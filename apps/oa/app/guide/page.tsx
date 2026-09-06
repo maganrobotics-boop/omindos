@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowUpRight, BookOpen, ClipboardCheck, PackageCheck, ShieldCheck, CircleDollarSign } from "lucide-react";
 import "./guide.css";
@@ -26,8 +27,8 @@ export default function GuidePage() {
   return <div className="oa-guide" id="top">
     <a className="guide-skip" href="#guide-main">跳到指南正文</a>
     <header className="guide-header">
-      <a href="/" className="guide-brand"><ArrowLeft size={18} aria-hidden="true" /><span>OriginMind × ARTS Robotics<small>联合研发 OA</small></span></a>
-      <a href="/" className="guide-enter">进入 OA <ArrowUpRight size={16} aria-hidden="true" /></a>
+      <Link href="/" className="guide-brand" prefetch={false}><ArrowLeft size={18} aria-hidden="true" /><span>OriginMind × ARTS Robotics<small>联合研发 OA</small></span></Link>
+      <Link href="/" className="guide-enter" prefetch={false}>进入 OA <ArrowUpRight size={16} aria-hidden="true" /></Link>
     </header>
     <main id="guide-main" className="guide-main">
       <div className="guide-heading"><span className="guide-kicker"><BookOpen size={18} aria-hidden="true" />新同学从这里开始</span><h1>项目章程与使用指南</h1><p>先了解为什么用，再找到你要办的事。</p></div>
@@ -83,7 +84,7 @@ export default function GuidePage() {
           <article><h3>应该找谁解决问题？</h3><p>任务和验收问题找项目负责人，技术问题找技术顾问，身份、权限或系统异常找 OA 管理员，劳务金额和支付进度找经费负责人或财务。反馈时带上申请编号、报错文字和发生步骤。</p></article>
         </div>
       </section>
-      <footer className="guide-footer"><p>准备好后，进入 OA 查看“待我处理”或新建申请。</p><a className="guide-enter" href="/">进入 OA <ArrowUpRight size={16} aria-hidden="true" /></a><a href="#top">回到顶部</a></footer>
+      <footer className="guide-footer"><p>准备好后，进入 OA 查看“待我处理”或新建申请。</p><Link className="guide-enter" href="/" prefetch={false}>进入 OA <ArrowUpRight size={16} aria-hidden="true" /></Link><a href="#top">回到顶部</a></footer>
     </main>
   </div>;
 }
