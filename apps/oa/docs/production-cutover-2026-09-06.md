@@ -13,7 +13,7 @@ The production database was imported from the source frozen at 2026-09-06 11:06:
 
 Feishu login at the production domain successfully identified the owner's existing account, exposed the administrator navigation and displayed 13 passed documents, 10 active collaborators and 100% archive completion. No new approval, signature or business message was submitted for testing. Existing member roles and NDA evidence were preserved. The owner explicitly waived pre-migration external-account binding for the eight unbound active members.
 
-The old source remains read-only. Its export flag is false, and export authentication key, public encryption key and window variables were removed in environment revision 19. This prevents two writable copies. The previous test D1 database is preserved separately. The previous production-domain CNAME was renamed `oa-migration-backup.omindos.ai` as a DNS configuration backup; it is not a supported user entry.
+The old source remains read-only. Source v64 (`218ecac522e907a2587f5894ab0b78befe8957e4`) adds a scoped redirect from oa.originmindos.com to oa.omindos.ai, enabled in environment revision 20. Public root and guide navigation were verified to redirect to the corresponding new address. Old POST bodies and OAuth query parameters are not forwarded. A cleanup request for the old platform registration of the new domain was rejected by automatic approval review; that registration remains, while the independently verified Cloudflare Worker binding serves the live domain. Its export flag is false, and export authentication key, public encryption key and window variables were removed in environment revision 19. This prevents two writable copies. The previous test D1 database is preserved separately. The previous production-domain CNAME was renamed `oa-migration-backup.omindos.ai` as a DNS configuration backup; it is not a supported user entry.
 
 ## Release and rollback constraints
 
@@ -21,4 +21,4 @@ The old staging release command is disabled for this Cloudflare account because 
 
 Do not blindly roll back to Worker version `4f993233-b1fe-4d3e-8a8c-d548a5ac9d7b`: that version binds the former test database. Do not restore the original source to writable mode after production has received new business writes without reconciling those writes first. The pre-import D1 recovery bookmark belongs to an empty database and is not a normal production rollback target.
 
-Mainland-China operator connectivity, a new business approval/signature/PDF archive write, the legacy OA redirect, automatic Git deployment, docs/API services and independent email are not claimed as verified by this cutover.
+Mainland-China operator connectivity, a new business approval/signature/PDF archive write, automatic Git deployment, docs/API services and independent email are not claimed as verified by this cutover.

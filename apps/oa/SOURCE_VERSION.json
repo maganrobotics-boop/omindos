@@ -17,7 +17,10 @@
     "schema_sha256": "f2ac3e37d233b1f0232eccd46a39a2609b9b3a4976c0cba7dfe25ebcb24cbfe5",
     "feishu_admin_login_verified": true,
     "chatgpt_login_enabled": false,
-    "verified_date": "2026-09-06"
+    "verified_date": "2026-09-06",
+    "legacy_oa_redirect_verified": true
   },
-  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; deployment guard after promoting the existing Worker. Production business artifact is v58 plus guide corrections."
+  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; deployment guard after promoting the existing Worker. Production business artifact is v58 plus guide corrections.",
+  "legacy_source_redirect_version": 64,
+  "legacy_source_redirect_commit": "218ecac522e907a2587f5894ab0b78befe8957e4"
 }

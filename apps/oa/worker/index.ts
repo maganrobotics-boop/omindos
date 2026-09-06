@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { legacyOaRedirect } from "../lib/legacy-oa-redirect.mjs";
 import { ensureMigrationWriteFreezeMarker, isMigrationWriteFrozen, shouldBlockForMigrationFreeze } from "../lib/migration-freeze";
 import { archiveApprovalPdfsToFeishu, type FeishuArchiveEnv } from "../lib/feishu-drive-archive";
 
@@ -15,6 +16,7 @@ interface Env {
     };
   };
   OA_MIGRATION_WRITE_FROZEN?: string;
+  OA_LEGACY_REDIRECT_ENABLED?: string;
   OA_MIGRATION_FREEZE_ID?: string;
   FEISHU_PDF_ARCHIVE_ENABLED?: string;
   FEISHU_LOGIN_APP_ID?: string;
@@ -75,6 +77,8 @@ async function archiveApprovalsFromResponse(response: Response, env: Env) {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const legacyRedirect = legacyOaRedirect(request, env.OA_LEGACY_REDIRECT_ENABLED);
+    if (legacyRedirect) return legacyRedirect;
     const url = new URL(request.url);
 
     if (isMigrationWriteFrozen(env as unknown as Record<string, unknown>)) {
