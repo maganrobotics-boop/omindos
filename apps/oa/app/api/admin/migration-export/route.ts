@@ -7,7 +7,6 @@ import {
   getMigrationExportConfig,
   isMigrationExportWindowOpen,
   MIGRATION_EXPORT_TABLES,
-  migrationLedgerSelectSql,
   migrationFreezeMarkerSelectSql,
   migrationArchiveActivitySelectSql,
   migrationExportSelectSql,
@@ -15,6 +14,7 @@ import {
 } from "../../../../lib/migration-export.mjs";
 import { migrationWriteFreezeId } from "../../../../lib/migration-freeze";
 import { getAuthorizedUser } from "../../_lib/auth";
+import { migrationSourceLedgerStatement } from "../../../../lib/migration-source-ledger.mjs";
 
 function responseHeaders(contentType = "application/json; charset=utf-8") {
   return {
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
     const freezeId = migrationWriteFreezeId(process.env);
     const statements = [
-      database.prepare(migrationLedgerSelectSql()),
+      await migrationSourceLedgerStatement(database),
       database.prepare(migrationSchemaSelectSql()),
       database.prepare(migrationFreezeMarkerSelectSql()).bind(freezeId),
       database.prepare(migrationArchiveActivitySelectSql()),
@@ -94,7 +94,8 @@ export async function POST(request: Request) {
     const headers = new Headers(responseHeaders(inline ? "application/json; charset=utf-8" : "application/vnd.originmind.oa-migration+json"));
     headers.set("content-disposition", `${inline ? "inline" : "attachment"}; filename="originmind-oa-migration-${timestamp}.json.enc"`);
     return new Response(body, { status: 200, headers });
-  } catch {
+  } catch (error) {
+    console.error("OA migration export validation failed", error instanceof Error ? error.message : "Unknown validation failure");
     return jsonError("迁移包生成失败，请保持页面开启并联系维护人员。", 500);
   }
 }
