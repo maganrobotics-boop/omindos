@@ -75,8 +75,9 @@ export async function POST(request: Request) {
     const envelope = await encryptMigrationPayload(payload, config.publicKeyJwk);
     const body = canonicalJson(envelope);
     const timestamp = payload.exportedAt.replace(/[-:]/gu, "").replace(/\.\d{3}Z$/u, "Z");
-    const headers = new Headers(responseHeaders("application/vnd.originmind.oa-migration+json"));
-    headers.set("content-disposition", `attachment; filename="originmind-oa-migration-${timestamp}.json.enc"`);
+    const inline = new URL(request.url).searchParams.get("delivery") === "inline";
+    const headers = new Headers(responseHeaders(inline ? "application/json; charset=utf-8" : "application/vnd.originmind.oa-migration+json"));
+    headers.set("content-disposition", `${inline ? "inline" : "attachment"}; filename="originmind-oa-migration-${timestamp}.json.enc"`);
     return new Response(body, { status: 200, headers });
   } catch {
     return jsonError("迁移包生成失败，请保持页面开启并联系维护人员。", 500);
