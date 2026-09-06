@@ -790,6 +790,7 @@ function ProfileSettingsView({ currentUser, migrationExportEnabled = false, migr
                 <div className="github-link-heading"><Download className="size-4" /><div><strong>加密迁移包</strong><span>只在短时迁移窗口内向 OA 管理员开放</span></div></div>
                 <form method="post" action="/api/admin/migration-export"><button type="submit" className="github-link-button"><Download className="size-4" />下载加密迁移包</button></form>
                 <form method="post" action="/api/admin/migration-export?delivery=inline"><button type="submit" className="github-link-button">打开加密迁移包</button></form>
+                <form method="post" action="/api/admin/migration-export?delivery=connector"><button type="submit" className="github-link-button">准备加密迁移副本</button></form>
                 <small>文件已使用临时公钥加密并附带源站认证；请勿转发或改名。</small>
               </div>
             )}

@@ -74,6 +74,21 @@ export async function POST(request: Request) {
     assertMigrationAdministratorCanReenter(payload, authorized.memberId, authorized.accountUserId);
     const envelope = await encryptMigrationPayload(payload, config.publicKeyJwk);
     const body = canonicalJson(envelope);
+    if (new URL(request.url).searchParams.get("delivery") === "connector") {
+      // Temporary encrypted transport for browsers without file downloads.
+      // This auxiliary table is not business data and has no public read route.
+      const chunks: Array<[number, string]> = [];
+      for (let offset = 0; offset < body.length; offset += 750) chunks.push([chunks.length, body.slice(offset, offset + 750)]);
+      const writes = [
+        database.prepare("CREATE TABLE IF NOT EXISTS migration_export_chunks (freeze_id TEXT NOT NULL, part INTEGER NOT NULL, encrypted_content TEXT NOT NULL, PRIMARY KEY (freeze_id, part))"),
+        database.prepare("DELETE FROM migration_export_chunks WHERE freeze_id = ?").bind(config.freezeId),
+      ];
+      for (let offset = 0; offset < chunks.length; offset += 1000) {
+        writes.push(database.prepare("INSERT INTO migration_export_chunks (freeze_id, part, encrypted_content) SELECT ?, json_extract(value, '$[0]'), json_extract(value, '$[1]') FROM json_each(?)").bind(config.freezeId, JSON.stringify(chunks.slice(offset, offset + 1000))));
+      }
+      await database.batch(writes);
+      return new Response(`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>加密迁移包已准备</title><h1>加密迁移包已准备</h1><p>已生成 ${chunks.length} 个加密片段，可通过站点所有者的数据连接读取。</p><p>OA 业务记录保持只读。</p></html>`, { headers: responseHeaders("text/html; charset=utf-8") });
+    }
     const timestamp = payload.exportedAt.replace(/[-:]/gu, "").replace(/\.\d{3}Z$/u, "Z");
     const inline = new URL(request.url).searchParams.get("delivery") === "inline";
     const headers = new Headers(responseHeaders(inline ? "application/json; charset=utf-8" : "application/vnd.originmind.oa-migration+json"));
