@@ -17,7 +17,7 @@ Version **V1.5.8.1**: the owner-supplied incremental patch has been merged into 
 
 Meeting UI, translation/report endpoints, authentication code, recording handlers, meeting database schema creation, TURN settings references and OpenAI calls. Visitor statistics remain, with their optional `VISITS_DB` binding.
 
-No production deployment, DNS changes, remote secret removal or database deletion has occurred. Existing Cloudflare settings must be inventoried before removing meeting-specific bindings; shared visit storage must be preserved.
+Website deployed to the new Cloudflare Pages project `omindos-website` in the owner account on 2026-09-06: https://omindos-website.pages.dev . Deployment ID: `0785558a-b062-4155-a4bf-c4350d73ab7c`, source commit `fceb5ec`. Nine live localized routes passed, and three former meeting URLs returned 404. This is a direct upload of the GitHub source; automatic Git deployment is not configured. Custom-domain DNS, OA migration, remote legacy meeting cleanup and independent mailboxes are pending. Visitor statistics have no VISITS_DB binding in the new project and return an unavailable state until storage is configured. Existing Cloudflare settings must be inventoried before removing meeting-specific bindings; shared visit storage must be preserved.
 
 ## Validation
 
