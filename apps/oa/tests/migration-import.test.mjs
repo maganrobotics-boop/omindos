@@ -226,3 +226,12 @@ test("direct messages may retain configured privileged participants without memb
   const message = row("direct_messages", { id: "message-1", sender_email: "owner@example.com", recipient_email: "member@example.com" });
   assert.equal(await migration.assertMigrationPayloadRelationships(payload({ direct_messages: [message] })), true);
 });
+
+test("deleted members retain their audit trail only with a final deletion event", async () => {
+  const submitted = row("member_events", { id: 1, member_id: "deleted-member", action: "submitted" });
+  const deleted = row("member_events", { id: 2, member_id: "deleted-member", action: "delete" });
+  assert.equal(await migration.assertMigrationPayloadRelationships(payload({ member_events: [submitted, deleted] })), true);
+  await assert.rejects(migration.assertMigrationPayloadRelationships(payload({ member_events: [submitted] })), /terminal deletion event/);
+  const afterDeletion = row("member_events", { id: 3, member_id: "deleted-member", action: "update_permissions" });
+  await assert.rejects(migration.assertMigrationPayloadRelationships(payload({ member_events: [submitted, deleted, afterDeletion] })), /terminal deletion event/);
+});

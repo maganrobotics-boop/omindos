@@ -128,7 +128,20 @@ export async function assertMigrationPayloadRelationships(payload: MigrationPayl
   assertReferences(approvalEvents, "approval_id", approvalIds, "approval event");
   assertReferences(approvalRevisions, "approval_id", approvalIds, "approval revision");
   assertReferences(archives, "approval_id", approvalIds, "external archive");
-  assertReferences(memberEvents, "member_id", memberIds, "member event");
+  const deletedMemberTrails = new Map<string, Array<Record<string, string | number | null>>>();
+  for (const event of memberEvents) {
+    const memberId = requiredText(event, "member_id");
+    if (memberIds.has(memberId)) continue;
+    const trail = deletedMemberTrails.get(memberId) ?? [];
+    trail.push(event);
+    deletedMemberTrails.set(memberId, trail);
+  }
+  // Earlier OA versions deliberately kept audit events after deleting a member.
+  // Preserve that evidence without recreating the deleted identity or its access.
+  for (const trail of deletedMemberTrails.values()) {
+    trail.sort((left, right) => requiredInteger(left, "id") - requiredInteger(right, "id"));
+    if (trail.at(-1)?.action !== "delete") throw new Error("Migration member event reference is broken without a terminal deletion event");
+  }
   assertReferences(identities, "member_id", memberIds, "authentication identity");
   assertReferences(laborClaims, "claimant_member_id", memberIds, "labor claimant");
   assertReferences(laborClaims, "technical_approval_id", approvalIds, "technical approval");
