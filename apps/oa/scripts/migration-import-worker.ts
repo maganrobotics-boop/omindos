@@ -17,6 +17,7 @@ import {
 } from "../lib/migration-import";
 import {
   migrationImportD1QueryCount,
+  migrationImportRowBatches,
   MIGRATION_IMPORT_MAX_D1_QUERIES,
   MIGRATION_IMPORT_TABLE_ORDER,
 } from "../lib/migration-import-plan.mjs";
@@ -98,9 +99,7 @@ function buildInsertStatements(db: D1Database, payload: MigrationPayload, guardK
   const expectedChanges: number[] = [];
   for (const tableName of MIGRATION_IMPORT_TABLE_ORDER) {
     const table = migrationTable(payload, tableName);
-    const maximumRowsPerStatement = table.name === "approval_revisions" ? 1 : Math.max(1, Math.floor((100 - 2) / table.columns.length));
-    for (let offset = 0; offset < table.rows.length; offset += maximumRowsPerStatement) {
-      const rows = table.rows.slice(offset, offset + maximumRowsPerStatement);
+    for (const rows of migrationImportRowBatches(table)) {
       const columnSql = table.columns.map(quoteIdentifier).join(", ");
       const valuesSql = rows.map(() => `(${table.columns.map(() => "?").join(", ")})`).join(", ");
       const sql = `WITH incoming (${columnSql}) AS (VALUES ${valuesSql}) INSERT INTO ${quoteIdentifier(table.name)} (${columnSql}) SELECT ${columnSql} FROM incoming WHERE ${guardExistsSql()}`;

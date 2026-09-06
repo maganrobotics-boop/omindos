@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 
 import { MIGRATION_EXPORT_TABLES } from "../lib/migration-export.mjs";
-import { assertTargetAdministratorReentry, migrationImportD1QueryCount } from "../lib/migration-import-plan.mjs";
+import { assertTargetAdministratorReentry, migrationImportD1QueryCount, migrationImportRowBatches } from "../lib/migration-import-plan.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const vite = await createServer({ appType: "custom", configFile: false, root, server: { middlewareMode: true, hmr: false } });
@@ -78,10 +78,33 @@ function approvalProjection(approval) {
 }
 
 test("migration import planner accepts the Free-plan boundary and rejects the next query", () => {
-  const atLimit = payload({ approval_revisions: Array.from({ length: 32 }, () => []) });
-  const overLimit = payload({ approval_revisions: Array.from({ length: 33 }, () => []) });
+  const atLimit = payload({ approval_revisions: Array.from({ length: 32 }, (_, index) => row("approval_revisions", { approval_id: "a", revision_no: index + 1 })) });
+  const overLimit = payload({ approval_revisions: Array.from({ length: 33 }, (_, index) => row("approval_revisions", { approval_id: "a", revision_no: index + 1 })) });
   assert.equal(migrationImportD1QueryCount(atLimit), 50);
   assert.equal(migrationImportD1QueryCount(overLimit), 51);
+});
+
+test("revision batches keep predecessors in earlier statements and respect D1 bindings", () => {
+  const rows = Array.from({ length: 23 }, (_, index) => Array.from({ length: index % 4 + 1 }, (_, depth) => row("approval_revisions", { approval_id: `approval-${index}`, revision_no: depth + 1 }))).flat();
+  const table = payload({ approval_revisions: rows }).tables.find((table) => table.name === "approval_revisions");
+  const inserted = new Map();
+  const batches = [...migrationImportRowBatches(table)];
+  for (const batch of batches) {
+    assert.ok(batch.length * table.columns.length + 2 <= 100);
+    const entries = batch.map((values) => record("approval_revisions", values));
+    assert.equal(new Set(entries.map((entry) => entry.approval_id)).size, entries.length);
+    for (const entry of entries) assert.equal(entry.revision_no, (inserted.get(entry.approval_id) || 0) + 1);
+    for (const entry of entries) inserted.set(entry.approval_id, entry.revision_no);
+  }
+  assert.equal(batches.flat().length, rows.length);
+  assert.ok(batches.length < rows.length);
+});
+
+test("the production-sized inventory fits the Free-plan import limit", () => {
+  const counts = { approvals: 14, approval_events: 26, members: 11, member_events: 67, auth_identities: 4, account_profiles: 11, direct_messages: 1, external_archives: 24 };
+  const rows = Object.fromEntries(Object.entries(counts).map(([table, count]) => [table, Array.from({ length: count }, () => row(table))]));
+  rows.approval_revisions = [2, 2, 2, 4, 2, 1, 2, 2, 1, 2, 1, 1].flatMap((count, approval) => Array.from({ length: count }, (_, depth) => row("approval_revisions", { approval_id: `approval-${approval}`, revision_no: depth + 1 })));
+  assert.ok(migrationImportD1QueryCount(payload(rows)) <= 50);
 });
 
 test("migration relationships validate provider subjects and same-approval archive revisions", async () => {

@@ -14,13 +14,45 @@ export const MIGRATION_IMPORT_TABLE_ORDER = Object.freeze([
 export const MIGRATION_IMPORT_MAX_D1_QUERIES = 50;
 const MIGRATION_IMPORT_FIXED_D1_QUERIES = 18;
 
+export function* migrationImportRowBatches(table) {
+  if (!table || !Array.isArray(table.columns) || !table.columns.length || table.columns.length > 98 || !Array.isArray(table.rows)) throw new Error("Migration table is missing or malformed");
+  const maximumRows = Math.floor(98 / table.columns.length);
+  if (table.name !== "approval_revisions") {
+    for (let offset = 0; offset < table.rows.length; offset += maximumRows) yield table.rows.slice(offset, offset + maximumRows);
+    return;
+  }
+  const approvalIndex = table.columns.indexOf("approval_id");
+  if (approvalIndex < 0) throw new Error("Migration revisions are missing approval_id");
+  const chains = new Map();
+  for (const row of table.rows) {
+    const approvalId = row[approvalIndex];
+    if (typeof approvalId !== "string" || !approvalId) throw new Error("Migration revision approval_id is invalid");
+    if (!chains.has(approvalId)) chains.set(approvalId, []);
+    chains.get(approvalId).push(row);
+  }
+  // The authenticated payload already has validated, ordered revision chains.
+  // Each statement contains independent approvals only: every predecessor is in
+  // an earlier statement, regardless of SQLite's order within INSERT SELECT.
+  for (let depth = 0; chains.size; depth += 1) {
+    let batch = [];
+    for (const [approvalId, rows] of chains) {
+      batch.push(rows[depth]);
+      if (depth + 1 === rows.length) chains.delete(approvalId);
+      if (batch.length === maximumRows) {
+        yield batch;
+        batch = [];
+      }
+    }
+    if (batch.length) yield batch;
+  }
+}
+
 export function migrationImportInsertStatementCount(payload) {
   let statements = 0;
   for (const tableName of MIGRATION_IMPORT_TABLE_ORDER) {
     const table = payload?.tables?.find((candidate) => candidate.name === tableName);
     if (!table || !Array.isArray(table.columns) || !table.columns.length || !Array.isArray(table.rows)) throw new Error(`Migration table ${tableName} is missing or malformed`);
-    const maximumRowsPerStatement = table.name === "approval_revisions" ? 1 : Math.max(1, Math.floor((100 - 2) / table.columns.length));
-    statements += Math.ceil(table.rows.length / maximumRowsPerStatement);
+    for (const batch of migrationImportRowBatches(table)) if (batch.length) statements += 1;
   }
   return statements;
 }

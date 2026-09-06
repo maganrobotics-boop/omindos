@@ -32,6 +32,7 @@ const vite = await createServer({
   server: { middlewareMode: true, hmr: false },
 });
 const migrationWorker = (await vite.ssrLoadModule("/scripts/migration-import-worker.ts")).default;
+const { buildApprovalRevision } = await vite.ssrLoadModule("/lib/approval-revisions.ts");
 
 after(async () => vite.close());
 
@@ -86,10 +87,30 @@ function seedSource(database, displayName = "迁移管理员") {
   );
 }
 
-async function makePayload({ displayName, duplicateProviderSubject = false } = {}) {
+async function seedRevisionChains(database) {
+  const approvalSpec = MIGRATION_EXPORT_TABLES.find((table) => table.name === "approvals");
+  const revisionSpec = MIGRATION_EXPORT_TABLES.find((table) => table.name === "approval_revisions");
+  const insert = (spec, values) => database.prepare(`INSERT INTO ${spec.name} (${spec.columns.join(", ")}) VALUES (${spec.columns.map(() => "?").join(", ")})`).run(...spec.columns.map((column) => values[column]));
+  for (let index = 0; index < 23; index += 1) {
+    const approval = Object.fromEntries(approvalSpec.columns.map((column) => [column, ""]));
+    Object.assign(approval, { id: `approval-${String(index).padStart(2, "0")}`, type: "技术审核", title: "迁移验证", requester_email: "admin@example.com", client_creation_key: null, business_key: null, created_at: "2026-09-01T00:00:00.000Z", updated_at: "2026-09-01T00:00:00.000Z", status: "已归档", amount: null, period_key: null, signers_json: "[]", payload_json: "{}", current_revision_no: 0, current_revision_hash: null });
+    for (let depth = 1; depth <= index % 4 + 1; depth += 1) {
+      const projection = Object.fromEntries(Object.entries(approval).map(([column, value]) => [column.replace(/_([a-z])/gu, (_, char) => char.toUpperCase()), value]));
+      const mutationRevision = `mutation-${index}-${depth}`;
+      const revision = await buildApprovalRevision({ nextApproval: projection, revisionNo: depth, previousRevisionHash: approval.current_revision_hash, mutation: { workflowMutationRevision: mutationRevision }, event: { action: "created" } });
+      insert(revisionSpec, { revision_hash: revision.revisionHash, approval_id: approval.id, revision_no: depth, previous_revision_hash: revision.previousRevisionHash, mutation_revision: mutationRevision, state_json: revision.stateJson, state_hash: revision.stateHash, event_json: revision.eventJson, created_at: approval.created_at });
+      approval.current_revision_no = depth;
+      approval.current_revision_hash = revision.revisionHash;
+    }
+    insert(approvalSpec, approval);
+  }
+}
+
+async function makePayload({ displayName, duplicateProviderSubject = false, revisionChains = false } = {}) {
   const source = createApplicationDatabase();
   try {
     seedSource(source, displayName);
+    if (revisionChains) await seedRevisionChains(source);
     const ledger = { success: true, results: plainRows(source.prepare(migrationLedgerSelectSql()).all()) };
     const schema = { success: true, results: plainRows(source.prepare(migrationSchemaSelectSql()).all()) };
     const tableResults = MIGRATION_EXPORT_TABLES.map((table) => ({
@@ -141,6 +162,7 @@ class TransactionalD1 {
     this.database = database;
     this.failBeforeCalls = new Set(failBeforeCalls);
     this.batchCalls = 0;
+    this.queryCount = 0;
   }
 
   prepare(sql) {
@@ -148,6 +170,9 @@ class TransactionalD1 {
   }
 
   async batch(statements) {
+    this.queryCount += statements.length;
+    assert.ok(this.queryCount <= 50, "D1 Free-plan query limit");
+    for (const statement of statements) assert.ok(statement.bindings.length <= 100, "D1 binding limit");
     this.batchCalls += 1;
     if (this.failBeforeCalls.delete(this.batchCalls)) throw new Error("simulated D1 transport failure");
     this.database.exec("BEGIN IMMEDIATE");
@@ -182,6 +207,7 @@ function environment(d1, payload) {
 }
 
 async function importRequest(d1, payload) {
+  d1.queryCount = 0;
   const serialized = canonicalJson(payload);
   return migrationWorker.fetch(new Request("http://127.0.0.1/import", {
     method: "POST",
@@ -236,6 +262,24 @@ test("a conflict in the final insert rolls back every business row and the impor
     assert.equal(response.status, 500);
     assert.equal((await response.json()).state, "commit_status_unknown");
     assert.deepEqual(targetCounts(target), { identities: 0, members: 0, guards: 0 });
+  } finally {
+    target.close();
+  }
+});
+
+test("batched revision chains import under D1 limits with real chain triggers and exact hashes", async () => {
+  const payload = await makePayload({ revisionChains: true });
+  const target = createApplicationDatabase();
+  try {
+    const d1 = new TransactionalD1(target);
+    const response = await importRequest(d1, payload);
+    const receipt = await response.json();
+    assert.equal(response.status, 200, JSON.stringify(receipt));
+    assert.equal(receipt.state, "imported_verified");
+    assert.equal(target.prepare("SELECT COUNT(*) AS count FROM approvals").get().count, 23);
+    assert.equal(target.prepare("SELECT COUNT(*) AS count FROM approval_revisions").get().count, 56);
+    assert.ok(d1.queryCount <= 50);
+    assert.equal(targetCounts(target).guards, 0);
   } finally {
     target.close();
   }
