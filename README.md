@@ -4,14 +4,14 @@ Private monorepo for the website, OA, documentation and API.
 
 | Service | Domain | Source status |
 | --- | --- | --- |
-| Website | omindos.ai | V1.5.8 supplied by owner; meeting assistant removed |
+| Website | omindos.ai | V1.5.8.1 supplied patch merged; meeting assistant removed |
 | OA | oa.omindos.ai | Awaiting source; current service oa.originmindos.com unchanged |
 | Documentation | docs.omindos.ai | Awaiting source |
 | API | api.omindos.ai | Awaiting source |
 
 Website source is in `apps/website`. It retains the original Cloudflare Pages `_worker.js` layout, language-cookie routing and dynamic Chinese/English/Japanese language switching. Existing pages and media are unchanged.
 
-This is **not V1.5.8.1**. The supplied share identifies `OriginMind_Website_V1.5.8.1_PATCH_ONLY.zip` as an incremental patch requiring V1.5.8; that patch has not been supplied or applied.
+Version **V1.5.8.1**: the owner-supplied incremental patch has been merged into the V1.5.8 base. It places the website above the sales email in the contact section and footers. The patch Worker differs from the base only in the meeting status build-version constant; the cleaned Worker is retained so meeting functionality is not restored.
 
 ## Removed from website source
 

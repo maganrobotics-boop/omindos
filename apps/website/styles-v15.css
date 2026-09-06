@@ -895,3 +895,22 @@ body.v15-site.founding-page {
   .v15-site.founding-page .founding-value-grid article { min-height: 0; }
   .v15-site.founding-page .founding-value-grid h3 { margin-top: 22px; }
 }
+
+
+/* V1.5.8.1 — public website first, business email second. */
+.v15-site .footer-main .footer-contact {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  font: 600 15px/1.4 var(--mono);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.v15-site .footer-main .footer-contact a {
+  color: #cad8e1;
+  overflow-wrap: anywhere;
+}
+.v15-site .footer-main .footer-contact a:hover,
+.v15-site .footer-main .footer-contact a:focus-visible {
+  color: #55ddff;
+}
