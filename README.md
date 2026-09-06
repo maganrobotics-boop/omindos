@@ -6,8 +6,8 @@ Private monorepo for the website, OA, documentation and API.
 | --- | --- | --- |
 | Website | omindos.ai | V1.5.8.1 supplied patch merged; meeting assistant removed |
 | OA | oa.omindos.ai | Live on independent Cloudflare Workers/D1; Feishu administrator login verified |
-| Documentation | docs.omindos.ai | Awaiting source |
-| API | api.omindos.ai | Awaiting source |
+| Documentation | docs.omindos.ai | Empty project reserved in apps/docs; program will be pushed later |
+| API | api.omindos.ai | Empty project reserved in apps/api; program will be pushed later |
 
 Website source is in `apps/website`. It retains the original Cloudflare Pages `_worker.js` layout, language-cookie routing and dynamic Chinese/English/Japanese language switching. Existing pages and media are unchanged.
 
@@ -31,4 +31,4 @@ The production D1 database `originmind-internal-oa-production` is separate from 
 
 Source v58 (`e4a509cbfc1f1ae160ed594571084a018c435195`) plus three guide Link fixes supplies the production business artifact. The original source was temporarily updated to v63 for migration export compatibility. That original deployment remains read-only as a rollback copy; its export entry is disabled and the temporary export credentials were removed. GitHub source includes subsequent migration-tool compatibility fixes. See `apps/oa/SOURCE_VERSION.json` and `apps/oa/docs/production-cutover-2026-09-06.md` for the production identifiers and verification limits.
 
-The old OA address oa.originmindos.com now redirects to oa.omindos.ai. Docs/API services, two independent mailboxes, automatic Git deployment and real mainland-China connectivity checks remain outstanding. Do not route missing docs/API services to an OA placeholder. Source business data, migration credentials and OAuth secrets must never be committed.
+The old OA address oa.originmindos.com now redirects to oa.omindos.ai. The owner requested empty projects for documentation and API, with application code to be pushed later. Their domains are reserved under the existing zone; no service or placeholder deployment is published. Two independent mailboxes, automatic Git deployment and real mainland-China connectivity checks remain outstanding. Source business data, migration credentials and OAuth secrets must never be committed.
