@@ -5,7 +5,7 @@ Private monorepo for the website, OA, documentation and API.
 | Service | Domain | Source status |
 | --- | --- | --- |
 | Website | omindos.ai | V1.5.8.1 supplied patch merged; meeting assistant removed |
-| OA | oa.omindos.ai | Awaiting source; current service oa.originmindos.com unchanged |
+| OA | oa.omindos.ai | v58 saved source imported into apps/oa; independent migration pending |
 | Documentation | docs.omindos.ai | Awaiting source |
 | API | api.omindos.ai | Awaiting source |
 
@@ -22,3 +22,7 @@ Website deployed to the new Cloudflare Pages project `omindos-website` in the ow
 ## Validation
 
 Run `node --test tests/website.test.mjs` with Node.js 22 or newer. These are local Worker-handler regression tests using an asset-binding mock, not a Cloudflare deployment or mainland-China connectivity test.
+
+## OA migration
+
+`apps/oa` contains the exact tracked source of saved Sites v58 (`e4a509cbfc1f1ae160ed594571084a018c435195`), plus source provenance metadata. This does not assert that v58 is the current production deployment. Existing OA hosting and data have not been switched. The standalone staging Worker and its separate D1 database already exist; both need version and data verification before release. Source business data, migration credentials and OAuth secrets must never be committed. The original Sites manifest is retained as provenance; the user-requested target is independent Cloudflare hosting.
