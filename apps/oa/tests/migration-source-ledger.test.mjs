@@ -19,8 +19,23 @@ test("source Drizzle ledger requires exact file hashes, timestamps, and migratio
     const query = await migrationSourceLedgerStatement(adapter);
     assert.deepEqual(migrationNamesFromLedger(await query.all()), MIGRATION_EXPORT_EXPECTED_MIGRATIONS);
     db.exec("UPDATE __drizzle_migrations SET hash = 'tampered' WHERE created_at = (SELECT MAX(created_at) FROM __drizzle_migrations)");
-    assert.throws(() => migrationNamesFromLedger({ success: true, results: db.prepare(`SELECT 1 AS id, 'UNRECOGNIZED' AS name`).all().map((row) => ({ ...row })) }), /required application schema/);
     const changed = await query.all();
     assert.throws(() => migrationNamesFromLedger(changed), /required application schema/);
   } finally { db.close(); }
 });
+
+for (const name of ["d1_migrations", "__appgarden_migrations"]) {
+  test(`${name} requires the complete ordered migration ledger`, async () => {
+    const db = new DatabaseSync(":memory:");
+    try {
+      db.exec(`CREATE TABLE ${name} (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)`);
+      for (const file of MIGRATION_EXPORT_EXPECTED_MIGRATIONS) db.prepare(`INSERT INTO ${name} (name) VALUES (?)`).run(file);
+      const adapter = { prepare(sql) { return { async all() { return { success: true, results: db.prepare(sql).all().map((row) => ({ ...row })) }; } }; } };
+      const query = await migrationSourceLedgerStatement(adapter);
+      assert.deepEqual(migrationNamesFromLedger(await query.all()), MIGRATION_EXPORT_EXPECTED_MIGRATIONS);
+      db.exec(`DELETE FROM ${name} WHERE id = 26`);
+      const incomplete = await query.all();
+      assert.throws(() => migrationNamesFromLedger(incomplete), /required application schema/);
+    } finally { db.close(); }
+  });
+}

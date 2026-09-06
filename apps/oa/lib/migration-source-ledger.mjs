@@ -135,6 +135,7 @@ export async function migrationSourceLedgerStatement(db) {
   const metadata = await db.prepare("SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name LIKE '%migration%' ORDER BY name").all();
   const names = new Set(metadata.results.map((row) => row.name));
   if (names.has("d1_migrations")) return db.prepare("SELECT id, name FROM d1_migrations ORDER BY id ASC");
+  if (names.has("__appgarden_migrations")) return db.prepare("SELECT id, name FROM __appgarden_migrations ORDER BY id ASC");
   if (names.has("__drizzle_migrations")) {
     const cases = EXPECTED_DRIZZLE_LEDGER.map((entry) => `WHEN hash = '${entry.hash}' AND created_at = ${entry.createdAt} THEN '${entry.name}'`).join(" ");
     return db.prepare(`SELECT row_number() OVER (ORDER BY created_at ASC) AS id, CASE ${cases} ELSE 'UNRECOGNIZED' END AS name FROM __drizzle_migrations ORDER BY created_at ASC`);
