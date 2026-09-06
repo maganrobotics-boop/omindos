@@ -1,0 +1,367 @@
+const VISITS_ENDPOINT = "/api/visits";
+const LANGUAGE_COOKIE = "originmind_language";
+const MINUTE_IN_MS = 60 * 1000;
+const RECENT_RETENTION_MINUTES = 2 * 24 * 60;
+const ROBOT_BROCHURE_PATH = "/assets/brochures/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_EN.pdf";
+const ROBOT_BROCHURE_FILENAME = "OriginMind_Intelligent_Mobile_Robot_Product_Brochure_EN.pdf";
+const VERSIONED_PUBLIC_ASSET = /\.(?:css|js|png|jpe?g|svg|webp|ico)$/u;
+const STABLE_PUBLIC_ASSET = /\.(?:woff2?|png|jpe?g|svg|webp|ico|mp4)$/u;
+
+const LANGUAGE_SITES = {
+  en: { home: "/index.en", oem: "/oem/en/", why: "/why/en/", notFound: "/404", contentLanguage: "en" },
+  zh: { home: "/index.zh", oem: "/oem/zh/", why: "/why/zh/", notFound: "/404.zh", contentLanguage: "zh-CN" },
+  ja: { home: "/index.ja", oem: "/oem/ja/", why: "/why/ja/", notFound: "/404.ja", contentLanguage: "ja-JP" },
+};
+
+const CANONICAL_HOSTS = {
+  "originmindos.com": "omindos.ai",
+  "www.originmindos.com": "omindos.ai",
+  "www.omindos.ai": "omindos.ai",
+};
+
+const LANGUAGE_REDIRECT_HOSTS = {
+  "originmindos.cn": "zh",
+  "www.originmindos.cn": "zh",
+  "jp.originmindos.com": "ja",
+};
+
+const LEGACY_HOME_PATH = /^\/index(?:\.(?:en|zh|ja|ar|de))?(?:\.html)?\/?$/;
+const LOCALE_RESOURCE_PATH = /^\/index\.(en|zh|ja)\.html$/;
+const LEGACY_OEM_PATH = /^\/founding-oem(?:\.(en|zh|ja|ar|de))?(?:\.html)?\/?$/;
+const INTERNAL_OEM_PATH = /^\/oem\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
+const INTERNAL_WHY_PATH = /^\/why\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
+const NOT_FOUND_PATH = /^\/404(?:\.(en|zh|ja))?(?:\.html)?\/?$/;
+
+function jsonResponse(body, status = 200, extraHeaders = {}) {
+  return Response.json(body, {
+    status,
+    headers: {
+      "Cache-Control": "no-store",
+      "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+      "Content-Type": "application/json; charset=utf-8",
+      "Referrer-Policy": "no-referrer",
+      "X-Content-Type-Options": "nosniff",
+      ...extraHeaders,
+    },
+  });
+}
+
+function errorResponse(error, status = 500, code = "internal_error") {
+  return jsonResponse({ error, code }, status);
+}
+
+function methodNotAllowed(methods) {
+  return jsonResponse({ error: "Method not allowed", code: "method_not_allowed" }, 405, { Allow: methods.join(", ") });
+}
+
+function logError(message, error, extra = {}) {
+  console.error(JSON.stringify({
+    level: "error",
+    message,
+    error: error instanceof Error ? error.message : String(error),
+    ...extra,
+  }));
+}
+
+function visitorCountry(request) {
+  const country = request.cf?.country?.toUpperCase();
+  return typeof country === "string" && /^[A-Z]{2}$/.test(country) ? country : "ZZ";
+}
+
+function isSameSiteBrowserRequest(request, url) {
+  const origin = request.headers.get("Origin");
+  if (origin) return origin === url.origin;
+  const fetchSite = request.headers.get("Sec-Fetch-Site");
+  return fetchSite === "same-origin" || fetchSite === "same-site";
+}
+
+async function recordVisit(database, countryCode, now) {
+  const minuteBucket = Math.floor(now / MINUTE_IN_MS);
+  await database.batch([
+    database.prepare(`INSERT INTO visit_totals (id, visits) VALUES (1, 1) ON CONFLICT(id) DO UPDATE SET visits = visits + 1`),
+    database.prepare(`INSERT INTO visit_recent (minute_bucket, country_code, visits) VALUES (?, ?, 1) ON CONFLICT(minute_bucket, country_code) DO UPDATE SET visits = visits + 1`).bind(minuteBucket, countryCode),
+    database.prepare(`INSERT INTO visit_country (country_code, visits) VALUES (?, 1) ON CONFLICT(country_code) DO UPDATE SET visits = visits + 1`).bind(countryCode),
+    database.prepare("DELETE FROM visit_recent WHERE minute_bucket < ?").bind(minuteBucket - RECENT_RETENTION_MINUTES),
+  ]);
+}
+
+async function readVisitStats(database, now) {
+  const firstRecentMinute = Math.floor((now - 24 * 60 * MINUTE_IN_MS) / MINUTE_IN_MS);
+  const [totalResult, recentResult, countryResult] = await database.batch([
+    database.prepare("SELECT visits FROM visit_totals WHERE id = 1"),
+    database.prepare("SELECT COALESCE(SUM(visits), 0) AS visits FROM visit_recent WHERE minute_bucket >= ?").bind(firstRecentMinute),
+    database.prepare(`SELECT country_code AS code, visits FROM visit_country ORDER BY visits DESC, country_code ASC LIMIT 18`),
+  ]);
+  return {
+    enabled: true,
+    total: Number(totalResult.results?.[0]?.visits ?? 0),
+    last24Hours: Number(recentResult.results?.[0]?.visits ?? 0),
+    countries: (countryResult.results ?? []).flatMap((row) => {
+      const code = String(row.code).toUpperCase();
+      return /^[A-Z]{2}$/.test(code) ? [{ code, visits: Number(row.visits) }] : [];
+    }),
+  };
+}
+
+async function handleVisits(request, env, url) {
+  if (!['GET', 'POST'].includes(request.method)) return methodNotAllowed(["GET", "POST"]);
+  if (!env.VISITS_DB) return jsonResponse({ enabled: false, error: "Visitor statistics are not configured" }, 503);
+  try {
+    const now = Date.now();
+    if (request.method === "POST") {
+      if (!isSameSiteBrowserRequest(request, url)) return errorResponse("Forbidden", 403, "forbidden");
+      await recordVisit(env.VISITS_DB, visitorCountry(request), now);
+    }
+    return jsonResponse(await readVisitStats(env.VISITS_DB, now));
+  } catch (error) {
+    logError("visitor statistics request failed", error);
+    return jsonResponse({ enabled: false, error: "Statistics unavailable" }, 503);
+  }
+}
+
+function languageForHostname(hostname) {
+  const host = hostname.toLowerCase();
+  if (host === "jp.originmindos.com" || host.endsWith(".jp.originmindos.com")) return "ja";
+  if (host === "originmindos.cn" || host.endsWith(".originmindos.cn")) return "zh";
+  return "en";
+}
+
+function normalizedHomeLanguage(value) {
+  const language = String(value || "").trim().toLowerCase();
+  return Object.hasOwn(LANGUAGE_SITES, language) ? language : "";
+}
+
+function languageFromCookie(request) {
+  const cookieHeader = request.headers.get("Cookie") || "";
+  for (const entry of cookieHeader.split(";")) {
+    const separator = entry.indexOf("=");
+    if (separator < 0) continue;
+    const name = entry.slice(0, separator).trim();
+    if (name !== LANGUAGE_COOKIE) continue;
+    try {
+      return normalizedHomeLanguage(decodeURIComponent(entry.slice(separator + 1).trim()));
+    } catch {
+      return "";
+    }
+  }
+  return "";
+}
+
+function isUnifiedHomeHost(hostname) {
+  const host = hostname.toLowerCase();
+  return host === "omindos.ai" || host === "www.omindos.ai" || host === "www.originmindos.com" || host === "originmindos.com" || host.endsWith(".pages.dev") || host === "localhost" || host === "127.0.0.1";
+}
+
+function isWeChatBrowser(request) {
+  return /(?:MicroMessenger|WeChat)/iu.test(request.headers.get("User-Agent") || "");
+}
+
+function selectedHomeLanguage(request, url, fallbackLanguage) {
+  if (!isUnifiedHomeHost(url.hostname)) return fallbackLanguage;
+  return languageFromCookie(request) || fallbackLanguage;
+}
+
+function rememberLanguageRedirect(url, language, pathname = url.pathname) {
+  const destination = new URL(url);
+  destination.pathname = pathname;
+  destination.searchParams.delete("lang");
+  const secure = destination.protocol === "https:" ? "; Secure" : "";
+  const headers = new Headers({
+    "Cache-Control": "private, no-store",
+    Location: destination.toString(),
+    "Set-Cookie": `${LANGUAGE_COOKIE}=${language}; Path=/; Max-Age=31536000; SameSite=Lax${secure}`,
+  });
+  return new Response(null, { status: 302, headers });
+}
+
+function assetRequest(request, url, pathname) {
+  const assetUrl = new URL(url);
+  assetUrl.pathname = pathname;
+  assetUrl.search = "";
+  return new Request(assetUrl, request);
+}
+
+function permanentRedirect(url, pathname, hostname = url.hostname) {
+  const destination = new URL(url);
+  destination.hostname = hostname;
+  destination.pathname = pathname;
+  return new Response(null, {
+    status: 308,
+    headers: {
+      "Cache-Control": "public, max-age=3600",
+      Location: destination.toString(),
+    },
+  });
+}
+
+function redirectLanguageDomain(url, language) {
+  const destination = new URL(url);
+  destination.protocol = "https:";
+  destination.hostname = "omindos.ai";
+  if (url.pathname === "/" || LEGACY_HOME_PATH.test(url.pathname)) {
+    destination.pathname = "/";
+    destination.searchParams.set("lang", language);
+  } else if (LEGACY_OEM_PATH.test(url.pathname) || INTERNAL_OEM_PATH.test(url.pathname)) {
+    destination.pathname = "/founding-oem";
+    destination.searchParams.set("lang", language);
+  } else if (url.pathname === "/why-originmind" || INTERNAL_WHY_PATH.test(url.pathname)) {
+    destination.pathname = "/why-originmind";
+    destination.searchParams.set("lang", language);
+  }
+  return new Response(null, {
+    status: 308,
+    headers: {
+      "Cache-Control": "public, max-age=3600",
+      Location: destination.toString(),
+    },
+  });
+}
+
+function withLanguageHeaders(response, language, varyByCookie = false) {
+  const headers = new Headers(response.headers);
+  headers.set("Content-Language", LANGUAGE_SITES[language].contentLanguage);
+  const vary = headers.get("Vary");
+  const values = (vary || "").split(",").map((value) => value.trim().toLowerCase()).filter(Boolean);
+  const varyValues = [];
+  if (!values.includes("host")) varyValues.push("Host");
+  if (varyByCookie && !values.includes("cookie")) varyValues.push("Cookie");
+  if (varyValues.length) headers.set("Vary", vary ? `${vary}, ${varyValues.join(", ")}` : varyValues.join(", "));
+  const cacheControl = (headers.get("Cache-Control") || "").toLowerCase();
+  const contentType = (headers.get("Content-Type") || "").toLowerCase();
+  if (varyByCookie && response.status >= 200 && response.status < 300 && contentType.includes("text/html")) {
+    headers.set("Cache-Control", "private, no-store");
+  } else if (response.status >= 200 && response.status < 300 && contentType.includes("text/html") && !cacheControl.includes("no-store") && !cacheControl.includes("private")) {
+    headers.set("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+  }
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+function withPublicAssetCache(response, url) {
+  if (response.status < 200 || response.status >= 400) return response;
+  const pathname = url.pathname.toLowerCase();
+  const headers = new Headers(response.headers);
+  if ((url.searchParams.has("v") && VERSIONED_PUBLIC_ASSET.test(pathname)) || /\.woff2?$/u.test(pathname)) {
+    headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  } else if (STABLE_PUBLIC_ASSET.test(pathname)) {
+    headers.set("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
+  }
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+async function renderNotFound(request, env, url, language) {
+  const response = await env.ASSETS.fetch(assetRequest(request, url, LANGUAGE_SITES[language].notFound));
+  const headers = new Headers(response.headers);
+  headers.delete("Location");
+  headers.set("Cache-Control", "no-store");
+  headers.set("X-Robots-Tag", "noindex, follow");
+  return withLanguageHeaders(new Response(response.body, {
+    status: 404,
+    statusText: "Not Found",
+    headers,
+  }), language);
+}
+
+async function serveRobotBrochure(request, env, url) {
+  if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+  const response = await env.ASSETS.fetch(request);
+  if (response.status === 404) return response;
+  const headers = new Headers(response.headers);
+  headers.set("Content-Disposition", `attachment; filename="${ROBOT_BROCHURE_FILENAME}"`);
+  headers.set("Content-Type", "application/pdf");
+  headers.set("Cache-Control", url.searchParams.has("v") ? "public, max-age=31536000, immutable" : "public, max-age=86400, stale-while-revalidate=604800");
+  headers.set("X-Content-Type-Options", "nosniff");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    try {
+      const requestHost = url.hostname.toLowerCase();
+      const redirectLanguage = Object.hasOwn(LANGUAGE_REDIRECT_HOSTS, requestHost) ? LANGUAGE_REDIRECT_HOSTS[requestHost] : "";
+      if (redirectLanguage) return redirectLanguageDomain(url, redirectLanguage);
+      const canonicalHost = Object.hasOwn(CANONICAL_HOSTS, requestHost) ? CANONICAL_HOSTS[requestHost] : null;
+      // Preserve the existing WeChat workaround only on the old apex host.
+      // The new www alias always redirects to the current canonical domain.
+      const preserveLegacyWeChatApex = requestHost === "originmindos.com" && isWeChatBrowser(request);
+      if (canonicalHost && !preserveLegacyWeChatApex) return permanentRedirect(url, url.pathname, canonicalHost);
+
+      if (url.pathname === VISITS_ENDPOINT) return handleVisits(request, env, url);
+
+      if ((url.pathname === "/" || url.pathname === "/founding-oem" || url.pathname === "/why-originmind") && url.searchParams.has("lang")) {
+        const requestedLanguage = normalizedHomeLanguage(url.searchParams.get("lang"));
+        if (requestedLanguage) return rememberLanguageRedirect(url, requestedLanguage, url.pathname);
+        const destination = new URL(url);
+        destination.searchParams.delete("lang");
+        return new Response(null, { status: 302, headers: { "Cache-Control": "private, no-store", Location: destination.toString() } });
+      }
+
+      const localeResource = url.pathname.match(LOCALE_RESOURCE_PATH);
+      if (localeResource && url.searchParams.get("locale-resource") === "1") {
+        if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+        const language = localeResource[1];
+        const response = await env.ASSETS.fetch(assetRequest(request, url, LANGUAGE_SITES[language].home));
+        if (response.status === 404) return renderNotFound(request, env, url, language);
+        const localized = withLanguageHeaders(response, language);
+        const headers = new Headers(localized.headers);
+        headers.set("Cache-Control", "private, no-store");
+        headers.set("X-Robots-Tag", "noindex, nofollow");
+        return new Response(localized.body, { status: localized.status, statusText: localized.statusText, headers });
+      }
+
+      const hostLanguage = languageForHostname(url.hostname);
+      const language = selectedHomeLanguage(request, url, hostLanguage);
+      const site = LANGUAGE_SITES[language];
+      if (url.pathname === ROBOT_BROCHURE_PATH) {
+        const response = await serveRobotBrochure(request, env, url);
+        return response.status === 404 ? renderNotFound(request, env, url, language) : response;
+      }
+      if (url.pathname === "/") {
+        const response = await env.ASSETS.fetch(assetRequest(request, url, site.home));
+        return withLanguageHeaders(response, language, isUnifiedHomeHost(url.hostname));
+      }
+
+      if (LEGACY_HOME_PATH.test(url.pathname)) return permanentRedirect(url, "/");
+
+      const legacyOem = url.pathname.match(LEGACY_OEM_PATH);
+      const internalOem = url.pathname.match(INTERNAL_OEM_PATH);
+      if ((legacyOem && url.pathname !== "/founding-oem") || internalOem) {
+        const legacyLanguage = legacyOem?.[1] || internalOem?.[1] || hostLanguage;
+        const destination = new URL(url);
+        destination.pathname = "/founding-oem";
+        destination.searchParams.set("lang", legacyLanguage);
+        return new Response(null, { status: 308, headers: { "Cache-Control": "public, max-age=3600", Location: destination.toString() } });
+      }
+
+      if (url.pathname === "/founding-oem") {
+        const response = await env.ASSETS.fetch(assetRequest(request, url, site.oem));
+        return withLanguageHeaders(response, language, isUnifiedHomeHost(url.hostname));
+      }
+
+      const internalWhy = url.pathname.match(INTERNAL_WHY_PATH);
+      if (internalWhy) {
+        const destination = new URL(url);
+        destination.pathname = "/why-originmind";
+        destination.searchParams.set("lang", internalWhy[1]);
+        return new Response(null, { status: 308, headers: { "Cache-Control": "public, max-age=3600", Location: destination.toString() } });
+      }
+
+      if (url.pathname === "/why-originmind") {
+        const response = await env.ASSETS.fetch(assetRequest(request, url, site.why));
+        return withLanguageHeaders(response, language, isUnifiedHomeHost(url.hostname));
+      }
+
+      const explicitNotFound = url.pathname.match(NOT_FOUND_PATH);
+      if (explicitNotFound) return renderNotFound(request, env, url, explicitNotFound[1] || language);
+
+      const response = await env.ASSETS.fetch(request);
+      return response.status === 404 ? renderNotFound(request, env, url, language) : withPublicAssetCache(response, url);
+    } catch (error) {
+      logError("unhandled worker request failure", error, { method: request.method, pathname: url.pathname });
+      if (url.pathname.startsWith("/api/")) return errorResponse("Service temporarily unavailable", 500, "internal_error");
+      return new Response("Service temporarily unavailable", { status: 500, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+    }
+  },
+};

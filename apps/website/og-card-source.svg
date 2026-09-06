@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="g" cx="78%" cy="12%" r="80%"><stop stop-color="#12344b"/><stop offset="1" stop-color="#05080d"/></radialGradient>
+    <linearGradient id="a" x1="0" x2="1"><stop stop-color="#4bdcff"/><stop offset="1" stop-color="#58ebcf"/></linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#8db8cf" stroke-opacity=".08"/></pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/><rect width="1200" height="630" fill="url(#grid)"/>
+  <circle cx="960" cy="315" r="180" fill="none" stroke="#4bdcff" stroke-opacity=".18"/><circle cx="960" cy="315" r="116" fill="none" stroke="#58ebcf" stroke-opacity=".28"/><circle cx="960" cy="315" r="7" fill="#58ebcf"/>
+  <rect x="82" y="74" width="54" height="54" rx="12" fill="none" stroke="#4bdcff" stroke-width="3"/><path d="M96 112l13-22 14 22z" fill="url(#a)"/>
+  <text x="154" y="114" fill="#f3f8fb" font-family="DejaVu Sans, sans-serif" font-size="38" font-weight="700">OriginMind</text>
+  <text x="414" y="112" fill="#4bdcff" font-family="DejaVu Sans, sans-serif" font-size="16" font-weight="700" letter-spacing="4">AI OS<tspan baseline-shift="super" font-size="12" letter-spacing="0">™</tspan></text>
+  <text x="82" y="270" fill="#f3f8fb" font-family="DejaVu Sans, sans-serif" font-size="66" font-weight="700">A Robot Agent OS</text>
+  <text x="82" y="350" fill="url(#a)" font-family="DejaVu Sans, sans-serif" font-size="58" font-weight="700">for Real-World Robots</text>
+  <text x="84" y="430" fill="#adc1cd" font-family="DejaVu Sans, sans-serif" font-size="27">Build Once. Deploy Across Robots.</text>
+  <path d="M84 504h560" stroke="#4bdcff" stroke-opacity=".42"/>
+  <text x="84" y="548" fill="#7893a2" font-family="DejaVu Sans, sans-serif" font-size="20" letter-spacing="2">omindos.ai</text>
+</svg>
