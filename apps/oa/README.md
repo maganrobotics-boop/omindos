@@ -227,3 +227,11 @@ The timeout defaults can be overridden for a controlled canary with `SITES_INSTA
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+
+## Production migration preparation (2026-09-06)
+
+The original business data has not been imported or frozen. The isolated staging Worker now runs the v58 source with guide navigation fixes (GitHub 46f0b7b), Worker version 4f993233-b1fe-4d3e-8a8c-d548a5ac9d7b. Existing staging records were retained.
+
+A separate empty D1 `originmind-internal-oa-production` was provisioned with the full 0000–0025 migration chain. Its verified schema fingerprint is `f2ac3e37d233b1f0232eccd46a39a2609b9b3a4976c0cba7dfe25ebcb24cbfe5`. The production importer mirrors the staging importer and retains encryption, expiry, identity, empty-target, recovery bookmark, schema, hash and revision checks. It requires `.wrangler/generated/wrangler.production.json`, worker name `originmind-internal-oa-production`, the matching D1 name, and explicit `OA_PRODUCTION_IMPORT_CONFIRM`, `OA_PRODUCTION_CLOUDFLARE_ACCOUNT_ID` and `OA_PRODUCTION_D1_DATABASE_ID`. It is prepared but has not run against business data.
+
+The owner chose to retain unbound members and let them complete verified identity binding later. Their records and existing permission assignments must be preserved. Before cutover, resolve the original platform’s masked configured administrator/project-owner/finance-owner assignments; do not infer missing assignments from the staging configuration.
