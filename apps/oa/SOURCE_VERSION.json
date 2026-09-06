@@ -2,5 +2,22 @@
   "source_site_id": "appgprj_6a94c47d4a0881919dc632f5319935a1",
   "saved_version": 58,
   "source_commit": "e4a509cbfc1f1ae160ed594571084a018c435195",
-  "production_version_verified": false
+  "production_version_verified": true,
+  "production": {
+    "origin": "https://oa.omindos.ai",
+    "cloudflare_account_id": "41e8b3404be24e1dd288556d77ffc951",
+    "worker_service": "originmind-internal-oa-staging",
+    "worker_version_id": "a7d5cb07-caa5-4e39-b87d-31a3e0c62271",
+    "worker_deployment_id": "88b07c57-8abc-4214-8017-acbd65158fe9",
+    "d1_database_id": "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
+    "data_import_state": "imported_verified",
+    "imported_tables": 10,
+    "imported_rows": 180,
+    "manifest_sha256": "67514f116670510262402a75361a2bd56f44da94011fd49359e89d3bde1c3871",
+    "schema_sha256": "f2ac3e37d233b1f0232eccd46a39a2609b9b3a4976c0cba7dfe25ebcb24cbfe5",
+    "feishu_admin_login_verified": true,
+    "chatgpt_login_enabled": false,
+    "verified_date": "2026-09-06"
+  },
+  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; deployment guard after promoting the existing Worker. Production business artifact is v58 plus guide corrections."
 }

@@ -1,10 +1,21 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { spawnSync } from "node:child_process";
 
 const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 const releaseScript = await readFile(new URL("../scripts/release-standalone.sh", import.meta.url), "utf8");
 const secretListValidator = await readFile(new URL("../scripts/validate-staging-secret-list.mjs", import.meta.url), "utf8");
+
+test("the retired staging release cannot overwrite the promoted production service", () => {
+  const result = spawnSync("/bin/bash", [new URL("../scripts/release-standalone.sh", import.meta.url).pathname, "staging"], {
+    encoding: "utf8",
+    env: { PATH: "/nonexistent", OA_STAGING_CLOUDFLARE_ACCOUNT_ID: "41e8b3404be24e1dd288556d77ffc951", OA_STAGING_RELEASE_CONFIRM: "originmind-internal-oa-staging" },
+  });
+  assert.equal(result.status, 64);
+  assert.match(result.stderr, /now serves production oa\.omindos\.ai/u);
+  assert.doesNotMatch(result.stderr, /command not found/u);
+});
 
 test("staging release uses one guarded immutable standalone artifact", () => {
   assert.equal(packageJson.scripts["release:standalone:staging"], "bash scripts/release-standalone.sh staging");

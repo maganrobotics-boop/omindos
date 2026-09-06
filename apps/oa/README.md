@@ -1,5 +1,7 @@
 # OriginMind × ARTS Robotics 联合研发 OA
 
+Production moved to independent Cloudflare at https://oa.omindos.ai on 2026-09-06. The Worker named `originmind-internal-oa-staging` now serves production and must not receive staging releases. The Sites sections below describe the preserved original source platform. See [production cutover record](docs/production-cutover-2026-09-06.md).
+
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
 Drizzle support.

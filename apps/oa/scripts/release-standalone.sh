@@ -6,6 +6,12 @@ if [[ "${target}" != "staging" ]]; then
   echo "Only the isolated staging target may be released." >&2
   exit 64
 fi
+# This existing service was promoted to production to retain its OAuth secrets.
+# A staging release must never rebind it to the former test database.
+if [[ "${OA_STAGING_CLOUDFLARE_ACCOUNT_ID:-}" == "41e8b3404be24e1dd288556d77ffc951" ]]; then
+  echo "originmind-internal-oa-staging now serves production oa.omindos.ai. Provision a separate staging service before using this release command." >&2
+  exit 64
+fi
 if [[ "${OA_STAGING_RELEASE_CONFIRM:-}" != "originmind-internal-oa-staging" ]]; then
   echo "Set OA_STAGING_RELEASE_CONFIRM=originmind-internal-oa-staging for an intentional staging release." >&2
   exit 64
