@@ -266,6 +266,15 @@
     root.dir = "ltr";
     updateLanguageLinks();
 
+    // Locale fragments may have been rewritten by an edge email obfuscator.
+    // Restore only our explicitly marked public contact, after every body swap.
+    document.querySelectorAll("[data-sales-email]").forEach((link) => {
+      link.setAttribute("href", "mailto:sales@omindos.ai");
+    });
+    document.querySelectorAll("[data-sales-email-text]").forEach((element) => {
+      element.textContent = "sales@omindos.ai";
+    });
+
     const header = document.querySelector(".site-header");
     const progress = document.querySelector(".scroll-progress i");
     const toggle = document.querySelector(".menu-toggle");
