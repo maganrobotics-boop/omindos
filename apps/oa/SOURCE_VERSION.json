@@ -37,8 +37,8 @@
     "oem_application_inbox_enabled": true,
     "feishu_notifications_deployed": true,
     "feishu_notifications_delivery_verified": false,
-    "feishu_notifications_verification": "sender_attempt_executed; self_test_rejected_by_Feishu_code_99991672; scheduled_retry_not_verified",
-    "feishu_notifications_scheduled_retry_verified": false
+    "feishu_notifications_verification": "Cloudflare GraphQL confirms 25 successful scheduled invocations 11:29:54Z–11:53:54Z; outbox attempts advanced to 5; message delivery still rejected with FEISHU_99991672",
+    "feishu_notifications_scheduled_retry_verified": true
   },
   "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production. Selectable optional circulation and approval stages; four daily categories with NDA signing retained at admission.",
   "legacy_source_redirect_version": 64,
