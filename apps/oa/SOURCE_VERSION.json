@@ -7,8 +7,8 @@
     "origin": "https://oa.omindos.ai",
     "cloudflare_account_id": "41e8b3404be24e1dd288556d77ffc951",
     "worker_service": "originmind-internal-oa-staging",
-    "worker_version_id": "e68bb03d-ffa5-4ef5-95f8-1daa7dc5e6c3",
-    "worker_deployment_id": "d3478d9c-684b-4c09-afba-f1e6830a2e7c",
+    "worker_version_id": "994a3412-c0df-491d-a957-7f5b5c35f104",
+    "worker_deployment_id": "fbcc8cce-57cd-4f79-aae4-017429b6a7ff",
     "d1_database_id": "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
     "data_import_state": "imported_verified",
     "imported_tables": 10,
@@ -19,15 +19,23 @@
     "chatgpt_login_enabled": false,
     "verified_date": "2026-09-07",
     "legacy_oa_redirect_verified": true,
-    "git_source_commit": "d77d5622cd91991c667ff990657eb240d7e20e9d",
+    "git_source_commit": "861194f122745be77a4fe8c89daff4d49fdf7ac6",
     "labor_explicit_dual_role_enabled": true,
-    "latest_release_authenticated_ui_check": "unverified_browser_automation_timeout",
+    "latest_release_authenticated_ui_check": "not_completed_login_session_expired_and_browser_automation_timeouts",
     "latest_release_tests": {
-      "passed": 221,
+      "passed": 238,
       "failed": 0
-    }
+    },
+    "circulation_approval_enabled": true,
+    "daily_approval_categories": [
+      "技术审核",
+      "采购审核",
+      "劳务报酬",
+      "流转审批"
+    ],
+    "latest_release_client_sha256": "0d4ec511c212570f16f33b002ca327745b9c5e05ced2c4c2e8e19d2169071142"
   },
-  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production.",
+  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production. Selectable optional circulation and approval stages; four daily categories with NDA signing retained at admission.",
   "legacy_source_redirect_version": 64,
   "legacy_source_redirect_commit": "218ecac522e907a2587f5894ab0b78befe8957e4"
 }
