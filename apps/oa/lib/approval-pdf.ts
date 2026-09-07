@@ -78,6 +78,11 @@ let embeddedFontCidMapCompressedCache: Uint8Array | undefined;
 let embeddedFontSupportedBitsCache: Uint8Array | undefined;
 
 const FIELD_LABELS: Record<string, string> = {
+  circulationContent: "流转事项内容",
+  circulationRecipients: "流转对象",
+  circulationApprovers: "指定审批人",
+  circulationConfirmations: "流转确认记录",
+  circulationApprovals: "审批记录",
   agreementKind: "协议类别",
   agreementVersion: "协议版本",
   archivedAt: "归档时间",
@@ -132,7 +137,7 @@ const FIELD_LABELS: Record<string, string> = {
 const OMITTED_PAYLOAD_FIELDS = new Set(["signatureDataUrl", "previewed", "agreed", "autoArchived"]);
 
 export function approvalEventActionLabel(action: string) {
-  return action === "submitted" ? "提交"
+  return action === "confirm_circulation" ? "流转确认" : action === "submitted" ? "提交"
     : action === "auto_archived" ? "系统自动归档"
       : action === "draft_saved" ? "保存草稿"
         : action === "confirm_developer" ? "开发人确认"

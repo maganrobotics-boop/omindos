@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowUpRight, BookOpen, ClipboardCheck, PackageCheck, ShieldCheck, CircleDollarSign } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BookOpen, ClipboardCheck, PackageCheck, CircleDollarSign, GitBranch } from "lucide-react";
 import "./guide.css";
 
 export const metadata: Metadata = {
@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 };
 
 const scenarios = [
+  { id: "circulation", icon: GitBranch, title: "需要自由流转或审批", entry: "流转审批", text: "分别选择流转对象和审批人，可只选其中一项。" },
   { id: "technical", icon: ClipboardCheck, title: "完成了一项研发成果", entry: "技术审核", text: "记录做了什么、由谁完成，以及如何验证。" },
   { id: "purchase", icon: PackageCheck, title: "需要买零件或设备", entry: "采购审核", text: "先说明用途、规格和预算，再按审核结果采购。" },
-  { id: "nda", icon: ShieldCheck, title: "第一次参加项目", entry: "保密协议", text: "确认本人身份，阅读并签署对应的保密文件。" },
   { id: "labor", icon: CircleDollarSign, title: "申请本月劳务报酬", entry: "劳务报酬", text: "关联已归档成果，说明本月工作与个人贡献。" },
 ];
 
@@ -52,8 +52,9 @@ export default function GuidePage() {
       </section>
 
       <section className="guide-section" id="tasks" aria-labelledby="tasks-title">
-        <div className="guide-section-heading"><span>02</span><div><h2 id="tasks-title">我现在该用哪张表？</h2><p>从你正在做的事情出发，选择一类申请。</p></div></div>
+        <div className="guide-section-heading"><span>02</span><div><h2 id="tasks-title">我现在该用哪张表？</h2><p>日常只需选择技术审核、采购审核、劳务报酬或流转审批。保密签署在首次进入系统时完成。</p></div></div>
         <div className="guide-scenarios">{scenarios.map(({ id, icon: Icon, title, entry, text }) => <a href={`#${id}`} key={id}><Icon size={23} aria-hidden="true" /><h3>{title}</h3><p>{text}</p><span>{entry} <ArrowUpRight size={16} aria-hidden="true" /></span></a>)}</div>
+        <article className="guide-task" id="circulation"><h3>流转审批：自由选择流转对象和审批人</h3><ol><li>选择“流转审批”，填写事项标题、内容和相关材料链接。</li><li>“流转给谁”和“给谁审批”分别选择，可搜索所有已完成准入的在用成员，支持多选；至少选择其中一项。</li><li>只流转：所选人员全部确认后归档。只审批：指定审批人全部同意后归档。两项都选：先由流转对象全部确认，再进入指定审批。</li><li>接收人在“待我处理”中独立确认或审批；需要补充时填写原因并退回申请人。每一步保留处理意见、身份和时间，归档后可下载正式 PDF。</li></ol><p className="guide-note">申请人不能审批自己的申请；流转对象与审批人可以重叠。退回或撤回后重新提交，需要所有所选人员重新确认或审批，旧记录仍保留。</p></article>
         <article className="guide-task" id="technical"><h3>技术审核：把研发工作变成可验证的成果记录</h3><p><strong>什么时候提交：</strong>完成一个能够独立说明、演示或复现的阶段成果时，例如控制程序调通、结构设计完成或一轮测试结束。</p><ol><li>点击“新建审核”，选择“技术审核”，写清项目、任务、完成内容、总工时和验证结果。</li><li>选择实际参与的开发人，分别写明工作与贡献占比，合计为 100%。开发人需已激活并完成保密协议归档。</li><li>在表单允许的位置补充代码版本、图纸、测试记录、数据、视频或资料链接；确保审核人能访问。</li><li>提交后，由每位开发人用本人账号确认，再交技术顾问和项目负责人审核。按详情页状态跟进至归档。</li></ol><div className="guide-example"><strong>填写示例</strong><p>不要只写“调试机器人”。可以写：“完成底盘急停与恢复逻辑，提交代码版本和测试记录，说明测试条件、通过项及尚未解决的问题。”</p></div></article>
         <article className="guide-task" id="purchase"><h3>采购审核：先说明需求，再按批准内容执行</h3><ol><li>选择“采购审核”，填写物品、规格型号、数量、用途、预计金额和供应商，补充清单。</li><li>说明它用于哪项任务，以及为什么需要采购，提交技术顾问和项目负责人审核。</li><li>项目负责人从符合准入条件的成员中指定采购人；采购人按批准内容执行并完成采购确认。</li><li>实际金额不得超过批准金额，超额需要退回重审。按页面要求填写实际金额和采购说明。</li></ol><p className="guide-note">“已提交”表示申请已发出，不表示已经获准采购。采购审核记录用于记录项目需求与批准过程；涉及学校经费时，还需办理对应的学校采购和财务手续。</p></article>
         <article className="guide-task" id="nda"><h3>保密协议：本人阅读、本人签署</h3><p>首次加入或系统提示补签、重签时，打开保密协议待办，核对身份和文件类型，阅读、手写签名、预览后提交。普通成员签完后自动归档；负责人承诺书按页面提示提交管理员确认。归档后可在本人有权限的申请记录中查阅。</p><p>如果仍提示未完成，先刷新查看是否已成功提交；有错误提示时保留提示文字，联系管理员，避免反复新建同一份申请。</p></article>

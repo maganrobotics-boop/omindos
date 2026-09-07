@@ -26,6 +26,7 @@ import {
   type ApprovalAction,
   type TechnicalDeveloper,
 } from "../../../../lib/approval-policy";
+import { circulationPeople, pendingCirculationPeople, validateStoredCirculation } from "../../../../lib/circulation-policy";
 import { addApprovalSigner } from "../../../../lib/approval-signers";
 import { conditionalApprovalEvent, conditionalArchivedApplicantEvent, conditionalLaborClaimInsert } from "../../../../lib/workflow-write-store";
 import { readBoundedJsonObject } from "../../../../lib/bounded-json-request";
@@ -45,7 +46,7 @@ import { conditionalApprovalRevisionInsert, planApprovalRevisions } from "../../
 import { FEISHU_PDF_ARCHIVE_DESTINATION } from "../../../../lib/feishu-drive-archive";
 import { serializeApproval } from "../route";
 
-const REVIEW_EVENT_ACTIONS = new Set(["approve", "return", "confirm_developer", "confirm_purchase"]);
+const REVIEW_EVENT_ACTIONS = new Set(["approve", "return", "confirm_developer", "confirm_purchase", "confirm_circulation"]);
 const PRIVATE_JSON_HEADERS = { "cache-control": "private, no-store" };
 const MAX_WORKFLOW_WRITES_PER_MINUTE = 20;
 const MAX_APPROVAL_REVISIONS = 128;
@@ -62,7 +63,7 @@ function formatAmount(value: number) {
 }
 
 function eventActionLabel(action: string) {
-  return action === "submitted" ? "提交"
+  return action === "confirm_circulation" ? "流转确认" : action === "submitted" ? "提交"
     : action === "auto_archived" ? "系统自动归档"
     : action === "draft_saved" ? "保存草稿"
       : action === "confirm_developer" ? "开发人确认"
@@ -340,13 +341,15 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (action !== "archive_note" && approval.currentRevisionNo >= MAX_APPROVAL_REVISIONS && !(action === "force_return" && approval.currentRevisionNo < MAX_EMERGENCY_FORCE_RETURN_REVISION)) {
       return Response.json({ error: "该申请的不可变材料版本已达安全上限，请联系管理员核验并制定迁移处理方案。" }, { status: 409 });
     }
+    let payload = parseJsonObject(approval.payloadJson);
     const isApplicantAction = action === "resubmit" || action === "withdraw" || action === "void" || action === "archive_note";
     if (isApplicantAction) {
       if (requesterEmail !== currentEmail) return Response.json({ error: "申请不存在或当前账号不可操作。" }, { status: 404 });
     } else if (action === "force_return") {
       if (!authorized.isAdmin) return Response.json({ error: "只有管理员可以执行异常流程强制退回。" }, { status: 403 });
     } else {
-      if (normalizeEmail(approval.currentReviewerEmail) !== currentEmail) return Response.json({ error: "申请不存在或当前账号不可操作。" }, { status: 404 });
+      const isAssignedCirculationActor = approval.type === "流转审批" && pendingCirculationPeople(payload, approval.currentStep).some((person) => person.email === currentEmail && person.memberId === authorized.memberId && person.accountUserId === authorized.accountUserId);
+      if (approval.type === "流转审批" ? !isAssignedCirculationActor : normalizeEmail(approval.currentReviewerEmail) !== currentEmail) return Response.json({ error: "申请不存在或当前账号不可操作。" }, { status: 404 });
       if (!stepRoleAllowed(approval.currentStep, authorized)) return Response.json({ error: "当前账号没有该审核节点的处理权限。" }, { status: 403 });
     }
     if (!isApprovalType(approval.type)) return Response.json({ error: "申请类型异常，无法继续流转。" }, { status: 409 });
@@ -356,7 +359,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (action === "force_return" && note.length < 10) return Response.json({ error: "管理员强制退回必须填写至少 10 个字的异常原因。" }, { status: 400 });
     if ((action === "withdraw" || action === "void") && note.length < 2) return Response.json({ error: action === "withdraw" ? "请填写至少 2 个字的撤回原因。" : "请填写至少 2 个字的作废原因。" }, { status: 400 });
     if (action === "approve" && requesterEmail === currentEmail) return Response.json({ error: "申请人不能审核自己的申请，请退回并改由其他实名审核人处理。" }, { status: 403 });
-    let payload = parseJsonObject(approval.payloadJson);
+
     const currentMemberNdaRequiresFreshSignature = approval.type === "保密协议"
       && confidentialityAgreementKindFromPayload(payload) === "member"
       && textValue(payload.agreementVersion) === NDA_AGREEMENT_VERSION
@@ -469,7 +472,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       let nextPeriodKey = approval.periodKey;
       let replacementLaborClaims: LaborSourceClaimInput[] = [];
       let laborClaimRevision = "";
-      if (approval.type === "技术审核") {
+      if (approval.type === "流转审批") {
+        const error = validateStoredCirculation(payload, await activeMembers(db), requesterEmail);
+        if (error) return Response.json({ error }, { status: 409 });
+        payload = { ...payload, circulationConfirmations: [], circulationApprovals: [] };
+        const person = [...circulationPeople(payload.circulationRecipients), ...circulationPeople(payload.circulationApprovers)][0];
+        nextReviewer = { email: person.email, displayName: person.name };
+      } else if (approval.type === "技术审核") {
         if (!(asNumber(payload.totalWorkHours) > 0) || !textValue(payload.robotPart) || !textValue(payload.technicalContent)) return Response.json({ error: "技术事项材料不完整，请重新编辑机器人部分、技术内容与总工时。" }, { status: 409 });
         const normalized = await normalizeStoredDevelopers(db, payload);
         if (!normalized.developers) return Response.json({ error: normalized.error || "技术开发人信息已失效，请重新编辑申请。" }, { status: 409 });
@@ -520,7 +529,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       }
       const workflowMutationRevision = crypto.randomUUID();
       payload = { ...payload, lastResubmissionNote: note, lastResubmittedAt: new Date().toISOString(), workflowMutationRevision };
-      const initialStep = approval.type === "技术审核"
+      const initialStep = approval.type === "流转审批" ? circulationPeople(payload.circulationRecipients).length ? "流转确认" : "指定审批" : approval.type === "技术审核"
         ? "开发人确认"
         : approval.type === "采购审核"
           ? "技术顾问"
@@ -597,6 +606,22 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     let nextAmount = approval.amount;
     const now = new Date().toISOString();
     const initialReviewerEmail = normalizeEmail(payload.initialReviewerEmail);
+
+    if (approval.type === "流转审批" && (action === "confirm_circulation" || action === "approve")) {
+      const error = validateStoredCirculation(payload, await activeMembers(db), requesterEmail);
+      if (error) return Response.json({ error }, { status: 409 });
+      if (action === "approve" && pendingCirculationPeople(payload, "流转确认").length) return Response.json({ error: "仍有流转对象未确认，暂不能审批。" }, { status: 409 });
+      const key = action === "confirm_circulation" ? "circulationConfirmations" : "circulationApprovals";
+      const decisions = Array.isArray(payload[key]) ? payload[key] as unknown[] : [];
+      payload = { ...payload, [key]: [...decisions, { memberId: authorized.memberId, accountUserId: authorized.accountUserId, email: currentEmail, name: user.displayName, confirmedAt: now, note }] };
+      signersJson = addApprovalSigner(signersJson, { name: user.displayName, email: currentEmail, accountUserId: authorized.accountUserId, memberId: authorized.memberId, signedAt: now });
+      const remaining = pendingCirculationPeople(payload, approval.currentStep);
+      if (remaining.length) nextStep = approval.currentStep;
+      else if (action === "confirm_circulation") nextStep = circulationPeople(payload.circulationApprovers).length ? "指定审批" : "已归档";
+      else nextStep = "已归档";
+      const nextPeople = pendingCirculationPeople(payload, nextStep);
+      if (nextPeople.length) nextReviewer = { email: nextPeople[0].email, displayName: nextPeople.map((person) => person.name).join("、") };
+    }
 
     // Re-check duty separation at every decisive transition so records created
     // before this policy cannot be completed through a legacy role collision.

@@ -8,7 +8,7 @@ import { hasCompletedNda, isApprovalRelated, normalizeEmail, parseJsonObject } f
 import { confidentialityAgreementKindFromPayload } from "../../../../../lib/nda-agreement";
 import { getAuthorizedUser } from "../../../_lib/auth";
 
-const REVIEW_EVENT_ACTIONS = new Set(["approve", "return", "confirm_developer", "confirm_purchase"]);
+const REVIEW_EVENT_ACTIONS = new Set(["approve", "return", "confirm_developer", "confirm_purchase", "confirm_circulation"]);
 
 function safeAsciiFileName(id: string) {
   return `${id.replace(/[^A-Za-z0-9._-]/gu, "-").slice(0, 80) || "approval"}.pdf`;

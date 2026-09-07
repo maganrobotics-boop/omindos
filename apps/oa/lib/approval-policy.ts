@@ -5,16 +5,17 @@ import {
   confidentialityAgreementVersions,
   type ConfidentialityAgreementKind,
 } from "./nda-agreement";
+import { circulationPeople, isCirculationParticipant } from "./circulation-policy";
 
 const SIGNATURE_CANVAS_WIDTH = 900;
 const SIGNATURE_CANVAS_HEIGHT = 260;
 const STANDARD_SRGB_CHRM = [31270, 32900, 64000, 33000, 30000, 60000, 15000, 6000] as const;
 const STANDARD_RGBA_SBIT = [8, 8, 8, 8] as const;
 
-export const APPROVAL_TYPES = ["技术审核", "采购审核", "保密协议", "劳务报酬"] as const;
+export const APPROVAL_TYPES = ["技术审核", "采购审核", "保密协议", "劳务报酬", "流转审批"] as const;
 export type ApprovalType = typeof APPROVAL_TYPES[number];
 
-export const APPROVAL_ACTIONS = ["approve", "return", "force_return", "confirm_developer", "confirm_purchase", "resubmit", "withdraw", "void", "archive_note"] as const;
+export const APPROVAL_ACTIONS = ["approve", "return", "force_return", "confirm_developer", "confirm_purchase", "confirm_circulation", "resubmit", "withdraw", "void", "archive_note"] as const;
 export type ApprovalAction = typeof APPROVAL_ACTIONS[number];
 
 export type TechnicalDeveloper = {
@@ -42,12 +43,18 @@ type ActiveMember = {
 
 type ApprovalAccessRecord = {
   type: string;
+  status?: string;
   requesterEmail: string;
   currentReviewerEmail: string;
   payloadJson: string;
 };
 
 const WORKFLOW_ACTIONS: Record<ApprovalType, Record<string, readonly ApprovalAction[]>> = {
+  流转审批: {
+    流转确认: ["confirm_circulation", "return"],
+    指定审批: ["approve", "return"],
+    补充材料: ["resubmit"],
+  },
   技术审核: {
     开发人确认: ["confirm_developer"],
     技术顾问: ["approve", "return"],
@@ -88,6 +95,7 @@ export function hasDistinctVerifiedEmails(...values: unknown[]) {
 }
 
 export function workflowRevisionsNeededAfterMaterial(type: ApprovalType, payload: Record<string, unknown>) {
+  if (type === "流转审批") return circulationPeople(payload.circulationRecipients).length + circulationPeople(payload.circulationApprovers).length;
   if (type === "技术审核") return (Array.isArray(payload.developers) ? payload.developers.length : 0) + 2;
   if (type === "采购审核") return 3;
   if (type === "保密协议") return payload.autoArchived === true ? 0 : 1;
@@ -138,6 +146,7 @@ export function nextWorkflowStep(type: ApprovalType, step: string, action: Exclu
   if (action === "force_return") return workflowAllows(type, step, action, "审批中") ? "补充材料" : null;
   if (!workflowAllows(type, step, action, action === "return" ? "审批中" : "待审核")) return null;
   if (action === "return") return "补充材料";
+  if (type === "流转审批") return step === "流转确认" ? "指定审批" : step === "指定审批" ? "已归档" : null;
   if (type === "技术审核") {
     if (step === "开发人确认") return "技术顾问";
     if (step === "技术顾问") return "项目负责人";
@@ -229,6 +238,7 @@ export function isApprovalRelated(row: ApprovalAccessRecord, email: string, hist
   return normalizeEmail(row.requesterEmail) === normalizedEmail
     || normalizeEmail(row.currentReviewerEmail) === normalizedEmail
     || historicalActorEmails.has(normalizedEmail)
+    || (row.type === "流转审批" && row.status !== "草稿" && isCirculationParticipant(parseJsonObject(row.payloadJson), normalizedEmail))
     || (row.type === "技术审核" && isTechnicalDeveloper(parseJsonObject(row.payloadJson), normalizedEmail));
 }
 

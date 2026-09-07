@@ -23,6 +23,7 @@ import {
   type ApprovalType,
   type TechnicalDeveloper,
 } from "../../../lib/approval-policy";
+import { circulationPeople, isCirculationParticipant, normalizeCirculationSelection } from "../../../lib/circulation-policy";
 import { addApprovalSigner, approvalSignerLabels } from "../../../lib/approval-signers";
 import { assertMemberNdaAdmissionInBatch, conditionalApprovalEvent, conditionalLaborClaimInsert } from "../../../lib/workflow-write-store";
 import { readBoundedJsonObject } from "../../../lib/bounded-json-request";
@@ -57,6 +58,7 @@ function canSeePayload(row: typeof approvals.$inferSelect, authorized: NonNullab
   return authorized.isAdmin
     || authorized.role === "project_owner"
     || (authorized.isFinanceOwner && row.type === "劳务报酬")
+    || (row.type === "流转审批" && row.status !== "草稿" && isCirculationParticipant(parseJsonObject(row.payloadJson), email))
     || normalizeEmail(row.requesterEmail) === email
     || normalizeEmail(row.currentReviewerEmail) === email;
 }
@@ -96,6 +98,12 @@ function approvalListSelection(currentEmail: string) {
           WHEN 'false' THEN json('false')
           ELSE NULL
         END
+      )
+      WHEN ${approvals.type} = '流转审批' THEN json_object(
+        'circulationRecipients', json_extract(${approvals.payloadJson}, '$.circulationRecipients'),
+        'circulationApprovers', json_extract(${approvals.payloadJson}, '$.circulationApprovers'),
+        'circulationConfirmations', json_extract(${approvals.payloadJson}, '$.circulationConfirmations'),
+        'circulationApprovals', json_extract(${approvals.payloadJson}, '$.circulationApprovals')
       )
       WHEN ${approvals.type} = '技术审核' THEN json_object(
         'totalWorkHours', json_extract(${approvals.payloadJson}, '$.totalWorkHours'),
@@ -221,7 +229,14 @@ export async function GET() {
             SELECT 1 FROM approval_events AS visibility_event
             WHERE visibility_event.approval_id = ${approvals.id}
               AND lower(visibility_event.actor_email) = ${currentEmail}
-              AND visibility_event.action IN ('approve', 'return', 'confirm_developer', 'confirm_purchase')
+              AND visibility_event.action IN ('approve', 'return', 'confirm_developer', 'confirm_purchase', 'confirm_circulation')
+          )
+          OR (
+            ${approvals.type} = '流转审批' AND ${approvals.status} <> '草稿'
+            AND (
+              EXISTS (SELECT 1 FROM json_each(CASE WHEN json_valid(${approvals.payloadJson}) THEN ${approvals.payloadJson} ELSE '{}' END, '$.circulationRecipients') AS recipient WHERE lower(json_extract(recipient.value, '$.email')) = ${currentEmail})
+              OR EXISTS (SELECT 1 FROM json_each(CASE WHEN json_valid(${approvals.payloadJson}) THEN ${approvals.payloadJson} ELSE '{}' END, '$.circulationApprovers') AS reviewer WHERE lower(json_extract(reviewer.value, '$.email')) = ${currentEmail})
+            )
           )
           OR (
             ${approvals.type} = '技术审核'
@@ -450,11 +465,23 @@ export async function POST(request: Request) {
       }
     }
 
+    if (type === "流转审批") {
+      const directory = (await db.select().from(members).where(eq(members.status, "active"))).filter(isNdaAdmittedMember);
+      const recipients = normalizeCirculationSelection(rawPayload.circulationRecipients ?? [], directory, "流转对象", true);
+      const approvers = normalizeCirculationSelection(rawPayload.circulationApprovers ?? [], directory, "审批人", true);
+      if (recipients.error || approvers.error) return Response.json({ error: recipients.error || approvers.error }, { status: 400 });
+      const content = textValue(rawPayload.circulationContent);
+      if (content.length > 4000) return Response.json({ error: "事项内容不能超过 4000 字。" }, { status: 400 });
+      if (!saveAsDraft && (!content || (!recipients.people.length && !approvers.people.length))) return Response.json({ error: "请填写事项内容，并至少选择流转对象或审批人。" }, { status: 400 });
+      if (approvers.people.some((person) => person.email === currentEmail)) return Response.json({ error: "申请人不能审批自己的申请，请选择其他成员。" }, { status: 400 });
+      payload = { circulationContent: content, circulationRecipients: recipients.people, circulationApprovers: approvers.people, circulationConfirmations: [], circulationApprovals: [] };
+    }
+
     const ndaDirectArchive = type === "保密协议" && agreementKind !== null
       && shouldAutoArchiveConfidentialityAgreement(agreementKind, authorized.isAdmin)
       && !saveAsDraft;
     let reviewer: { email: string; displayName: string } | null = null;
-    if (!saveAsDraft && !ndaDirectArchive) {
+    if (!saveAsDraft && !ndaDirectArchive && type !== "流转审批") {
       if (!reviewerEmail) return Response.json({ error: "请选择首位审核人。" }, { status: 400 });
       if (reviewerEmail === currentEmail) return Response.json({ error: "申请人与审核人必须是不同的实名账号，请选择其他审核人。" }, { status: 400 });
       const reviewerRecord = (await getReviewerDirectory({ ...authorized.user, accountUserId: authorized.accountUserId })).find((item) => item.email === reviewerEmail);
@@ -475,7 +502,7 @@ export async function POST(request: Request) {
     const preserveReturned = saveAsDraft && existing?.status === "已退回";
     const preserveWithdrawn = saveAsDraft && existing?.status === "已撤回";
     const preserveApplicantEdit = preserveReturned || preserveWithdrawn;
-    const initialStep = type === "技术审核"
+    const initialStep = type === "流转审批" ? circulationPeople(payload.circulationRecipients).length ? "流转确认" : "指定审批" : type === "技术审核"
       ? "开发人确认"
       : type === "采购审核"
         ? "技术顾问"
@@ -486,6 +513,8 @@ export async function POST(request: Request) {
       ? preserveApplicantEdit && existing ? { email: existing.requesterEmail, displayName: existing.requesterName } : null
       : ndaDirectArchive
         ? null
+      : type === "流转审批"
+        ? (() => { const person = [...circulationPeople(payload.circulationRecipients), ...circulationPeople(payload.circulationApprovers)][0]; return person ? { email: person.email, displayName: person.name } : null; })()
       : type === "技术审核"
         ? { email: firstTechnicalDeveloper?.email || "", displayName: firstTechnicalDeveloper?.name || "" }
         : reviewer;
