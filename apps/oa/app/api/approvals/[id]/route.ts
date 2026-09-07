@@ -30,7 +30,7 @@ import { addApprovalSigner } from "../../../../lib/approval-signers";
 import { conditionalApprovalEvent, conditionalArchivedApplicantEvent, conditionalLaborClaimInsert } from "../../../../lib/workflow-write-store";
 import { readBoundedJsonObject } from "../../../../lib/bounded-json-request";
 import { consumeWriteRateLimit } from "../../../../lib/write-rate-limit";
-import { authorizedMemberGuard, getAuthorizedUser, getConfiguredAdministrators, getConfiguredFinanceOwners, getReviewerDirectory, isNdaAdmittedMember, isProjectOwner, parseMemberPermissions } from "../../_lib/auth";
+import { authorizedMemberGuard, getAuthorizedUser, getConfiguredAdministrators, getConfiguredFinanceOwners, getConfiguredProjectOwners, getReviewerDirectory, isNdaAdmittedMember, isProjectOwner, parseMemberPermissions } from "../../_lib/auth";
 import { buildArchiveManifest } from "../../../../lib/archive-manifest";
 import {
   NDA_AGREEMENT_VERSION,
@@ -130,6 +130,16 @@ async function eligibleFinanceOwner(db: Awaited<ReturnType<typeof getDb>>, exclu
   const administratorEmail = normalizeEmail(administrator.email);
   const administratorMember = membersByEmail.get(administratorEmail);
   return { email: administratorEmail, displayName: administratorMember?.status === "active" && administratorMember.accountUserId === administrator.accountUserId ? administratorMember.fullName : administrator.displayName };
+}
+
+function canCombineLaborReviewRoles(authorized: NonNullable<Awaited<ReturnType<typeof getAuthorizedUser>>>) {
+  const email = normalizeEmail(authorized.user.email);
+  const matchesIdentity = (owner: ReturnType<typeof getConfiguredFinanceOwners>[number]) =>
+    normalizeEmail(owner.email) === email && owner.accountUserId === authorized.accountUserId;
+  // Administrator fallback alone does not authorize combining financial duties.
+  return authorized.role === "project_owner" && authorized.isFinanceOwner
+    && getConfiguredProjectOwners().some(matchesIdentity)
+    && getConfiguredFinanceOwners().some(matchesIdentity);
 }
 
 async function normalizeStoredDevelopers(db: Awaited<ReturnType<typeof getDb>>, payload: Record<string, unknown>) {
@@ -600,7 +610,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       }
     }
     if (action === "approve" && approval.type === "劳务报酬" && approval.currentStep === "经费负责人" && !hasDistinctVerifiedEmails(requesterEmail, initialReviewerEmail, currentEmail)) {
-      return Response.json({ error: "劳务申请人、项目负责人和经费负责人必须由不同实名账号担任。" }, { status: 409 });
+      const recommendationIdentity = payload.suggestedAmountBy as { email?: unknown; accountUserId?: unknown } | undefined;
+      const configuredDualReview = initialReviewerEmail === currentEmail
+        && requesterEmail !== currentEmail
+        && normalizeEmail(recommendationIdentity?.email) === currentEmail
+        && textValue(recommendationIdentity?.accountUserId) === authorized.accountUserId
+        && canCombineLaborReviewRoles(authorized);
+      if (!configuredDualReview) return Response.json({ error: "劳务申请人不能审核本人申请；只有明确配置兼任的同一实名负责人可以分别完成项目建议与经费终审。" }, { status: 409 });
     }
 
     if (action === "confirm_developer") {
@@ -696,10 +712,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         unitRateUnit: "元/贡献分",
         compensationCalculation: { formula: "建议金额 ÷ 贡献总分", totalScore: round(totalScore), suggestedAmount, unitRate, calculatedAt: now },
         suggestedAmountAt: now,
-        suggestedAmountBy: { email: currentEmail, name: user.displayName },
+        suggestedAmountBy: { email: currentEmail, name: user.displayName, accountUserId: authorized.accountUserId },
       };
-      const financeOwner = await eligibleFinanceOwner(db, [requesterEmail, currentEmail]);
-      if (!financeOwner) return Response.json({ error: "没有与申请人、项目负责人相互独立且已完成保密协议的经费负责人，暂时无法流转劳务报酬申请。" }, { status: 503 });
+      const excludedFinanceEmails = canCombineLaborReviewRoles(authorized) ? [requesterEmail] : [requesterEmail, currentEmail];
+      const financeOwner = await eligibleFinanceOwner(db, excludedFinanceEmails);
+      if (!financeOwner) return Response.json({ error: "没有符合职责配置且已完成保密协议的经费负责人，暂时无法流转劳务报酬申请。" }, { status: 503 });
       nextReviewer = financeOwner;
       nextAmount = formatAmount(suggestedAmount);
       signersJson = addApprovalSigner(signersJson, { name: user.displayName, email: currentEmail, accountUserId: authorized.accountUserId, memberId: authorized.memberId, signedAt: now });
@@ -712,7 +729,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       if (!(finalAmount > 0) || !(suggestedAmount > 0)) return Response.json({ error: "请填写有效的最终审核金额。" }, { status: 400 });
       if (round(finalAmount) !== round(suggestedAmount) && !financeNote) return Response.json({ error: "最终金额与建议金额不一致时，必须填写经费审核说明。" }, { status: 400 });
       if (financeNote.length > 1000) return Response.json({ error: "经费审核说明不能超过 1000 字。" }, { status: 400 });
-      payload = { ...payload, finalAmount: round(finalAmount), financeNote, finalAmountAt: now, finalAmountBy: { email: currentEmail, name: user.displayName } };
+      payload = { ...payload, finalAmount: round(finalAmount), financeNote, finalAmountAt: now, finalAmountBy: { email: currentEmail, name: user.displayName, accountUserId: authorized.accountUserId } };
       nextAmount = formatAmount(round(finalAmount));
       signersJson = addApprovalSigner(signersJson, { name: user.displayName, email: currentEmail, accountUserId: authorized.accountUserId, memberId: authorized.memberId, signedAt: now });
     }
@@ -757,7 +774,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       : nextReviewer
         ? `已转交给${nextReviewer.displayName}（${nextReviewer.email}）`
         : isFinal ? "流程完成并归档" : "流程节点已更新";
-    const eventNote = action === "force_return" ? transitionNote : `${note}${note ? "；" : ""}${transitionNote}`;
+    const laborReviewLabel = approval.type === "劳务报酬" && action === "approve"
+      ? approval.currentStep === "项目负责人" ? "项目负责人建议；" : "经费负责人终审；"
+      : "";
+    const eventNote = action === "force_return" ? transitionNote : `${laborReviewLabel}${note}${note ? "；" : ""}${transitionNote}`;
     const finalAgreementKind = approval.type === "保密协议" ? confidentialityAgreementKindFromPayload(payload) : null;
     if (approval.type === "保密协议" && isFinal && !finalAgreementKind) return Response.json({ error: "保密文件类型或版本无效，不能归档。" }, { status: 409 });
     const nextBusinessKey = approval.type === "保密协议" && isFinal ? ndaBusinessKeyForVersion(textValue(payload.signerAccountUserId), textValue(payload.agreementVersion)) : approval.businessKey;

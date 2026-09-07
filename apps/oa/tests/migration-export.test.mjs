@@ -133,7 +133,14 @@ const vite = await createServer({
           DB: {
             prepare(sql) {
               globalThis.${stateKey}.preparedSql.push(sql);
-              return { sql, bind() { return this; } };
+              return {
+                sql,
+                bind() { return this; },
+                async all() {
+                  if (!sql.includes("FROM sqlite_master")) throw new Error("Unexpected standalone metadata query");
+                  return { success: true, results: [{ name: "d1_migrations" }] };
+                },
+              };
             },
             async batch() {
               globalThis.${stateKey}.batchCalls += 1;
@@ -247,7 +254,11 @@ test("admin receives an authenticated encrypted snapshot with exact long values"
   assert.equal(response.headers.get("cache-control"), "private, no-store, max-age=0");
   assert.match(response.headers.get("content-disposition") || "", /^attachment; filename="originmind-oa-migration-/u);
   assert.equal(response.headers.get("content-type"), "application/vnd.originmind.oa-migration+json");
-  assert.deepEqual(state.preparedSql, [migrationLedgerSelectSql(), migrationSchemaSelectSql(), migrationFreezeMarkerSelectSql(), migrationArchiveActivitySelectSql(), ...MIGRATION_EXPORT_TABLES.map(migrationExportSelectSql)]);
+  assert.deepEqual(state.preparedSql, [
+    "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name LIKE '%migration%' ORDER BY name",
+    migrationLedgerSelectSql(), migrationSchemaSelectSql(), migrationFreezeMarkerSelectSql(), migrationArchiveActivitySelectSql(),
+    ...MIGRATION_EXPORT_TABLES.map(migrationExportSelectSql),
+  ]);
   assert.equal(state.batchCalls, 1);
   assert.deepEqual(state.authOptions, [{ readOnly: true }]);
 
