@@ -2,8 +2,7 @@ const VISITS_ENDPOINT = "/api/visits";
 const LANGUAGE_COOKIE = "originmind_language";
 const MINUTE_IN_MS = 60 * 1000;
 const RECENT_RETENTION_MINUTES = 2 * 24 * 60;
-const ROBOT_BROCHURE_PATH = "/assets/brochures/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_EN.pdf";
-const ROBOT_BROCHURE_FILENAME = "OriginMind_Intelligent_Mobile_Robot_Product_Brochure_EN.pdf";
+const ROBOT_BROCHURE_PATH = /^\/assets\/brochures\/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_(EN|ZH|JA)\.pdf$/;
 const VERSIONED_PUBLIC_ASSET = /\.(?:css|js|png|jpe?g|svg|webp|ico)$/u;
 const STABLE_PUBLIC_ASSET = /\.(?:woff2?|png|jpe?g|svg|webp|ico|mp4)$/u;
 
@@ -328,7 +327,7 @@ async function serveRobotBrochure(request, env, url) {
   const response = await env.ASSETS.fetch(request);
   if (response.status === 404) return response;
   const headers = new Headers(response.headers);
-  headers.set("Content-Disposition", `attachment; filename="${ROBOT_BROCHURE_FILENAME}"`);
+  headers.set("Content-Disposition", `attachment; filename="${url.pathname.split("/").pop()}"`);
   headers.set("Content-Type", "application/pdf");
   headers.set("Cache-Control", url.searchParams.has("v") ? "public, max-age=31536000, immutable" : "public, max-age=86400, stale-while-revalidate=604800");
   headers.set("X-Content-Type-Options", "nosniff");
@@ -375,7 +374,7 @@ export default {
       const hostLanguage = languageForHostname(url.hostname);
       const language = selectedHomeLanguage(request, url, hostLanguage);
       const site = LANGUAGE_SITES[language];
-      if (url.pathname === ROBOT_BROCHURE_PATH) {
+      if (ROBOT_BROCHURE_PATH.test(url.pathname)) {
         const response = await serveRobotBrochure(request, env, url);
         return response.status === 404 ? renderNotFound(request, env, url, language) : response;
       }

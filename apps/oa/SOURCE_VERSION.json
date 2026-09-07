@@ -7,8 +7,8 @@
     "origin": "https://oa.omindos.ai",
     "cloudflare_account_id": "41e8b3404be24e1dd288556d77ffc951",
     "worker_service": "originmind-internal-oa-staging",
-    "worker_version_id": "0eadbc0e-8f53-4cdd-88a3-5b6dde578628",
-    "worker_deployment_id": "02f74eff-4a97-4a7d-a5c4-1c2b3b7cf83c",
+    "worker_version_id": "4ef0194e-2ae0-4df0-b3d8-259fedbfd1f9",
+    "worker_deployment_id": "e0d0b538-9def-4c36-acff-076cd9b260b7",
     "d1_database_id": "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
     "data_import_state": "imported_verified",
     "imported_tables": 10,
@@ -19,11 +19,11 @@
     "chatgpt_login_enabled": false,
     "verified_date": "2026-09-07",
     "legacy_oa_redirect_verified": true,
-    "git_source_commit": "ce4d1fbca143463a7bb5fe659e12586bc7773dca",
+    "git_source_commit": "2d8cf4d640fb48ad583651f9c6f47ad5068b9bef",
     "labor_explicit_dual_role_enabled": true,
     "latest_release_authenticated_ui_check": "not_completed_login_session_expired_and_browser_automation_timeouts",
     "latest_release_tests": {
-      "passed": 240,
+      "passed": 250,
       "failed": 0
     },
     "circulation_approval_enabled": true,
@@ -34,7 +34,10 @@
       "流转审批"
     ],
     "website_d1_database_id": "3651ff92-d9fb-45aa-9d1d-623d25bf3459",
-    "oem_application_inbox_enabled": true
+    "oem_application_inbox_enabled": true,
+    "feishu_notifications_deployed": true,
+    "feishu_notifications_delivery_verified": false,
+    "feishu_notifications_verification": "scheduled_handler_executed; self_test_rejected_by_Feishu_code_99991672; pending_application_message_send_permission"
   },
   "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production. Selectable optional circulation and approval stages; four daily categories with NDA signing retained at admission.",
   "legacy_source_redirect_version": 64,

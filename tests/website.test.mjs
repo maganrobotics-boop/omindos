@@ -43,9 +43,18 @@ test('visitor statistics binding remains optional and errors are controlled',asy
   const method=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'DELETE'}),env);assert.equal(method.status,405);
   const forbidden=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST',headers:{Origin:'https://other.example'}}),{...env,VISITS_DB:{}});assert.equal(forbidden.status,403);
 });
-test('brochure download remains available',async()=>{
-  const r=await worker.fetch(new Request('https://omindos.ai/assets/brochures/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_EN.pdf'),env);
-  assert.equal(r.status,200);assert.equal(r.headers.get('Content-Type'),'application/pdf');assert.match(r.headers.get('Content-Disposition'),/attachment/);
+test('each homepage language downloads its matching PDF without changing the homepage address',async()=>{
+  for (const lang of ['zh', 'en', 'ja']) {
+    const filename = `OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf`;
+    const home = await worker.fetch(new Request('https://omindos.ai/', {headers:{Cookie:`originmind_language=${lang}`}}),env);
+    assert.equal(home.headers.get('Location'),null);
+    const html=await home.text();
+    assert.ok(html.includes(`download="${filename}"`));
+    const r=await worker.fetch(new Request(`https://omindos.ai/assets/brochures/${filename}`),env);
+    assert.equal(r.status,200);assert.equal(r.headers.get('Content-Type'),'application/pdf');
+    assert.equal(r.headers.get('Content-Disposition'),`attachment; filename="${filename}"`);
+    assert.equal(new TextDecoder().decode((await r.arrayBuffer()).slice(0,5)),'%PDF-');
+  }
 });
 
 async function oemFixture() {
