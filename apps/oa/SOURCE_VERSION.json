@@ -7,8 +7,8 @@
     "origin": "https://oa.omindos.ai",
     "cloudflare_account_id": "41e8b3404be24e1dd288556d77ffc951",
     "worker_service": "originmind-internal-oa-staging",
-    "worker_version_id": "a7d5cb07-caa5-4e39-b87d-31a3e0c62271",
-    "worker_deployment_id": "88b07c57-8abc-4214-8017-acbd65158fe9",
+    "worker_version_id": "e68bb03d-ffa5-4ef5-95f8-1daa7dc5e6c3",
+    "worker_deployment_id": "d3478d9c-684b-4c09-afba-f1e6830a2e7c",
     "d1_database_id": "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
     "data_import_state": "imported_verified",
     "imported_tables": 10,
@@ -17,10 +17,17 @@
     "schema_sha256": "f2ac3e37d233b1f0232eccd46a39a2609b9b3a4976c0cba7dfe25ebcb24cbfe5",
     "feishu_admin_login_verified": true,
     "chatgpt_login_enabled": false,
-    "verified_date": "2026-09-06",
-    "legacy_oa_redirect_verified": true
+    "verified_date": "2026-09-07",
+    "legacy_oa_redirect_verified": true,
+    "git_source_commit": "d77d5622cd91991c667ff990657eb240d7e20e9d",
+    "labor_explicit_dual_role_enabled": true,
+    "latest_release_authenticated_ui_check": "unverified_browser_automation_timeout",
+    "latest_release_tests": {
+      "passed": 221,
+      "failed": 0
+    }
   },
-  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; deployment guard after promoting the existing Worker. Production business artifact is v58 plus guide corrections.",
+  "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production.",
   "legacy_source_redirect_version": 64,
   "legacy_source_redirect_commit": "218ecac522e907a2587f5894ab0b78befe8957e4"
 }

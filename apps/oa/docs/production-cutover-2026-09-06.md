@@ -1,5 +1,7 @@
 # Production cutover — 2026-09-06
 
+This records the original cutover. The current production version and the subsequent narrowly authorized labor-workflow fix are recorded in [the 2026-09-07 release receipt](labor-dual-role-2026-09-07.md) and `../SOURCE_VERSION.json`.
+
 - Owner: maganrobotics@gmail.com, the sole configured OA administrator.
 - Canonical origin: https://oa.omindos.ai
 - Cloudflare account: `41e8b3404be24e1dd288556d77ffc951`
