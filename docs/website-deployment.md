@@ -2,6 +2,8 @@
 
 工作流：`.github/workflows/deploy-website.yml`，目标为现有 Cloudflare Pages 项目 `omindos-website` 和正式域名 https://omindos.ai。
 
+已于 2026-09-07 启用并完成首次 push 自动发布验收：[运行记录](https://github.com/maganrobotics-boop/omindos/actions/runs/34081030685)。13 项回归测试、发布和 16 项线上检查全部通过。Cloudflare 正式部署 `5c32a4d0-b28b-4cdf-9371-4845081ce7de` 对应 GitHub 提交 `d1397dd70234c2ec7543d17874a0154dc5ac1b35`。
+
 ## 触发方式
 
 - Push 到 `main`，并修改官网目录 `apps/website`、官网测试、发布校验脚本或此工作流时，先运行测试，通过后自动发布。
