@@ -75,6 +75,66 @@ function isSameSiteBrowserRequest(request, url) {
   return fetchSite === "same-origin" || fetchSite === "same-site";
 }
 
+async function digestText(value) {
+  return Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function handleOemApplication(request, env, url) {
+  if (request.method !== "POST") return methodNotAllowed(["POST"]);
+  if (request.headers.get("Origin") !== url.origin) return errorResponse("Forbidden", 403, "forbidden");
+  if (request.headers.get("Content-Type")?.split(";")[0].trim() !== "application/json") return errorResponse("JSON required", 415, "invalid_format");
+  if (!env.VISITS_DB) return errorResponse("Submission unavailable", 503, "unavailable");
+  let data;
+  try {
+    const reader = request.body?.getReader();
+    if (!reader) return errorResponse("Application required", 400, "invalid_application");
+    const chunks = []; let size = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.length;
+      if (size > 32000) { await reader.cancel(); return errorResponse("Application too large", 413, "too_large"); }
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(size); let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
+    data = JSON.parse(new TextDecoder().decode(bytes));
+  } catch { return errorResponse("Invalid JSON", 400, "invalid_application"); }
+  if (!data || typeof data !== "object" || Array.isArray(data) || data.consent !== true || data.website || !["zh", "en", "ja"].includes(data.language) || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.submissionKey || "")) return errorResponse("Invalid application", 400, "invalid_application");
+  const fields = { company: 200, contact: 100, email: 254, phone: 100, robot: 300, stack: 500, start: 100, quantity: 100, capabilities: 3000, test_unit: 200, track: 30, summary: 5000 };
+  const optional = new Set(["phone", "quantity", "summary"]);
+  const payload = {};
+  for (const [key, maximum] of Object.entries(fields)) {
+    const value = data[key] === undefined && optional.has(key) ? "" : data[key];
+    if (typeof value !== "string" || value.length > maximum || (!optional.has(key) && !value.trim()) || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/u.test(value)) return errorResponse("Invalid application field", 400, "invalid_application");
+    payload[key] = value.trim();
+  }
+  if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/u.test(payload.email) || !["foundation", "advanced"].includes(payload.track)) return errorResponse("Invalid contact or track", 400, "invalid_application");
+  payload.consentVersion = "2026-09-07";
+  const payloadJson = JSON.stringify(payload);
+  const payloadHash = await digestText(data.language + payloadJson);
+  try {
+    // Replays return the same receipt only when the entire submitted content matches.
+    const existing = await env.VISITS_DB.prepare("SELECT id, payload_hash FROM oem_applications WHERE submission_key = ?").bind(data.submissionKey).first();
+    if (existing) return existing.payload_hash === payloadHash ? jsonResponse({ receipt: existing.id }, 200) : errorResponse("Submission changed; use a new key", 409, "submission_changed");
+    const now = Date.now();
+    const ip = request.headers.get("CF-Connecting-IP") || "local";
+    const sourceHash = await digestText(`${Math.floor(now / 86400000)}:${ip}`);
+    const id = `OEM-${crypto.randomUUID()}`;
+    // D1 serializes this conditional INSERT, including simultaneous submissions.
+    await env.VISITS_DB.prepare(`INSERT INTO oem_applications (id, submission_key, payload_hash, language, payload_json, created_at, source_hash)
+      SELECT ?, ?, ?, ?, ?, ?, ? WHERE (SELECT COUNT(*) FROM oem_applications WHERE source_hash = ? AND created_at > ?) < 10
+      ON CONFLICT(submission_key) DO NOTHING`).bind(id, data.submissionKey, payloadHash, data.language, payloadJson, now, sourceHash, sourceHash, now - 3600000).run();
+    const saved = await env.VISITS_DB.prepare("SELECT id, payload_hash FROM oem_applications WHERE submission_key = ?").bind(data.submissionKey).first();
+    if (!saved) return jsonResponse({ error: "Too many submissions", code: "rate_limited" }, 429, { "Retry-After": "3600" });
+    if (saved.payload_hash !== payloadHash) return errorResponse("Submission changed; use a new key", 409, "submission_changed");
+    return jsonResponse({ receipt: saved.id }, saved.id === id ? 201 : 200);
+  } catch {
+    // Never put the submitted contact or business information in public errors/logs.
+    return errorResponse("Submission unavailable; retry with the same key", 503, "unavailable");
+  }
+}
+
 async function recordVisit(database, countryCode, now) {
   const minuteBucket = Math.floor(now / MINUTE_IN_MS);
   await database.batch([
@@ -289,6 +349,7 @@ export default {
       if (canonicalHost && !preserveLegacyWeChatApex) return permanentRedirect(url, url.pathname, canonicalHost);
 
       if (url.pathname === VISITS_ENDPOINT) return handleVisits(request, env, url);
+      if (url.pathname === "/api/oem-applications") return handleOemApplication(request, env, url);
 
       if ((url.pathname === "/" || url.pathname === "/founding-oem" || url.pathname === "/why-originmind") && url.searchParams.has("lang")) {
         const requestedLanguage = normalizedHomeLanguage(url.searchParams.get("lang"));
