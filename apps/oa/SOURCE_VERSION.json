@@ -21,7 +21,7 @@
     "legacy_oa_redirect_verified": true,
     "git_source_commit": "2d8cf4d640fb48ad583651f9c6f47ad5068b9bef",
     "labor_explicit_dual_role_enabled": true,
-    "latest_release_authenticated_ui_check": "not_completed_login_session_expired_and_browser_automation_timeouts",
+    "latest_release_authenticated_ui_check": "passed_admin_dashboard_four_categories_oem_empty_inbox_and_notification_sent_status",
     "latest_release_tests": {
       "passed": 250,
       "failed": 0
@@ -36,8 +36,9 @@
     "website_d1_database_id": "3651ff92-d9fb-45aa-9d1d-623d25bf3459",
     "oem_application_inbox_enabled": true,
     "feishu_notifications_deployed": true,
-    "feishu_notifications_delivery_verified": false,
-    "feishu_notifications_verification": "Cloudflare GraphQL confirms 25 successful scheduled invocations; automatic retry verified. Fresh self-test now returns FEISHU_230006 (bot capability not active/published), replacing previous permission error FEISHU_99991672. Delivery remains unverified.",
+    "feishu_notifications_delivery_verified": true,
+    "feishu_notifications_verification": "Feishu app version 1.0.5 published with bot capability; no permission changes or external sharing. Administrator-only test sent successfully on its first scheduled attempt with a Feishu message ID. Cloudflare scheduled invocations and automatic retry were separately verified. API acceptance does not assert that the recipient has read the message.",
+    "feishu_app_published_version": "1.0.5",
     "feishu_notifications_scheduled_retry_verified": true
   },
   "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production. Selectable optional circulation and approval stages; four daily categories with NDA signing retained at admission.",
