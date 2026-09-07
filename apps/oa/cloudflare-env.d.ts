@@ -6,6 +6,7 @@ declare namespace Cloudflare {
     GITHUB_OAUTH_CLIENT_ID?: string;
     GITHUB_OAUTH_CLIENT_SECRET?: string;
     FEISHU_LOGIN_ENABLED?: string;
+    FEISHU_NOTIFICATIONS_ENABLED?: string;
     FEISHU_LOGIN_APP_ID?: string;
     FEISHU_LOGIN_APP_SECRET?: string;
     FEISHU_LOGIN_TENANT_KEY?: string;

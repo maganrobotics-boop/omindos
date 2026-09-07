@@ -4,6 +4,7 @@ import handler from "vinext/server/app-router-entry";
 import { legacyOaRedirect } from "../lib/legacy-oa-redirect.mjs";
 import { ensureMigrationWriteFreezeMarker, isMigrationWriteFrozen, shouldBlockForMigrationFreeze } from "../lib/migration-freeze";
 import { archiveApprovalPdfsToFeishu, type FeishuArchiveEnv } from "../lib/feishu-drive-archive";
+import { processApprovalNotifications } from "../lib/feishu-notifications";
 
 interface Env {
   ASSETS: Fetcher;
@@ -21,6 +22,8 @@ interface Env {
   FEISHU_PDF_ARCHIVE_ENABLED?: string;
   FEISHU_LOGIN_APP_ID?: string;
   FEISHU_LOGIN_APP_SECRET?: string;
+  FEISHU_LOGIN_TENANT_KEY?: string;
+  FEISHU_NOTIFICATIONS_ENABLED?: string;
   OA_ADMIN_EMAILS?: string;
 }
 
@@ -76,6 +79,9 @@ async function archiveApprovalsFromResponse(response: Response, env: Env) {
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
 const worker = {
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    if (!isMigrationWriteFrozen(env as unknown as Record<string, unknown>)) ctx.waitUntil(processApprovalNotifications(env));
+  },
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const legacyRedirect = legacyOaRedirect(request, env.OA_LEGACY_REDIRECT_ENABLED);
     if (legacyRedirect) return legacyRedirect;
@@ -112,6 +118,7 @@ const worker = {
 
     const response = await handler.fetch(request, env, ctx);
     if (isApprovalJsonResponse(request, response)) ctx.waitUntil(archiveApprovalsFromResponse(response.clone(), env));
+    if (response.ok && request.method !== "GET" && (url.pathname.startsWith("/api/approvals") || url.pathname === "/api/admin/notifications")) ctx.waitUntil(processApprovalNotifications(env));
     return withSecurityHeaders(request, response);
   },
 };
