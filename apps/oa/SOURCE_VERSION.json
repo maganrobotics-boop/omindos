@@ -7,8 +7,8 @@
     "origin": "https://oa.omindos.ai",
     "cloudflare_account_id": "41e8b3404be24e1dd288556d77ffc951",
     "worker_service": "originmind-internal-oa-staging",
-    "worker_version_id": "994a3412-c0df-491d-a957-7f5b5c35f104",
-    "worker_deployment_id": "fbcc8cce-57cd-4f79-aae4-017429b6a7ff",
+    "worker_version_id": "0eadbc0e-8f53-4cdd-88a3-5b6dde578628",
+    "worker_deployment_id": "02f74eff-4a97-4a7d-a5c4-1c2b3b7cf83c",
     "d1_database_id": "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
     "data_import_state": "imported_verified",
     "imported_tables": 10,
@@ -19,11 +19,11 @@
     "chatgpt_login_enabled": false,
     "verified_date": "2026-09-07",
     "legacy_oa_redirect_verified": true,
-    "git_source_commit": "861194f122745be77a4fe8c89daff4d49fdf7ac6",
+    "git_source_commit": "ce4d1fbca143463a7bb5fe659e12586bc7773dca",
     "labor_explicit_dual_role_enabled": true,
     "latest_release_authenticated_ui_check": "not_completed_login_session_expired_and_browser_automation_timeouts",
     "latest_release_tests": {
-      "passed": 238,
+      "passed": 240,
       "failed": 0
     },
     "circulation_approval_enabled": true,
@@ -33,7 +33,8 @@
       "劳务报酬",
       "流转审批"
     ],
-    "latest_release_client_sha256": "0d4ec511c212570f16f33b002ca327745b9c5e05ced2c4c2e8e19d2169071142"
+    "website_d1_database_id": "3651ff92-d9fb-45aa-9d1d-623d25bf3459",
+    "oem_application_inbox_enabled": true
   },
   "source_additions": "Three guide Link corrections; migration tooling compatibility and recovery improvements; production deployment guard; explicitly configured project/finance labor dual-role exception with separate confirmations, audit events and amount evidence. Original source provenance remains recorded above; current deployed Git commit is recorded under production. Selectable optional circulation and approval stages; four daily categories with NDA signing retained at admission.",
   "legacy_source_redirect_version": 64,
