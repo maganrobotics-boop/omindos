@@ -46,6 +46,9 @@ used_images={Path(d['src']).name for p in parsed.values() for t,d in p.tags if t
 assert lab_images <= used_images,('missing laboratory rendering',lab_images-used_images)
 assert not used_images.intersection({'originmind-quadruped-concept.webp','robot-integration.webp','fleet-hero.webp','quadruped-field.webp','humanoid-task.webp','tracked-inspection.webp','warehouse-transport.webp'}),'superseded concept image in use'
 assert 'Engineering prototype in development' in (study/'index.html').read_text()
+assert all('OriginMind AI OS' not in f.read_text() for f in files), 'outdated product name'
+assert 'OmindOS' in (study/'task-level-system/index.html').read_text()
+assert all(any(t=='img' and d.get('src','').endswith('/'+name) and 'AI-generated' in d.get('alt','') for t,d in home.tags) for name in ['warehouse-concept-v2.webp','task-platforms-concept-v2.webp'])
 assert all('open' not in d for t,d in home.tags if t=='details'), 'default closed disclosures'
 assert sum(t=='video' and 'data-field-video' in d for t,d in home.tags)==6
 assert all(d.get('preload')=='none' and 'controls' in d for t,d in home.tags if t=='video' and 'data-field-video' in d)

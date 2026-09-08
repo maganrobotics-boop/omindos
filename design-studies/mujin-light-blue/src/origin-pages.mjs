@@ -4,7 +4,7 @@ export const pages=[
  {path:'/field-tests',label:'Field validation'},
  {path:'/field-tests/warehouse',label:'Warehouse inspection'},
  {path:'/field-tests/metal-mine',label:'Metal mine field validation'},
- {path:'/task-level-system',label:'Task-level system'},
+ {path:'/task-level-system',label:'OmindOS — Task-level system'},
  {path:'/cooperation',label:'Cooperation'},
  {path:'/about',label:'About OriginMind'},
  {path:'/robot-products',label:'Robot products and pricing'},
