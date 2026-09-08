@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { runInNewContext } from 'node:vm';
 import { DatabaseSync } from 'node:sqlite';
 import { readFile, access } from 'node:fs/promises';
 const root = new URL('../apps/website/', import.meta.url);
@@ -101,4 +102,142 @@ test('OEM limits repeated new submissions while allowing safe retries', async ()
     assert.equal((await send()).status, 200);
     assert.equal(db.prepare('SELECT COUNT(*) n FROM oem_applications').get().n, 10);
   } finally { db.close(); }
+});
+
+const homepageRoot = new URL('../apps/website/', import.meta.url);
+const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
+
+test('V1.5.11 retains localized downloads, online contact and hidden statistics', async () => {
+  for (const lang of ['en', 'zh', 'ja']) {
+    const source = await readFile(new URL(`index.${lang}.html`, homepageRoot), 'utf8');
+    const sections = [...source.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
+    assert.deepEqual(sections.slice(0, 6), ['what', 'tasks', 'capabilities', 'why', 'products', 'company']);
+    assert.match(source, new RegExp(`chat\\.omindos\\.ai/widget\\.html\\?lang=${lang}`));
+    assert.ok(source.includes(`download="OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf"`));
+    assert.match(source, /data-visitor-map hidden aria-hidden="true" style="display: none;"/);
+    assert.match(source, /data-sales-email data-sales-email-text/);
+    assert.match(source, /originmind-mark-92\.webp/);
+    assert.doesNotMatch(source, /homepage-v159|\/meeting(?:["/?#])/);
+    const videos = [...source.matchAll(/<video\b([^>]*)>/g)];
+    assert.equal(videos.length, 6);
+    for (const [, attrs] of videos) {
+      assert.match(attrs, /preload="none"/);
+      assert.match(attrs, /poster="[^" ]+"/);
+      assert.match(attrs, /\bcontrols\b/);
+      assert.doesNotMatch(attrs, /\bautoplay\b/);
+    }
+  }
+  assert.equal(await readFile(new URL('index.html', homepageRoot), 'utf8'), await readFile(new URL('index.en.html', homepageRoot), 'utf8'));
+});
+
+test('every updated page loads its own styles and keeps the current shared script', async () => {
+  for (const page of ['index.html', 'index.en.html', 'index.zh.html', 'index.ja.html', ...['en', 'zh', 'ja'].map(lang => `why/${lang}/index.html`)]) {
+    const source = await readFile(new URL(page, homepageRoot), 'utf8');
+    assert.match(source, /homepage-v1511\.css/);
+    assert.match(source, /homepage-v1511\.js/);
+    assert.match(source, /script\.js\?v=20260907-contact/);
+    for (const match of source.matchAll(/<link\b[^>]*>/g)) {
+      if (!/rel="stylesheet"/.test(match[0])) continue;
+      const href = match[0].match(/href="([^"]+)"/)[1].split('?')[0];
+      await readFile(new URL(href.startsWith('/') ? href.slice(1) : href, homepageRoot));
+    }
+  }
+});
+
+// A minimal DOM boundary for the dependency-free script. The calls below test
+// observable behavior, including fresh elements after the real loader's body swap.
+function fixture({ hash = '', clipboard, fallback = false } = {}) {
+  const handlers = new Map(), windowHandlers = new Map(), ids = new Map();
+  const videos = [], fields = [];
+  let observer;
+  class Element {
+    constructor() { this.parentElement = null; this.dataset = {}; }
+    closest(selector) { return this.matches?.[selector] || null; }
+  }
+  class Details extends Element {
+    constructor() { super(); this.open = false; this.videos = []; }
+    querySelectorAll() { return this.videos; }
+  }
+  class Video extends Element {
+    constructor() { super(); this.paused = false; this.pauseCalls = 0; }
+    pause() { this.paused = true; this.pauseCalls++; }
+  }
+  const status = { textContent: '' };
+  const document = {
+    body: { append(field) { fields.push(field); } },
+    getElementById: id => ids.get(id),
+    querySelector: () => status,
+    querySelectorAll: () => videos,
+    addEventListener(type, handler) { handlers.set(type, handler); },
+    createElement() {
+      return { style: {}, setAttribute() {}, select() {}, remove() { this.removed = true; } };
+    },
+    execCommand: () => fallback,
+  };
+  const location = { href: 'https://omindos.ai/', origin: 'https://omindos.ai', pathname: '/', hash };
+  const window = { isSecureContext: true, addEventListener(type, handler) { windowHandlers.set(type, handler); } };
+  const context = {
+    window, document, location, navigator: { clipboard }, URL,
+    Element, HTMLDetailsElement: Details, HTMLVideoElement: Video,
+    MutationObserver: class { constructor(callback) { observer = callback; } observe() {} },
+  };
+  runInNewContext(enhancement, context);
+  const click = target => handlers.get('click')({ target, button: 0 });
+  return { handlers, windowHandlers, ids, videos, fields, status, location, Element, Details, Video, click, observer: () => observer(), context };
+}
+
+test('task links reveal nested demos after a language body replacement', () => {
+  const f = fixture();
+  const parent = new f.Details(), inner = new f.Details(), target = new f.Element();
+  target.parentElement = inner; inner.parentElement = parent;
+  f.ids.set('demo-navigation', target);
+  const link = new f.Element();
+  link.href = 'https://omindos.ai/#demo-navigation'; link.matches = { 'a[href]': link };
+  f.click(link);
+  assert.equal(inner.open, true); assert.equal(parent.open, true);
+  const translated = new f.Details(); f.ids.set('demo-navigation', translated);
+  f.location.hash = '#demo-navigation'; f.observer();
+  assert.equal(translated.open, true);
+  assert.doesNotThrow(() => { f.location.hash = '#%E0%A4%A'; f.observer(); });
+});
+
+test('starting one clip pauses others and collapsing a demo pauses its videos', () => {
+  const f = fixture();
+  const playing = new f.Video(), other = new f.Video(), paused = new f.Video(); paused.paused = true;
+  f.videos.push(playing, other, paused);
+  f.handlers.get('play')({ target: playing });
+  assert.equal(playing.pauseCalls, 0); assert.equal(other.pauseCalls, 1); assert.equal(paused.pauseCalls, 0);
+  const disclosure = new f.Details(); disclosure.videos = [playing];
+  f.handlers.get('toggle')({ target: disclosure });
+  assert.equal(playing.pauseCalls, 1);
+});
+
+test('copying email reports clipboard success and fallback failure without leaving fields', async () => {
+  for (const succeeds of [true, false]) {
+    let copied;
+    const f = fixture({ clipboard: { async writeText(text) { if (!succeeds) throw new Error('denied'); copied = text; } } });
+    const button = new f.Element();
+    button.dataset = { copyEmail: 'sales@omindos.ai', copySuccess: 'copied', copyFailure: 'copy manually' };
+    button.matches = { 'button[data-copy-email]': button }; button.focus = () => {};
+    f.click(button);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(button.disabled, false);
+    assert.equal(f.status.textContent, succeeds ? 'copied' : 'copy manually');
+    assert.equal(copied, succeeds ? 'sales@omindos.ai' : undefined);
+    assert.ok(f.fields.every(field => field.removed));
+  }
+});
+
+test('email selection fallback works and duplicate script execution keeps one handler set', async () => {
+  const f = fixture({ fallback: true });
+  const originalHandler = f.handlers.get('click');
+  runInNewContext(enhancement, f.context);
+  assert.equal(f.handlers.get('click'), originalHandler);
+  const button = new f.Element();
+  button.dataset = { copyEmail: 'sales@omindos.ai', copySuccess: 'copied', copyFailure: 'failed' };
+  button.matches = { 'button[data-copy-email]': button }; button.focus = () => {};
+  f.click(button);
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(f.status.textContent, 'copied');
+  assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
