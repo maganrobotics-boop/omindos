@@ -40,7 +40,11 @@ for f,p in parsed.items():
 home=parsed[study/'index.html']
 assert all(not any(term in f.read_text().lower() for term in ['mujin','truckbot','coal mine','framerusercontent']) for f in files), 'foreign or incorrect content'
 assert any(t=='img' and d.get('src','').endswith('/originmind-mark-184.webp') for t,d in home.tags)
-assert any(t=='img' and d.get('src','').endswith('/originmind-quadruped-concept.webp') for t,d in home.tags)
+assert any(t=='img' and d.get('src','').endswith('/lab-quadruped-render.webp') for t,d in home.tags)
+lab_images={'lab-quadruped-render.webp','lab-wheeled-render.webp','lab-wheel-legged-silver-render.webp','lab-wheel-legged-open-render.webp','lab-articulated-render.webp'}
+used_images={Path(d['src']).name for p in parsed.values() for t,d in p.tags if t=='img'}
+assert lab_images <= used_images,('missing laboratory rendering',lab_images-used_images)
+assert not used_images.intersection({'originmind-quadruped-concept.webp','robot-integration.webp','fleet-hero.webp','quadruped-field.webp','humanoid-task.webp','tracked-inspection.webp','warehouse-transport.webp'}),'superseded concept image in use'
 assert 'Engineering prototype in development' in (study/'index.html').read_text()
 assert all('open' not in d for t,d in home.tags if t=='details'), 'default closed disclosures'
 assert sum(t=='video' and 'data-field-video' in d for t,d in home.tags)==6
