@@ -178,3 +178,35 @@
 }
 @media (max-width:380px){.v1511-homepage .v1511-hero-copy h1{font-size:29px}.v1511-hero-copy .v15-actions{gap:9px}}
 .v1511-site .visitor-insights[hidden]{display:none!important}
+
+/* V1.5.12: two mobility capabilities, followed by separate real-world demos. */
+.v1511-homepage .v1512-mobile-demos{background:#fff;border-bottom:1px solid var(--v11-line)}
+.v1511-homepage .v1512-field-demos{background:var(--v11-surface);border-bottom:1px solid var(--v11-line)}
+.v1512-task-groups{display:grid;gap:20px}
+.v1512-task-example{min-width:0;padding:26px 28px 0;border:1px solid var(--v11-line);border-radius:10px;background:#fafcfc}
+.v1512-task-heading{display:flex;align-items:flex-start;gap:20px}
+.v1512-task-heading>.v1511-number{flex:0 0 auto;margin:4px 0 0;font-size:15px}
+.v1512-task-heading>div{min-width:0}
+.v1511-homepage .v1512-task-heading h3{margin:0;color:var(--v11-ink);font-size:clamp(21px,2vw,27px);font-weight:660;line-height:1.5;letter-spacing:-.015em}
+.v1512-task-heading p{margin:10px 0 0;color:var(--v11-muted);font-size:15px;line-height:1.85}
+.v1512-demo-disclosure{margin-top:20px}
+.v1512-demo-disclosure>summary{gap:16px;min-height:64px;padding:16px 0}
+.v1512-disclosure-action{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.v1512-disclosure-action small{color:var(--v11-muted);font-size:12px;font-weight:500}
+.v1512-demo-disclosure .v1512-show-open{display:none}
+.v1512-demo-disclosure[open] .v1512-show-open{display:inline}
+.v1512-demo-disclosure[open] .v1512-show-closed{display:none}
+.v1512-demo-disclosure .v1511-disclosure-body{padding:0 0 24px}
+.v1512-field-demos .v1512-demo-disclosure{padding:0 26px;border:1px solid var(--v11-line);border-radius:10px;background:#fff}
+.v1512-field-demos .v1512-demo-disclosure>summary{flex-wrap:wrap}
+.v1512-summary-title{margin-right:auto;color:var(--v11-ink);font-size:18px}
+@media(max-width:760px){
+ .v1512-task-groups{gap:16px}
+ .v1512-task-example{padding:21px 20px 0}
+ .v1512-task-heading{gap:14px}
+ .v1512-task-heading p{font-size:14px}
+ .v1512-demo-disclosure{margin-top:17px}
+ .v1512-field-demos .v1512-demo-disclosure{padding:0 20px}
+ .v1512-summary-title{flex-basis:100%;font-size:17px}
+ .v1512-demo-disclosure .v1511-disclosure-body{padding-bottom:20px}
+}
