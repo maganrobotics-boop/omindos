@@ -107,11 +107,34 @@ test('OEM limits repeated new submissions while allowing safe retries', async ()
 const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
 
-test('V1.5.11 retains localized downloads, online contact and hidden statistics', async () => {
+test('V1.5.12 groups six collapsed videos and retains localized downloads, contact and statistics', async () => {
   for (const lang of ['en', 'zh', 'ja']) {
     const source = await readFile(new URL(`index.${lang}.html`, homepageRoot), 'utf8');
     const sections = [...source.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
-    assert.deepEqual(sections.slice(0, 6), ['what', 'tasks', 'capabilities', 'why', 'products', 'company']);
+    assert.deepEqual(sections.slice(0, 6), ['what', 'tasks', 'production', 'why', 'products', 'company']);
+    // The first two pairs explain mobility; mine and warehouse footage stays
+    // in a separate field-validation section. Every video starts collapsed.
+    const groups = [...source.matchAll(/<details\b([^>]*\bid="demo-[^"]+"[^>]*)>([\s\S]*?)<\/details>/g)];
+    assert.equal(groups.length, 3);
+    const expected = [
+      ['demo-navigation', ['1000087152', '1000087155']],
+      ['demo-language', ['1000087157', '1000087156']],
+      ['demo-field', ['1000087153', '1000087160']],
+    ];
+    for (const [index, [, attrs, contents]] of groups.entries()) {
+      const [id, videos] = expected[index];
+      assert.ok(attrs.includes(`id="${id}"`));
+      assert.doesNotMatch(attrs, /\bopen(?:\s|=|$)/);
+      assert.match(contents, /<summary>/);
+      assert.deepEqual([...contents.matchAll(/<source src="\/assets\/videos\/(\d+)-web\.mp4"/g)].map(match => match[1]), videos);
+    }
+    const mobility = source.match(/<section\b[^>]*id="tasks"[^>]*>([\s\S]*?)<\/section>/)[1];
+    const field = source.match(/<section\b[^>]*id="production"[^>]*>([\s\S]*?)<\/section>/)[1];
+    assert.equal([...mobility.matchAll(/<article\b/g)].length, 2);
+    assert.equal([...mobility.matchAll(/<video\b/g)].length, 4);
+    assert.equal([...field.matchAll(/<video\b/g)].length, 2);
+    for (const id of ['capabilities', 'demo-mine', 'demo-pharma']) assert.ok(source.includes(`id="${id}"`));
+    assert.match(source, /data-nav="production" href="#production"/);
     assert.match(source, new RegExp(`chat\\.omindos\\.ai/widget\\.html\\?lang=${lang}`));
     assert.ok(source.includes(`download="OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf"`));
     assert.match(source, /data-visitor-map hidden aria-hidden="true" style="display: none;"/);
