@@ -141,7 +141,7 @@ test('OEM limits repeated new submissions while allowing safe retries', async ()
 const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
 
-test('V1.5.15 keeps videos collapsed and moves product documents while retaining contact and statistics', async () => {
+test('V1.5.17 keeps collapsed videos and product links while removing the final contact block', async () => {
   for (const lang of ['en', 'zh', 'ja']) {
     const source = await readFile(new URL(`index.${lang}.html`, homepageRoot), 'utf8');
     const sections = [...source.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
@@ -194,7 +194,8 @@ test('V1.5.15 keeps videos collapsed and moves product documents while retaining
       assert.ok(detail.includes(`href="/?lang=${lang}#${id}"`), 'both audiences can return to their homepage entry');
     }
     assert.match(source, /data-nav="production" href="#production"/);
-    assert.match(source, new RegExp(`chat\\.omindos\\.ai/widget\\.html\\?lang=${lang}`));
+    assert.doesNotMatch(source, /v1511-final|id="contact"|chat\.omindos\.ai\/widget/);
+    assert.match(source, /data-nav="products" href="#products"/);
     assert.match(source, /data-visitor-map hidden aria-hidden="true" style="display: none;"/);
     assert.match(source, /data-sales-email data-sales-email-text/);
     assert.match(source, /originmind-mark-92\.webp/);
