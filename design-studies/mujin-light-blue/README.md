@@ -17,7 +17,7 @@
 
 - 用户确认矿井属于金属矿；所有品牌页面使用 metal mine。
 - 用户提供的矿井照片 `1000088956.jpg` 转换为 WebP，用于现场环境展示，不识别照片人物。
-- 用户另提供金属矿井四足场景效果图 `1000089006.jpg`，放在金属矿井详情页标题下方，标为“Application concept rendering · Engineering prototype in development”。保留完整画幅；原矿井实拍和履带实机视频仍在后续内容中展示。
+- 金属矿井四足场景主图采用用户最新提供的 `1000089013.jpg`（更新双雷达外观），替换之前的 `1000089006.jpg`。位置在金属矿井详情页标题下方，标为“Application concept rendering · Engineering prototype in development”。保留完整画幅；原矿井实拍和履带实机视频仍在后续内容中展示。
 - 用户最终选定五张实验室机器人效果图，均转换为 WebP、保留完整画幅，统一标为“Laboratory robot rendering”。四足另外标注“Engineering prototype in development”。旧四足图和系统集成 AI 示意图不再用于页面展示。
 
 | 用户图片 | 放置位置 | 说明 |
