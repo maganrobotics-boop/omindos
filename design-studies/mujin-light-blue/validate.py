@@ -19,7 +19,7 @@ class Page(HTMLParser):
   else:self.stack.pop()
 
 files=list(study.rglob('*.html'));parsed={f:Page(f.read_text()) for f in files};refs=0
-assert len(files)==86, len(files)
+assert len(files)==94, len(files)
 for f,p in parsed.items():
  assert not p.stack and not p.errors,(f,p.errors,p.stack)
  assert sum(t=='h1' for t,d in p.tags)==1,('h1',f)
@@ -38,9 +38,16 @@ for f,p in parsed.items():
    if u.fragment:assert any(x.get('id')==unquote(u.fragment) for _,x in parsed[target].tags),(f,d[key])
    refs+=1
 home=parsed[study/'index.html']
-scene_images=[d for t,d in home.tags if t=='img' and d.get('alt','').startswith('AI concept:')]
-assert len(scene_images)==15,len(scene_images)
-assert all(d['src'].startswith('/design-study/assets/') for d in scene_images)
+assert all(not any(term in f.read_text().lower() for term in ['mujin','truckbot','coal mine','framerusercontent']) for f in files), 'foreign or incorrect content'
+assert any(t=='img' and d.get('src','').endswith('/originmind-mark-184.webp') for t,d in home.tags)
+assert any(t=='img' and d.get('src','').endswith('/originmind-quadruped-concept.webp') for t,d in home.tags)
+assert 'Engineering prototype in development' in (study/'index.html').read_text()
+assert all('open' not in d for t,d in home.tags if t=='details'), 'default closed disclosures'
+assert sum(t=='video' and 'data-field-video' in d for t,d in home.tags)==6
+assert all(d.get('preload')=='none' and 'controls' in d for t,d in home.tags if t=='video' and 'data-field-video' in d)
+redirects=[p for p in parsed.values() if any(t=='meta' and d.get('http-equiv')=='refresh' for t,d in p.tags)]
+assert len(redirects)==83,len(redirects)
+assert (study/'fonts/manrope-latin-variable.woff2').is_file()
 film=next(d for t,d in home.tags if t=='video' and 'data-hero-film' in d)
 assert all(k in film for k in ['muted','loop','playsinline'])
 assert film.get('preload')=='none' and 'src' not in film
@@ -49,4 +56,4 @@ assert len(clips)==3 and sum(c['end']-c['start'] for c in clips)==24
 assert all(c['src'].startswith('https://omindos.ai/assets/videos/') and 0<=c['start']<c['end'] for c in clips)
 assert any(t=='source' and d.get('data-src')==clips[0]['src'] for t,d in home.tags)
 assert not list(study.rglob('*.mp4'))
-print(json.dumps({'html_pages':len(files),'routes':85,'local_references':refs,'mobile_robot_image_slots':len(scene_images),'structure':'valid'}))
+print(json.dumps({'html_pages':len(files),'brand_routes':10,'legacy_redirects':83,'local_references':refs,'structure':'valid'}))
