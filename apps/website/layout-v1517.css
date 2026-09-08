@@ -19,6 +19,11 @@ body.v15-site * {
 .v15-site :is(.v1511-heading h2,.v1511-heading>p,.v1511-detail-hero h1,.v1511-detail-hero .shell>p) {
   margin-inline: auto;
 }
+.v15-site .v1511-heading,
+.v15-site.founding-page .logic-section-heading,
+.v15-site.founding-page .logic-section-heading>p:not(.eyebrow) {
+  margin-inline: auto;
+}
 .v15-site .v1513-capability-list,
 .v15-site .v1511-hero-media figcaption,
 .v15-site .v1511-process li {
