@@ -52,6 +52,11 @@ assert all(d.get('preload')=='none' and 'controls' in d for t,d in home.tags if 
 redirects=[p for p in parsed.values() if any(t=='meta' and d.get('http-equiv')=='refresh' for t,d in p.tags)]
 assert len(redirects)==83,len(redirects)
 assert (study/'fonts/manrope-latin-variable.woff2').is_file()
+mine=parsed[study/'field-tests/metal-mine/index.html']
+assert any(t=='img' and d.get('src','').endswith('/metal-mine-quadruped-render.webp') and 'concept rendering' in d.get('alt','') for t,d in mine.tags)
+assert 'Application concept rendering · Engineering prototype in development' in (study/'field-tests/metal-mine/index.html').read_text()
+assert any(t=='img' and d.get('src','').endswith('/metal-mine-site.webp') for t,d in mine.tags)
+assert any(t=='source' and '1000087153-web.mp4' in d.get('src','') for t,d in mine.tags)
 film=next(d for t,d in home.tags if t=='video' and 'data-hero-film' in d)
 assert all(k in film for k in ['muted','loop','playsinline'])
 assert film.get('preload')=='none' and 'src' not in film
