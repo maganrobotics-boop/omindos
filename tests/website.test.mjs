@@ -107,7 +107,7 @@ test('OEM limits repeated new submissions while allowing safe retries', async ()
 const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
 
-test('V1.5.13 orders collapsed capability and field demos while retaining downloads, contact and statistics', async () => {
+test('V1.5.14 keeps demos and product documents collapsed while retaining contact and statistics', async () => {
   for (const lang of ['en', 'zh', 'ja']) {
     const source = await readFile(new URL(`index.${lang}.html`, homepageRoot), 'utf8');
     const sections = [...source.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
@@ -134,6 +134,15 @@ test('V1.5.13 orders collapsed capability and field demos while retaining downlo
     assert.equal([...mobility.matchAll(/<article\b/g)].length, 2);
     assert.equal([...mobility.matchAll(/<video\b/g)].length, 4);
     assert.equal([...field.matchAll(/<video\b/g)].length, 2);
+    const documents = mobility.match(/<details\b([^>]*\bid="product-docs"[^>]*)>([\s\S]*?)<\/details>/);
+    assert.ok(documents, 'product documents belong below the mobile robot videos');
+    assert.doesNotMatch(documents[1], /\bopen(?:\s|=|$)/);
+    assert.match(documents[2], /<summary>/);
+    assert.ok(documents[2].includes(`download="OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf"`));
+    assert.ok(mobility.indexOf('id="product-docs"') > mobility.lastIndexOf('</video>'));
+    assert.doesNotMatch(field, /assets\/brochures\//);
+    const hero = source.match(/<section\b[^>]*id="what"[^>]*>([\s\S]*?)<\/section>/)[1];
+    assert.doesNotMatch(hero, /class="v15-actions"/);
     for (const id of ['capabilities', 'demo-field', 'demo-mine', 'demo-pharma']) assert.ok(source.includes(`id="${id}"`));
     const ids = [...source.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
     assert.equal(ids.length, new Set(ids).size, 'deep links need unique targets');
@@ -167,10 +176,12 @@ test('V1.5.13 orders collapsed capability and field demos while retaining downlo
 });
 
 test('every updated page loads its own styles and keeps the current shared script', async () => {
-  for (const page of ['index.html', 'index.en.html', 'index.zh.html', 'index.ja.html', ...['en', 'zh', 'ja'].map(lang => `why/${lang}/index.html`)]) {
+  for (const page of ['index.html', 'index.en.html', 'index.zh.html', 'index.ja.html', ...['en', 'zh', 'ja'].flatMap(lang => [`why/${lang}/index.html`, `oem/${lang}/index.html`])]) {
     const source = await readFile(new URL(page, homepageRoot), 'utf8');
-    assert.match(source, /homepage-v1511\.css/);
-    assert.match(source, /homepage-v1511\.js/);
+    if (!page.startsWith('oem/')) {
+      assert.match(source, /homepage-v1511\.css/);
+      assert.match(source, /homepage-v1511\.js/);
+    }
     assert.match(source, /script\.js\?v=20260907-contact/);
     for (const match of source.matchAll(/<link\b[^>]*>/g)) {
       if (!/rel="stylesheet"/.test(match[0])) continue;
