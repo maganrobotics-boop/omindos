@@ -1,0 +1,113 @@
+/* User-directed centered typography across the multilingual public pages.
+   Override inherited legacy justification without changing text or controls. */
+body.v15-site,
+body.v15-site * {
+  text-align: center !important;
+}
+
+.v15-site .v15-actions,
+.v15-site .v15-button,
+.v15-site .founding-actions,
+.v15-site .form-actions {
+  justify-content: center;
+}
+.v15-site .v1511-cooperation-card,
+.v15-site .v1511-card-actions,
+.v15-site .v1511-task-card {
+  align-items: center;
+}
+.v15-site :is(.v1511-heading h2,.v1511-heading>p,.v1511-detail-hero h1,.v1511-detail-hero .shell>p) {
+  margin-inline: auto;
+}
+.v15-site .v1513-capability-list,
+.v15-site .v1511-hero-media figcaption,
+.v15-site .v1511-process li {
+  justify-content: center;
+}
+.v15-site .v1511-disclosure>summary {
+  position: relative;
+  justify-content: center;
+  padding-inline: 28px;
+}
+.v15-site .v1511-disclosure>summary>span[aria-hidden] {
+  position: absolute;
+  inset-inline-end: 0;
+}
+.v15-site .v1512-disclosure-action {
+  justify-content: center;
+}
+.v15-site .footer-main,
+.v15-site .footer-bottom,
+.v15-site .footer-contact {
+  justify-items: center;
+}
+
+/* A narrower, balanced hero moves the photo toward the center of the page. */
+.v1511-homepage .v1511-hero-grid {
+  max-width: 1080px;
+  grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr);
+  gap: 40px;
+}
+.v1511-homepage .v1511-hero-description {
+  margin-inline: auto;
+}
+.v1511-homepage .v1511-hero-media {
+  width: 100%;
+  max-width: 360px;
+  justify-self: center;
+}
+.v1511-homepage .v1511-photo-label {
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 28px);
+  white-space: nowrap;
+}
+
+/* Two mobility cards and two field cases share the same column layout. */
+.v1511-homepage .v1512-task-groups,
+.v1511-homepage .v1513-field-cases {
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  align-items: start;
+  gap: 20px;
+}
+.v1511-homepage .v1512-task-heading {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.v1511-homepage .v1512-task-heading>.v1511-number {
+  margin: 0;
+}
+.v1511-homepage .v1512-task-example .v1511-video-pair {
+  grid-template-columns: minmax(0,1fr);
+}
+.v1511-homepage .v1511-cooperation-bottom {
+  justify-content: center;
+}
+
+@media(max-width:1100px) and (min-width:761px) {
+  .v1511-homepage .v1511-hero-grid {
+    gap: 28px;
+  }
+}
+@media(max-width:760px) {
+  .v1511-homepage .v1511-hero-grid,
+  .v1511-homepage .v1512-task-groups,
+  .v1511-homepage .v1513-field-cases {
+    grid-template-columns: minmax(0,1fr);
+  }
+  .v1511-homepage .v1511-hero-grid {
+    gap: 20px;
+  }
+  .v1511-homepage .v1511-hero-media {
+    width: 86%;
+    max-width: 300px;
+  }
+  .v1511-homepage .v1512-task-groups,
+  .v1511-homepage .v1513-field-cases {
+    gap: 12px;
+  }
+  .v1511-homepage .v1512-task-heading {
+    gap: 6px;
+  }
+}
