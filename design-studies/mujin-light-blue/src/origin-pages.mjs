@@ -11,9 +11,9 @@ export const pages=[
  {path:'/contact',label:'Contact OriginMind'}
 ];
 export const clips=[
- {src:'https://omindos.ai/assets/videos/1000087160-web.mp4',start:16,end:24},
- {src:'https://omindos.ai/assets/videos/1000087155-web.mp4',start:2,end:10},
- {src:'https://omindos.ai/assets/videos/1000087153-web.mp4',start:8,end:16}
+ {src:'https://omindos.ai/assets/videos/1000087160-web.mp4',start:12,end:17,crop:{top:.13,bottom:.12}},
+ {src:'https://omindos.ai/assets/videos/1000087155-web.mp4',start:1.5,end:3.5,crop:{top:.28,bottom:.12}},
+ {src:'https://omindos.ai/assets/videos/1000087153-web.mp4',start:0,end:4,crop:{top:.18,bottom:.12}}
 ];
 export const demonstrations={
  indoor:{id:'1000087152',title:'Quadruped · Indoor autonomous mobility',poster:'quadruped-indoor.jpg'},

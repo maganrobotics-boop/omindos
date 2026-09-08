@@ -10,9 +10,29 @@ if(movie&&movieButton){
  const source=movie.querySelector('source[data-src]');
  const clips=JSON.parse(movie.dataset.clips||'[]');
  let userPaused=false,inView=true,clipIndex=0,changingClip=false;
+ const hero=movie.closest('.hero');
+ // Fit the inspected, caption-free source rectangle into the full hero viewport.
+ // Cropping happens in the browser; the original remote videos remain untouched.
+ const frameClip=()=>{
+  const crop=clips[clipIndex]?.crop;if(!crop)return;
+  const width=movie.videoWidth||960,height=movie.videoHeight||540;
+  const left=crop.left||0,right=crop.right||0,top=crop.top||0,bottom=crop.bottom||0;
+  const usableWidth=width*(1-left-right),usableHeight=height*(1-top-bottom);
+  const scale=Math.max(hero.clientWidth/usableWidth,hero.clientHeight/usableHeight);
+  Object.assign(movie.style,{
+   maxWidth:'none',width:width*scale+'px',height:height*scale+'px',
+   left:(hero.clientWidth-usableWidth*scale)/2-left*width*scale+'px',
+   top:(hero.clientHeight-usableHeight*scale)/2-top*height*scale+'px',right:'auto',bottom:'auto'
+  });
+ };
+ if('ResizeObserver' in window)new ResizeObserver(frameClip).observe(hero);
+ else addEventListener('resize',frameClip,{passive:true});
+ frameClip();
  const label=()=>{movieButton.textContent=movie.paused?'Play film':'Pause film';movieButton.setAttribute('aria-label',movie.paused?'Play background video':'Pause background video');};
  const loadClip=index=>{
   clipIndex=index;changingClip=true;
+  movie.classList.remove('is-playing');
+  frameClip();
   source.src=clips[index].src;movie.load();
  };
  const play=()=>{
@@ -25,11 +45,19 @@ if(movie&&movieButton){
  };
  movie.addEventListener('loadedmetadata',()=>{
   if(!clips.length||!changingClip)return;
-  movie.currentTime=clips[clipIndex].start;changingClip=false;play();
+  frameClip();
+  if(clips[clipIndex].start===0){changingClip=false;play();}
+  else movie.currentTime=clips[clipIndex].start;
  });
+ movie.addEventListener('seeked',()=>{if(changingClip){changingClip=false;play();}});
  movie.addEventListener('timeupdate',()=>{
   if(clips.length&&!changingClip&&!movie.paused&&movie.currentTime>=clips[clipIndex].end)loadClip((clipIndex+1)%clips.length);
  });
+ // End a selected interval on the displayed frame, before later captions appear.
+ if('requestVideoFrameCallback' in movie){
+  const followFrame=()=>{if(clips.length&&!changingClip&&!movie.paused&&movie.currentTime>=clips[clipIndex].end)loadClip((clipIndex+1)%clips.length);movie.requestVideoFrameCallback(followFrame);};
+  movie.requestVideoFrameCallback(followFrame);
+ }
  movie.addEventListener('playing',()=>{movie.classList.add('is-playing');label();});
  movie.addEventListener('pause',label);
  movie.addEventListener('error',()=>{movie.classList.remove('is-playing');label();});

@@ -61,8 +61,9 @@ film=next(d for t,d in home.tags if t=='video' and 'data-hero-film' in d)
 assert all(k in film for k in ['muted','loop','playsinline'])
 assert film.get('preload')=='none' and 'src' not in film
 clips=json.loads(film['data-clips'])
-assert len(clips)==3 and sum(c['end']-c['start'] for c in clips)==24
+assert len(clips)==3 and sum(c['end']-c['start'] for c in clips)==11
 assert all(c['src'].startswith('https://omindos.ai/assets/videos/') and 0<=c['start']<c['end'] for c in clips)
+assert all(0<c['crop']['top']<.4 and 0<c['crop']['bottom']<.3 and c['crop']['top']+c['crop']['bottom']<.6 for c in clips)
 assert any(t=='source' and d.get('data-src')==clips[0]['src'] for t,d in home.tags)
 assert not list(study.rglob('*.mp4'))
 print(json.dumps({'html_pages':len(files),'brand_routes':10,'legacy_redirects':83,'local_references':refs,'structure':'valid'}))
