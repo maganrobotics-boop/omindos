@@ -1,0 +1,94 @@
+/* The homepage follows an image-led sequence; detail pages retain their layout. */
+.home-page{text-align:left}
+.home-page .wrap{width:min(1480px,100%);padding-inline:clamp(24px,4vw,64px)}
+.home-page .section{padding-block:clamp(64px,7vw,112px)}
+.home-page .intro{max-width:1060px;margin:0 0 40px}
+.home-page .intro h2{font-size:clamp(32px,3.6vw,52px);max-width:1000px}
+.home-page .lead{margin-left:0;max-width:780px;font-size:clamp(18px,1.6vw,22px);line-height:1.55}
+.home-page .eyebrow{margin-bottom:14px;letter-spacing:.09em}
+.home-page .header-inner{max-width:none;padding-inline:clamp(24px,3vw,48px)}
+.home-page .desktop-nav{display:none}
+.home-page .menu-toggle{display:grid}
+.home-page .menu-panel{justify-items:start;padding-left:clamp(24px,5vw,80px)}
+.home-page .menu-panel>a{font-size:clamp(22px,3vw,38px);padding-left:0}
+.home-page .hero{height:100svh;min-height:640px;max-height:1100px;display:flex;align-items:center}
+.home-page .hero::after{background:linear-gradient(90deg,#0b2019b3,#0b201933 70%),linear-gradient(180deg,#0b20194d,transparent 30%,transparent 70%,#0b201999)}
+.home-page .hero-copy{padding-block:130px 150px}
+.home-page .hero h1{font-size:clamp(42px,5vw,76px);line-height:1.09;max-width:1000px;margin:0;letter-spacing:-.04em}
+.home-page .hero .lead{font-size:clamp(20px,2vw,28px);margin-top:24px;color:#fff}
+.home-page .hero-bottom{left:clamp(24px,4vw,64px);right:clamp(24px,4vw,64px)}
+.home-page .hero-bottom>a{text-align:center}
+.home-page .home-introduction{display:grid;grid-template-columns:.85fr 1.15fr;align-items:center;gap:clamp(28px,5vw,80px)}
+.home-page .home-introduction .intro{margin:0}
+.home-page .quadruped-concept{width:100%;max-width:none;margin:0}
+.home-page .quadruped-concept img{border-radius:8px}
+.home-page .quadruped-concept figcaption{padding:14px 0 0;font-size:14px;text-align:center}
+.home-page .home-system>.wrap{padding-top:56px;padding-bottom:56px;border-radius:14px;background:#e7eeea}
+.home-page .home-system{padding:0 clamp(16px,2vw,32px) 0;background:#fff}
+.home-page .home-system .intro{margin:0 auto 44px;text-align:center}
+.home-page .home-system .lead{margin-inline:auto}
+.home-page .home-system-grid{display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:clamp(32px,5vw,80px)}
+.home-page .home-system-image img{width:100%;height:auto;border-radius:8px}
+.home-page .home-system-image figcaption{font-size:14px;color:var(--muted);text-align:center;padding-top:12px}
+.home-page .home-benefit{border-bottom:1px solid #b8cfc1}
+.home-page .home-benefit summary{font-size:clamp(20px,2vw,26px);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:88px;list-style:none}
+.home-page .home-benefit summary::-webkit-details-marker{display:none}
+.home-page .home-benefit summary>span{font-size:28px;font-weight:400}
+.home-page .home-benefit[open] summary>span{transform:rotate(45deg)}
+.home-page .home-benefit p{font-size:18px;color:var(--muted);max-width:42ch;padding:0 32px 22px 0}
+.home-page .home-visual-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;align-items:start}
+.home-page .home-feature{min-width:0}
+.home-page .home-feature-image{background:#e5e9e7;overflow:hidden;border-radius:8px}
+.home-page .home-feature-image img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.home-page .home-feature-copy{padding:28px 0 0}
+.home-page .home-feature-copy h3{font-size:clamp(25px,2.6vw,36px);line-height:1.2}
+.home-page .home-feature-copy>p:not(.eyebrow){font-size:18px;color:var(--muted);margin-top:12px}
+.home-page .video-fold{margin-top:22px;text-align:left}
+.home-page .video-fold summary{align-items:center;font-size:16px;line-height:1.5;min-height:68px}
+.home-page .home-mobility .video-pair{grid-template-columns:1fr}
+.home-page .home-partner{min-width:0;border-radius:8px;overflow:hidden;background:#fff}
+.home-page .home-partner figure{position:relative}
+.home-page .home-partner img{width:100%;aspect-ratio:1536/866;object-fit:contain;background:#e5e6e7}
+.home-page .home-partner figure figcaption{font-size:14px;color:var(--muted);padding:12px 24px 0}
+.home-page .home-partner-copy{padding:24px 28px 32px}
+.home-page .home-partner-copy h3{font-size:clamp(26px,2.6vw,36px)}
+.home-page .home-partner-copy p{font-size:18px;color:var(--muted);margin-top:12px}
+.home-page .home-partner-copy .text-link{margin-top:20px}
+.home-page .home-field .home-feature-copy>.eyebrow{font-size:14px;line-height:1.7;letter-spacing:.035em}
+.home-page .footer{text-align:center}
+@media(max-width:900px){
+ .home-page .home-introduction{grid-template-columns:1fr;gap:36px}
+ .home-page .home-copy{max-width:760px}
+ .home-page .home-system-grid{grid-template-columns:1fr;gap:24px}
+ .home-page .home-system-image{max-width:740px;margin-inline:auto}
+ .home-page .home-benefit summary{min-height:76px}
+ .home-page .home-visual-pair{gap:24px}
+ .home-page .fold-state .closed-label,.home-page .fold-state .open-label{display:none}
+}
+@media(max-width:700px){
+ .home-page .section{padding-block:52px}
+ .home-page .wrap{padding-inline:22px}
+ .home-page .hero{height:92svh;min-height:610px}
+ .home-page .hero-copy{padding-block:130px 155px}
+ .home-page .hero h1{font-size:clamp(38px,9.5vw,58px)}
+ .home-page .hero video{object-fit:cover}
+ .home-page .hero .lead{max-width:24ch;font-size:20px}
+ .home-page .hero-bottom{left:22px;right:22px}
+ .home-page .hero-bottom p{justify-self:start}
+ .home-page .intro{margin-bottom:28px}
+ .home-page .intro h2{font-size:34px}
+ .home-page .home-system{padding:0 12px;background:#fff}
+ .home-page .home-system>.wrap{padding:34px 18px;border-radius:10px}
+ .home-page .home-system .intro{margin-bottom:28px}
+ .home-page .home-system .intro h2{font-size:32px}
+ .home-page .home-benefit summary{font-size:21px;min-height:72px}
+ .home-page .home-system-copy .button{max-width:100%;gap:14px;padding-inline:16px;font-size:15px}
+ .home-page .home-visual-pair{grid-template-columns:1fr;gap:40px}
+ .home-page .home-feature-image img{aspect-ratio:4/3}
+ .home-page .home-feature-copy{padding-top:22px}
+ .home-page .home-feature-copy h3,.home-page .home-partner-copy h3{font-size:28px}
+ .home-page .home-partner-copy{padding:22px 22px 28px}
+ .home-page .home-partner figure figcaption{padding-inline:22px}
+ .home-page .video-fold summary{font-size:16px;gap:12px}
+ .home-page .home-field .home-feature-copy>.eyebrow{min-height:0}
+}
