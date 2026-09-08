@@ -14,7 +14,7 @@ const env = { ASSETS: { async fetch(request) {
   return new Response('not found', {status:404});
 }}};
 for (const [lang, contentLanguage] of [['zh','zh-CN'],['en','en'],['ja','ja-JP']]) {
-  for (const path of ['/', '/founding-oem', '/why-originmind']) {
+  for (const path of ['/', '/founding-oem', '/why-originmind', '/robot-products']) {
     test(`${lang}: same-address route ${path}`, async () => {
       const url = `https://omindos.ai${path}`;
       const response = await worker.fetch(new Request(url, {headers:{Cookie:`originmind_language=${lang}`}}),env);
@@ -27,6 +27,40 @@ for (const [lang, contentLanguage] of [['zh','zh-CN'],['en','en'],['ja','ja-JP']
     });
   }
 }
+test('robot product aliases and language controls stay on the product page', async () => {
+  const sharedScript = await readFile(new URL('script.js', root), 'utf8');
+  for (const lang of ['zh', 'en', 'ja']) {
+    const alias = await worker.fetch(new Request(`https://omindos.ai/robots/${lang}/index.html`), env);
+    assert.equal(alias.status, 308);
+    assert.equal(alias.headers.get('Location'), `https://omindos.ai/robot-products?lang=${lang}`);
+    const page = await readFile(new URL(`robots/${lang}/index.html`, root), 'utf8');
+    const links = [...page.matchAll(/<a\b[^>]*data-language="(en|zh|ja)"[^>]*>/g)].map(match => {
+      const attrs = new Map([['href', match[0].match(/href="([^"]+)"/)[1]]]);
+      return { dataset: { language: match[1] }, attrs, classList: { toggle() {} },
+        setAttribute(key, value) { attrs.set(key, value); }, removeAttribute(key) { attrs.delete(key); },
+        set href(value) { attrs.set('href', value); } };
+    });
+    let update;
+    runInNewContext(sharedScript.replace(/\}\)\(\);\s*$/, 'expose(updateLanguageLinks);})();'), {
+      URL, URLSearchParams,
+      document: { documentElement: { lang }, readyState: 'loading', addEventListener() {},
+        body: { classList: { contains: value => value === 'robot-products-page' } },
+        querySelector: () => null, querySelectorAll: () => links },
+      window: { location: new URL('https://omindos.ai/robot-products#quote') },
+      expose: value => { update = value; },
+    });
+    update();
+    assert.equal(links.length, 6);
+    for (const link of links) {
+      assert.equal(link.attrs.get('href'), `https://omindos.ai/robot-products?lang=${link.dataset.language}#quote`);
+      assert.equal(link.attrs.get('aria-current'), link.dataset.language === lang ? 'page' : undefined);
+    }
+    const quote = new URL(page.match(/href="(mailto:[^"]+\?subject=[^"]+)"/)[1].replaceAll('&amp;', '&'));
+    assert.equal(quote.pathname, 'sales@omindos.ai');
+    assert.ok(quote.searchParams.get('body').includes('\n\n'));
+  }
+});
+
 test('removed meeting pages and APIs return 404 without credentials',async()=>{
   for(const path of ['/meeting','/meeting/','/meeting/display','/meeting/index.page','/api/meeting/login','/api/meeting/realtime-secret','/api/meeting/rooms','/api/meetings']) {
     const r=await worker.fetch(new Request(`https://omindos.ai${path}`),env);assert.equal(r.status,404,path);
@@ -44,10 +78,10 @@ test('visitor statistics binding remains optional and errors are controlled',asy
   const method=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'DELETE'}),env);assert.equal(method.status,405);
   const forbidden=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST',headers:{Origin:'https://other.example'}}),{...env,VISITS_DB:{}});assert.equal(forbidden.status,403);
 });
-test('each homepage language downloads its matching PDF without changing the homepage address',async()=>{
+test('each product page downloads its matching PDF without changing the page address',async()=>{
   for (const lang of ['zh', 'en', 'ja']) {
     const filename = `OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf`;
-    const home = await worker.fetch(new Request('https://omindos.ai/', {headers:{Cookie:`originmind_language=${lang}`}}),env);
+    const home = await worker.fetch(new Request('https://omindos.ai/robot-products', {headers:{Cookie:`originmind_language=${lang}`}}),env);
     assert.equal(home.headers.get('Location'),null);
     const html=await home.text();
     assert.ok(html.includes(`download="${filename}"`));
@@ -107,7 +141,7 @@ test('OEM limits repeated new submissions while allowing safe retries', async ()
 const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
 
-test('V1.5.14 keeps demos and product documents collapsed while retaining contact and statistics', async () => {
+test('V1.5.15 keeps videos collapsed and moves product documents while retaining contact and statistics', async () => {
   for (const lang of ['en', 'zh', 'ja']) {
     const source = await readFile(new URL(`index.${lang}.html`, homepageRoot), 'utf8');
     const sections = [...source.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
@@ -134,13 +168,16 @@ test('V1.5.14 keeps demos and product documents collapsed while retaining contac
     assert.equal([...mobility.matchAll(/<article\b/g)].length, 2);
     assert.equal([...mobility.matchAll(/<video\b/g)].length, 4);
     assert.equal([...field.matchAll(/<video\b/g)].length, 2);
-    const documents = mobility.match(/<details\b([^>]*\bid="product-docs"[^>]*)>([\s\S]*?)<\/details>/);
-    assert.ok(documents, 'product documents belong below the mobile robot videos');
+    const productPage = await readFile(new URL(`robots/${lang}/index.html`, homepageRoot), 'utf8');
+    const documents = productPage.match(/<details\b([^>]*\bid="product-docs"[^>]*)>([\s\S]*?)<\/details>/);
+    assert.ok(documents, 'product documents belong on the dedicated product page');
     assert.doesNotMatch(documents[1], /\bopen(?:\s|=|$)/);
     assert.match(documents[2], /<summary>/);
     assert.ok(documents[2].includes(`download="OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf"`));
     assert.ok(mobility.indexOf('id="product-docs"') > mobility.lastIndexOf('</video>'));
-    assert.doesNotMatch(field, /assets\/brochures\//);
+    assert.ok(mobility.includes(`href="/robot-products?lang=${lang}"`));
+    assert.doesNotMatch(source, /assets\/brochures\//);
+    assert.doesNotMatch(field, /v1513-task-bridge|class="v1511-note"/);
     const hero = source.match(/<section\b[^>]*id="what"[^>]*>([\s\S]*?)<\/section>/)[1];
     assert.doesNotMatch(hero, /class="v15-actions"/);
     for (const id of ['capabilities', 'demo-field', 'demo-mine', 'demo-pharma']) assert.ok(source.includes(`id="${id}"`));
@@ -158,7 +195,6 @@ test('V1.5.14 keeps demos and product documents collapsed while retaining contac
     }
     assert.match(source, /data-nav="production" href="#production"/);
     assert.match(source, new RegExp(`chat\\.omindos\\.ai/widget\\.html\\?lang=${lang}`));
-    assert.ok(source.includes(`download="OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf"`));
     assert.match(source, /data-visitor-map hidden aria-hidden="true" style="display: none;"/);
     assert.match(source, /data-sales-email data-sales-email-text/);
     assert.match(source, /originmind-mark-92\.webp/);
@@ -176,13 +212,13 @@ test('V1.5.14 keeps demos and product documents collapsed while retaining contac
 });
 
 test('every updated page loads its own styles and keeps the current shared script', async () => {
-  for (const page of ['index.html', 'index.en.html', 'index.zh.html', 'index.ja.html', ...['en', 'zh', 'ja'].flatMap(lang => [`why/${lang}/index.html`, `oem/${lang}/index.html`])]) {
+  for (const page of ['index.html', 'index.en.html', 'index.zh.html', 'index.ja.html', ...['en', 'zh', 'ja'].flatMap(lang => [`why/${lang}/index.html`, `oem/${lang}/index.html`, `robots/${lang}/index.html`])]) {
     const source = await readFile(new URL(page, homepageRoot), 'utf8');
     if (!page.startsWith('oem/')) {
       assert.match(source, /homepage-v1511\.css/);
       assert.match(source, /homepage-v1511\.js/);
     }
-    assert.match(source, /script\.js\?v=20260907-contact/);
+    assert.match(source, /script\.js\?v=202609(?:07-contact|08-products)/);
     for (const match of source.matchAll(/<link\b[^>]*>/g)) {
       if (!/rel="stylesheet"/.test(match[0])) continue;
       const href = match[0].match(/href="([^"]+)"/)[1].split('?')[0];

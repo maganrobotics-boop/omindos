@@ -27,6 +27,7 @@
   const isHomePage = () => Boolean(document.querySelector("main.logic-home")) && HOME_PATH.test(window.location.pathname);
   const isOemPage = () => document.body.classList.contains("founding-page") && /^\/founding-oem\/?$/u.test(window.location.pathname);
   const isWhyPage = () => document.body.classList.contains("why-page") && /^\/why-originmind\/?$/u.test(window.location.pathname);
+  const isRobotPage = () => document.body.classList.contains("robot-products-page") && /^\/robot-products\/?$/u.test(window.location.pathname);
 
   const readStoredLanguage = () => {
     try {
@@ -133,6 +134,7 @@
     const home = isHomePage();
     const oem = isOemPage();
     const why = isWhyPage();
+    const robots = isRobotPage();
     const legacySites = {
       en: { origin: "https://omindos.ai", preview: "../en/", hreflang: "en" },
       zh: { origin: "https://omindos.ai", preview: "../zh/", hreflang: "zh-CN" },
@@ -149,9 +151,9 @@
       if (targetLanguage === language) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
 
-      if (home || oem || why) {
+      if (home || oem || why || robots) {
         const fallbackOrigin = isProduction ? "https://omindos.ai" : window.location.origin;
-        const fallbackUrl = new URL(why ? "/why-originmind" : oem ? "/founding-oem" : "/", fallbackOrigin);
+        const fallbackUrl = new URL(robots ? "/robot-products" : why ? "/why-originmind" : oem ? "/founding-oem" : "/", fallbackOrigin);
         fallbackUrl.searchParams.set("lang", targetLanguage);
         fallbackUrl.hash = sectionHash;
         link.href = fallbackUrl.toString();
