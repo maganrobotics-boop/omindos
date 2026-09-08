@@ -9,13 +9,27 @@ const movie=document.querySelector('.hero video');const movieButton=document.que
 if(movie&&movieButton){
  const reduced=matchMedia('(prefers-reduced-motion:reduce)');
  const source=movie.querySelector('source[data-src]');
- let userPaused=false,inView=true;
+ const clips=JSON.parse(movie.dataset.clips||'[]');
+ let userPaused=false,inView=true,clipIndex=0,changingClip=false;
  const label=()=>{movieButton.textContent=movie.paused?'Play film':'Pause film';movieButton.setAttribute('aria-label',movie.paused?'Play background video':'Pause background video');};
+ const loadClip=index=>{
+  clipIndex=index;changingClip=true;
+  source.src=clips[index].src;movie.load();
+ };
  const play=()=>{
   if(reduced.matches||document.hidden||!inView||userPaused)return;
+  if(source&&clips.length&&!source.hasAttribute('src')){loadClip(0);return;}
+  if(changingClip)return;
   if(source&&!source.hasAttribute('src')){source.src=source.dataset.src;movie.load();}
   movie.muted=true;movie.play().then(label).catch(label);
  };
+ movie.addEventListener('loadedmetadata',()=>{
+  if(!clips.length||!changingClip)return;
+  movie.currentTime=clips[clipIndex].start;changingClip=false;play();
+ });
+ movie.addEventListener('timeupdate',()=>{
+  if(clips.length&&!changingClip&&!movie.paused&&movie.currentTime>=clips[clipIndex].end)loadClip((clipIndex+1)%clips.length);
+ });
  movie.addEventListener('playing',()=>{movie.classList.add('is-playing');label();});
  movie.addEventListener('pause',label);
  movie.addEventListener('error',()=>{movie.classList.remove('is-playing');label();});

@@ -44,5 +44,9 @@ assert all(d['src'].startswith('/design-study/assets/') for d in scene_images)
 film=next(d for t,d in home.tags if t=='video' and 'data-hero-film' in d)
 assert all(k in film for k in ['muted','loop','playsinline'])
 assert film.get('preload')=='none' and 'src' not in film
-assert any(t=='source' and d.get('data-src')=='/design-study/assets/mobile-operations.mp4' for t,d in home.tags)
+clips=json.loads(film['data-clips'])
+assert len(clips)==3 and sum(c['end']-c['start'] for c in clips)==24
+assert all(c['src'].startswith('https://omindos.ai/assets/videos/') and 0<=c['start']<c['end'] for c in clips)
+assert any(t=='source' and d.get('data-src')==clips[0]['src'] for t,d in home.tags)
+assert not list(study.rglob('*.mp4'))
 print(json.dumps({'html_pages':len(files),'routes':85,'local_references':refs,'mobile_robot_image_slots':len(scene_images),'structure':'valid'}))
