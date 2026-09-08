@@ -1,0 +1,674 @@
+[
+  {
+    "path": "/",
+    "source": "https://mujin-corp.com/",
+    "label": "Home",
+    "type": "page"
+  },
+  {
+    "path": "/applications",
+    "source": "https://mujin-corp.com/applications",
+    "label": "Applications",
+    "type": "page"
+  },
+  {
+    "path": "/resources",
+    "source": "https://mujin-corp.com/resources",
+    "label": "Resources",
+    "type": "page"
+  },
+  {
+    "path": "/truckbot-get-quote",
+    "source": "https://mujin-corp.com/truckbot-get-quote",
+    "label": "TruckBot inquiry",
+    "type": "page"
+  },
+  {
+    "path": "/download-mujinos",
+    "source": "https://mujin-corp.com/download-mujinos",
+    "label": "MujinOS brochure",
+    "type": "page"
+  },
+  {
+    "path": "/contact",
+    "source": "https://mujin-corp.com/contact",
+    "label": "Contact",
+    "type": "page"
+  },
+  {
+    "path": "/company",
+    "source": "https://mujin-corp.com/company",
+    "label": "Company",
+    "type": "page"
+  },
+  {
+    "path": "/careers",
+    "source": "https://mujin-corp.com/careers",
+    "label": "Careers",
+    "type": "page"
+  },
+  {
+    "path": "/industries",
+    "source": "https://mujin-corp.com/industries",
+    "label": "Industries",
+    "type": "page"
+  },
+  {
+    "path": "/integrators",
+    "source": "https://mujin-corp.com/integrators",
+    "label": "Integrators",
+    "type": "page"
+  },
+  {
+    "path": "/technology",
+    "source": "https://mujin-corp.com/technology",
+    "label": "Technology",
+    "type": "page"
+  },
+  {
+    "path": "/applications/amr-agv-fleet-manager",
+    "source": "https://mujin-corp.com/applications/amr-agv-fleet-manager",
+    "label": "Fleet Coordination",
+    "type": "page"
+  },
+  {
+    "path": "/applications/truck-trailer-unloading",
+    "source": "https://mujin-corp.com/applications/truck-trailer-unloading",
+    "label": "TruckBot",
+    "type": "page"
+  },
+  {
+    "path": "/resources/news",
+    "source": "https://mujin-corp.com/resources/news",
+    "label": "News",
+    "type": "page"
+  },
+  {
+    "path": "/resources/blog",
+    "source": "https://mujin-corp.com/resources/blog",
+    "label": "Blog",
+    "type": "page"
+  },
+  {
+    "path": "/resources/events",
+    "source": "https://mujin-corp.com/resources/events",
+    "label": "Events",
+    "type": "page"
+  },
+  {
+    "path": "/resources/videos",
+    "source": "https://mujin-corp.com/resources/videos",
+    "label": "Videos",
+    "type": "page"
+  },
+  {
+    "path": "/resources/case-studies",
+    "source": "https://mujin-corp.com/resources/case-studies",
+    "label": "Case Studies",
+    "type": "page"
+  },
+  {
+    "path": "/applications/mixed-case-fulfillment",
+    "source": "https://mujin-corp.com/applications/mixed-case-fulfillment",
+    "label": "Mixed-Case Fulfillment",
+    "type": "page"
+  },
+  {
+    "path": "/applications/piece-picking",
+    "source": "https://mujin-corp.com/applications/piece-picking",
+    "label": "Piece Picking",
+    "type": "page"
+  },
+  {
+    "path": "/applications/bin-picking",
+    "source": "https://mujin-corp.com/applications/bin-picking",
+    "label": "Bin Picking",
+    "type": "page"
+  },
+  {
+    "path": "/applications/depalletizing",
+    "source": "https://mujin-corp.com/applications/depalletizing",
+    "label": "Depalletizing",
+    "type": "page"
+  },
+  {
+    "path": "/applications/palletizing",
+    "source": "https://mujin-corp.com/applications/palletizing",
+    "label": "Palletizing",
+    "type": "page"
+  },
+  {
+    "path": "/industries/e-commerce",
+    "source": "https://mujin-corp.com/industries/e-commerce",
+    "label": "E-commerce",
+    "type": "page"
+  },
+  {
+    "path": "/industries/food-and-beverage",
+    "source": "https://mujin-corp.com/industries/food-and-beverage",
+    "label": "Food & Beverage",
+    "type": "page"
+  },
+  {
+    "path": "/industries/cpg",
+    "source": "https://mujin-corp.com/industries/cpg",
+    "label": "CPG",
+    "type": "page"
+  },
+  {
+    "path": "/industries/3pl",
+    "source": "https://mujin-corp.com/industries/3pl",
+    "label": "3PL",
+    "type": "page"
+  },
+  {
+    "path": "/industries/manufacturing",
+    "source": "https://mujin-corp.com/industries/manufacturing",
+    "label": "Manufacturing",
+    "type": "page"
+  },
+  {
+    "path": "/industries/retail",
+    "source": "https://mujin-corp.com/industries/retail",
+    "label": "Retail",
+    "type": "page"
+  },
+  {
+    "path": "/resources/news/seriesd-announcement-advancing-industrial-automation-intelligent-robotics",
+    "source": "https://mujin-corp.com/resources/news/seriesd-announcement-advancing-industrial-automation-intelligent-robotics",
+    "label": "New funding for Mujin’s international expansion",
+    "summary": "Company update: new funding for Mujin’s international expansion. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-announces-two-key-leadership-appointments-in-north-america",
+    "source": "https://mujin-corp.com/resources/news/mujin-announces-two-key-leadership-appointments-in-north-america",
+    "label": "North American leadership team changes",
+    "summary": "Company update: north American leadership team changes. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-partners-with-leading-integrators-to-expand-adoption-of-its-robotics-operating-system",
+    "source": "https://mujin-corp.com/resources/news/mujin-partners-with-leading-integrators-to-expand-adoption-of-its-robotics-operating-system",
+    "label": "An expanded ecosystem of integration partners",
+    "summary": "Company update: an expanded ecosystem of integration partners. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-debuts-new-user-interface-at-automate-to-simplify-robotic-palletizing",
+    "source": "https://mujin-corp.com/resources/news/mujin-debuts-new-user-interface-at-automate-to-simplify-robotic-palletizing",
+    "label": "A redesigned interface for palletizing workflows",
+    "summary": "Company update: a redesigned interface for palletizing workflows. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/accenture-and-mujin-establish-joint-venture-to-bring-ai-and-robotics-to-the-manufacturing-and-logistics-industries",
+    "source": "https://mujin-corp.com/resources/news/accenture-and-mujin-establish-joint-venture-to-bring-ai-and-robotics-to-the-manufacturing-and-logistics-industries",
+    "label": "Mujin and Accenture form an automation venture",
+    "summary": "Company update: mujin and Accenture form an automation venture. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-opens-in-europe-to-advance-our-global-expansion",
+    "source": "https://mujin-corp.com/resources/news/mujin-opens-in-europe-to-advance-our-global-expansion",
+    "label": "Establishing a European presence",
+    "summary": "Company update: establishing a European presence. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-secures-85m-in-series-c-funding-to-accelerate-intelligent-robotic-automation",
+    "source": "https://mujin-corp.com/resources/news/mujin-secures-85m-in-series-c-funding-to-accelerate-intelligent-robotic-automation",
+    "label": "Series C investment in the robotics platform",
+    "summary": "Company update: series C investment in the robotics platform. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-launches-truckbot-an-autonomous-solution-for-unloading-trailers-and-shipping-containers",
+    "source": "https://mujin-corp.com/resources/news/mujin-launches-truckbot-an-autonomous-solution-for-unloading-trailers-and-shipping-containers",
+    "label": "Introducing robotic trailer unloading with TruckBot",
+    "summary": "Company update: introducing robotic trailer unloading with TruckBot. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-and-geek-to-debut-total-order-fulfillment-automation-at-manifest-logistics-show-in-las-vegas",
+    "source": "https://mujin-corp.com/resources/news/mujin-and-geek-to-debut-total-order-fulfillment-automation-at-manifest-logistics-show-in-las-vegas",
+    "label": "Order-fulfillment demonstration with Geek+",
+    "summary": "Company update: order-fulfillment demonstration with Geek+. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-debuts-quickbot-a-plug-and-play-robotic-case-handler-to-simplify-warehouse-automation",
+    "source": "https://mujin-corp.com/resources/news/mujin-debuts-quickbot-a-plug-and-play-robotic-case-handler-to-simplify-warehouse-automation",
+    "label": "QuickBot enters warehouse case handling",
+    "summary": "Company update: quickBot enters warehouse case handling. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/shape-process-automation-partners-with-mujin-to-deliver-advanced-intelligent-solutions-for-north-american-warehouses",
+    "source": "https://mujin-corp.com/resources/news/shape-process-automation-partners-with-mujin-to-deliver-advanced-intelligent-solutions-for-north-american-warehouses",
+    "label": "Collaboration with Shape Process Automation",
+    "summary": "Company update: collaboration with Shape Process Automation. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-unveils-first-of-its-kind-mixed-case-solution-other-warehouse-robotics-applications-at-modex",
+    "source": "https://mujin-corp.com/resources/news/mujin-unveils-first-of-its-kind-mixed-case-solution-other-warehouse-robotics-applications-at-modex",
+    "label": "Mixed-case robotics demonstrations at MODEX",
+    "summary": "Company update: mixed-case robotics demonstrations at MODEX. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-exhibits-the-latest-total-solutions-with-21-robots-at-irex-2022",
+    "source": "https://mujin-corp.com/resources/news/mujin-exhibits-the-latest-total-solutions-with-21-robots-at-irex-2022",
+    "label": "A multi-robot exhibition at iREX",
+    "summary": "Company update: a multi-robot exhibition at iREX. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/report-innovative-new-robotics-at-pack-expo-las-vegas",
+    "source": "https://mujin-corp.com/resources/news/report-innovative-new-robotics-at-pack-expo-las-vegas",
+    "label": "Robotics on display at PACK EXPO",
+    "summary": "Company update: robotics on display at PACK EXPO. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/brandon-coats-discusses-revolutionary-robotic-solutions",
+    "source": "https://mujin-corp.com/resources/news/brandon-coats-discusses-revolutionary-robotic-solutions",
+    "label": "A conversation with Brandon Coats",
+    "summary": "Company update: a conversation with Brandon Coats. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/new-wave-of-robots-changes-logistics-job-descriptions",
+    "source": "https://mujin-corp.com/resources/news/new-wave-of-robots-changes-logistics-job-descriptions",
+    "label": "How automation is changing logistics work",
+    "summary": "Company update: how automation is changing logistics work. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/japanese-robotics-company-mujin-opens-u-s-headquarters-in-sandy-springs",
+    "source": "https://mujin-corp.com/resources/news/japanese-robotics-company-mujin-opens-u-s-headquarters-in-sandy-springs",
+    "label": "A US headquarters in Sandy Springs",
+    "summary": "Company update: a US headquarters in Sandy Springs. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-expands-into-north-america",
+    "source": "https://mujin-corp.com/resources/news/mujin-expands-into-north-america",
+    "label": "Building a North American presence",
+    "summary": "Company update: building a North American presence. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-brings-production-ready-intelligent-robotics-solutions-to-u-s-logistics-companies",
+    "source": "https://mujin-corp.com/resources/news/mujin-brings-production-ready-intelligent-robotics-solutions-to-u-s-logistics-companies",
+    "label": "Industrial robotics for American logistics operations",
+    "summary": "Company update: industrial robotics for American logistics operations. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-opens-georgia-office-to-offer-robot-controller-to-u-s-logistics-market",
+    "source": "https://mujin-corp.com/resources/news/mujin-opens-georgia-office-to-offer-robot-controller-to-u-s-logistics-market",
+    "label": "A Georgia base for robot-control technology",
+    "summary": "Company update: a Georgia base for robot-control technology. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujinrobot-palletizer-receives-robotics-innovation-prize-of-the-logistics-grand-prizes",
+    "source": "https://mujin-corp.com/resources/news/mujinrobot-palletizer-receives-robotics-innovation-prize-of-the-logistics-grand-prizes",
+    "label": "Recognition for robotic palletizing",
+    "summary": "Company update: recognition for robotic palletizing. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/japan-open-innovation-prize-ceremony-mujin-wins-the-prime-minister-s-award",
+    "source": "https://mujin-corp.com/resources/news/japan-open-innovation-prize-ceremony-mujin-wins-the-prime-minister-s-award",
+    "label": "Recognition at Japan’s Open Innovation awards",
+    "summary": "Company update: recognition at Japan’s Open Innovation awards. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/apac-business-award-best-for-manufacturing-automation-solutions-2020",
+    "source": "https://mujin-corp.com/resources/news/apac-business-award-best-for-manufacturing-automation-solutions-2020",
+    "label": "A manufacturing automation business award",
+    "summary": "Company update: a manufacturing automation business award. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/ai-sum-world-30-nikkei-award-(grand-prize)",
+    "source": "https://mujin-corp.com/resources/news/ai-sum-world-30-nikkei-award-(grand-prize)",
+    "label": "Recognition from Nikkei at AI/SUM",
+    "summary": "Company update: recognition from Nikkei at AI/SUM. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/jsme-medal-for-new-technology-2018",
+    "source": "https://mujin-corp.com/resources/news/jsme-medal-for-new-technology-2018",
+    "label": "Technology recognition from JSME",
+    "summary": "Company update: technology recognition from JSME. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/mujin-jd-com-test-first-automated-warehouse",
+    "source": "https://mujin-corp.com/resources/news/mujin-jd-com-test-first-automated-warehouse",
+    "label": "An automated warehouse project with JD.com",
+    "summary": "Company update: an automated warehouse project with JD.com. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/the-world-s-first-humanless-warehouse-is-run-only-by-robots-and-is-a-model-for-the-future",
+    "source": "https://mujin-corp.com/resources/news/the-world-s-first-humanless-warehouse-is-run-only-by-robots-and-is-a-model-for-the-future",
+    "label": "A warehouse operated by robotic systems",
+    "summary": "Company update: a warehouse operated by robotic systems. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/news/japan-seeks-its-economic-mojo-in-the-stuff-that-makes-the-stuff",
+    "source": "https://mujin-corp.com/resources/news/japan-seeks-its-economic-mojo-in-the-stuff-that-makes-the-stuff",
+    "label": "Manufacturing technology and Japan’s economy",
+    "summary": "Company update: manufacturing technology and Japan’s economy. The source publication provides the detailed account and its context.",
+    "category": "news",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/yxUDyzVPRrCuxu79CWQsSkm1y7o.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/events/mujin-modex-2026",
+    "source": "https://mujin-corp.com/resources/events/mujin-modex-2026",
+    "label": "Mujin’s MODEX 2026 exhibition",
+    "summary": "Event overview: mujin’s MODEX 2026 exhibition. The source publication provides the detailed account and its context.",
+    "category": "events",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/overcoming-frankenstein-robotic-automation-integration-unifying-hardware-mujin-os",
+    "source": "https://mujin-corp.com/resources/blog/overcoming-frankenstein-robotic-automation-integration-unifying-hardware-mujin-os",
+    "label": "Connecting fragmented CPG automation systems",
+    "summary": "Technical perspective: connecting fragmented CPG automation systems. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/how-to-scale-faster-than-your-competition",
+    "source": "https://mujin-corp.com/resources/blog/how-to-scale-faster-than-your-competition",
+    "label": "Scaling operations with physical AI",
+    "summary": "Technical perspective: scaling operations with physical AI. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/not-all-warehouse-ai-is-created-equal",
+    "source": "https://mujin-corp.com/resources/blog/not-all-warehouse-ai-is-created-equal",
+    "label": "Assessing AI for warehouse applications",
+    "summary": "Technical perspective: assessing AI for warehouse applications. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/mujin-modex-2026-physical-ai-at-work",
+    "source": "https://mujin-corp.com/resources/blog/mujin-modex-2026-physical-ai-at-work",
+    "label": "Physical AI demonstrations at MODEX 2026",
+    "summary": "Technical perspective: physical AI demonstrations at MODEX 2026. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/preparing-for-modex-2026",
+    "source": "https://mujin-corp.com/resources/blog/preparing-for-modex-2026",
+    "label": "Planning a visit to MODEX 2026",
+    "summary": "Technical perspective: planning a visit to MODEX 2026. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/mixed-sku-palletizing-the-hidden-driver-of-margin-erosion",
+    "source": "https://mujin-corp.com/resources/blog/mixed-sku-palletizing-the-hidden-driver-of-margin-erosion",
+    "label": "The operational cost of mixed-SKU palletizing",
+    "summary": "Technical perspective: the operational cost of mixed-SKU palletizing. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/confronting-the-10-problem-what-to-do-about-the-intelligence-gap-in-traditional-robotics",
+    "source": "https://mujin-corp.com/resources/blog/confronting-the-10-problem-what-to-do-about-the-intelligence-gap-in-traditional-robotics",
+    "label": "Addressing limitations in conventional robot intelligence",
+    "summary": "Technical perspective: addressing limitations in conventional robot intelligence. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/why-case-picking-is-the-next-battleground-for-3pl-automation",
+    "source": "https://mujin-corp.com/resources/blog/why-case-picking-is-the-next-battleground-for-3pl-automation",
+    "label": "Case picking in third-party logistics",
+    "summary": "Technical perspective: case picking in third-party logistics. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/the-rise-of-physical-ai",
+    "source": "https://mujin-corp.com/resources/blog/the-rise-of-physical-ai",
+    "label": "A new phase of development for physical AI",
+    "summary": "Technical perspective: a new phase of development for physical AI. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/debunking-industrial-robotics-myths",
+    "source": "https://mujin-corp.com/resources/blog/debunking-industrial-robotics-myths",
+    "label": "Common misconceptions about industrial robots",
+    "summary": "Technical perspective: common misconceptions about industrial robots. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/next-generation-3pl-software-led",
+    "source": "https://mujin-corp.com/resources/blog/next-generation-3pl-software-led",
+    "label": "Software as a foundation for future 3PL operations",
+    "summary": "Technical perspective: software as a foundation for future 3PL operations. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/plug-play-robotics-becomes-plug-operate",
+    "source": "https://mujin-corp.com/resources/blog/plug-play-robotics-becomes-plug-operate",
+    "label": "What practical robot deployment requires",
+    "summary": "Technical perspective: what practical robot deployment requires. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/inbound-palletizing-next-big-robotics-opportunity",
+    "source": "https://mujin-corp.com/resources/blog/inbound-palletizing-next-big-robotics-opportunity",
+    "label": "Robotics opportunities in inbound palletizing",
+    "summary": "Technical perspective: robotics opportunities in inbound palletizing. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/robotics-transforming-worker-experience-across-3pl-manufactuing-ecommerce",
+    "source": "https://mujin-corp.com/resources/blog/robotics-transforming-worker-experience-across-3pl-manufactuing-ecommerce",
+    "label": "The changing experience of working alongside robots",
+    "summary": "Technical perspective: the changing experience of working alongside robots. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/robotic-case-picking-smart-automation-fulfillment",
+    "source": "https://mujin-corp.com/resources/blog/robotic-case-picking-smart-automation-fulfillment",
+    "label": "Removing bottlenecks in 3PL automation",
+    "summary": "Technical perspective: removing bottlenecks in 3PL automation. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/the-top-challenges-manufacturers-face-with-robotics",
+    "source": "https://mujin-corp.com/resources/blog/the-top-challenges-manufacturers-face-with-robotics",
+    "label": "Difficulties in manufacturing robot deployment",
+    "summary": "Technical perspective: difficulties in manufacturing robot deployment. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/faster-smarter-safer-reimagining-palletizing-for-modern-manufacturing",
+    "source": "https://mujin-corp.com/resources/blog/faster-smarter-safer-reimagining-palletizing-for-modern-manufacturing",
+    "label": "A new approach to manufacturing palletizing",
+    "summary": "Technical perspective: a new approach to manufacturing palletizing. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/2024-mujin-s-pivotal-year-in-robotics-automation",
+    "source": "https://mujin-corp.com/resources/blog/2024-mujin-s-pivotal-year-in-robotics-automation",
+    "label": "Looking back at Mujin’s 2024 developments",
+    "summary": "Technical perspective: looking back at Mujin’s 2024 developments. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/packaging-integrator-realizes-simplified-robotics-system-delivery-with-mujin-intelligence",
+    "source": "https://mujin-corp.com/resources/blog/packaging-integrator-realizes-simplified-robotics-system-delivery-with-mujin-intelligence",
+    "label": "A packaging integrator’s system-delivery experience",
+    "summary": "Technical perspective: a packaging integrator’s system-delivery experience. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/how-a-top-retailer-simplified-inbound-automation-with-intelligent-robotics-by-mujin",
+    "source": "https://mujin-corp.com/resources/blog/how-a-top-retailer-simplified-inbound-automation-with-intelligent-robotics-by-mujin",
+    "label": "A retailer’s approach to inbound robotics",
+    "summary": "Technical perspective: a retailer’s approach to inbound robotics. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/truckbot-awarded-the-rbr50-robotics-innovation-award-for-transforming-automated-truck-unloading",
+    "source": "https://mujin-corp.com/resources/blog/truckbot-awarded-the-rbr50-robotics-innovation-award-for-transforming-automated-truck-unloading",
+    "label": "Innovation recognition for TruckBot",
+    "summary": "Technical perspective: innovation recognition for TruckBot. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/2023-mujin-s-landmark-year-in-review",
+    "source": "https://mujin-corp.com/resources/blog/2023-mujin-s-landmark-year-in-review",
+    "label": "Looking back at Mujin’s 2023 developments",
+    "summary": "Technical perspective: looking back at Mujin’s 2023 developments. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/on-the-fly-mixed-sku-palletizing-at-trusco-nakayama-s-flagship-distribution-center-an-innovative-leap-forward",
+    "source": "https://mujin-corp.com/resources/blog/on-the-fly-mixed-sku-palletizing-at-trusco-nakayama-s-flagship-distribution-center-an-innovative-leap-forward",
+    "label": "Mixed-SKU handling at Trusco Nakayama",
+    "summary": "Technical perspective: mixed-SKU handling at Trusco Nakayama. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/experts-say-you-are-ready-for-robots-in-the-warehouse-at-manifest-2023-logistics-show",
+    "source": "https://mujin-corp.com/resources/blog/experts-say-you-are-ready-for-robots-in-the-warehouse-at-manifest-2023-logistics-show",
+    "label": "Warehouse readiness discussed at Manifest 2023",
+    "summary": "Technical perspective: warehouse readiness discussed at Manifest 2023. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/resources/blog/mujin-and-geek-showcase-the-future-of-supply-chain-automation-at-manifest-trade-show",
+    "source": "https://mujin-corp.com/resources/blog/mujin-and-geek-showcase-the-future-of-supply-chain-automation-at-manifest-trade-show",
+    "label": "Supply-chain automation demonstrations with Geek+",
+    "summary": "Technical perspective: supply-chain automation demonstrations with Geek+. The source publication provides the detailed account and its context.",
+    "category": "blog",
+    "type": "article",
+    "image": "https://framerusercontent.com/images/7Lfxsja3fM8yjOa5kuweEoKKcc4.jpg?scale-down-to=1024"
+  },
+  {
+    "path": "/coming-soon",
+    "source": "https://mujin-corp.com/coming-soon",
+    "label": "Support and partner portal",
+    "type": "page"
+  },
+  {
+    "path": "/privacy-policy",
+    "source": "https://mujin-corp.com/privacy-policy",
+    "label": "Privacy & study information",
+    "type": "page"
+  }
+]
