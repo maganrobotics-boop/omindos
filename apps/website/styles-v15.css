@@ -920,6 +920,7 @@ body.v15-site.founding-page {
 .v15-site .language-switch{font-size:14px}
 .v15-site :is(.v15-contact-list dt,.footer-bottom,.footer-bottom a,.footer-main>p){font-size:14px;line-height:1.7}
 .v15-site.founding-page :is(.eyebrow,.founding-badge,.founding-signal>small,.founding-signal dt,.founding-value-grid small,.track-price small,.track-price>span,.track-card>footer span,.apply-copy dt,.oem-form legend,.oem-form label>span,.track-options small,.form-status,.privacy-note){font-size:14px;line-height:1.7}
+.v15-site.founding-page :is(.founding-signal dd,.track-card>header b,.timeline-list small,.process-line b,.process-line p){font-size:14px;line-height:1.7}
 @media(max-width:640px){
  .v15-site .header-inner{gap:8px}
  .v15-site .site-header .brand{gap:6px}
