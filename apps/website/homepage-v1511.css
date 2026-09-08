@@ -213,6 +213,25 @@
 .v1513-task-bridge .v1511-text-link{margin-top:14px}
 .v1513-audience-grid{margin-top:28px}
 .v1513-audience-grid .v1511-text-link{margin-top:20px}
+/* V1.5.14: quieter hero, compact product documents and consistent text rhythm. */
+.v1511-hero-description{max-width:540px}
+.v1511-hero-footnote{margin-top:22px}
+.v1511-hero-media>img{aspect-ratio:1.4}
+.v1511-site .v1511-heading h2{max-width:1000px}
+.v1511-site:lang(zh) :is(h1,h2,h3),.v1511-site:lang(ja) :is(h1,h2,h3){line-break:strict;word-break:normal;overflow-wrap:break-word;letter-spacing:-.015em}
+.v1511-site:lang(ja) :is(.v1511-heading h2,.v1511-detail-hero h1){line-height:1.5}
+.v1511-site .v15-button{align-items:center;justify-content:space-between;gap:12px;text-align:start}
+.v1511-site .v15-button>span[aria-hidden]{flex-shrink:0}
+.v1511-cooperation-bottom{justify-content:flex-end}
+.v1514-product-docs{margin-top:24px;padding:0 28px;border:1px solid var(--v11-line);border-radius:10px;background:#f5f8f9}
+.v1514-product-docs>summary{min-height:86px;gap:24px;padding:20px 0}
+.v1514-product-docs>summary>span:first-child{min-width:0}
+.v1514-product-docs summary strong{display:block;color:var(--v11-ink);font-size:17px;font-weight:650;line-height:1.5}
+.v1514-product-docs summary small{display:block;margin-top:5px;color:var(--v11-muted);font-size:12px;font-weight:500;line-height:1.7}
+.v1514-product-docs .v1511-disclosure-body{padding-bottom:22px}
+.v1514-product-docs .v1511-disclosure-body>p{margin:0}
+.v1514-product-docs .v1511-brochure{margin-top:10px}
+.v1514-product-docs .v1511-text-link{overflow-wrap:anywhere}
 @media(max-width:760px){
  .v1512-task-groups{gap:16px}
  .v1512-task-example{padding:21px 20px 0}
@@ -229,4 +248,11 @@
  .v1513-capability-list{gap:7px;margin-top:15px}
  .v1513-capability-list li{font-size:12px;padding:5px 9px}
  .v1513-task-bridge{margin-top:24px;padding-block:22px}
+ .v1511-hero-media>img{aspect-ratio:1.6}
+ .v1511-site .v1511-heading h2{font-size:26px}
+ .v1511-site:lang(ja) .v1511-heading h2{font-size:25px}
+ .v1514-product-docs{margin-top:18px;padding:0 20px}
+ .v1514-product-docs>summary{min-height:80px;padding:18px 0;gap:18px}
+ .v1514-product-docs summary strong{font-size:16px}
+ .v1514-product-docs .v1511-disclosure-body{padding-bottom:20px}
 }

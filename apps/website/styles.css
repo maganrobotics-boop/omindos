@@ -269,7 +269,8 @@ button {
   white-space: nowrap;
 }
 
-.brand-only-tm { display: none; }
+.brand-only-tm { display: inline; }
+.brand-unit { white-space: nowrap; }
 
 .brand-name {
   display: flex;
