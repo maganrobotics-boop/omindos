@@ -1,0 +1,36 @@
+{
+  "tool": "built-in image_gen",
+  "generated": "2026-09-08",
+  "assets": [
+    {
+      "key": "fleet-hero",
+      "prompt": "Use case: ads-marketing. Asset type: website background photograph for an independent mobile-robot design concept. A wide 16:9 cinematic architectural photograph of a modern logistics hall with three unbranded autonomous mobile robots, low wheeled AMRs with compact white aluminum bodies, black rubber wheels, lidar and subtle pale blue status lights. One robot center right carries a small tote, others farther back. Cool white skylight, light blue and steel palette, realistic mechanisms, dark navy floor shadows. Spacious left half suitable for website headline overlay. Robots fully visible and recognizable. No stationary industrial arms. No text, no typography, no logos, no watermark. This is a speculative visualization, not a photo of a delivered product. Render one continuous landscape image, no collage.",
+      "file": "public/assets/fleet-hero.webp"
+    },
+    {
+      "key": "quadruped-field",
+      "prompt": "Use case: ads-marketing. Asset type: website background photograph for an independent mobile-robot design concept. Wide 16:9 realistic premium editorial photograph of a single unbranded four-legged inspection robot walking over uneven gravel beside a clean industrial campus, ramps and steps in the distance. White and graphite enclosure, precisely four articulated legs, small lidar and camera sensor head, pale blue accents. Low camera angle, robot fills middle third; cool soft daylight, steel blue sky. Plausible machine proportions, no weapons. No text, no typography, no logos, no watermark. This is a speculative visualization, not a photo of a delivered product. Render one continuous landscape image, no collage.",
+      "file": "public/assets/quadruped-field.webp"
+    },
+    {
+      "key": "humanoid-task",
+      "prompt": "Use case: ads-marketing. Asset type: website background photograph for an independent mobile-robot design concept. Wide 16:9 realistic high-end robotics concept photograph of a single unbranded humanoid mobile robot in a bright warehouse aisle, two legs and two arms, simple featureless sensor face, white graphite materials with pale blue details. Carrying a small tote in both hands while walking, shelves with neutral cartons recede behind it. Natural joints and balanced stance, cool daylight, subject near center right. No people, no glowing holograms. No text, no typography, no logos, no watermark. This is a speculative visualization, not a photo of a delivered product. Render one continuous landscape image, no collage.",
+      "file": "public/assets/humanoid-task.webp"
+    },
+    {
+      "key": "tracked-inspection",
+      "prompt": "Use case: ads-marketing. Asset type: website background photograph for an independent mobile-robot design concept. Wide 16:9 premium realistic robotics concept photograph of a compact tracked inspection mobile robot in a spacious industrial underground service tunnel. Exactly two rubber caterpillar tracks, white-gray robust body with pale blue accents, a modest camera and lidar mast, no weapon or manipulator. Tunnel lamps and distant piping, cool steel palette, believable environmental detail. Subject foreground right, wide view, clear enough for a website background. No text, no typography, no logos, no watermark. This is a speculative visualization, not a photo of a delivered product. Render one continuous landscape image, no collage.",
+      "file": "public/assets/tracked-inspection.webp"
+    },
+    {
+      "key": "warehouse-transport",
+      "prompt": "Use case: ads-marketing. Asset type: website background photograph for an independent mobile-robot design concept. Wide 16:9 realistic premium industrial concept photograph of two unbranded low-profile wheeled autonomous mobile robots transporting enclosed tote racks in a bright distribution warehouse. White gray robotics, small pale-blue status lights, clean concrete floor, orderly shelving, three-quarter view. Main robot centered with visible wheels and lidar. Cool daylight, no yellow or orange visual accents, no stationary robot arms. No text, no typography, no logos, no watermark. This is a speculative visualization, not a photo of a delivered product. Render one continuous landscape image, no collage.",
+      "file": "public/assets/warehouse-transport.webp"
+    },
+    {
+      "key": "robot-integration",
+      "prompt": "Use case: ads-marketing. Asset type: website background photograph for an independent mobile-robot design concept. Wide 16:9 high-end realistic product concept photograph of a wheeled mobile manipulator in a clean robotics laboratory, one collaborative arm on a broad white graphite wheeled AMR base with lidar. Arm gently reaches toward a simple parts tray beside it. Wide camera frame, wheels obvious, subtle light blue detailing, soft blue-white daylight, restrained industrial materials, no people or logos. No text, no typography, no logos, no watermark. This is a speculative visualization, not a photo of a delivered product. Render one continuous landscape image, no collage.",
+      "file": "public/assets/robot-integration.webp"
+    }
+  ]
+}
