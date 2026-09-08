@@ -7,9 +7,9 @@ const VERSIONED_PUBLIC_ASSET = /\.(?:css|js|png|jpe?g|svg|webp|ico)$/u;
 const STABLE_PUBLIC_ASSET = /\.(?:woff2?|png|jpe?g|svg|webp|ico|mp4)$/u;
 
 const LANGUAGE_SITES = {
-  en: { home: "/index.en", oem: "/oem/en/", why: "/why/en/", notFound: "/404", contentLanguage: "en" },
-  zh: { home: "/index.zh", oem: "/oem/zh/", why: "/why/zh/", notFound: "/404.zh", contentLanguage: "zh-CN" },
-  ja: { home: "/index.ja", oem: "/oem/ja/", why: "/why/ja/", notFound: "/404.ja", contentLanguage: "ja-JP" },
+  en: { home: "/index.en", oem: "/oem/en/", why: "/why/en/", robots: "/robots/en/", notFound: "/404", contentLanguage: "en" },
+  zh: { home: "/index.zh", oem: "/oem/zh/", why: "/why/zh/", robots: "/robots/zh/", notFound: "/404.zh", contentLanguage: "zh-CN" },
+  ja: { home: "/index.ja", oem: "/oem/ja/", why: "/why/ja/", robots: "/robots/ja/", notFound: "/404.ja", contentLanguage: "ja-JP" },
 };
 
 const CANONICAL_HOSTS = {
@@ -29,6 +29,7 @@ const LOCALE_RESOURCE_PATH = /^\/index\.(en|zh|ja)\.html$/;
 const LEGACY_OEM_PATH = /^\/founding-oem(?:\.(en|zh|ja|ar|de))?(?:\.html)?\/?$/;
 const INTERNAL_OEM_PATH = /^\/oem\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
 const INTERNAL_WHY_PATH = /^\/why\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
+const INTERNAL_ROBOT_PATH = /^\/robots\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
 const NOT_FOUND_PATH = /^\/404(?:\.(en|zh|ja))?(?:\.html)?\/?$/;
 
 function jsonResponse(body, status = 200, extraHeaders = {}) {
@@ -266,6 +267,9 @@ function redirectLanguageDomain(url, language) {
   } else if (url.pathname === "/why-originmind" || INTERNAL_WHY_PATH.test(url.pathname)) {
     destination.pathname = "/why-originmind";
     destination.searchParams.set("lang", language);
+  } else if (/^\/robot-products\/?$/.test(url.pathname) || INTERNAL_ROBOT_PATH.test(url.pathname)) {
+    destination.pathname = "/robot-products";
+    destination.searchParams.set("lang", language);
   }
   return new Response(null, {
     status: 308,
@@ -350,7 +354,7 @@ export default {
       if (url.pathname === VISITS_ENDPOINT) return handleVisits(request, env, url);
       if (url.pathname === "/api/oem-applications") return handleOemApplication(request, env, url);
 
-      if ((url.pathname === "/" || url.pathname === "/founding-oem" || url.pathname === "/why-originmind") && url.searchParams.has("lang")) {
+      if ((url.pathname === "/" || url.pathname === "/founding-oem" || url.pathname === "/why-originmind" || url.pathname === "/robot-products") && url.searchParams.has("lang")) {
         const requestedLanguage = normalizedHomeLanguage(url.searchParams.get("lang"));
         if (requestedLanguage) return rememberLanguageRedirect(url, requestedLanguage, url.pathname);
         const destination = new URL(url);
@@ -411,6 +415,20 @@ export default {
       if (url.pathname === "/why-originmind") {
         const response = await env.ASSETS.fetch(assetRequest(request, url, site.why));
         return withLanguageHeaders(response, language, isUnifiedHomeHost(url.hostname));
+      }
+
+      const internalRobot = url.pathname.match(INTERNAL_ROBOT_PATH);
+      if (internalRobot || url.pathname === "/robot-products/") {
+        const destination = new URL(url);
+        destination.pathname = "/robot-products";
+        if (internalRobot) destination.searchParams.set("lang", internalRobot[1]);
+        return new Response(null, { status: 308, headers: { "Cache-Control": "public, max-age=3600", Location: destination.toString() } });
+      }
+
+      if (url.pathname === "/robot-products") {
+        if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+        const response = await env.ASSETS.fetch(assetRequest(request, url, site.robots));
+        return response.status === 404 ? renderNotFound(request, env, url, language) : withLanguageHeaders(response, language, isUnifiedHomeHost(url.hostname));
       }
 
       const explicitNotFound = url.pathname.match(NOT_FOUND_PATH);
