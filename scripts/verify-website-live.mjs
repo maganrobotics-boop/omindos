@@ -19,7 +19,7 @@ async function check(name, callback) {
   }
 }
 
-for (const [language, contentLanguage] of [['zh', 'zh-CN'], ['en', 'en'], ['ja', 'ja-JP']]) {
+for (const [language, contentLanguage] of [['zh', 'zh-CN'], ['en', 'en']]) {
   await Promise.all(['/founding-oem', '/why-originmind', '/robot-products'].map(path => check(`${language} ${path}`, async () => {
     const response = await request(`https://omindos.ai${path}`, { Cookie: `originmind_language=${language}` });
     assert.equal(response.status, 200);
@@ -118,9 +118,15 @@ for (const asset of [
     assert.equal(response.status, 404);
   });
 }
-await check('Japanese homepage', async () => {
+await check('Japanese homepage redirects to English', async () => {
   const response = await request('https://omindos.ai/ja/');
-  assert.equal(response.status, 200); assert.equal(response.headers.get('Content-Language'), 'ja-JP');
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get('Location'), 'https://omindos.ai/en/');
+  await response.body?.cancel();
+});
+await check('Japanese brochure removed', async () => {
+  const response = await request('https://omindos.ai/assets/brochures/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_JA.pdf');
+  assert.equal(response.status, 404);
   await response.body?.cancel();
 });
 await check('OEM endpoint accepts no public listing', async () => {

@@ -4595,101 +4595,8 @@ html[lang="zh-CN"] .product-section .logic-section-heading h2 {
   .oem-form { padding-inline: 14px; }
 }
 
-
-/* Japanese edition: natural Japanese typography and three-language navigation. */
-.language-switch a[data-language="ja"] {
-  min-width: 54px;
-}
-
 .language-switch a[data-language="de"] {
   min-width: 58px;
-}
-
-html[lang="ja"] {
-  --ja-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", YuGothic, Meiryo, "Noto Sans JP", system-ui, sans-serif;
-  --sans: var(--ja-sans);
-  --display: var(--ja-sans);
-}
-
-html[lang="ja"] body {
-  font-kerning: normal;
-  font-feature-settings: "palt" 1;
-}
-
-html[lang="ja"] .site-nav a {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-html[lang="ja"] .logic-hero-copy h1 {
-  max-width: 800px;
-  font-size: clamp(45px, 4.8vw, 66px);
-  line-height: 1.24;
-  letter-spacing: -0.035em;
-}
-
-html[lang="ja"] .logic-hero-copy > p:not(.eyebrow),
-html[lang="ja"] .logic-section-heading > p:not(.eyebrow),
-html[lang="ja"] .contact-copy > p:not(.eyebrow) {
-  line-height: 1.9;
-}
-
-html[lang="ja"] .logic-section-heading h2,
-html[lang="ja"] .contact-copy h2 {
-  font-size: clamp(34px, 3.7vw, 50px);
-  line-height: 1.38;
-  letter-spacing: -0.025em;
-}
-
-html[lang="ja"] .product-section .logic-section-heading h2 {
-  max-width: 900px;
-  font-size: clamp(34px, 3.55vw, 48px);
-  line-height: 1.38;
-}
-
-html[lang="ja"] .product-bridge h3,
-html[lang="ja"] .application-card header h3,
-html[lang="ja"] .advantage-flow h3,
-html[lang="ja"] .timeline-list h3,
-html[lang="ja"] .process-line h3,
-html[lang="ja"] .track-card > header span,
-html[lang="ja"] .founding-value-grid h3 {
-  line-height: 1.48;
-  letter-spacing: -0.015em;
-}
-
-html[lang="ja"] .application-card header p,
-html[lang="ja"] .product-bridge p,
-html[lang="ja"] .advantage-flow p,
-html[lang="ja"] .track-card li,
-html[lang="ja"] .timeline-list p,
-html[lang="ja"] .process-line p {
-  line-height: 1.82;
-}
-
-html[lang="ja"] .compound-line strong {
-  font-size: clamp(28px, 3.3vw, 46px);
-  line-height: 1.35;
-  letter-spacing: -0.025em;
-}
-
-html[lang="ja"] .founding-hero h1 {
-  max-width: 900px;
-  font-size: clamp(40px, 4.35vw, 60px);
-  line-height: 1.32;
-  letter-spacing: -0.03em;
-}
-
-html[lang="ja"] .founding-lead {
-  line-height: 1.92;
-}
-
-html[lang="ja"] .founding-badge,
-html[lang="ja"] .founding-signal dd,
-html[lang="ja"] .track-price strong,
-html[lang="ja"] .timeline-list time {
-  letter-spacing: 0;
 }
 
 @media (max-width: 640px) {
@@ -4707,41 +4614,8 @@ html[lang="ja"] .timeline-list time {
     min-width: 31px;
   }
 
-  .language-switch a[data-language="ja"] {
-    min-width: 46px;
-  }
-
   .menu-toggle {
     flex: 0 0 auto;
-  }
-
-  html[lang="ja"] .logic-hero-copy h1 {
-    font-size: 38px;
-    line-height: 1.3;
-  }
-
-  html[lang="ja"] .logic-section-heading h2,
-  html[lang="ja"] .contact-copy h2,
-  html[lang="ja"] .product-section .logic-section-heading h2 {
-    font-size: 30px;
-    line-height: 1.42;
-  }
-
-  html[lang="ja"] .logic-hero-copy > p:not(.eyebrow),
-  html[lang="ja"] .logic-section-heading > p:not(.eyebrow),
-  html[lang="ja"] .contact-copy > p:not(.eyebrow) {
-    font-size: 16px;
-    line-height: 1.88;
-  }
-
-  html[lang="ja"] .founding-hero h1 {
-    font-size: 30px;
-    line-height: 1.4;
-  }
-
-  html[lang="ja"] .founding-lead {
-    font-size: 16px;
-    line-height: 1.9;
   }
 }
 
@@ -4751,7 +4625,7 @@ html[lang="ja"] .timeline-list time {
   }
 }
 
-/* V10.1 Japan Release — justified editorial copy across English, Chinese and Japanese.
+/* V10.1 bilingual release — justified editorial copy across English and Chinese.
    Long-form copy is justified; headings, navigation, buttons, labels, form controls,
    numerical data and short taglines retain their natural alignment. */
 .logic-home .logic-hero-copy > p:not(.eyebrow),
@@ -4852,57 +4726,65 @@ html[lang="de"] .founding-hero h1 {
 }
 
 html[lang="zh-CN"] .logic-home .logic-hero-copy > p:not(.eyebrow),
+
+
 html[lang="zh-CN"] .logic-home .logic-section-heading > p:not(.eyebrow),
+
+
 html[lang="zh-CN"] .logic-home .product-bridge p,
+
+
 html[lang="zh-CN"] .logic-home .application-card header p,
+
+
 html[lang="zh-CN"] .logic-home .advantage-flow p,
+
+
 html[lang="zh-CN"] .logic-home .contact-copy > p:not(.eyebrow),
+
+
 html[lang="zh-CN"] .site-footer .visitor-copy > p:not(.eyebrow):not(.visitor-status),
+
+
 html[lang="zh-CN"] .founding-page .founding-lead,
+
+
 html[lang="zh-CN"] .founding-page .development-notice,
+
+
 html[lang="zh-CN"] .founding-page .logic-section-heading > p:not(.eyebrow),
+
+
 html[lang="zh-CN"] .founding-page .founding-value-grid p,
+
+
 html[lang="zh-CN"] .founding-page .track-card li,
+
+
 html[lang="zh-CN"] .founding-page .track-note,
+
+
 html[lang="zh-CN"] .founding-page .startup-condition span,
+
+
 html[lang="zh-CN"] .founding-page .startup-reminder,
+
+
 html[lang="zh-CN"] .founding-page .timeline-list p,
+
+
 html[lang="zh-CN"] .founding-page .process-line p,
+
+
 html[lang="zh-CN"] .founding-page .apply-copy > p:not(.eyebrow):not(.privacy-note),
-html[lang="zh-CN"] .founding-page .privacy-note,
-html[lang="ja"] .logic-home .logic-hero-copy > p:not(.eyebrow),
-html[lang="ja"] .logic-home .logic-section-heading > p:not(.eyebrow),
-html[lang="ja"] .logic-home .product-bridge p,
-html[lang="ja"] .logic-home .application-card header p,
-html[lang="ja"] .logic-home .advantage-flow p,
-html[lang="ja"] .logic-home .contact-copy > p:not(.eyebrow),
-html[lang="ja"] .site-footer .visitor-copy > p:not(.eyebrow):not(.visitor-status),
-html[lang="ja"] .founding-page .founding-lead,
-html[lang="ja"] .founding-page .development-notice,
-html[lang="ja"] .founding-page .logic-section-heading > p:not(.eyebrow),
-html[lang="ja"] .founding-page .founding-value-grid p,
-html[lang="ja"] .founding-page .track-card li,
-html[lang="ja"] .founding-page .track-note,
-html[lang="ja"] .founding-page .startup-condition span,
-html[lang="ja"] .founding-page .startup-reminder,
-html[lang="ja"] .founding-page .timeline-list p,
-html[lang="ja"] .founding-page .process-line p,
-html[lang="ja"] .founding-page .apply-copy > p:not(.eyebrow):not(.privacy-note),
-html[lang="ja"] .founding-page .privacy-note {
+
+
+html[lang="zh-CN"] .founding-page .privacy-note {
   text-justify: inter-character;
   line-break: strict;
 }
 
-/* Preserve the final Japanese hero scale while restoring the original layout alignment. */
-html[lang="ja"] .logic-hero-copy h1 {
-  font-size: clamp(45px, 4.2vw, 56px);
-}
-
 @media (max-width: 640px) {
-  html[lang="ja"] .logic-hero-copy h1 {
-    font-size: clamp(26px, 8.2vw, 33px);
-    line-height: 1.42;
-  }
 }
 
 /* V1.3.6 — real field-validation cases */
@@ -5177,9 +5059,9 @@ html[lang="en"] .validation-story dd {
 }
 
 html[lang="zh-CN"] .validation-lead,
-html[lang="zh-CN"] .validation-story dd,
-html[lang="ja"] .validation-lead,
-html[lang="ja"] .validation-story dd {
+
+
+html[lang="zh-CN"] .validation-story dd {
   text-justify: inter-character;
   line-break: strict;
 }
@@ -5773,8 +5655,9 @@ html[lang="ja"] .validation-story dd {
 }
 
 .mujin-light-section .logic-section-heading h2,
-html[lang="zh-CN"] .mujin-light-section .logic-section-heading h2,
-html[lang="ja"] .mujin-light-section .logic-section-heading h2 {
+
+
+html[lang="zh-CN"] .mujin-light-section .logic-section-heading h2 {
   max-width: 940px;
   color: var(--light-ink);
   font-size: clamp(38px, 4.35vw, 58px);
@@ -5782,16 +5665,16 @@ html[lang="ja"] .mujin-light-section .logic-section-heading h2 {
   letter-spacing: -0.045em;
 }
 
-html[lang="zh-CN"] .mujin-light-section .logic-section-heading h2,
-html[lang="ja"] .mujin-light-section .logic-section-heading h2 {
+html[lang="zh-CN"] .mujin-light-section .logic-section-heading h2 {
   font-size: clamp(36px, 4vw, 52px);
   line-height: 1.2;
   letter-spacing: -0.035em;
 }
 
 .mujin-light-section .logic-section-heading > p:not(.eyebrow),
-html[lang="zh-CN"] .mujin-light-section .logic-section-heading > p:not(.eyebrow),
-html[lang="ja"] .mujin-light-section .logic-section-heading > p:not(.eyebrow) {
+
+
+html[lang="zh-CN"] .mujin-light-section .logic-section-heading > p:not(.eyebrow) {
   max-width: 800px;
   margin-top: 20px;
   color: var(--light-copy);
@@ -5870,8 +5753,9 @@ html[lang="ja"] .mujin-light-section .logic-section-heading > p:not(.eyebrow) {
 }
 
 .mujin-light-section .application-card header h3,
-html[lang="zh-CN"] .mujin-light-section .application-card header h3,
-html[lang="ja"] .mujin-light-section .application-card header h3 {
+
+
+html[lang="zh-CN"] .mujin-light-section .application-card header h3 {
   color: var(--light-ink);
   font-size: clamp(25px, 2.4vw, 34px);
 }
@@ -6047,14 +5931,16 @@ html[lang="ja"] .mujin-light-section .application-card header h3 {
   }
 
   .mujin-light-section .logic-section-heading h2,
-  html[lang="zh-CN"] .mujin-light-section .logic-section-heading h2,
-  html[lang="ja"] .mujin-light-section .logic-section-heading h2 {
+
+
+  html[lang="zh-CN"] .mujin-light-section .logic-section-heading h2 {
     font-size: 33px;
   }
 
   .mujin-light-section .logic-section-heading > p:not(.eyebrow),
-  html[lang="zh-CN"] .mujin-light-section .logic-section-heading > p:not(.eyebrow),
-  html[lang="ja"] .mujin-light-section .logic-section-heading > p:not(.eyebrow) {
+
+
+  html[lang="zh-CN"] .mujin-light-section .logic-section-heading > p:not(.eyebrow) {
     font-size: 16px;
   }
 
@@ -6484,14 +6370,10 @@ html[lang="ja"] .mujin-light-section .application-card header h3 {
     line-height: 1.18;
   }
 
-  html[lang="ja"] .logic-hero-copy h1 {
-    font-size: 31px;
-    line-height: 1.38;
-  }
-
   .logic-hero-copy > p:not(.eyebrow),
-  html[lang="zh-CN"] .logic-hero-copy > p:not(.eyebrow),
-  html[lang="ja"] .logic-hero-copy > p:not(.eyebrow) {
+
+
+  html[lang="zh-CN"] .logic-hero-copy > p:not(.eyebrow) {
     margin-block: 16px;
     font-size: 17px;
     line-height: 1.7;
@@ -6587,19 +6469,16 @@ html[lang="ja"] .mujin-light-section .application-card header h3 {
     line-height: 1.25;
   }
 
-  html[lang="ja"] .logic-section-heading h2,
-  html[lang="ja"] .contact-copy h2,
-  html[lang="ja"] .product-section .logic-section-heading h2 {
-    font-size: 29px;
-    line-height: 1.4;
-  }
-
   .logic-section-heading > p:not(.eyebrow),
+
+
   .contact-copy > p:not(.eyebrow),
+
+
   html[lang="zh-CN"] .logic-section-heading > p:not(.eyebrow),
-  html[lang="zh-CN"] .contact-copy > p:not(.eyebrow),
-  html[lang="ja"] .logic-section-heading > p:not(.eyebrow),
-  html[lang="ja"] .contact-copy > p:not(.eyebrow) {
+
+
+  html[lang="zh-CN"] .contact-copy > p:not(.eyebrow) {
     margin-top: 15px;
     font-size: 16px;
     line-height: 1.72;
@@ -6808,8 +6687,9 @@ html[lang="ja"] .mujin-light-section .application-card header h3 {
   }
 
   .mujin-light-section .application-card header h3,
-  html[lang="zh-CN"] .mujin-light-section .application-card header h3,
-  html[lang="ja"] .mujin-light-section .application-card header h3 {
+
+
+  html[lang="zh-CN"] .mujin-light-section .application-card header h3 {
     font-size: 25px;
   }
 
@@ -7085,8 +6965,9 @@ html[dir="rtl"] .founding-page .founding-signal strong {
     min-width: 32px;
   }
 
-  .language-switch a[data-language="ja"],
   .language-switch a[data-language="ar"],
+
+
   .language-switch a[data-language="de"] {
     min-width: 48px;
   }
@@ -7102,8 +6983,11 @@ html[dir="rtl"] .founding-page .founding-signal strong {
   }
 
   .language-switch a,
-  .language-switch a[data-language="ja"],
+
+
   .language-switch a[data-language="ar"],
+
+
   .language-switch a[data-language="de"] {
     min-width: 29px;
     width: 29px;

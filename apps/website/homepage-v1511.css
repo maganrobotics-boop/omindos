@@ -216,8 +216,7 @@
 .v1511-hero-footnote{margin-top:22px}
 .v1511-hero-media>img{aspect-ratio:1.4}
 .v1511-site .v1511-heading h2{max-width:1000px}
-.v1511-site:lang(zh) :is(h1,h2,h3),.v1511-site:lang(ja) :is(h1,h2,h3){line-break:strict;word-break:normal;overflow-wrap:break-word;letter-spacing:-.015em}
-.v1511-site:lang(ja) :is(.v1511-heading h2,.v1511-detail-hero h1){line-height:1.5}
+.v1511-site:lang(zh) :is(h1,h2,h3) {line-break:strict;word-break:normal;overflow-wrap:break-word;letter-spacing:-.015em}
 .v1511-site .v15-button{align-items:center;justify-content:space-between;gap:12px;text-align:start}
 .v1511-site .v15-button>span[aria-hidden]{flex-shrink:0}
 .v1511-cooperation-bottom{justify-content:flex-end}
@@ -247,7 +246,6 @@
  .v1513-capability-list li{font-size:14px;padding:5px 9px}
  .v1511-hero-media>img{aspect-ratio:1.6}
  .v1511-site .v1511-heading h2{font-size:26px}
- .v1511-site:lang(ja) .v1511-heading h2{font-size:25px}
  .v1514-product-docs{margin-top:18px;padding:0 20px}
  .v1514-product-docs>summary{min-height:80px;padding:18px 0;gap:18px}
  .v1514-product-docs summary strong{font-size:16px}

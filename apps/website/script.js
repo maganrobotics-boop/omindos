@@ -4,11 +4,10 @@
   const root = document.documentElement;
   const LANGUAGE_STORAGE_KEY = "originmind.language";
   const LANGUAGE_COOKIE = "originmind_language";
-  const HOME_PATH = /^\/(?:index(?:\.(?:en|zh|ja))?(?:\.html)?)?\/?$/u;
+  const HOME_PATH = /^\/(?:index(?:\.(?:en|zh))?(?:\.html)?)?\/?$/u;
   const LANGUAGE_RESOURCES = {
     en: { file: "/index.en.html", htmlLang: "en", locale: "en-US", hreflang: "en" },
     zh: { file: "/index.zh.html", htmlLang: "zh-CN", locale: "zh-CN", hreflang: "zh-CN" },
-    ja: { file: "/index.ja.html", htmlLang: "ja", locale: "ja-JP", hreflang: "ja-JP" },
   };
   const languageCodes = Object.keys(LANGUAGE_RESOURCES);
   let pageController = null;
@@ -19,7 +18,6 @@
   const normalizeLanguage = (value) => {
     const language = String(value || "").trim().toLowerCase();
     if (language === "zh" || language.startsWith("zh-")) return "zh";
-    if (language === "ja" || language.startsWith("ja-")) return "ja";
     return "en";
   };
 
@@ -115,7 +113,6 @@
     const messages = {
       en: "Language switching is temporarily unavailable. Please try again.",
       zh: "语言切换暂时不可用，请稍后重试。",
-      ja: "言語の切り替えが一時的に利用できません。もう一度お試しください。",
     };
     let status = document.querySelector("[data-language-status]");
     if (!status) {
@@ -138,7 +135,6 @@
     const legacySites = {
       en: { origin: "https://omindos.ai", preview: "../en/", hreflang: "en" },
       zh: { origin: "https://omindos.ai", preview: "../zh/", hreflang: "zh-CN" },
-      ja: { origin: "https://omindos.ai", preview: "../ja/", hreflang: "ja-JP" },
     };
     const host = window.location.hostname.toLowerCase();
     const isProduction = host === "omindos.ai" || host === "www.omindos.ai" || host === "originmindos.com" || host.endsWith(".originmindos.com") || host === "originmindos.cn" || host.endsWith(".originmindos.cn");
@@ -409,10 +405,6 @@
         zh: {
           unavailable: "实时统计暂不可用，网站其他功能不受影响。",
           live: "数据从访客地图上线后开始累计，仅保留国家级汇总。",
-        },
-        ja: {
-          unavailable: "アクセス統計は一時的にご利用いただけません。ウェブサイトのその他の機能には影響ありません。",
-          live: "本マップの公開後から集計を開始し、国・地域別の集計値のみを保存しています。",
         },
       }[language];
       const numberFormat = new Intl.NumberFormat(locale);

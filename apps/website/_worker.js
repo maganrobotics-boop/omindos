@@ -3,35 +3,34 @@ const LANGUAGE_COOKIE = "originmind_language";
 const PRIVACY_VERSION = "2026-09-09";
 const MINUTE_IN_MS = 60 * 1000;
 const RECENT_RETENTION_MINUTES = 2 * 24 * 60;
-const ROBOT_BROCHURE_PATH = /^\/assets\/brochures\/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_(EN|ZH|JA)\.pdf$/;
+const ROBOT_BROCHURE_PATH = /^\/assets\/brochures\/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_(EN|ZH)\.pdf$/;
 const VERSIONED_PUBLIC_ASSET = /\.(?:css|js|png|jpe?g|svg|webp|ico)$/u;
 const STABLE_PUBLIC_ASSET = /\.(?:woff2?|png|jpe?g|svg|webp|ico|mp4)$/u;
 
 const LANGUAGE_SITES = {
   en: { home: "/index.en", oem: "/oem/en/", why: "/why/en/", robots: "/robots/en/", notFound: "/404", contentLanguage: "en" },
   zh: { home: "/index.zh", oem: "/oem/zh/", why: "/why/zh/", robots: "/robots/zh/", notFound: "/404.zh", contentLanguage: "zh-CN" },
-  ja: { home: "/index.ja", oem: "/oem/ja/", why: "/why/ja/", robots: "/robots/ja/", notFound: "/404.ja", contentLanguage: "ja-JP" },
 };
 
 const CANONICAL_HOSTS = {
   "originmindos.com": "omindos.ai",
   "www.originmindos.com": "omindos.ai",
   "www.omindos.ai": "omindos.ai",
+  "jp.originmindos.com": "omindos.ai",
 };
 
 const LANGUAGE_REDIRECT_HOSTS = {
   "originmindos.cn": "zh",
   "www.originmindos.cn": "zh",
-  "jp.originmindos.com": "ja",
 };
 
-const LEGACY_HOME_PATH = /^\/index(?:\.(?:en|zh|ja|ar|de))?(?:\.html)?\/?$/;
-const LOCALE_RESOURCE_PATH = /^\/index\.(en|zh|ja)\.html$/;
+const LEGACY_HOME_PATH = /^\/index(?:\.(?:en|zh|ar|de))?(?:\.html)?\/?$/;
+const LOCALE_RESOURCE_PATH = /^\/index\.(en|zh)\.html$/;
 const LEGACY_OEM_PATH = /^\/founding-oem(?:\.(en|zh|ja|ar|de))?(?:\.html)?\/?$/;
-const INTERNAL_OEM_PATH = /^\/oem\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
-const INTERNAL_WHY_PATH = /^\/why\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
-const INTERNAL_ROBOT_PATH = /^\/robots\/(en|zh|ja)(?:\/index(?:\.html)?)?\/?$/;
-const NOT_FOUND_PATH = /^\/404(?:\.(en|zh|ja))?(?:\.html)?\/?$/;
+const INTERNAL_OEM_PATH = /^\/oem\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
+const INTERNAL_WHY_PATH = /^\/why\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
+const INTERNAL_ROBOT_PATH = /^\/robots\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
+const NOT_FOUND_PATH = /^\/404(?:\.(en|zh))?(?:\.html)?\/?$/;
 
 function jsonResponse(body, status = 200, extraHeaders = {}) {
   return Response.json(body, {
@@ -101,7 +100,7 @@ async function handleOemApplication(request, env, url) {
     for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
     data = JSON.parse(new TextDecoder().decode(bytes));
   } catch { return errorResponse("Invalid JSON", 400, "invalid_application"); }
-  if (!data || typeof data !== "object" || Array.isArray(data) || data.consent !== true || data.website || !["zh", "en", "ja"].includes(data.language) || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.submissionKey || "")) return errorResponse("Invalid application", 400, "invalid_application");
+  if (!data || typeof data !== "object" || Array.isArray(data) || data.consent !== true || data.website || !["zh", "en"].includes(data.language) || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.submissionKey || "")) return errorResponse("Invalid application", 400, "invalid_application");
   const fields = { company: 200, contact: 100, email: 254, phone: 100, robot: 300, stack: 500, start: 100, quantity: 100, capabilities: 3000, test_unit: 200, track: 30, summary: 5000 };
   const optional = new Set(["phone", "quantity", "summary"]);
   const payload = {};
@@ -166,7 +165,6 @@ async function handleVisits(request, env, url) {
 
 function languageForHostname(hostname) {
   const host = hostname.toLowerCase();
-  if (host === "jp.originmindos.com" || host.endsWith(".jp.originmindos.com")) return "ja";
   if (host === "originmindos.cn" || host.endsWith(".originmindos.cn")) return "zh";
   return "en";
 }
@@ -323,8 +321,8 @@ async function serveRobotBrochure(request, env, url) {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
-// The approved bilingual portal uses URL language selection. Legacy OEM and
-// Japanese pages continue to use the existing language cookie and API bindings.
+// The approved bilingual portal uses URL language selection. Legacy OEM pages
+// retain the existing language cookie and API bindings.
 const PORTAL_ROUTES = new Set([
   "/", "/robots", "/robots/wheel-legged", "/robots/quadruped",
   "/robots/articulated", "/robots/open-frame", "/robots/wheeled", "/robots/dual-arm",
@@ -397,18 +395,13 @@ export default {
         return servePortal(request, env, url, locale, route);
       }
 
-      // Keep the existing Japanese site available through an explicit address.
-      if (url.pathname === "/ja") return portalRedirect(url, "/ja/");
-      if (url.pathname === "/ja/") {
-        if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
-        return withLanguageHeaders(await env.ASSETS.fetch(assetRequest(request, url, LANGUAGE_SITES.ja.home)), "ja", true);
-      }
+
+      if (/^\/(?:ja\/?|index\.ja(?:\.html)?\/?)$/u.test(url.pathname)) return portalRedirect(url, "/en/");
 
       const portalRoute = url.pathname.replace(/\/$/, "") || "/";
       if (PORTAL_ROUTES.has(portalRoute)) {
         if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
         const selected = url.searchParams.get("lang");
-        if (portalRoute === "/" && selected === "ja") return portalRedirect(url, "/ja/", true);
         const locale = selected === "zh" || selected === "cn" ? "cn" : selected === "en" ? "en" : browserPortalLocale(request);
         return portalRedirect(url, `/${locale}${portalRoute === "/" ? "/" : portalRoute + "/"}`, true);
       }
@@ -447,7 +440,7 @@ export default {
       }
 
       if (LEGACY_HOME_PATH.test(url.pathname)) {
-        const legacyLocale = url.pathname.match(/\.(en|zh|ja)(?:\.html)?$/)?.[1];
+        const legacyLocale = url.pathname.match(/\.(en|zh)(?:\.html)?$/)?.[1];
         return portalRedirect(url, legacyLocale ? `/${legacyLocale === "zh" ? "cn" : legacyLocale}/` : "/");
       }
 

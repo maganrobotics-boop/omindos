@@ -18,7 +18,7 @@ const env = { ASSETS: { async fetch(request) {
   }
   return new Response('not found', {status:404});
 }}};
-for (const [lang, contentLanguage] of [['zh','zh-CN'],['en','en'],['ja','ja-JP']]) {
+for (const [lang, contentLanguage] of [['zh','zh-CN'],['en','en']]) {
   for (const path of ['/founding-oem', '/why-originmind', '/robot-products']) {
     test(`${lang}: same-address route ${path}`, async () => {
       const url = `https://omindos.ai${path}`;
@@ -34,12 +34,12 @@ for (const [lang, contentLanguage] of [['zh','zh-CN'],['en','en'],['ja','ja-JP']
 }
 test('robot product aliases and language controls stay on the product page', async () => {
   const sharedScript = await readFile(new URL('script.js', root), 'utf8');
-  for (const lang of ['zh', 'en', 'ja']) {
+  for (const lang of ['zh', 'en']) {
     const alias = await worker.fetch(new Request(`https://omindos.ai/robots/${lang}/index.html`), env);
     assert.equal(alias.status, 308);
     assert.equal(alias.headers.get('Location'), `https://omindos.ai/robot-products?lang=${lang}`);
     const page = await readFile(new URL(`robots/${lang}/index.html`, root), 'utf8');
-    const links = [...page.matchAll(/<a\b[^>]*data-language="(en|zh|ja)"[^>]*>/g)].map(match => {
+    const links = [...page.matchAll(/<a\b[^>]*data-language="(en|zh)"[^>]*>/g)].map(match => {
       const attrs = new Map([['href', match[0].match(/href="([^"]+)"/)[1]]]);
       return { dataset: { language: match[1] }, attrs, classList: { toggle() {} },
         setAttribute(key, value) { attrs.set(key, value); }, removeAttribute(key) { attrs.delete(key); },
@@ -55,7 +55,7 @@ test('robot product aliases and language controls stay on the product page', asy
       expose: value => { update = value; },
     });
     update();
-    assert.equal(links.length, 6);
+    assert.equal(links.length, 4);
     for (const link of links) {
       assert.equal(link.attrs.get('href'), `https://omindos.ai/robot-products?lang=${link.dataset.language}#quote`);
       assert.equal(link.attrs.get('aria-current'), link.dataset.language === lang ? 'page' : undefined);
@@ -91,7 +91,7 @@ test('visitor statistics accept only same-origin writes and expose no public rea
   assert.equal(accepted.status,204);assert.equal(await accepted.text(),'');
 });
 test('each product page downloads its matching PDF without changing the page address',async()=>{
-  for (const lang of ['zh', 'en', 'ja']) {
+  for (const lang of ['zh', 'en']) {
     const filename = `OriginMind_Intelligent_Mobile_Robot_Product_Brochure_${lang.toUpperCase()}.pdf`;
     const home = await worker.fetch(new Request('https://omindos.ai/robot-products', {headers:{Cookie:`originmind_language=${lang}`}}),env);
     assert.equal(home.headers.get('Location'),null);
@@ -299,6 +299,8 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/home/base.css?v=20260909-remediation'));
         assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
         assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
+        assert.ok(html.includes('/assets/omindos-system-overview-20260910.webp'));
+        assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260909-remediation'));
         assert.ok(html.includes('/site.js?v=20260909-remediation'));
@@ -328,15 +330,33 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
   }
 });
 
-test('explicit old homepage links and the Japanese homepage remain reachable', async () => {
-  for (const [legacy, destination] of [['zh', 'cn'], ['en', 'en'], ['ja', 'ja']]) {
+test('explicit old bilingual homepage links remain reachable and Japanese content is removed', async () => {
+  for (const [legacy, destination] of [['zh', 'cn'], ['en', 'en']]) {
     const r = await worker.fetch(new Request(`https://omindos.ai/?lang=${legacy}&source=old`), env);
     assert.equal(r.status, 302); assert.equal(r.headers.get('Location'), `https://omindos.ai/${destination}/?source=old`);
     const alias = await worker.fetch(new Request(`https://omindos.ai/index.${legacy}.html`), env);
     assert.equal(alias.status, 308); assert.equal(alias.headers.get('Location'), `https://omindos.ai/${destination}/`);
   }
-  const japanese = await worker.fetch(new Request('https://omindos.ai/ja/'), env);
-  assert.equal(japanese.status, 200); assert.equal(japanese.headers.get('Content-Language'), 'ja-JP');
+  const obsoleteQuery = await worker.fetch(new Request('https://omindos.ai/?lang=ja&source=old'), env);
+  assert.equal(obsoleteQuery.status, 302);
+  assert.equal(obsoleteQuery.headers.get('Location'), 'https://omindos.ai/en/?source=old');
+  for (const path of ['/ja/', '/index.ja.html']) {
+    const removed = await worker.fetch(new Request(`https://omindos.ai${path}`), env);
+    assert.equal(removed.status, 308, path);
+    assert.equal(removed.headers.get('Location'), 'https://omindos.ai/en/', path);
+  }
+  for (const path of ['/oem/ja/', '/why/ja/', '/robots/ja/', '/404.ja.html']) {
+    const removed = await worker.fetch(new Request(`https://omindos.ai${path}`), env);
+    assert.equal(removed.status, 404, path);
+    assert.notEqual(removed.headers.get('Content-Language'), 'ja-JP', path);
+  }
+  const { payload, send } = await oemFixture();
+  const rejectedJapaneseForm = await send({ ...payload, language: 'ja' });
+  assert.equal(rejectedJapaneseForm.status, 400);
+  for (const file of ['404.ja.html', 'index.ja.html', 'founding-oem.ja.js', 'oem/ja/index.html', 'robots/ja/index.html',
+    'why/ja/index.html', 'assets/brochures/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_JA.pdf']) {
+    await assert.rejects(access(new URL(file, root)), undefined, file);
+  }
   const policy = await readFile(new URL('robots.txt', root), 'utf8');
   assert.doesNotMatch(policy, /Cloudflare Managed|User-agent:/);
   assert.equal((policy.match(/Sitemap:/g) || []).length, 1);
@@ -345,6 +365,7 @@ test('explicit old homepage links and the Japanese homepage remain reachable', a
   assert.ok(sitemap.includes('https://omindos.ai/en/robots/wheeled/'));
   assert.ok(sitemap.includes('https://omindos.ai/cn/privacy/'));
   assert.ok(sitemap.includes('https://omindos.ai/en/privacy/'));
+  assert.doesNotMatch(sitemap, /\/ja\//);
   assert.doesNotMatch(sitemap, /\/robot-products/);
 });
 
@@ -452,7 +473,7 @@ test('navigation breakpoint and skip-link focus enhancement stay aligned', async
 });
 
 test('V1.5.17 keeps collapsed videos and product links while removing the final contact block', async () => {
-  for (const lang of ['en', 'zh', 'ja']) {
+  for (const lang of ['en', 'zh']) {
     const source = await readFile(new URL(`index.${lang}.html`, homepageRoot), 'utf8');
     const sections = [...source.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map(match => match[1]);
     assert.deepEqual(sections.slice(0, 6), ['what', 'tasks', 'production', 'why', 'products', 'company']);
@@ -523,17 +544,14 @@ test('V1.5.17 keeps collapsed videos and product links while removing the final 
 });
 
 test('every updated page loads its own styles and keeps the current shared script', async () => {
-  for (const page of ['index.html', 'index.en.html', 'index.zh.html', 'index.ja.html', ...['en', 'zh', 'ja'].flatMap(lang => [`why/${lang}/index.html`, `oem/${lang}/index.html`, `robots/${lang}/index.html`])]) {
+  for (const page of ['index.html', 'index.en.html', 'index.zh.html', ...['en', 'zh'].flatMap(lang => [`why/${lang}/index.html`, `oem/${lang}/index.html`, `robots/${lang}/index.html`])]) {
     const source = await readFile(new URL(page, homepageRoot), 'utf8');
     if (!page.startsWith('oem/')) {
       assert.match(source, /homepage-v1511\.css/);
       assert.match(source, /homepage-v1511\.js/);
     }
-    if (/(?:\.ja\.html|\/ja\/)/.test(page)) {
-      assert.match(source, /script\.js\?v=202609(?:07-contact|08-products)/);
-    } else {
-      assert.match(source, /script\.js\?v=20260909-remediation/);
-    }
+    assert.match(source, /script\.js\?v=20260909-remediation/);
+    assert.doesNotMatch(source, /(?:data-language="ja"|ja_JP|ja-JP|日本語)/);
     for (const match of source.matchAll(/<link\b[^>]*>/g)) {
       if (!/rel="stylesheet"/.test(match[0])) continue;
       const href = match[0].match(/href="([^"]+)"/)[1].split('?')[0];
