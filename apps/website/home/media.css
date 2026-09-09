@@ -1,0 +1,41 @@
+/* Frame the supplied robot images without cutting off limbs. */
+.origin-media{position:relative;margin:0;min-width:0;overflow:hidden;border-radius:inherit}
+.origin-media>img{display:block;width:100%;height:100%;object-fit:cover}
+.origin-media.is-rendering>img{object-fit:contain;background:#e5e7e9}
+.origin-media>figcaption{position:absolute;left:0;right:0;bottom:0;padding:9px 14px;background:#ffffffed;color:#35414a;font-size:14px;line-height:1.4;letter-spacing:0;text-align:left}
+.split>.origin-media{aspect-ratio:1.22;border-radius:16px}
+.split>.origin-media.is-rendering>img{object-fit:contain}
+.benefits>.origin-media{height:100%;min-height:350px;border-radius:12px}
+.benefits>.origin-media.is-rendering>img{object-fit:contain}
+.card>.origin-media{aspect-ratio:1.6}
+.card>.origin-media img{aspect-ratio:auto;height:100%}
+.card>.mine-field-media>img{object-position:50% 100%;transform-origin:50% 100%}
+.photo-card>.origin-media{position:absolute;inset:0;border-radius:inherit;aspect-ratio:auto}
+.photo-card>.origin-media>figcaption{z-index:1;top:0;bottom:auto;left:auto;max-width:90%;background:#18242add;color:white;font-size:14px}
+.photo-card .card-body{position:relative;z-index:2}
+.menu-aside>.origin-media{aspect-ratio:1.6;border-radius:12px}
+.origin-platforms{align-items:start;gap:24px}
+.origin-platforms>figure{margin:0;flex:1 1 150px;max-width:220px}
+.origin-platforms img{width:100%;height:130px;object-fit:contain;background:#e5e7e9;border-radius:8px}
+.origin-platforms figcaption{font-size:14px;margin-top:12px}
+.platform-note{font-size:14px;color:#616161;margin-top:22px}
+.study-badge{position:static;justify-content:center;border:0;border-radius:0;box-shadow:none;background:#ededed;padding:14px;font-size:14px}
+@media(max-width:700px){
+ .split>.origin-media{aspect-ratio:1.35}
+ .benefits>.origin-media{height:auto;min-height:0;aspect-ratio:1.2}
+ .origin-platforms{gap:20px 14px}
+ .origin-platforms>figure{flex-basis:calc(50% - 14px);max-width:none}
+ .origin-platforms img{height:115px}
+ .origin-media>figcaption{padding:7px 10px;font-size:14px}
+}
+/* Keep supplied interface and application images complete, with captions below. */
+.split>.origin-media.is-natural,.benefits>.origin-media.is-natural{aspect-ratio:auto;height:auto;min-height:0;align-self:center}
+.origin-media.is-natural>img{height:auto;object-fit:contain}
+.origin-media.is-natural>figcaption{position:static}
+/* Frame the real Unitree robot and OriginMind hardware mounted on its back. */
+.photo-card>.integration-media>img{object-position:57% 48%;transform:scale(1.28);transform-origin:57% 48%}
+.photo-card:hover>.integration-media>img{transform:scale(1.31)}
+.photo-card>.stairs-media>img{object-fit:cover;object-position:50% 42%}
+@media(max-width:700px){
+ .photo-card>.stairs-media>img{object-fit:cover;object-position:53% 42%}
+}

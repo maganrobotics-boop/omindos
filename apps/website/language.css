@@ -1,0 +1,7 @@
+/* Chinese typography; language selection is handled by the URL. */
+html[lang="zh-CN"] body{font-family:Arial,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;line-height:1.7}
+html[lang="zh-CN"] h1,html[lang="zh-CN"] h2,html[lang="zh-CN"] h3,html[lang="zh-CN"] h4{letter-spacing:0;line-height:1.3}
+html[lang="zh-CN"] .eyebrow,html[lang="zh-CN"] .lead,html[lang="zh-CN"] .mobile-menu>a{letter-spacing:0}
+html[lang="zh-CN"] .eyebrow{text-transform:none}
+html[lang="zh-CN"] .page-intro h1{font-size:clamp(36px,4.4vw,68px)}
+html[lang="zh-CN"] .lead{line-height:1.65}

@@ -338,6 +338,54 @@ async function serveRobotBrochure(request, env, url) {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
+// The approved bilingual portal uses URL language selection. Legacy OEM and
+// Japanese pages continue to use the existing language cookie and API bindings.
+const PORTAL_ROUTES = new Set([
+  "/", "/robots", "/robots/wheel-legged", "/robots/quadruped",
+  "/robots/articulated", "/robots/open-frame", "/robots/wheeled",
+  "/omindos", "/integration", "/field-work", "/field-work/mining",
+  "/field-work/warehouse", "/mobility", "/about", "/contact",
+]);
+
+function browserPortalLocale(request) {
+  const preferences = (request.headers.get("Accept-Language") || "en")
+    .split(",").map((entry, index) => {
+      const [language, ...parameters] = entry.trim().split(";");
+      const weight = parameters.find(value => value.trim().startsWith("q="));
+      return { language, index, quality: weight ? Number(weight.trim().slice(2)) : 1 };
+    }).filter(entry => Number.isFinite(entry.quality) && entry.quality > 0)
+    .sort((a, b) => b.quality - a.quality || a.index - b.index);
+  return /^zh(?:-|$)/i.test(preferences[0]?.language || "en") ? "cn" : "en";
+}
+
+function portalRedirect(url, pathname, automatic = false) {
+  const destination = new URL(url);
+  destination.pathname = pathname;
+  destination.searchParams.delete("lang");
+  return new Response(null, { status: automatic ? 302 : 308, headers: {
+    Location: destination.toString(),
+    "Cache-Control": automatic ? "private, no-store" : "public, max-age=3600",
+    ...(automatic ? { Vary: "Accept-Language" } : {}),
+  } });
+}
+
+async function servePortal(request, env, url, locale, route) {
+  if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+  const exists = PORTAL_ROUTES.has(route);
+  const assetPath = exists ? `/${locale}${route === "/" ? "/" : route + "/"}` : `/${locale}/404.html`;
+  const response = await env.ASSETS.fetch(assetRequest(request, url, assetPath));
+  const headers = new Headers(response.headers);
+  headers.set("Content-Type", "text/html; charset=utf-8");
+  headers.set("Content-Language", locale === "cn" ? "zh-CN" : "en");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  headers.set("Cache-Control", exists ? "public, max-age=0, must-revalidate" : "no-store");
+  if (!exists) { headers.delete("Location"); headers.set("X-Robots-Tag", "noindex, follow"); }
+  return new Response(request.method === "HEAD" ? null : response.body, {
+    status: exists ? response.status : 404, headers,
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -353,6 +401,31 @@ export default {
 
       if (url.pathname === VISITS_ENDPOINT) return handleVisits(request, env, url);
       if (url.pathname === "/api/oem-applications") return handleOemApplication(request, env, url);
+
+      const explicitPortal = url.pathname.match(/^\/(cn|en)(\/.*)?$/);
+      if (explicitPortal) {
+        const locale = explicitPortal[1];
+        const route = (explicitPortal[2] || "/").replace(/\/index\.html$/, "/").replace(/\/$/, "") || "/";
+        const canonicalPath = `/${locale}${route === "/" ? "/" : route + "/"}`;
+        if (PORTAL_ROUTES.has(route) && url.pathname !== canonicalPath) return portalRedirect(url, canonicalPath);
+        return servePortal(request, env, url, locale, route);
+      }
+
+      // Keep the existing Japanese site available through an explicit address.
+      if (url.pathname === "/ja") return portalRedirect(url, "/ja/");
+      if (url.pathname === "/ja/") {
+        if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+        return withLanguageHeaders(await env.ASSETS.fetch(assetRequest(request, url, LANGUAGE_SITES.ja.home)), "ja", true);
+      }
+
+      const portalRoute = url.pathname.replace(/\/$/, "") || "/";
+      if (PORTAL_ROUTES.has(portalRoute)) {
+        if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+        const selected = url.searchParams.get("lang");
+        if (portalRoute === "/" && selected === "ja") return portalRedirect(url, "/ja/", true);
+        const locale = selected === "zh" || selected === "cn" ? "cn" : selected === "en" ? "en" : browserPortalLocale(request);
+        return portalRedirect(url, `/${locale}${portalRoute === "/" ? "/" : portalRoute + "/"}`, true);
+      }
 
       if ((url.pathname === "/" || url.pathname === "/founding-oem" || url.pathname === "/why-originmind" || url.pathname === "/robot-products") && url.searchParams.has("lang")) {
         const requestedLanguage = normalizedHomeLanguage(url.searchParams.get("lang"));
@@ -387,7 +460,10 @@ export default {
         return withLanguageHeaders(response, language, isUnifiedHomeHost(url.hostname));
       }
 
-      if (LEGACY_HOME_PATH.test(url.pathname)) return permanentRedirect(url, "/");
+      if (LEGACY_HOME_PATH.test(url.pathname)) {
+        const legacyLocale = url.pathname.match(/\.(en|zh|ja)(?:\.html)?$/)?.[1];
+        return portalRedirect(url, legacyLocale ? `/${legacyLocale === "zh" ? "cn" : legacyLocale}/` : "/");
+      }
 
       const legacyOem = url.pathname.match(LEGACY_OEM_PATH);
       const internalOem = url.pathname.match(INTERNAL_OEM_PATH);

@@ -20,7 +20,7 @@ async function check(name, callback) {
 }
 
 for (const [language, contentLanguage] of [['zh', 'zh-CN'], ['en', 'en'], ['ja', 'ja-JP']]) {
-  await Promise.all(['/', '/founding-oem', '/why-originmind'].map(path => check(`${language} ${path}`, async () => {
+  await Promise.all(['/founding-oem', '/why-originmind', '/robot-products'].map(path => check(`${language} ${path}`, async () => {
     const response = await request(`https://omindos.ai${path}`, { Cookie: `originmind_language=${language}` });
     assert.equal(response.status, 200);
     assert.equal(response.headers.get('Content-Language'), contentLanguage);
@@ -29,6 +29,48 @@ for (const [language, contentLanguage] of [['zh', 'zh-CN'], ['en', 'en'], ['ja',
     assert.match(await response.text(), /<html/);
   })));
 }
+
+for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
+  for (const route of ['', 'robots', 'robots/wheel-legged', 'robots/quadruped', 'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'omindos', 'integration', 'field-work', 'field-work/mining', 'field-work/warehouse', 'mobility', 'about', 'contact']) {
+    const path = `/${locale}/${route ? route + '/' : ''}`;
+    await check(`portal ${path}`, async () => {
+      const response = await request(`https://omindos.ai${path}`, { 'Accept-Language': locale === 'cn' ? 'en' : 'zh-CN', Cookie: `originmind_language=${locale === 'cn' ? 'en' : 'zh'}` });
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('Content-Language'), contentLanguage);
+      assert.equal(response.headers.get('Location'), null);
+      const html = await response.text();
+      assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`));
+      assert.ok(html.includes('name="robots" content="index,follow"'));
+    });
+  }
+  await check(`automatic ${locale}`, async () => {
+    const response = await request('https://omindos.ai/?source=deployment', { 'Accept-Language': contentLanguage });
+    assert.equal(response.status, 302);
+    assert.equal(response.headers.get('Location'), `https://omindos.ai/${locale}/?source=deployment`);
+    assert.match(response.headers.get('Cache-Control'), /private, no-store/);
+  });
+  await check(`localized 404 ${locale}`, async () => {
+    const response = await request(`https://omindos.ai/${locale}/deployment-check-not-a-page/`);
+    assert.equal(response.status, 404); assert.equal(response.headers.get('Content-Language'), contentLanguage);
+    await response.body?.cancel();
+  });
+}
+
+for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-interface-source.png']) {
+  await check(`asset ${asset}`, async () => {
+    const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
+    assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);
+  });
+}
+await check('Japanese homepage', async () => {
+  const response = await request('https://omindos.ai/ja/');
+  assert.equal(response.status, 200); assert.equal(response.headers.get('Content-Language'), 'ja-JP');
+  await response.body?.cancel();
+});
+await check('OEM endpoint accepts no public listing', async () => {
+  const response = await request('https://omindos.ai/api/oem-applications');
+  assert.equal(response.status, 405); await response.body?.cancel();
+});
 
 await check('visitor statistics', async () => {
   const response = await request('https://omindos.ai/api/visits');

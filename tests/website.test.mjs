@@ -14,7 +14,7 @@ const env = { ASSETS: { async fetch(request) {
   return new Response('not found', {status:404});
 }}};
 for (const [lang, contentLanguage] of [['zh','zh-CN'],['en','en'],['ja','ja-JP']]) {
-  for (const path of ['/', '/founding-oem', '/why-originmind', '/robot-products']) {
+  for (const path of ['/founding-oem', '/why-originmind', '/robot-products']) {
     test(`${lang}: same-address route ${path}`, async () => {
       const url = `https://omindos.ai${path}`;
       const response = await worker.fetch(new Request(url, {headers:{Cookie:`originmind_language=${lang}`}}),env);
@@ -140,6 +140,75 @@ test('OEM limits repeated new submissions while allowing safe retries', async ()
 
 const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
+
+const portalRoutes = ['', 'robots', 'robots/wheel-legged', 'robots/quadruped',
+  'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'omindos',
+  'integration', 'field-work', 'field-work/mining', 'field-work/warehouse',
+  'mobility', 'about', 'contact'];
+
+test('automatic portal entry follows preferred browser language and preserves query strings', async () => {
+  for (const [accept, locale] of [['zh-CN,zh;q=0.9,en;q=0.8', 'cn'], ['zh-TW,en;q=0.8', 'cn'],
+    ['en-US,zh;q=0.7', 'en'], ['ja,en;q=0.8', 'en'], ['', 'en'], ['en;q=0.5,zh;q=1', 'cn']]) {
+    for (const route of ['', 'robots/open-frame', 'field-work/mining']) {
+      const r = await worker.fetch(new Request(`https://omindos.ai/${route}?source=link`, {
+        headers: { 'Accept-Language': accept, Cookie: `originmind_language=${locale === 'cn' ? 'en' : 'zh'}` },
+      }), env);
+      assert.equal(r.status, 302);
+      assert.equal(r.headers.get('Location'), `https://omindos.ai/${locale}/${route ? route + '/' : ''}?source=link`);
+      assert.match(r.headers.get('Cache-Control'), /private, no-store/);
+      assert.equal(r.headers.get('Vary'), 'Accept-Language');
+    }
+  }
+});
+
+test('all 30 explicit bilingual pages ignore browser, cookie and query language preferences', async () => {
+  for (const locale of ['cn', 'en']) {
+    for (const route of portalRoutes) {
+      const path = `/${locale}/${route ? route + '/' : ''}`;
+      const r = await worker.fetch(new Request(`https://omindos.ai${path}?lang=${locale === 'cn' ? 'en' : 'zh'}`, {
+        headers: { 'Accept-Language': locale === 'cn' ? 'en' : 'zh-CN', Cookie: `originmind_language=${locale === 'cn' ? 'en' : 'zh'}` },
+      }), env);
+      assert.equal(r.status, 200, path);
+      assert.equal(r.headers.get('Location'), null, path);
+      assert.equal(r.headers.get('Content-Language'), locale === 'cn' ? 'zh-CN' : 'en');
+      const html = await r.text();
+      assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`), path);
+      assert.ok(html.includes('name="robots" content="index,follow"'), path);
+      assert.doesNotMatch(html, /data-language=|class="language-switch|mujin|framerusercontent/i);
+      for (const match of html.matchAll(/(?:src|poster|href|data-video-src|data-src)="(\/[^"#]*)"/g)) {
+        const target = new URL(match[1].replaceAll('&amp;', '&'), 'https://omindos.ai').pathname;
+        if (target === '/founding-oem') continue;
+        const asset = /\.[a-z0-9]+$/i.test(target) ? target : target.replace(/\/$/, '') + '/index.html';
+        await access(new URL('.' + asset, root));
+      }
+    }
+    const integration = await readFile(new URL(`${locale}/integration/index.html`, root), 'utf8');
+    assert.ok(integration.includes(`/founding-oem?lang=${locale === 'cn' ? 'zh' : 'en'}`));
+    const head = await worker.fetch(new Request(`https://omindos.ai/${locale}/`, { method: 'HEAD' }), env);
+    assert.equal(head.status, 200); assert.equal(await head.text(), '');
+    const short = await worker.fetch(new Request(`https://omindos.ai/${locale}`), env);
+    assert.equal(short.status, 308); assert.equal(short.headers.get('Location'), `https://omindos.ai/${locale}/`);
+    const missing = await worker.fetch(new Request(`https://omindos.ai/${locale}/does-not-exist/`), env);
+    assert.equal(missing.status, 404); assert.match(missing.headers.get('X-Robots-Tag'), /noindex/);
+    assert.equal(missing.headers.get('Content-Language'), locale === 'cn' ? 'zh-CN' : 'en');
+  }
+});
+
+test('explicit old homepage links and the Japanese homepage remain reachable', async () => {
+  for (const [legacy, destination] of [['zh', 'cn'], ['en', 'en'], ['ja', 'ja']]) {
+    const r = await worker.fetch(new Request(`https://omindos.ai/?lang=${legacy}&source=old`), env);
+    assert.equal(r.status, 302); assert.equal(r.headers.get('Location'), `https://omindos.ai/${destination}/?source=old`);
+    const alias = await worker.fetch(new Request(`https://omindos.ai/index.${legacy}.html`), env);
+    assert.equal(alias.status, 308); assert.equal(alias.headers.get('Location'), `https://omindos.ai/${destination}/`);
+  }
+  const japanese = await worker.fetch(new Request('https://omindos.ai/ja/'), env);
+  assert.equal(japanese.status, 200); assert.equal(japanese.headers.get('Content-Language'), 'ja-JP');
+  const policy = await readFile(new URL('robots.txt', root), 'utf8');
+  assert.match(policy, /User-agent: \*\nAllow: \//);
+  const sitemap = await readFile(new URL('sitemap.xml', root), 'utf8');
+  assert.ok(sitemap.includes('https://omindos.ai/cn/robots/wheeled/'));
+  assert.ok(sitemap.includes('https://omindos.ai/en/robots/wheeled/'));
+});
 
 test('V1.5.17 keeps collapsed videos and product links while removing the final contact block', async () => {
   for (const lang of ['en', 'zh', 'ja']) {
