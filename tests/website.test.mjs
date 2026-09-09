@@ -142,7 +142,7 @@ const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
 
 const portalRoutes = ['', 'robots', 'robots/wheel-legged', 'robots/quadruped',
-  'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'omindos',
+  'robots/articulated', 'robots/humanoid-dual-arm', 'robots/open-frame', 'robots/wheeled', 'omindos',
   'integration', 'field-work', 'field-work/mining', 'field-work/warehouse',
   'mobility', 'about', 'contact'];
 
@@ -152,7 +152,7 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
         .map(match => match[0]).filter(card => /class="(?:sale-image|product-picture)"/.test(card));
-      assert.equal(cards.length, 5);
+      assert.equal(cards.length, 6);
       for (const card of cards) {
         const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
         assert.match(card, new RegExp(`>${isQuadruped ? development : sale}<`, 'i'));
@@ -182,7 +182,7 @@ test('quadruped availability agrees across both homepages, catalogues and produc
 
 test('product details are readable inline and keep model-specific specifications separate', async () => {
   for (const locale of ['cn', 'en']) {
-    for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
+    for (const model of ['wheel-legged', 'quadruped', 'articulated', 'humanoid-dual-arm', 'open-frame', 'wheeled']) {
       const html = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
       const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
       assert.doesNotMatch(main, /href="[^"]+\.(?:pdf|docx|zip)"/i);
