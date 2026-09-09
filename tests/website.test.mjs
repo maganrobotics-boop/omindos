@@ -146,6 +146,38 @@ const portalRoutes = ['', 'robots', 'robots/wheel-legged', 'robots/quadruped',
   'integration', 'field-work', 'field-work/mining', 'field-work/warehouse',
   'mobility', 'about', 'contact'];
 
+test('quadruped availability agrees across both homepages, catalogues and product pages', async () => {
+  for (const [locale, development, sale] of [['cn', '在研', '在售'], ['en', 'IN DEVELOPMENT', 'FOR SALE']]) {
+    for (const route of ['', 'robots']) {
+      const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
+      const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
+        .map(match => match[0]).filter(card => /class="(?:sale-image|product-picture)"/.test(card));
+      assert.equal(cards.length, 5);
+      for (const card of cards) {
+        const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
+        assert.match(card, new RegExp(`>${isQuadruped ? development : sale}<`, 'i'));
+        if (isQuadruped) {
+          assert.doesNotMatch(card, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
+          assert.match(card, /#specifications/);
+          assert.match(card, /#videos/);
+        }
+      }
+    }
+    const page = await readFile(new URL(`${locale}/robots/quadruped/index.html`, root), 'utf8');
+    assert.match(page, new RegExp(`>${development}<`, 'i'));
+    assert.doesNotMatch(page, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
+    assert.match(page, /id="specifications"/);
+    assert.match(page, /id="videos"/);
+    const enquiryLinks = [...page.matchAll(/href="(mailto:[^"]+\?subject=[^"]+)"/g)];
+    assert.equal(enquiryLinks.length, 3);
+    for (const [, href] of enquiryLinks) {
+      const subject = new URL(href.replaceAll('&amp;', '&')).searchParams.get('subject');
+      assert.match(subject, /研发进展|应用需求|development|application/);
+      assert.doesNotMatch(subject, /报价|quotation|demonstration/);
+    }
+  }
+});
+
 test('automatic portal entry follows preferred browser language and preserves query strings', async () => {
   for (const [accept, locale] of [['zh-CN,zh;q=0.9,en;q=0.8', 'cn'], ['zh-TW,en;q=0.8', 'cn'],
     ['en-US,zh;q=0.7', 'en'], ['ja,en;q=0.8', 'en'], ['', 'en'], ['en;q=0.5,zh;q=1', 'cn']]) {

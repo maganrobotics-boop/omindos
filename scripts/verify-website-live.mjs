@@ -41,6 +41,17 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
       const html = await response.text();
       assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`));
       assert.ok(html.includes('name="robots" content="index,follow"'));
+      if (route === '' || route === 'robots') {
+        const quadruped = [...html.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
+          .map(match => match[0]).filter(card => card.includes(`/${locale}/robots/quadruped`));
+        assert.equal(quadruped.length, 1);
+        assert.match(quadruped[0], locale === 'cn' ? />在研</ : />IN DEVELOPMENT</i);
+        assert.doesNotMatch(quadruped[0], />(?:在售|for sale)</i);
+      }
+      if (route === 'robots/quadruped') {
+        assert.match(html, locale === 'cn' ? />在研</ : />IN DEVELOPMENT</i);
+        assert.doesNotMatch(html, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
+      }
     });
   }
   await check(`automatic ${locale}`, async () => {
