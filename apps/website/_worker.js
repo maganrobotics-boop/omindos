@@ -31,6 +31,7 @@ const INTERNAL_OEM_PATH = /^\/oem\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
 const INTERNAL_WHY_PATH = /^\/why\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
 const INTERNAL_ROBOT_PATH = /^\/robots\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
 const NOT_FOUND_PATH = /^\/404(?:\.(en|zh))?(?:\.html)?\/?$/;
+const REMOVED_JAPANESE_PATH = /^\/(?:ja\/?|index\.ja(?:\.html)?\/?|founding-oem\.ja(?:\.html)?\/?|(?:oem|why|robots)\/ja(?:\/index(?:\.html)?)?\/?|404\.ja(?:\.html)?\/?)$/u;
 
 function jsonResponse(body, status = 200, extraHeaders = {}) {
   return Response.json(body, {
@@ -396,7 +397,9 @@ export default {
       }
 
 
-      if (/^\/(?:ja\/?|index\.ja(?:\.html)?\/?)$/u.test(url.pathname)) return portalRedirect(url, "/en/");
+      // Intercept every retired Japanese page before ASSETS.fetch so an older
+      // Cloudflare asset cache cannot continue serving deleted Japanese HTML.
+      if (REMOVED_JAPANESE_PATH.test(url.pathname)) return portalRedirect(url, "/en/");
 
       const portalRoute = url.pathname.replace(/\/$/, "") || "/";
       if (PORTAL_ROUTES.has(portalRoute)) {
