@@ -1,9 +1,12 @@
 const isChinese = document.documentElement.lang === 'zh-CN';
 const ui = (english, chinese) => isChinese ? chinese : english;
 const menuButton=document.querySelector('.menu-toggle');const menu=document.querySelector('.menu-panel');
-function setMenu(open){menu.hidden=!open;menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?ui('Close navigation','关闭导航'):ui('Open navigation','打开导航'));document.body.classList.toggle('menu-open',open);if(open)menu.querySelector('summary,a')?.focus();else menuButton.focus();}
+function setMenu(open,returnFocus=true){menu.hidden=!open;menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?ui('Close navigation','关闭导航'):ui('Open navigation','打开导航'));document.body.classList.toggle('menu-open',open);if(open)menu.querySelector('summary,a')?.focus();else if(returnFocus)menuButton.focus();}
 menuButton?.addEventListener('click',()=>setMenu(menu.hidden));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden)setMenu(false);if(e.key==='Tab'&&!menu.hidden){const f=[menuButton,...menu.querySelectorAll('a,summary,button')].filter(x=>x.getClientRects().length);if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===f.at(-1)){e.preventDefault();f[0].focus();}}});
+matchMedia('(min-width:1100px)').addEventListener('change',event=>{if(event.matches&&menu&&!menu.hidden)setMenu(false,false);});
+const skipLink=document.querySelector('.skip-link[href^="#"]');
+skipLink?.addEventListener('click',()=>{const target=document.querySelector(skipLink.hash);if(!target)return;if(!target.hasAttribute('tabindex'))target.tabIndex=-1;requestAnimationFrame(()=>target.focus({preventScroll:true}));});
 const header=document.querySelector('.header');const scrollHeader=()=>header.classList.toggle('scrolled',scrollY>30||!menu.hidden);addEventListener('scroll',scrollHeader,{passive:true});scrollHeader();
 document.querySelectorAll('[data-carousel]').forEach(button=>button.addEventListener('click',()=>{const track=document.querySelector(button.dataset.carousel);track.scrollBy({left:(track.clientWidth*.8)*(+button.dataset.direction),behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});}));
 document.querySelectorAll('[data-accordion-group] details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)d.parentElement.querySelectorAll('details').forEach(other=>{if(other!==d)other.open=false;});}));

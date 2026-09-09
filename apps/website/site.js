@@ -1,5 +1,12 @@
 const isChinese = document.documentElement.lang === 'zh-CN';
 const ui = (english, chinese) => isChinese ? chinese : english;
+const skipLink = document.querySelector('.skip-link[href^="#"]');
+skipLink?.addEventListener('click', () => {
+  const target = document.querySelector(skipLink.hash);
+  if (!target) return;
+  if (!target.hasAttribute('tabindex')) target.tabIndex = -1;
+  requestAnimationFrame(() => target.focus({preventScroll:true}));
+});
 const menuButton = document.querySelector('.menu-button');
 const menu = document.querySelector('#mobile-menu');
 function setMenu(open, returnFocus = true) {

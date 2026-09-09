@@ -2,8 +2,13 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { DatabaseSync } from 'node:sqlite';
+import { createHash } from 'node:crypto';
 import { readFile, access } from 'node:fs/promises';
 const root = new URL('../apps/website/', import.meta.url);
+function siteFooter(html) {
+  return [...html.matchAll(/<footer\b[^>]*class="[^"]*(?:site-footer|footer)[^"]*"[^>]*>[\s\S]*?<\/footer>/g)]
+    .map(match => match[0]).at(-1);
+}
 const source = await readFile(new URL('_worker.js', root), 'utf8');
 const { default: worker } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const env = { ASSETS: { async fetch(request) {
@@ -73,10 +78,17 @@ test('original legacy-host redirects remain',async()=>{
     const r=await worker.fetch(new Request(`https://${host}/`),env); assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');
   }
 });
-test('visitor statistics binding remains optional and errors are controlled',async()=>{
-  const r=await worker.fetch(new Request('https://omindos.ai/api/visits'),env);assert.equal(r.status,503);assert.equal((await r.json()).enabled,false);
+test('visitor statistics accept only same-origin writes and expose no public read',async()=>{
+  const read=await worker.fetch(new Request('https://omindos.ai/api/visits'),env);
+  assert.equal(read.status,405);assert.equal(read.headers.get('Allow'),'POST');
+  assert.doesNotMatch(await read.text(),/total|countries|last24Hours/);
+  const unavailable=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST'}),env);
+  assert.equal(unavailable.status,503);assert.equal((await unavailable.json()).enabled,false);
   const method=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'DELETE'}),env);assert.equal(method.status,405);
-  const forbidden=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST',headers:{Origin:'https://other.example'}}),{...env,VISITS_DB:{}});assert.equal(forbidden.status,403);
+  const database={prepare(){return{bind(){return this;}}},async batch(){return[];}};
+  const forbidden=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST',headers:{Origin:'https://other.example'}}),{...env,VISITS_DB:database});assert.equal(forbidden.status,403);
+  const accepted=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST',headers:{Origin:'https://omindos.ai'}}),{...env,VISITS_DB:database});
+  assert.equal(accepted.status,204);assert.equal(await accepted.text(),'');
 });
 test('each product page downloads its matching PDF without changing the page address',async()=>{
   for (const lang of ['zh', 'en', 'ja']) {
@@ -123,7 +135,9 @@ test('OEM retries, simultaneous retries and changed content preserve one correct
     assert.deepEqual(Object.keys(receipts[0]), ['receipt']);
     assert.equal(db.prepare('SELECT COUNT(*) n FROM oem_applications').get().n, 1);
     assert.equal((await send({ ...payload, company: 'Changed company' })).status, 409);
-    assert.equal(JSON.parse(db.prepare('SELECT payload_json FROM oem_applications').get().payload_json).company, 'Example Robotics');
+    const stored = JSON.parse(db.prepare('SELECT payload_json FROM oem_applications').get().payload_json);
+    assert.equal(stored.company, 'Example Robotics');
+    assert.equal(stored.consentVersion, '2026-09-09');
   } finally { db.close(); }
 });
 test('OEM limits repeated new submissions while allowing safe retries', async () => {
@@ -144,14 +158,14 @@ const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), '
 const portalRoutes = ['', 'robots', 'robots/wheel-legged', 'robots/quadruped',
   'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'robots/dual-arm', 'omindos',
   'integration', 'field-work', 'field-work/mining', 'field-work/warehouse',
-  'mobility', 'about', 'contact'];
+  'mobility', 'about', 'contact', 'privacy'];
 
 test('quadruped availability agrees across both homepages, catalogues and product pages', async () => {
   for (const [locale, development, sale] of [['cn', '在研', '在售'], ['en', 'IN DEVELOPMENT', 'FOR SALE']]) {
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
-        .map(match => match[0]).filter(card => /class="(?:sale-image|product-picture)"/.test(card));
+        .map(match => match[0]).filter(card => /class="[^"]*\b(?:sale-image|product-picture)\b[^"]*"/.test(card));
       assert.equal(cards.length, 6);
       for (const card of cards) {
         const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
@@ -161,7 +175,7 @@ test('quadruped availability agrees across both homepages, catalogues and produc
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="(\/(?:cn|en)\/robots\/[^"#]+)"/)[1];
         const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
-        assert.deepEqual(actions.map(([, href]) => href), [destination, `/${locale}/contact`]);
+        assert.deepEqual(actions.map(([, href]) => href), [destination, `/${locale}/contact/`]);
         assert.deepEqual(actions.map(([, , label]) => label), locale === 'cn' ? ['产品详情', '联系我们'] : ['Details', 'Contact us']);
         if (isQuadruped) {
           assert.doesNotMatch(card, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
@@ -213,7 +227,6 @@ test('uploaded product demonstrations use accessible players and fast-start MP4 
     'open-frame': ['open-frame-field-demo'],
     'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
     'wheeled': ['mobile-inspection-demo'],
-    'dual-arm': ['dual-arm-digital-twin-demo', 'dual-arm-service-demo'],
   };
   for (const [model, names] of Object.entries(demos)) {
     for (const locale of ['cn', 'en']) {
@@ -275,7 +288,26 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       const html = await r.text();
       assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`), path);
       assert.ok(html.includes('name="robots" content="index,follow"'), path);
+      assert.match(html, /<a class="skip-link" href="#main-content">/);
+      assert.match(html, /<main\b[^>]*\bid="main-content"[^>]*>/);
+      const footer = siteFooter(html);
+      assert.ok(footer, `${path}: site footer`);
+      assert.ok(footer.includes(`href="/${locale}/privacy/"`), `${path}: privacy footer link`);
       assert.doesNotMatch(html, /data-language=|class="language-switch|mujin|framerusercontent/i);
+      assert.ok(html.includes('https://omindos.ai/og-card.png?v=20260909-omindos'), `${path}: social image version`);
+      if (route === '') {
+        assert.ok(html.includes('/home/base.css?v=20260909-remediation'));
+        assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
+        assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
+      } else {
+        assert.ok(html.includes('/site.css?v=20260909-remediation'));
+        assert.ok(html.includes('/site.js?v=20260909-remediation'));
+        if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
+        if (route.startsWith('robots/')) assert.ok(html.includes('/product-details.css?v=20260909-remediation'));
+      }
+      for (const match of html.matchAll(/href="(\/(?:cn|en)\/[^"?#]*)/g)) {
+        if (!/\.[a-z0-9]+$/i.test(match[1])) assert.ok(match[1].endsWith('/'), `${path}: ${match[1]}`);
+      }
       for (const match of html.matchAll(/(?:src|poster|href|data-video-src|data-src)="(\/[^"#]*)"/g)) {
         const target = new URL(match[1].replaceAll('&amp;', '&'), 'https://omindos.ai').pathname;
         if (target === '/founding-oem') continue;
@@ -292,6 +324,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
     const missing = await worker.fetch(new Request(`https://omindos.ai/${locale}/does-not-exist/`), env);
     assert.equal(missing.status, 404); assert.match(missing.headers.get('X-Robots-Tag'), /noindex/);
     assert.equal(missing.headers.get('Content-Language'), locale === 'cn' ? 'zh-CN' : 'en');
+    assert.match(await missing.text(), locale === 'cn' ? /<h1>页面未找到<\/h1>/ : /<h1>Page not found<\/h1>/);
   }
 });
 
@@ -305,10 +338,117 @@ test('explicit old homepage links and the Japanese homepage remain reachable', a
   const japanese = await worker.fetch(new Request('https://omindos.ai/ja/'), env);
   assert.equal(japanese.status, 200); assert.equal(japanese.headers.get('Content-Language'), 'ja-JP');
   const policy = await readFile(new URL('robots.txt', root), 'utf8');
-  assert.match(policy, /User-agent: \*\nAllow: \//);
+  assert.doesNotMatch(policy, /Cloudflare Managed|User-agent:/);
+  assert.equal((policy.match(/Sitemap:/g) || []).length, 1);
   const sitemap = await readFile(new URL('sitemap.xml', root), 'utf8');
   assert.ok(sitemap.includes('https://omindos.ai/cn/robots/wheeled/'));
   assert.ok(sitemap.includes('https://omindos.ai/en/robots/wheeled/'));
+  assert.ok(sitemap.includes('https://omindos.ai/cn/privacy/'));
+  assert.ok(sitemap.includes('https://omindos.ai/en/privacy/'));
+  assert.doesNotMatch(sitemap, /\/robot-products/);
+});
+
+test('approved bilingual naming, privacy links and legacy catalogue scope stay consistent', async () => {
+  const current = {};
+  for (const locale of ['cn', 'en']) {
+    current[locale] = await Promise.all(portalRoutes.map(async route =>
+      readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8')));
+  }
+  const legacyPaths = ['index.html', 'index.en.html', 'index.zh.html',
+    'why/en/index.html', 'why/zh/index.html', 'oem/en/index.html', 'oem/zh/index.html',
+    'robots/en/index.html', 'robots/zh/index.html', '404.html', '404.zh.html'];
+  const legacy = await Promise.all(legacyPaths.map(path => readFile(new URL(path, root), 'utf8')));
+  for (const html of [...current.cn, ...current.en, ...legacy]) {
+    assert.doesNotMatch(html, /OriginMind AI OS|OriginMind Robotics Intelligence|华润医药|China Resources|unitree|宇树/i);
+  }
+  assert.ok(current.cn.find(html => html.includes('<title>OmindOS | OriginMind</title>'))
+    .includes('OmindOS 是 OriginMind 的机器人智能操作系统（Robot Agent OS）'));
+  assert.ok(current.en.find(html => html.includes('<title>OmindOS | OriginMind</title>'))
+    .includes('OmindOS is OriginMind’s Robot Agent OS'));
+  for (const locale of ['cn', 'en']) {
+    const privacy = current[locale].find(html => html.includes(locale === 'cn' ? '<title>隐私说明 | OriginMind</title>' : '<title>Privacy Notice | OriginMind</title>'));
+    assert.ok(privacy.includes('<code>originmind.language</code>'));
+    assert.ok(privacy.includes('<code>originmind_language</code>'));
+  }
+
+  for (const [locale, name] of [['cn', '双臂协同操作平台'], ['en', 'Dual-arm manipulation platform']]) {
+    for (const route of ['', 'robots']) {
+      const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
+      assert.ok(html.includes(name));
+      assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="/${locale}/robots/dual-arm/">${name}</a></h3>`));
+      assert.ok(html.includes('/robot-covers.css?v=20260909'));
+      for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm']) {
+        assert.ok(html.includes(`/assets/covers/${model}-cover-20260909.webp`));
+        assert.match(html, new RegExp(`data-robot-cover href="/${locale}/robots/${model}/"`));
+      }
+    }
+    const detail = await readFile(new URL(`${locale}/robots/dual-arm/index.html`, root), 'utf8');
+    assert.ok(detail.includes(`<h1 class="dual-arm-title">${name}</h1>`));
+    assert.ok(detail.includes(`<meta property="og:title" content="${name} | OriginMind">`));
+    assert.ok(detail.includes('/assets/dual-arm-platform-manual.jpg'));
+    assert.ok(detail.includes('/assets/dual-arm-motion-plan-manual.jpg'));
+    assert.ok(detail.includes('/assets/dual-arm-digital-twin-manual.png'));
+    assert.doesNotMatch(detail, /dual-arm-(?:service|digital-twin)-demo|id="videos"|href="#videos"/);
+    assert.doesNotMatch(detail, /dual-arm-cover-20260909|data-robot-cover/);
+    for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
+      const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
+      assert.ok(product.includes('/robot-covers.css?v=20260909'));
+      assert.ok(product.includes(`/assets/covers/${model}-cover-20260909.webp`));
+      assert.match(product, /class="media product-detail-image" data-robot-cover/);
+    }
+  }
+
+  const oldEnglish = await readFile(new URL('robots/en/index.html', root), 'utf8');
+  const oldChinese = await readFile(new URL('robots/zh/index.html', root), 'utf8');
+  assert.match(oldEnglish, /Mobile robot brochure and reference pricing/);
+  assert.ok(oldEnglish.includes('href="/en/robots/"'));
+  assert.match(oldChinese, /移动机器人手册与参考报价/);
+  assert.ok(oldChinese.includes('href="/cn/robots/"'));
+  for (const [path, privacyPath] of [['oem/en/index.html', '/en/privacy/'], ['oem/zh/index.html', '/cn/privacy/']]) {
+    const html = await readFile(new URL(path, root), 'utf8');
+    const consent = html.match(/<label class="consent">[\s\S]*?<\/label>/)?.[0];
+    assert.ok(consent, `${path}: consent label`);
+    assert.match(consent, /<input\b(?=[^>]*type="checkbox")(?=[^>]*name="consent")(?=[^>]*\brequired\b)[^>]*>/);
+    assert.ok(consent.includes(`href="${privacyPath}"`), `${path}: consent privacy link`);
+  }
+  for (const page of ['index.html', 'index.en.html']) {
+    assert.doesNotMatch(await readFile(new URL(page, root), 'utf8'), /"legalName"/);
+  }
+
+  const ogSource = await readFile(new URL('og-card-source.svg', root), 'utf8');
+  assert.match(ogSource, />OMINDOS</);
+  assert.doesNotMatch(ogSource, /AI OS/);
+  const ogCard = await readFile(new URL('og-card.png', root));
+  assert.deepEqual([...ogCard.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.equal(ogCard.toString('ascii', 12, 16), 'IHDR');
+  assert.equal(ogCard.readUInt32BE(16), 1200);
+  assert.equal(ogCard.readUInt32BE(20), 630);
+  assert.equal(createHash('sha256').update(ogCard).digest('hex'), 'b7c6bd8261276e63ad4dbe6d847d545e1768ce581c466509eeb8feb432115d4a');
+  for (const asset of [
+    'assets/unitree-originmind-hardware.jpg',
+    'assets/dual-arm-digital-twin-demo-poster.jpg',
+    'assets/dual-arm-service-demo-poster.jpg',
+    'assets/videos/dual-arm-digital-twin-demo.mp4',
+    'assets/videos/dual-arm-service-demo.mp4',
+  ]) await assert.rejects(access(new URL(asset, root)));
+});
+
+test('navigation breakpoint and skip-link focus enhancement stay aligned', async () => {
+  const base = await readFile(new URL('home/base.css', root), 'utf8');
+  assert.match(base, /@media\(min-width:1100px\)\{\.desktop-nav\{display:flex\}/);
+  assert.match(base, /@media\(min-width:1500px\)\{\.hero\.full h1\{font-size:64px\}\}/);
+  assert.match(base, /@media\(min-width:900px\) and \(max-width:1099px\).*grid-template-columns/s);
+  const scripts = await Promise.all(['home/controls.js', 'site.js', 'script.js']
+    .map(path => readFile(new URL(path, root), 'utf8')));
+  for (const script of scripts) {
+    assert.match(script, /skip-link/);
+    assert.match(script, /tabIndex\s*=\s*-1/);
+    assert.match(script, /focus\(\{\s*preventScroll:\s*true\s*\}\)/);
+  }
+  const productDetails = await readFile(new URL('product-details.css', root), 'utf8');
+  assert.match(productDetails, /@media\(min-width:601px\)\{\.page-intro h1\.dual-arm-title\{[^}]*white-space:nowrap/);
+  const productCards = await readFile(new URL('product-cards.css', root), 'utf8');
+  assert.match(productCards, /@media\(min-width:701px\)\{\.sale-card h3\.dual-arm-card-title,\.product-card-copy h3\.dual-arm-card-title\{[^}]*white-space:nowrap/);
 });
 
 test('V1.5.17 keeps collapsed videos and product links while removing the final contact block', async () => {
@@ -389,7 +529,11 @@ test('every updated page loads its own styles and keeps the current shared scrip
       assert.match(source, /homepage-v1511\.css/);
       assert.match(source, /homepage-v1511\.js/);
     }
-    assert.match(source, /script\.js\?v=202609(?:07-contact|08-products)/);
+    if (/(?:\.ja\.html|\/ja\/)/.test(page)) {
+      assert.match(source, /script\.js\?v=202609(?:07-contact|08-products)/);
+    } else {
+      assert.match(source, /script\.js\?v=20260909-remediation/);
+    }
     for (const match of source.matchAll(/<link\b[^>]*>/g)) {
       if (!/rel="stylesheet"/.test(match[0])) continue;
       const href = match[0].match(/href="([^"]+)"/)[1].split('?')[0];
@@ -495,4 +639,3 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
-

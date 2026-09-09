@@ -11,6 +11,17 @@ import shutil
 import sys
 
 website = Path(__file__).resolve().parents[1] / 'apps/website'
+
+
+def version_asset(source, asset, version):
+    """Replace an optional existing query string with the release version."""
+    return re.sub(
+        rf'(?P<quote>["\']){re.escape(asset)}(?:\?[^"\']*)?(?P=quote)',
+        lambda match: f'{match["quote"]}{asset}?v={version}{match["quote"]}',
+        source,
+    )
+
+
 if len(sys.argv) == 2:
     source = Path(sys.argv[1]).resolve()
     for file in source.rglob('*'):
@@ -38,7 +49,7 @@ for locale in ['cn', 'en']:
                         lambda match: f'<link rel="alternate" hreflang="{match[1]}" href="https://omindos.ai{match[2].rstrip("/") + ("" if is_error else "/")}">', source)
         title = re.search(r'<title>(.*?)</title>', source, re.S)[1]
         description = re.search(r'<meta name="description" content="([^"]*)">', source)
-        metadata = f'<link rel="canonical" href="https://omindos.ai{route}"><meta property="og:type" content="website"><meta property="og:site_name" content="OriginMind"><meta property="og:title" content="{html.escape(html.unescape(title), quote=True)}"><meta property="og:url" content="https://omindos.ai{route}"><meta property="og:locale" content="{"zh_CN" if locale == "cn" else "en_US"}"><meta property="og:image" content="https://omindos.ai/og-card.png">'
+        metadata = f'<link rel="canonical" href="https://omindos.ai{route}"><meta property="og:type" content="website"><meta property="og:site_name" content="OriginMind"><meta property="og:title" content="{html.escape(html.unescape(title), quote=True)}"><meta property="og:url" content="https://omindos.ai{route}"><meta property="og:locale" content="{"zh_CN" if locale == "cn" else "en_US"}"><meta property="og:image" content="https://omindos.ai/og-card.png?v=20260909-omindos">'
         if description:
             metadata += f'<meta property="og:description" content="{description[1]}">'
         if '/portal-client.js' not in source and not is_error:
@@ -46,8 +57,31 @@ for locale in ['cn', 'en']:
         source = source.replace('</head>', metadata + '</head>')
         # Preserve the official application flow in the language of the page.
         source = source.replace('https://omindos.ai/founding-oem?lang=en', '/founding-oem?lang=' + ('zh' if locale == 'cn' else 'en'))
+        for asset, version in [
+            ('/site.css', '20260909-remediation'),
+            ('/site.js', '20260909-remediation'),
+            ('/home/base.css', '20260909-remediation'),
+            ('/home/controls.js', '20260909-remediation'),
+            ('/product-cards.css', '20260909-remediation'),
+            ('/product-details.css', '20260909-remediation'),
+            ('/robot-covers.css', '20260909'),
+        ]:
+            source = version_asset(source, asset, version)
         page.write_text(source)
 
-urls += ['https://omindos.ai/ja/', 'https://omindos.ai/founding-oem', 'https://omindos.ai/why-originmind', 'https://omindos.ai/robot-products']
+for relative in [
+    'index.html', 'index.en.html', 'index.zh.html',
+    'why/en/index.html', 'why/zh/index.html',
+    'oem/en/index.html', 'oem/zh/index.html',
+    'robots/en/index.html', 'robots/zh/index.html',
+]:
+    page = website / relative
+    source = page.read_text()
+    source = version_asset(source, '/script.js', '20260909-remediation')
+    source = version_asset(source, 'script.js', '20260909-remediation')
+    page.write_text(source)
+
+legacy_urls = ['https://omindos.ai/ja/', 'https://omindos.ai/founding-oem', 'https://omindos.ai/why-originmind']
+urls += legacy_urls
 (website / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{url}</loc></url>\n' for url in urls) + '</urlset>\n')
-print(f'Prepared {len(urls) - 4} bilingual pages and production search metadata.')
+print(f'Prepared {len(urls) - len(legacy_urls)} bilingual pages and production search metadata.')

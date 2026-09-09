@@ -40,3 +40,5 @@
   outline:3px solid #2458df;
   outline-offset:3px;
 }
+.product-picture.dual-arm-card-media,.sale-card .sale-image.dual-arm-card-media{background:#fff}
+@media(min-width:701px){.sale-card h3.dual-arm-card-title,.product-card-copy h3.dual-arm-card-title{font-size:clamp(18px,1.55vw,24px);line-height:1.2;white-space:nowrap;text-wrap:nowrap}}
