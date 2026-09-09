@@ -243,6 +243,15 @@
   };
 
   document.addEventListener("click", (event) => {
+    const skipLink = event.target.closest("a.skip-link[href^='#']");
+    if (skipLink) {
+      const target = document.querySelector(skipLink.hash);
+      if (target) {
+        if (!target.hasAttribute("tabindex")) target.tabIndex = -1;
+        window.requestAnimationFrame(() => target.focus({ preventScroll: true }));
+      }
+      return;
+    }
     const link = event.target.closest("a[data-language]");
     if (!link || !isHomePage()) return;
     const language = link.dataset.language;
@@ -389,7 +398,7 @@
     }
 
     const visitorRoot = document.querySelector("[data-visitor-map]");
-    if (visitorRoot) {
+    if (visitorRoot?.hidden === false) {
       const language = currentLanguage();
       const locale = LANGUAGE_RESOURCES[language].locale;
       const copy = {

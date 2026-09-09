@@ -32,3 +32,6 @@
 .product-structure-note{margin-top:24px;max-width:1000px}
 @media(max-width:760px){.product-structure-grid{grid-template-columns:minmax(0,1fr);gap:28px}.product-structure-videos{grid-template-columns:minmax(0,1fr)}}
 @media(min-width:601px){.page-intro h1.dual-arm-title{font-size:clamp(38px,4.2vw,62px);white-space:nowrap;text-wrap:nowrap}}
+.dual-arm-primary-media>img{aspect-ratio:auto;object-fit:contain;background:#fff}
+.dual-arm-reference-media{max-width:760px;margin:34px auto 0}
+.dual-arm-reference-media>img{aspect-ratio:auto;background:#fff}

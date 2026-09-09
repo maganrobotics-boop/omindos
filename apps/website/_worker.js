@@ -1,5 +1,6 @@
 const VISITS_ENDPOINT = "/api/visits";
 const LANGUAGE_COOKIE = "originmind_language";
+const PRIVACY_VERSION = "2026-09-09";
 const MINUTE_IN_MS = 60 * 1000;
 const RECENT_RETENTION_MINUTES = 2 * 24 * 60;
 const ROBOT_BROCHURE_PATH = /^\/assets\/brochures\/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_(EN|ZH|JA)\.pdf$/;
@@ -110,7 +111,7 @@ async function handleOemApplication(request, env, url) {
     payload[key] = value.trim();
   }
   if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/u.test(payload.email) || !["foundation", "advanced"].includes(payload.track)) return errorResponse("Invalid contact or track", 400, "invalid_application");
-  payload.consentVersion = "2026-09-07";
+  payload.consentVersion = PRIVACY_VERSION;
   const payloadJson = JSON.stringify(payload);
   const payloadHash = await digestText(data.language + payloadJson);
   try {
@@ -145,34 +146,18 @@ async function recordVisit(database, countryCode, now) {
   ]);
 }
 
-async function readVisitStats(database, now) {
-  const firstRecentMinute = Math.floor((now - 24 * 60 * MINUTE_IN_MS) / MINUTE_IN_MS);
-  const [totalResult, recentResult, countryResult] = await database.batch([
-    database.prepare("SELECT visits FROM visit_totals WHERE id = 1"),
-    database.prepare("SELECT COALESCE(SUM(visits), 0) AS visits FROM visit_recent WHERE minute_bucket >= ?").bind(firstRecentMinute),
-    database.prepare(`SELECT country_code AS code, visits FROM visit_country ORDER BY visits DESC, country_code ASC LIMIT 18`),
-  ]);
-  return {
-    enabled: true,
-    total: Number(totalResult.results?.[0]?.visits ?? 0),
-    last24Hours: Number(recentResult.results?.[0]?.visits ?? 0),
-    countries: (countryResult.results ?? []).flatMap((row) => {
-      const code = String(row.code).toUpperCase();
-      return /^[A-Z]{2}$/.test(code) ? [{ code, visits: Number(row.visits) }] : [];
-    }),
-  };
-}
-
 async function handleVisits(request, env, url) {
-  if (!['GET', 'POST'].includes(request.method)) return methodNotAllowed(["GET", "POST"]);
+  if (request.method !== "POST") return methodNotAllowed(["POST"]);
   if (!env.VISITS_DB) return jsonResponse({ enabled: false, error: "Visitor statistics are not configured" }, 503);
   try {
     const now = Date.now();
-    if (request.method === "POST") {
-      if (!isSameSiteBrowserRequest(request, url)) return errorResponse("Forbidden", 403, "forbidden");
-      await recordVisit(env.VISITS_DB, visitorCountry(request), now);
-    }
-    return jsonResponse(await readVisitStats(env.VISITS_DB, now));
+    if (!isSameSiteBrowserRequest(request, url)) return errorResponse("Forbidden", 403, "forbidden");
+    await recordVisit(env.VISITS_DB, visitorCountry(request), now);
+    return new Response(null, { status: 204, headers: {
+      "Cache-Control": "no-store",
+      "Referrer-Policy": "no-referrer",
+      "X-Content-Type-Options": "nosniff",
+    } });
   } catch (error) {
     logError("visitor statistics request failed", error);
     return jsonResponse({ enabled: false, error: "Statistics unavailable" }, 503);
@@ -344,7 +329,7 @@ const PORTAL_ROUTES = new Set([
   "/", "/robots", "/robots/wheel-legged", "/robots/quadruped",
   "/robots/articulated", "/robots/open-frame", "/robots/wheeled", "/robots/dual-arm",
   "/omindos", "/integration", "/field-work", "/field-work/mining",
-  "/field-work/warehouse", "/mobility", "/about", "/contact",
+  "/field-work/warehouse", "/mobility", "/about", "/contact", "/privacy",
 ]);
 
 function browserPortalLocale(request) {
@@ -372,7 +357,8 @@ function portalRedirect(url, pathname, automatic = false) {
 async function servePortal(request, env, url, locale, route) {
   if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
   const exists = PORTAL_ROUTES.has(route);
-  const assetPath = exists ? `/${locale}${route === "/" ? "/" : route + "/"}` : `/${locale}/404.html`;
+  const notFoundPath = locale === "cn" ? "/404.zh.html" : "/404.html";
+  const assetPath = exists ? `/${locale}${route === "/" ? "/" : route + "/"}` : notFoundPath;
   const response = await env.ASSETS.fetch(assetRequest(request, url, assetPath));
   const headers = new Headers(response.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
@@ -519,4 +505,3 @@ export default {
     }
   },
 };
-

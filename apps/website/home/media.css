@@ -32,10 +32,11 @@
 .split>.origin-media.is-natural,.benefits>.origin-media.is-natural{aspect-ratio:auto;height:auto;min-height:0;align-self:center}
 .origin-media.is-natural>img{height:auto;object-fit:contain}
 .origin-media.is-natural>figcaption{position:static}
-/* Frame the real Unitree robot and OriginMind hardware mounted on its back. */
+/* Frame the third-party quadruped platform and OriginMind hardware mounted on its back. */
 .photo-card>.integration-media>img{object-position:57% 48%;transform:scale(1.28);transform-origin:57% 48%}
 .photo-card:hover>.integration-media>img{transform:scale(1.31)}
 .photo-card>.stairs-media>img{object-fit:cover;object-position:50% 42%}
 @media(max-width:700px){
  .photo-card>.stairs-media>img{object-fit:cover;object-position:53% 42%}
 }
+

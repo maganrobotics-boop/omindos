@@ -31,7 +31,7 @@ for (const [language, contentLanguage] of [['zh', 'zh-CN'], ['en', 'en'], ['ja',
 }
 
 for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
-  for (const route of ['', 'robots', 'robots/wheel-legged', 'robots/quadruped', 'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'robots/dual-arm', 'omindos', 'integration', 'field-work', 'field-work/mining', 'field-work/warehouse', 'mobility', 'about', 'contact']) {
+  for (const route of ['', 'robots', 'robots/wheel-legged', 'robots/quadruped', 'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'robots/dual-arm', 'omindos', 'integration', 'field-work', 'field-work/mining', 'field-work/warehouse', 'mobility', 'about', 'contact', 'privacy']) {
     const path = `/${locale}/${route ? route + '/' : ''}`;
     await check(`portal ${path}`, async () => {
       const response = await request(`https://omindos.ai${path}`, { 'Accept-Language': locale === 'cn' ? 'en' : 'zh-CN', Cookie: `originmind_language=${locale === 'cn' ? 'en' : 'zh'}` });
@@ -41,12 +41,28 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
       const html = await response.text();
       assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`));
       assert.ok(html.includes('name="robots" content="index,follow"'));
+      assert.match(html, /<a class="skip-link" href="#main-content">/);
+      assert.match(html, /<main\b[^>]*\bid="main-content"[^>]*>/);
+      const footer = [...html.matchAll(/<footer\b[^>]*class="[^"]*(?:site-footer|footer)[^"]*"[^>]*>[\s\S]*?<\/footer>/g)]
+        .map(match => match[0]).at(-1);
+      assert.ok(footer);
+      assert.ok(footer.includes(`href="/${locale}/privacy/"`));
+      assert.ok(html.includes('https://omindos.ai/og-card.png?v=20260909-omindos'));
+      if (route === 'privacy') {
+        assert.ok(html.includes('<code>originmind.language</code>'));
+        assert.ok(html.includes('<code>originmind_language</code>'));
+      }
+      for (const match of html.matchAll(/href="(\/(?:cn|en)\/[^"?#]*)/g)) {
+        if (!/\.[a-z0-9]+$/i.test(match[1])) assert.ok(match[1].endsWith('/'), match[1]);
+      }
       if (route === '' || route === 'robots') {
         const quadruped = [...html.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
           .map(match => match[0]).filter(card => card.includes(`/${locale}/robots/quadruped`));
         assert.equal(quadruped.length, 1);
         assert.match(quadruped[0], locale === 'cn' ? />在研</ : />IN DEVELOPMENT</i);
         assert.doesNotMatch(quadruped[0], />(?:在售|for sale)</i);
+        const dualArmName = locale === 'cn' ? '双臂协同操作平台' : 'Dual-arm manipulation platform';
+        assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="/${locale}/robots/dual-arm/">${dualArmName}</a></h3>`));
       }
       if (route === 'robots/quadruped') {
         assert.match(html, locale === 'cn' ? />在研</ : />IN DEVELOPMENT</i);
@@ -59,6 +75,13 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
         assert.match(main, /id="applications"/);
         assert.doesNotMatch(main, /href="[^"]+\.(?:pdf|docx|zip)"/i);
       }
+      if (route === 'robots/dual-arm') {
+        const name = locale === 'cn' ? '双臂协同操作平台' : 'Dual-arm manipulation platform';
+        assert.ok(html.includes(`<h1 class="dual-arm-title">${name}</h1>`));
+        assert.ok(html.includes('/assets/dual-arm-platform-manual.jpg'));
+        assert.ok(html.includes('/assets/dual-arm-digital-twin-manual.png'));
+        assert.doesNotMatch(html, /dual-arm-(?:service|digital-twin)-demo|id="videos"/);
+      }
     });
   }
   await check(`automatic ${locale}`, async () => {
@@ -70,16 +93,29 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
   await check(`localized 404 ${locale}`, async () => {
     const response = await request(`https://omindos.ai/${locale}/deployment-check-not-a-page/`);
     assert.equal(response.status, 404); assert.equal(response.headers.get('Content-Language'), contentLanguage);
-    await response.body?.cancel();
+    assert.match(await response.text(), locale === 'cn' ? /<h1>页面未找到<\/h1>/ : /<h1>Page not found<\/h1>/);
   });
 }
 
-const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded', 'dual-arm-digital-twin-demo', 'dual-arm-service-demo'];
-for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
+const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'];
+const productCovers = ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm'];
+for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-manual.jpg', 'assets/dual-arm-motion-plan-manual.jpg', 'assets/dual-arm-digital-twin-manual.png', ...productCovers.map(name => `assets/covers/${name}-cover-20260909.webp`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);
     if (asset.endsWith('.mp4')) assert.match(response.headers.get('Content-Type'), /video\/mp4/);
+  });
+}
+for (const asset of [
+  'assets/unitree-originmind-hardware.jpg',
+  'assets/dual-arm-digital-twin-demo-poster.jpg',
+  'assets/dual-arm-service-demo-poster.jpg',
+  'assets/videos/dual-arm-digital-twin-demo.mp4',
+  'assets/videos/dual-arm-service-demo.mp4',
+]) {
+  await check(`withheld asset ${asset}`, async () => {
+    const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
+    assert.equal(response.status, 404);
   });
 }
 await check('Japanese homepage', async () => {
@@ -92,11 +128,35 @@ await check('OEM endpoint accepts no public listing', async () => {
   assert.equal(response.status, 405); await response.body?.cancel();
 });
 
-await check('visitor statistics', async () => {
+await check('visitor statistics are not publicly readable', async () => {
   const response = await request('https://omindos.ai/api/visits');
-  assert.equal(response.status, 200);
-  assert.equal((await response.json()).enabled, true);
+  assert.equal(response.status, 405);
+  assert.equal(response.headers.get('Allow'), 'POST');
+  assert.doesNotMatch(await response.text(), /total|countries|last24Hours/);
 });
+
+await check('robots and sitemap policy', async () => {
+  const robots = await (await request('https://omindos.ai/robots.txt')).text();
+  assert.equal((robots.match(/BEGIN Cloudflare Managed/g) || []).length, 1);
+  assert.equal((robots.match(/Sitemap:/g) || []).length, 1);
+  const sitemap = await (await request('https://omindos.ai/sitemap.xml')).text();
+  assert.match(sitemap, /https:\/\/omindos\.ai\/cn\/privacy\//);
+  assert.match(sitemap, /https:\/\/omindos\.ai\/en\/privacy\//);
+  assert.doesNotMatch(sitemap, /\/robot-products/);
+});
+
+for (const [language, route, label] of [
+  ['zh', '/cn/robots/', '移动机器人手册与参考报价'],
+  ['en', '/en/robots/', 'Mobile robot brochure and reference pricing'],
+]) {
+  await check(`legacy robot catalogue ${language}`, async () => {
+    const response = await request('https://omindos.ai/robot-products', { Cookie: `originmind_language=${language}` });
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.ok(html.includes(`href="${route}"`));
+    assert.ok(html.includes(label));
+  });
+}
 
 for (const path of ['/meeting', '/meeting/display', '/api/meeting/login']) {
   await check(`removed ${path}`, async () => {
@@ -114,4 +174,3 @@ for (const host of ['www.omindos.ai', 'originmindos.com', 'www.originmindos.com'
     await response.body?.cancel();
   });
 }
-
