@@ -89,7 +89,6 @@ body.v15-site {
   font-size: 14px;
 }
 .v15-site .language-switch a { min-width: 34px; min-height: 32px; }
-.v15-site .language-switch a[data-language="ja"] { min-width: 42px; }
 .v15-site .language-switch a:hover,
 .v15-site .language-switch a:focus-visible,
 .v15-site .language-switch a.is-active {
@@ -446,16 +445,6 @@ html[lang="zh-CN"] body.v15-site {
   --sans: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-html[lang="ja"] body.v15-site {
-  --sans: "Hiragino Sans", "Yu Gothic", YuGothic, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-html[lang="ja"] .v15-what-copy h1,
-html[lang="ja"] .v15-section-heading h2,
-html[lang="ja"] .v15-why-summary h2,
-html[lang="ja"] .v15-company-copy h2,
-html[lang="ja"] .v15-why-hero h1 { letter-spacing: -.01em; }
-
 @media (min-width: 921px) {
   html[lang="en"] .v15-why-summary .v15-section-heading h2 {
     font-size: clamp(32px, 3.15vw, 42px);
@@ -505,8 +494,7 @@ html[lang="ja"] .v15-why-hero h1 { letter-spacing: -.01em; }
   .v15-site .header-inner { min-height: 70px; }
   .v15-site .site-nav { inset-block-start: 70px; }
   .v15-site .language-switch { padding-inline: 2px; }
-  .v15-site .language-switch a,
-  .v15-site .language-switch a[data-language="ja"] { min-width: 31px; }
+  .v15-site .language-switch a { min-width: 31px; }
   .v15-section { padding: 34px 0 48px; }
   .v15-what { padding-top: 92px; padding-bottom: 52px; }
   .v15-what-copy h1 { font-size: clamp(36px, 9.5vw, 44px); line-height: 1.12; }
@@ -564,8 +552,7 @@ html[lang="ja"] .v15-why-hero h1 { letter-spacing: -.01em; }
 @media (max-width: 380px) {
   .v15-site .brand-name small { display: none; }
   .v15-site .language-switch span { display: none; }
-  .v15-site .language-switch a,
-  .v15-site .language-switch a[data-language="ja"] { min-width: 28px; }
+  .v15-site .language-switch a { min-width: 28px; }
   .v15-site .language-switch a { font-size: 0; }
   .v15-site .language-switch a::after { content: attr(data-short); font-size: 14px; }
   .v15-what-copy h1 { font-size: 36px; }
@@ -928,7 +915,7 @@ body.v15-site.founding-page {
  .v15-site .site-header .brand-name strong{font-size:19px}
  .v15-site .header-actions{gap:0}
  .v15-site .language-switch a::after{font-size:14px}
- .v15-site .language-switch a,.v15-site .language-switch a[data-language="ja"]{min-width:28px;width:28px;min-height:40px}
+ .v15-site .language-switch a {min-width:28px;width:28px;min-height:40px}
  .v15-site .menu-toggle{width:40px;height:40px;flex:0 0 40px}
 }
 @media(max-width:360px){

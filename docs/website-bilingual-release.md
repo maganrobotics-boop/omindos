@@ -7,8 +7,8 @@ The reviewed source is the OriginMind Sites build at commit
 - Thirty content pages: fifteen in Chinese at `/cn/`, fifteen in English at `/en/`.
 - Automatic entries choose Chinese for a preferred Chinese browser language;
   otherwise English. Explicit language paths always take precedence.
-- Navigation has no visible language selector. Existing language query links
-  still work. The previous Japanese homepage remains at `/ja/`.
+- Navigation has no visible language selector. Chinese and English legacy
+  language query links still work. Japanese pages and controls were removed on 2026-09-10; the former `/ja/` entry redirects to English.
 - Approved media, product availability, prototype labels and specifications are
   retained. The OEM application, brochure downloads, visitor statistics, domain
   redirects and verification file remain in place.

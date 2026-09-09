@@ -2,7 +2,7 @@
 
 Pass a built portal directory to import a future approved version. Without an
 argument, refresh production metadata on the checked-in bilingual pages.
-Legacy OEM, Japanese pages, APIs and verification files are retained.
+Legacy OEM pages, APIs and verification files are retained.
 """
 from pathlib import Path
 import html
@@ -81,7 +81,7 @@ for relative in [
     source = version_asset(source, 'script.js', '20260909-remediation')
     page.write_text(source)
 
-legacy_urls = ['https://omindos.ai/ja/', 'https://omindos.ai/founding-oem', 'https://omindos.ai/why-originmind']
+legacy_urls = ['https://omindos.ai/founding-oem', 'https://omindos.ai/why-originmind']
 urls += legacy_urls
 (website / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{url}</loc></url>\n' for url in urls) + '</urlset>\n')
 print(f'Prepared {len(urls) - len(legacy_urls)} bilingual pages and production search metadata.')
