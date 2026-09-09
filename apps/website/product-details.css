@@ -24,3 +24,10 @@
  .product-section th{width:34%}
  .product-section .note{line-height:1.65}
 }
+.product-structure-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;margin-top:40px}
+.product-structure-grid .media{min-width:0}
+.product-structure-grid .media>img{width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;background:#fff;border:1px solid var(--line)}
+.product-structure-videos{margin-top:40px}
+.product-structure-videos .video-figure>video{aspect-ratio:1;background:#fff}
+.product-structure-note{margin-top:24px;max-width:1000px}
+@media(max-width:760px){.product-structure-grid{grid-template-columns:minmax(0,1fr);gap:28px}.product-structure-videos{grid-template-columns:minmax(0,1fr)}}

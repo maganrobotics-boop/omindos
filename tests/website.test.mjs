@@ -206,7 +206,8 @@ test('product details are readable inline and keep model-specific specifications
 
 test('uploaded product demonstrations use accessible players and fast-start MP4 assets', async () => {
   const demos = {
-    'wheel-legged': ['wheel-legged-demo'],
+    'wheel-legged': ['wheel-legged-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'],
+    'open-frame': ['open-frame-field-demo'],
     'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
     'wheeled': ['mobile-inspection-demo'],
   };

@@ -22,3 +22,11 @@ No unverified quantitative deployment savings, integration times, map areas, acc
 ## Media handling
 
 The four uploaded videos are encoded as H.264/AAC MP4 with fast-start metadata, at up to 1280 pixels wide, preserving their footage and audio. Posters are extracted from the corresponding videos. Video controls remain visible, preload is disabled, and playback requires user action.
+
+## Additional model and motion materials — 2026-09-09
+
+- `mmexport1788943045826.mp4` shows the blue open-frame wheel-legged prototype: straight travel, uphill/downhill traversal, turning, body-height adjustment and curved-path movement. Its visible chassis and equipment match the existing open-frame laboratory footage. Added only to the Chinese and English open-frame detail pages. No numeric slope, payload or speed is inferred.
+- `2、爆炸动画.rar` contains whole-robot and leg-mechanism AVI variants. The whole-robot enclosure, hip joints and wheel/leg layout identify the enclosed wheel-legged platform. The background versions of the whole-robot and rendered-leg animations are presented as development-stage mechanical designs, separately from real movement footage.
+- `1、三维模型.rar` supplies the matching bracket design image (`9b0afe3def7bae94d2073268c9987d3.png`) and part photograph (`fa833598a5ec9167fed5e726bd4f089.jpg`). Both are copied unchanged into the enclosed wheel-legged mechanical design section. Raw SLDPRT files remain unpublished.
+- The resubmitted `展板-仿生蜘蛛(1).pptx` repeats the spider research material already included on the articulated page. It does not establish new product specifications; no duplicate section is added.
+- Three additional web videos use H.264 with fast-start metadata. The supplied open-frame audio and institutional credit remain intact. The two silent CAD animations are labeled as animations. Posters come from the corresponding clips; controls, no preload and user-initiated playback remain unchanged.
