@@ -67,7 +67,7 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
   });
 }
 
-for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-interface-source.png']) {
+for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg']) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);

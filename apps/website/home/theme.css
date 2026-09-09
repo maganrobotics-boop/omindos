@@ -102,7 +102,7 @@ html[lang="zh-CN"] .origin-theme h2{text-wrap:balance}
 .hardware-system-pair .paired-hardware{background:#e7edf4}
 .hardware-system-pair .paired-hardware img{height:clamp(220px,22vw,300px)}
 .hardware-system-pair .paired-software{padding:18px 18px 0;background:#f7faff;border-top:1px solid #d7e1ed}
-.hardware-system-pair .paired-software img{height:auto;aspect-ratio:533/262;background:#fff}
+.hardware-system-pair .paired-software img{height:auto;aspect-ratio:2/1;background:#101e28}
 .hardware-system-pair figcaption{padding:10px 16px;color:#485c78;font-size:.875rem;line-height:1.45;background:#f7faff}
 .hardware-system-pair .paired-software figcaption{padding-inline:0}
 

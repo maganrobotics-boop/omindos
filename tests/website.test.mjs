@@ -156,10 +156,12 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       for (const card of cards) {
         const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
         assert.match(card, new RegExp(`>${isQuadruped ? development : sale}<`, 'i'));
+        const destination = card.match(/href="(\/(?:cn|en)\/robots\/[^"#]+)"/)[1];
+        const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
+        assert.deepEqual(actions.map(([, href]) => href), [destination, `/${locale}/contact`]);
+        assert.deepEqual(actions.map(([, , label]) => label), locale === 'cn' ? ['产品详情', '联系我们'] : ['Details', 'Contact us']);
         if (isQuadruped) {
           assert.doesNotMatch(card, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
-          assert.match(card, /#specifications/);
-          assert.match(card, /#videos/);
         }
       }
     }
