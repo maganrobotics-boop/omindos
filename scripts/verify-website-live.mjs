@@ -99,7 +99,7 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
 
 const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'];
 const productCovers = ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm'];
-for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-manual.jpg', 'assets/dual-arm-motion-plan-manual.jpg', 'assets/dual-arm-digital-twin-manual.png', ...productCovers.map(name => `assets/covers/${name}-cover-20260909.webp`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
+for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/omindos-system-overview-20260910.webp', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-manual.jpg', 'assets/dual-arm-motion-plan-manual.jpg', 'assets/dual-arm-digital-twin-manual.png', ...productCovers.map(name => `assets/covers/${name}-cover-20260909.webp`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);
@@ -118,12 +118,14 @@ for (const asset of [
     assert.equal(response.status, 404);
   });
 }
-await check('Japanese homepage redirects to English', async () => {
-  const response = await request('https://omindos.ai/ja/');
-  assert.equal(response.status, 308);
-  assert.equal(response.headers.get('Location'), 'https://omindos.ai/en/');
-  await response.body?.cancel();
-});
+for (const path of ['/ja/', '/index.ja.html', '/founding-oem.ja.html', '/oem/ja/', '/why/ja/', '/robots/ja/', '/404.ja.html']) {
+  await check(`retired Japanese path ${path} redirects to English`, async () => {
+    const response = await request(`https://omindos.ai${path}`);
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get('Location'), 'https://omindos.ai/en/');
+    await response.body?.cancel();
+  });
+}
 await check('Japanese brochure removed', async () => {
   const response = await request('https://omindos.ai/assets/brochures/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_JA.pdf');
   assert.equal(response.status, 404);
