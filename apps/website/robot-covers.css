@@ -1,11 +1,11 @@
 /* Isolated robot covers share one surface across both languages. */
-.sale-card .sale-image.robot-cover,
-.product-picture.robot-cover{
+.sale-card .sale-image[data-robot-cover],
+.product-picture[data-robot-cover]{
   aspect-ratio:4/3;
   background:#fff;
 }
-.sale-card .sale-image.robot-cover>img,
-.product-picture.robot-cover>img{
+.sale-card .sale-image[data-robot-cover]>img,
+.product-picture[data-robot-cover]>img{
   display:block;
   width:100%;
   height:100%;
@@ -15,7 +15,7 @@
   padding:12px;
   background:#fff;
 }
-.product-detail-image.robot-cover>img{
+.product-detail-image[data-robot-cover]>img{
   display:block;
   width:100%;
   height:auto;
@@ -27,6 +27,6 @@
   background:#fff;
 }
 @media(max-width:600px){
-  .sale-card .sale-image.robot-cover>img,
-  .product-picture.robot-cover>img{padding:10px}
+  .sale-card .sale-image[data-robot-cover]>img,
+  .product-picture[data-robot-cover]>img{padding:10px}
 }
