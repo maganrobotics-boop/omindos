@@ -30,4 +30,5 @@
 .product-structure-videos{margin-top:40px}
 .product-structure-videos .video-figure>video{aspect-ratio:1;background:#fff}
 .product-structure-note{margin-top:24px;max-width:1000px}
-@media(max-width:760px){.product-structure-grid{grid-template-columns:minmax(0,1fr);gap:28px}.product-structure-videos{grid-template-columns:minmax(0,1fr)}}\n@media(min-width:601px){.page-intro h1.dual-arm-title{font-size:clamp(38px,4.2vw,62px);white-space:nowrap;text-wrap:nowrap}}\n
+@media(max-width:760px){.product-structure-grid{grid-template-columns:minmax(0,1fr);gap:28px}.product-structure-videos{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:601px){.page-intro h1.dual-arm-title{font-size:clamp(38px,4.2vw,62px);white-space:nowrap;text-wrap:nowrap}}
