@@ -51,6 +51,13 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
       if (route === 'robots/quadruped') {
         assert.match(html, locale === 'cn' ? />在研</ : />IN DEVELOPMENT</i);
         assert.doesNotMatch(html, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
+        assert.match(html, locale === 'cn' ? /整机集成与场景验证/ : /full-system integration and application validation/);
+      }
+      if (route.startsWith('robots/')) {
+        const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/)[0];
+        assert.match(main, /id="features"/);
+        assert.match(main, /id="applications"/);
+        assert.doesNotMatch(main, /href="[^"]+\.(?:pdf|docx|zip)"/i);
       }
     });
   }
@@ -67,10 +74,12 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
   });
 }
 
-for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg']) {
+const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo'];
+for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);
+    if (asset.endsWith('.mp4')) assert.match(response.headers.get('Content-Type'), /video\/mp4/);
   });
 }
 await check('Japanese homepage', async () => {

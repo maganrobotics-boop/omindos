@@ -1,0 +1,26 @@
+/* Shared editorial layout for the Chinese and English product details. */
+.product-section h2{font-size:clamp(32px,3.5vw,52px);line-height:1.15;letter-spacing:-.035em}
+.product-section-intro{max-width:850px;margin-top:26px;color:var(--muted);font-size:20px;line-height:1.7}
+.product-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:38px 32px;margin-top:42px}
+.product-feature-grid article{min-width:0;border-top:2px solid var(--line);padding-top:22px}
+.product-feature-grid h3{font-size:25px;line-height:1.25;letter-spacing:-.025em;text-wrap:pretty}
+.product-feature-grid p{margin-top:16px;color:var(--muted);line-height:1.75}
+.product-research-note{margin-top:44px;padding-top:28px;border-top:1px solid var(--line);max-width:960px}
+.product-research-note h3{font-size:26px;line-height:1.25}
+.product-research-note p{margin-top:18px;line-height:1.75;color:var(--muted)}
+.product-console{margin-top:34px}
+.product-console img{height:auto;object-fit:contain;border:1px solid var(--line)}
+.product-console+.text-link{margin-top:24px}
+.product-section .detail-content{max-width:none}
+.product-section table{max-width:1080px}
+.product-section th{width:29%}
+.product-section .video-grid .video-figure{min-width:0}
+@media(max-width:1000px){.product-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+ .product-feature-grid{grid-template-columns:minmax(0,1fr);gap:28px;margin-top:32px}
+ .product-section-intro{font-size:18px;margin-top:22px}
+ .product-feature-grid h3{font-size:24px}
+ .product-feature-grid p{margin-top:12px}
+ .product-section th{width:34%}
+ .product-section .note{line-height:1.65}
+}

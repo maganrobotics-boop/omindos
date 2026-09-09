@@ -180,6 +180,68 @@ test('quadruped availability agrees across both homepages, catalogues and produc
   }
 });
 
+test('product details are readable inline and keep model-specific specifications separate', async () => {
+  for (const locale of ['cn', 'en']) {
+    for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
+      const html = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
+      const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
+      assert.doesNotMatch(main, /href="[^"]+\.(?:pdf|docx|zip)"/i);
+      for (const anchor of main.matchAll(/href="#([^"]+)"/g)) {
+        assert.ok(main.includes(`id="${anchor[1]}"`), `${model}: ${anchor[1]}`);
+      }
+      const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
+      assert.equal(ids.length, new Set(ids).size);
+      if (model === 'quadruped') {
+        assert.doesNotMatch(main, /Go2|15\s*kg|700\s*[×x]\s*310|760\s*[×x]\s*310|10\s*km|7\.5万元/i);
+        assert.match(main, locale === 'cn' ? /整机集成与场景验证/ : /full-system integration and application validation/);
+      }
+      if (model === 'wheeled') {
+        assert.match(main, /730 × 460 × 860 mm/);
+        assert.match(main, /1\.5 m\/s/);
+        assert.match(main, /10 kg/);
+      }
+    }
+  }
+});
+
+test('uploaded product demonstrations use accessible players and fast-start MP4 assets', async () => {
+  const demos = {
+    'wheel-legged': ['wheel-legged-demo'],
+    'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
+    'wheeled': ['mobile-inspection-demo'],
+  };
+  for (const [model, names] of Object.entries(demos)) {
+    for (const locale of ['cn', 'en']) {
+      const html = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
+      for (const name of names) {
+        const player = [...html.matchAll(/<video\b[\s\S]*?<\/video>/g)].map(m => m[0])
+          .find(video => video.includes(`/assets/videos/${name}.mp4`));
+        assert.ok(player, `${locale} ${model} ${name}`);
+        assert.match(player, /controls playsinline preload="none"/);
+        assert.match(player, /aria-label="[^"]+"/);
+        assert.doesNotMatch(player, /\bautoplay\b/);
+        assert.ok(player.includes(`poster="/assets/${name}-poster.jpg"`));
+      }
+    }
+    for (const name of names) {
+      const file = await readFile(new URL(`assets/videos/${name}.mp4`, root));
+      assert.equal(file.toString('ascii', 4, 8), 'ftyp');
+      assert.ok(file.length < 25 * 1024 * 1024, 'within the hosting asset size limit');
+      let offset = 0;
+      const atoms = [];
+      while (offset + 8 <= file.length) {
+        const size = file.readUInt32BE(offset);
+        atoms.push(file.toString('ascii', offset + 4, offset + 8));
+        assert.ok(size >= 8 && offset + size <= file.length);
+        offset += size;
+      }
+      assert.equal(offset, file.length);
+      assert.ok(atoms.includes('moov') && atoms.includes('mdat'));
+      assert.ok(atoms.indexOf('moov') < atoms.indexOf('mdat'), 'metadata precedes the video payload');
+    }
+  }
+});
+
 test('automatic portal entry follows preferred browser language and preserves query strings', async () => {
   for (const [accept, locale] of [['zh-CN,zh;q=0.9,en;q=0.8', 'cn'], ['zh-TW,en;q=0.8', 'cn'],
     ['en-US,zh;q=0.7', 'en'], ['ja,en;q=0.8', 'en'], ['', 'en'], ['en;q=0.5,zh;q=1', 'cn']]) {
