@@ -1,6 +1,6 @@
 # Product detail content — 2026-09-09
 
-Scope: the five existing product detail routes in `/cn/robots/` and `/en/robots/`. Product text, configuration tables and videos are readable on the page. Existing legacy brochure routes remain available, but the current wheeled detail page no longer requires a PDF download.
+Scope: the six product detail routes in `/cn/robots/` and `/en/robots/`. Product text, configuration tables and videos are readable on the page. Existing legacy brochure routes remain available, but the current wheeled detail page no longer requires a PDF download.
 
 ## Evidence and attribution
 
@@ -30,3 +30,16 @@ The four uploaded videos are encoded as H.264/AAC MP4 with fast-start metadata, 
 - `1、三维模型.rar` supplies the matching bracket design image (`9b0afe3def7bae94d2073268c9987d3.png`) and part photograph (`fa833598a5ec9167fed5e726bd4f089.jpg`). Both are copied unchanged into the enclosed wheel-legged mechanical design section. Raw SLDPRT files remain unpublished.
 - The resubmitted `展板-仿生蜘蛛(1).pptx` repeats the spider research material already included on the articulated page. It does not establish new product specifications; no duplicate section is added.
 - Three additional web videos use H.264 with fast-start metadata. The supplied open-frame audio and institutional credit remain intact. The two silent CAD animations are labeled as animations. Posters come from the corresponding clips; controls, no preload and user-initiated playback remain unchanged.
+
+## Dual-arm manipulation platform — 2026-09-09
+
+- Added `/cn/robots/dual-arm/` and `/en/robots/dual-arm/`, with a sixth card in both homepages and catalogues. The user's requested direction is humanoid dual-arm manipulation.
+- `智能机器人双臂灵巧操作平台产品手册.pdf` (five pages; document metadata dated February 2022) describes a fixed experimental platform built from two standard collaborative industrial arms, grippers, RGB-D sensing and a controller. It is not evidence of a complete walking humanoid.
+- The manual's reference configuration is explicitly restricted to that experimental platform: 6 DoF per arm / 12 total arm DoF; 16 kg weight per arm; 3 kg payload per arm; 625 mm reach per arm; ±0.02 mm arm repeatability; tool speed ≤1.9 m/s; maximum joint speed 180°/s; final-joint range ±360°; 1200 × 900 × 1800 mm platform; aluminum extrusion frame. Arm repeatability is not presented as system assembly accuracy. No combined payload is inferred.
+- Software descriptions are rewritten from the manual: RGB-D perception and 6D pose estimation; grasp planning; regrasping and handovers; motion planning; digital twins; control, kinematics and development interfaces. OmindOS integration, full source-code delivery, third-party-free software and universal collision-free execution are not asserted.
+- `数字孪生Final Publish.mp4` shows the matching fixed dual-arm experimental platform with virtual/physical synchronization, Real to Sim and Sim to Real demonstrations. Its institutional credits and 2× labels remain intact.
+- `桌面型服务机器人.mp4` shows a different white desktop service prototype coordinating cup holding and pouring during coffee preparation. Its configuration is distinguished from the manual platform throughout the page; the manual's specifications are not assigned to it.
+- The catalogue uses “平台方案” / “PLATFORM” for the new entry because current sale availability was not specified. Existing sale statuses and the quadruped's in-development status are preserved.
+- The accompanying railway robot photograph and inspection documents concern other platforms and are not reused as dual-arm evidence. Space servicing and unrelated example images in the older manual are not added as current commercial capabilities.
+- Both videos are supplied as web MP4 with user-initiated playback, visible controls, no preload and frame-based posters. Product details and specifications remain inline, with no PDF download requirement.
+

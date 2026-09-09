@@ -142,7 +142,7 @@ const homepageRoot = new URL('../apps/website/', import.meta.url);
 const enhancement = await readFile(new URL('homepage-v1511.js', homepageRoot), 'utf8');
 
 const portalRoutes = ['', 'robots', 'robots/wheel-legged', 'robots/quadruped',
-  'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'omindos',
+  'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'robots/dual-arm', 'omindos',
   'integration', 'field-work', 'field-work/mining', 'field-work/warehouse',
   'mobility', 'about', 'contact'];
 
@@ -152,10 +152,13 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
         .map(match => match[0]).filter(card => /class="(?:sale-image|product-picture)"/.test(card));
-      assert.equal(cards.length, 5);
+      assert.equal(cards.length, 6);
       for (const card of cards) {
         const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
-        assert.match(card, new RegExp(`>${isQuadruped ? development : sale}<`, 'i'));
+        const isDualArm = card.includes(`/${locale}/robots/dual-arm`);
+        const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : sale;
+        assert.match(card, new RegExp(`>${expectedStatus}<`, 'i'));
+        if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="(\/(?:cn|en)\/robots\/[^"#]+)"/)[1];
         const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
         assert.deepEqual(actions.map(([, href]) => href), [destination, `/${locale}/contact`]);
@@ -182,7 +185,7 @@ test('quadruped availability agrees across both homepages, catalogues and produc
 
 test('product details are readable inline and keep model-specific specifications separate', async () => {
   for (const locale of ['cn', 'en']) {
-    for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
+    for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm']) {
       const html = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
       const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
       assert.doesNotMatch(main, /href="[^"]+\.(?:pdf|docx|zip)"/i);
@@ -210,6 +213,7 @@ test('uploaded product demonstrations use accessible players and fast-start MP4 
     'open-frame': ['open-frame-field-demo'],
     'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
     'wheeled': ['mobile-inspection-demo'],
+    'dual-arm': ['dual-arm-digital-twin-demo', 'dual-arm-service-demo'],
   };
   for (const [model, names] of Object.entries(demos)) {
     for (const locale of ['cn', 'en']) {
@@ -246,7 +250,7 @@ test('uploaded product demonstrations use accessible players and fast-start MP4 
 test('automatic portal entry follows preferred browser language and preserves query strings', async () => {
   for (const [accept, locale] of [['zh-CN,zh;q=0.9,en;q=0.8', 'cn'], ['zh-TW,en;q=0.8', 'cn'],
     ['en-US,zh;q=0.7', 'en'], ['ja,en;q=0.8', 'en'], ['', 'en'], ['en;q=0.5,zh;q=1', 'cn']]) {
-    for (const route of ['', 'robots/open-frame', 'field-work/mining']) {
+    for (const route of ['', 'robots/open-frame', 'robots/dual-arm', 'field-work/mining']) {
       const r = await worker.fetch(new Request(`https://omindos.ai/${route}?source=link`, {
         headers: { 'Accept-Language': accept, Cookie: `originmind_language=${locale === 'cn' ? 'en' : 'zh'}` },
       }), env);
@@ -258,7 +262,7 @@ test('automatic portal entry follows preferred browser language and preserves qu
   }
 });
 
-test('all 30 explicit bilingual pages ignore browser, cookie and query language preferences', async () => {
+test('all explicit bilingual pages ignore browser, cookie and query language preferences', async () => {
   for (const locale of ['cn', 'en']) {
     for (const route of portalRoutes) {
       const path = `/${locale}/${route ? route + '/' : ''}`;
@@ -491,3 +495,4 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
+

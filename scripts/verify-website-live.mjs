@@ -31,7 +31,7 @@ for (const [language, contentLanguage] of [['zh', 'zh-CN'], ['en', 'en'], ['ja',
 }
 
 for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
-  for (const route of ['', 'robots', 'robots/wheel-legged', 'robots/quadruped', 'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'omindos', 'integration', 'field-work', 'field-work/mining', 'field-work/warehouse', 'mobility', 'about', 'contact']) {
+  for (const route of ['', 'robots', 'robots/wheel-legged', 'robots/quadruped', 'robots/articulated', 'robots/open-frame', 'robots/wheeled', 'robots/dual-arm', 'omindos', 'integration', 'field-work', 'field-work/mining', 'field-work/warehouse', 'mobility', 'about', 'contact']) {
     const path = `/${locale}/${route ? route + '/' : ''}`;
     await check(`portal ${path}`, async () => {
       const response = await request(`https://omindos.ai${path}`, { 'Accept-Language': locale === 'cn' ? 'en' : 'zh-CN', Cookie: `originmind_language=${locale === 'cn' ? 'en' : 'zh'}` });
@@ -74,7 +74,7 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
   });
 }
 
-const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'];
+const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded', 'dual-arm-digital-twin-demo', 'dual-arm-service-demo'];
 for (const asset of ['assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
@@ -114,3 +114,4 @@ for (const host of ['www.omindos.ai', 'originmindos.com', 'www.originmindos.com'
     await response.body?.cancel();
   });
 }
+
