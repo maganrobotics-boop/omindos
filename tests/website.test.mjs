@@ -268,7 +268,7 @@ test('product details are readable inline and keep model-specific specifications
 
 test('uploaded product demonstrations use accessible players and fast-start MP4 assets', async () => {
   const demos = {
-    'wheel-legged': ['wheel-legged-demo'],
+    'wheel-legged': ['wheel-legged-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'],
     'open-frame': ['open-frame-field-demo'],
     'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
     'wheeled': ['mobile-inspection-demo'],
@@ -306,7 +306,9 @@ test('uploaded product demonstrations use accessible players and fast-start MP4 
   }
   for (const locale of ['cn', 'en']) {
     const wheelLegged = await readFile(new URL(`${locale}/robots/wheel-legged/index.html`, root), 'utf8');
-    assert.doesNotMatch(wheelLegged, /wheel-legged-(?:exploded|leg-exploded)/);
+    assert.doesNotMatch(wheelLegged, /wheel-legged-bracket-(?:model\.png|photo\.jpg)/);
+    assert.ok(wheelLegged.includes('class="video-grid product-structure-videos"'));
+    assert.equal([...wheelLegged.matchAll(/<video\b/g)].length, 3);
   }
 });
 
@@ -356,7 +358,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/site.js?v=20260910-polish'));
         if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260910-polish'));
         if (route.startsWith('robots/')) {
-          const version = '20260910-catalogue';
+          const version = '20260910-structure-video';
           assert.ok(html.includes(`/product-details.css?v=${version}`));
         }
       }
@@ -477,11 +479,11 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     assert.doesNotMatch(detail, /dual-arm-(?:service|digital-twin)-demo/);
     assert.ok(detail.includes('id="videos"'));
     assert.ok(detail.includes('href="#videos"'));
-    assert.ok(detail.includes('/product-details.css?v=20260910-catalogue'));
+    assert.ok(detail.includes('/product-details.css?v=20260910-structure-video'));
     assert.ok(detail.includes('/assets/covers/dual-arm-cover-20260909.webp'));
     for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
       const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
-      assert.ok(product.includes('/product-details.css?v=20260910-catalogue'));
+      assert.ok(product.includes('/product-details.css?v=20260910-structure-video'));
       assert.ok(product.includes('/robot-covers.css?v=20260909'));
       assert.ok(product.includes(`/assets/covers/${coverNames[model]}`));
       assert.match(product, /class="media product-detail-image" data-robot-cover/);
