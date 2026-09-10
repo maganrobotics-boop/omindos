@@ -357,18 +357,17 @@ function portalRedirect(url, pathname, automatic = false) {
 async function servePortal(request, env, url, locale, route) {
   if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
   const exists = PORTAL_ROUTES.has(route);
-  const notFoundPath = locale === "cn" ? "/404.zh.html" : "/404.html";
-  const assetPath = exists ? `/${locale}${route === "/" ? "/" : route + "/"}` : notFoundPath;
+  if (!exists) return renderNotFound(request, env, url, locale === "cn" ? "zh" : "en");
+  const assetPath = `/${locale}${route === "/" ? "/" : route + "/"}`;
   const response = await env.ASSETS.fetch(assetRequest(request, url, assetPath));
   const headers = new Headers(response.headers);
   headers.set("Content-Type", "text/html; charset=utf-8");
   headers.set("Content-Language", locale === "cn" ? "zh-CN" : "en");
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  headers.set("Cache-Control", exists ? "public, max-age=0, must-revalidate" : "no-store");
-  if (!exists) { headers.delete("Location"); headers.set("X-Robots-Tag", "noindex, follow"); }
+  headers.set("Cache-Control", "public, max-age=0, must-revalidate");
   return new Response(request.method === "HEAD" ? null : response.body, {
-    status: exists ? response.status : 404, headers,
+    status: response.status, headers,
   });
 }
 
