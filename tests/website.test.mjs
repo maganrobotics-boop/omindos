@@ -181,6 +181,27 @@ const portalRoutes = ['', 'robots', 'robots/wheel-legged', 'robots/quadruped',
   'integration', 'field-work', 'field-work/mining', 'field-work/warehouse',
   'mobility', 'about', 'contact', 'privacy'];
 
+test('localized page titles prefer natural wrapping', async () => {
+  for (const locale of ['cn', 'en']) {
+    for (const route of portalRoutes) {
+      const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
+      const heading = html.match(/<h1\b[^>]*>[\s\S]*?<\/h1>/i)?.[0];
+      assert.ok(heading, `${locale}/${route || 'index'}: h1`);
+      assert.doesNotMatch(heading, /<br\s*\/?>/i, `${locale}/${route || 'index'}: forced h1 break`);
+    }
+  }
+  for (const path of ['cn/404.html', 'en/404.html']) {
+    const html = await readFile(new URL(path, root), 'utf8');
+    const heading = html.match(/<h1\b[^>]*>[\s\S]*?<\/h1>/i)?.[0];
+    assert.ok(heading, `${path}: h1`);
+    assert.doesNotMatch(heading, /<br\s*\/?>/i, `${path}: forced h1 break`);
+  }
+  const Chinese = await readFile(new URL('cn/field-work/mining/index.html', root), 'utf8');
+  const English = await readFile(new URL('en/field-work/mining/index.html', root), 'utf8');
+  assert.ok(Chinese.includes('<h1>面向井下环境的机器人技术</h1>'));
+  assert.ok(English.includes('<h1>Robotics for underground environments.</h1>'));
+});
+
 test('quadruped availability agrees across both homepages, catalogues and product pages', async () => {
   for (const [locale, development, sale] of [['cn', '在研', '在售'], ['en', 'IN DEVELOPMENT', 'FOR SALE']]) {
     for (const route of ['', 'robots']) {
