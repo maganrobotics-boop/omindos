@@ -39,6 +39,7 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
       assert.equal(response.headers.get('Content-Language'), contentLanguage);
       assert.equal(response.headers.get('Location'), null);
       const html = await response.text();
+      assert.doesNotMatch(html, /unitree-originmind-hardware\.jpg|dual-arm-(?:digital-twin-demo|service-demo)/);
       assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`));
       assert.ok(html.includes('name="robots" content="index,follow"'));
       assert.match(html, /<a class="skip-link" href="#main-content">/);
@@ -74,18 +75,31 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
         assert.match(main, /id="features"/);
         assert.match(main, /id="applications"/);
         assert.doesNotMatch(main, /href="[^"]+\.(?:pdf|docx|zip)"/i);
+        assert.ok(html.includes('/product-details.css?v=20260910-catalogue'));
       }
       if (route === 'robots/dual-arm') {
         const name = locale === 'cn' ? '双臂协同操作平台' : 'Dual-arm manipulation platform';
         assert.ok(html.includes(`<h1 class="dual-arm-title">${name}</h1>`));
         assert.ok(html.includes('/assets/covers/dual-arm-cover-20260909.webp'));
-        assert.ok(html.includes('/assets/dual-arm-platform-manual.jpg'));
+        assert.ok(html.includes('/assets/dual-arm-platform-photo-20260910.jpg'));
+        assert.ok(html.includes('/assets/dual-arm-platform-cad-20260910.jpg'));
+        assert.ok(html.includes('class="dual-arm-reference-grid"'));
+        assert.doesNotMatch(html, /dual-arm-platform-manual\.jpg/);
         assert.ok(html.includes('id="videos"'));
         assert.ok(html.includes('/assets/videos/dual-arm-coffee-service.mp4'));
         assert.ok(html.includes('/assets/videos/dual-arm-digital-twin.mp4'));
         assert.ok(html.includes('/assets/dual-arm-coffee-service-poster.jpg'));
         assert.ok(html.includes('/assets/dual-arm-digital-twin-poster.jpg'));
         assert.doesNotMatch(html, /dual-arm-(?:service|digital-twin)-demo|dual-arm-digital-twin-manual\.png/);
+      }
+      if (route === 'robots/wheel-legged') {
+        assert.doesNotMatch(html, /wheel-legged-(?:exploded|leg-exploded)/);
+      }
+      if (route === 'robots/open-frame') {
+        const name = locale === 'cn' ? '并联轮足机器人' : 'Parallel-linkage wheel-legged robot';
+        const retiredName = locale === 'cn' ? '开放式轮足机器人' : 'Open-frame wheel-legged robot';
+        assert.ok(html.includes(name));
+        assert.ok(!html.includes(retiredName));
       }
     });
   }
@@ -102,25 +116,13 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
   });
 }
 
-const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded', 'dual-arm-coffee-service', 'dual-arm-digital-twin'];
-const productCovers = ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm'];
-for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/omindos-system-overview-20260910-balanced.webp', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-manual.jpg', ...productCovers.map(name => `assets/covers/${name}-cover-20260909.webp`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
+const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'dual-arm-coffee-service', 'dual-arm-digital-twin'];
+const productCovers = ['wheel-legged-cover-20260910.webp', 'quadruped-cover-20260909.webp', 'articulated-cover-20260910.webp', 'open-frame-cover-20260910.webp', 'wheeled-cover-20260910.webp', 'dual-arm-cover-20260909.webp'];
+for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/omindos-system-overview-20260910-balanced.webp', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-photo-20260910.jpg', 'assets/dual-arm-platform-cad-20260910.jpg', ...productCovers.map(name => `assets/covers/${name}`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);
     if (asset.endsWith('.mp4')) assert.match(response.headers.get('Content-Type'), /video\/mp4/);
-  });
-}
-for (const asset of [
-  'assets/unitree-originmind-hardware.jpg',
-  'assets/dual-arm-digital-twin-demo-poster.jpg',
-  'assets/dual-arm-service-demo-poster.jpg',
-  'assets/videos/dual-arm-digital-twin-demo.mp4',
-  'assets/videos/dual-arm-service-demo.mp4',
-]) {
-  await check(`withheld asset ${asset}`, async () => {
-    const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
-    assert.equal(response.status, 404);
   });
 }
 for (const path of ['/ja/', '/index.ja.html']) {
@@ -197,3 +199,4 @@ for (const host of ['www.omindos.ai', 'originmindos.com', 'www.originmindos.com'
     await response.body?.cancel();
   });
 }
+
