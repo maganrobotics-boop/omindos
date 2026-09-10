@@ -1,7 +1,18 @@
-/* Chinese typography; language selection is handled by the URL. */
+/* Shared language navigation and Chinese typography. */
+.locale-switch{display:flex;align-items:center;flex-shrink:0;gap:2px;font-size:14px;line-height:1.4;letter-spacing:normal}
+.locale-switch a{display:flex;align-items:center;justify-content:center;min-width:36px;min-height:44px;padding:8px 5px;white-space:nowrap;border-radius:3px}
+.locale-switch a[aria-current=page]{font-weight:700;text-decoration:underline;text-underline-offset:5px}
+.locale-switch a:hover{background:#8ca4c229}
+.locale-switch a:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.origin-theme .header{gap:20px}
+.origin-theme .header .desktop-nav{margin-left:auto}
+.origin-theme .header .locale-switch{margin-left:auto}
+@media(min-width:1100px){.origin-theme .header .locale-switch{margin-left:0}}
+@media(max-width:600px){.origin-theme .header{gap:8px}.origin-theme .header .origin-wordmark{font-size:24px}}
 html[lang="zh-CN"] body{font-family:Arial,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;line-height:1.7}
 html[lang="zh-CN"] h1,html[lang="zh-CN"] h2,html[lang="zh-CN"] h3,html[lang="zh-CN"] h4{letter-spacing:0;line-height:1.3}
 html[lang="zh-CN"] .eyebrow,html[lang="zh-CN"] .lead,html[lang="zh-CN"] .mobile-menu>a{letter-spacing:0}
 html[lang="zh-CN"] .eyebrow{text-transform:none}
 html[lang="zh-CN"] .page-intro h1{font-size:clamp(36px,4.4vw,68px)}
 html[lang="zh-CN"] .lead{line-height:1.65}
+@media(max-width:600px){html[lang="zh-CN"] .page-intro h1{font-size:clamp(28px,7.6vw,38px)}}

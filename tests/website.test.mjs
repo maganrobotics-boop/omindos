@@ -188,6 +188,9 @@ test('localized page titles prefer natural wrapping', async () => {
       const heading = html.match(/<h1\b[^>]*>[\s\S]*?<\/h1>/i)?.[0];
       assert.ok(heading, `${locale}/${route || 'index'}: h1`);
       assert.doesNotMatch(heading, /<br\s*\/?>/i, `${locale}/${route || 'index'}: forced h1 break`);
+      for (const heading of html.matchAll(/<h[23]\b[^>]*>[\s\S]*?<\/h[23]>/gi)) {
+        assert.doesNotMatch(heading[0], /<br\s*\/?>/i, `${locale}/${route || 'index'}: forced section-heading break`);
+      }
     }
   }
   for (const path of ['cn/404.html', 'en/404.html']) {
@@ -199,7 +202,7 @@ test('localized page titles prefer natural wrapping', async () => {
   const Chinese = await readFile(new URL('cn/field-work/mining/index.html', root), 'utf8');
   const English = await readFile(new URL('en/field-work/mining/index.html', root), 'utf8');
   assert.ok(Chinese.includes('<h1>面向井下环境的机器人技术</h1>'));
-  assert.ok(English.includes('<h1>Robotics for underground environments.</h1>'));
+  assert.ok(English.includes('<h1>Robotics for underground environments</h1>'));
 });
 
 test('quadruped availability agrees across both homepages, catalogues and product pages', async () => {
@@ -339,17 +342,17 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       assert.doesNotMatch(html, /data-language=|class="language-switch|mujin|framerusercontent/i);
       assert.ok(html.includes('https://omindos.ai/og-card.png?v=20260909-omindos'), `${path}: social image version`);
       if (route === '') {
-        assert.ok(html.includes('/home/base.css?v=20260909-remediation'));
+        assert.ok(html.includes('/home/base.css?v=20260910-polish'));
         assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
-        assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
+        assert.ok(html.includes('/product-cards.css?v=20260910-polish'));
         assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
-        assert.ok(html.includes('/site.css?v=20260909-remediation'));
-        assert.ok(html.includes('/site.js?v=20260909-remediation'));
-        if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
+        assert.ok(html.includes('/site.css?v=20260910-polish'));
+        assert.ok(html.includes('/site.js?v=20260910-polish'));
+        if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260910-polish'));
         if (route.startsWith('robots/')) {
-          const version = route === 'robots/dual-arm' ? '20260910-dual-arm-media' : '20260909-remediation';
+          const version = '20260910-polish';
           assert.ok(html.includes(`/product-details.css?v=${version}`));
         }
       }
@@ -516,9 +519,35 @@ test('navigation breakpoint and skip-link focus enhancement stay aligned', async
     assert.match(script, /focus\(\{\s*preventScroll:\s*true\s*\}\)/);
   }
   const productDetails = await readFile(new URL('product-details.css', root), 'utf8');
-  assert.match(productDetails, /@media\(min-width:601px\)\{\.page-intro h1\.dual-arm-title\{[^}]*white-space:nowrap/);
+  assert.doesNotMatch(productDetails, /dual-arm-title\{[^}]*white-space:nowrap/);
   const productCards = await readFile(new URL('product-cards.css', root), 'utf8');
-  assert.match(productCards, /@media\(min-width:701px\)\{\.sale-card h3\.dual-arm-card-title,\.product-card-copy h3\.dual-arm-card-title\{[^}]*white-space:nowrap/);
+  assert.doesNotMatch(productCards, /dual-arm-card-title\{[^}]*white-space:nowrap/);
+});
+
+test('language links preserve the current page, query and section', async () => {
+  const portalClient = await readFile(new URL('portal-client.js', root), 'utf8');
+  for (const route of portalRoutes) {
+    for (const locale of ['cn', 'en']) {
+      const path = `/${locale}/${route ? route + '/' : ''}`;
+      const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
+      const switcher = html.match(/<nav class="locale-switch"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+      assert.ok(switcher, `${path}: visible language navigation`);
+      const links = [...switcher.matchAll(/href="([^"]+)"/g)].map(match => ({
+        href: match[1], getAttribute() { return this.href; },
+      }));
+      assert.equal(links.length, 2);
+      const location = new URL(`https://omindos.ai${path}?source=partner&lang=zh#features`);
+      runInNewContext(portalClient, {
+        URL, location,
+        document: { querySelectorAll: () => links },
+        AbortSignal: { timeout: () => undefined },
+        fetch: async () => ({ body: { cancel() {} } }),
+      });
+      for (const [i, targetLocale] of ['cn', 'en'].entries()) {
+        assert.equal(links[i].href, `https://omindos.ai/${targetLocale}/${route ? route + '/' : ''}?source=partner#features`);
+      }
+    }
+  }
 });
 
 test('V1.5.17 keeps collapsed videos and product links while removing the final contact block', async () => {
@@ -706,4 +735,3 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
-

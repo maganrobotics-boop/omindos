@@ -1,4 +1,4 @@
-/* Consistent, compact actions for homepage and catalogue robot cards. */
+/* Consistent, compact actions for homepage and catalog robot cards. */
 .product-card{display:flex;flex-direction:column}
 .product-card-copy{display:flex;flex:1;flex-direction:column}
 .sale-card .sale-actions,.product-card .product-links{
@@ -41,4 +41,6 @@
   outline-offset:3px;
 }
 .product-picture.dual-arm-card-media,.sale-card .sale-image.dual-arm-card-media{background:#fff}
-@media(min-width:701px){.sale-card h3.dual-arm-card-title,.product-card-copy h3.dual-arm-card-title{font-size:clamp(18px,1.55vw,24px);line-height:1.2;white-space:nowrap;text-wrap:nowrap}}
+.sale-card h3{min-height:2.5em}
+.sale-card h3,.product-card-copy h3{white-space:normal;text-wrap:pretty}
+@media(max-width:600px){.sale-card h3{min-height:0}}
