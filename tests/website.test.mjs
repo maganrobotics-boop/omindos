@@ -320,7 +320,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/home/base.css?v=20260909-remediation'));
         assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
         assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
-        assert.ok(html.includes('/assets/omindos-system-overview-20260910.webp'));
+        assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260909-remediation'));
