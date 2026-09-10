@@ -35,5 +35,8 @@
 .dual-arm-primary-media>img{aspect-ratio:3/2;object-fit:contain;background:#fff}
 .dual-arm-demo-grid{margin-top:34px}
 .dual-arm-demo-grid .video-figure>video{background:#050e17}
-.dual-arm-reference-media{max-width:510px;margin:34px auto 0}
-.dual-arm-reference-media>img{aspect-ratio:510/424;background:#fff}
+.dual-arm-reference-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;max-width:1080px;margin:34px auto 0}
+.dual-arm-reference-grid .product-console{margin-top:0}
+.dual-arm-reference-media{min-width:0}
+.dual-arm-reference-media>img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff}
+@media(max-width:760px){.dual-arm-reference-grid{grid-template-columns:minmax(0,1fr);gap:28px}}

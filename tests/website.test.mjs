@@ -458,7 +458,10 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     const detail = await readFile(new URL(`${locale}/robots/dual-arm/index.html`, root), 'utf8');
     assert.ok(detail.includes(`<h1 class="dual-arm-title">${name}</h1>`));
     assert.ok(detail.includes(`<meta property="og:title" content="${name} | OriginMind">`));
-    assert.ok(detail.includes('/assets/dual-arm-platform-manual.jpg'));
+    assert.ok(detail.includes('/assets/dual-arm-platform-photo-20260910.jpg'));
+    assert.ok(detail.includes('/assets/dual-arm-platform-cad-20260910.jpg'));
+    assert.ok(detail.includes('class="dual-arm-reference-grid"'));
+    assert.doesNotMatch(detail, /dual-arm-platform-manual\.jpg/);
     assert.doesNotMatch(detail, /dual-arm-(?:service|digital-twin)-demo/);
     assert.ok(detail.includes('id="videos"'));
     assert.ok(detail.includes('href="#videos"'));
