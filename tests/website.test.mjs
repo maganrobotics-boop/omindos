@@ -356,7 +356,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/site.js?v=20260910-polish'));
         if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260910-polish'));
         if (route.startsWith('robots/')) {
-          const version = '20260910-polish';
+          const version = '20260910-catalogue';
           assert.ok(html.includes(`/product-details.css?v=${version}`));
         }
       }
