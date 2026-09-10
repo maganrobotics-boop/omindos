@@ -269,6 +269,7 @@ test('uploaded product demonstrations use accessible players and fast-start MP4 
     'open-frame': ['open-frame-field-demo'],
     'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
     'wheeled': ['mobile-inspection-demo'],
+    'dual-arm': ['dual-arm-coffee-service', 'dual-arm-digital-twin'],
   };
   for (const [model, names] of Object.entries(demos)) {
     for (const locale of ['cn', 'en']) {
@@ -347,7 +348,10 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/site.css?v=20260909-remediation'));
         assert.ok(html.includes('/site.js?v=20260909-remediation'));
         if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
-        if (route.startsWith('robots/')) assert.ok(html.includes('/product-details.css?v=20260909-remediation'));
+        if (route.startsWith('robots/')) {
+          const version = route === 'robots/dual-arm' ? '20260910-dual-arm-media' : '20260909-remediation';
+          assert.ok(html.includes(`/product-details.css?v=${version}`));
+        }
       }
       for (const match of html.matchAll(/href="(\/(?:cn|en)\/[^"?#]*)/g)) {
         if (!/\.[a-z0-9]+$/i.test(match[1])) assert.ok(match[1].endsWith('/'), `${path}: ${match[1]}`);
@@ -452,10 +456,10 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     assert.ok(detail.includes(`<h1 class="dual-arm-title">${name}</h1>`));
     assert.ok(detail.includes(`<meta property="og:title" content="${name} | OriginMind">`));
     assert.ok(detail.includes('/assets/dual-arm-platform-manual.jpg'));
-    assert.ok(detail.includes('/assets/dual-arm-motion-plan-manual.jpg'));
-    assert.ok(detail.includes('/assets/dual-arm-digital-twin-manual.png'));
-    assert.doesNotMatch(detail, /dual-arm-(?:service|digital-twin)-demo|id="videos"|href="#videos"/);
-    assert.doesNotMatch(detail, /dual-arm-cover-20260909|data-robot-cover/);
+    assert.doesNotMatch(detail, /dual-arm-(?:service|digital-twin)-demo/);
+    assert.ok(detail.includes('id="videos"'));
+    assert.ok(detail.includes('href="#videos"'));
+    assert.ok(detail.includes('/assets/covers/dual-arm-cover-20260909.webp'));
     for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
       const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
       assert.ok(product.includes('/robot-covers.css?v=20260909'));
@@ -702,3 +706,4 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
+
