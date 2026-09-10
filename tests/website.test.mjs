@@ -327,7 +327,10 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/site.css?v=20260909-remediation'));
         assert.ok(html.includes('/site.js?v=20260909-remediation'));
         if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260909-remediation'));
-        if (route.startsWith('robots/')) assert.ok(html.includes('/product-details.css?v=20260909-remediation'));
+        if (route.startsWith('robots/')) {
+          const version = route === 'robots/dual-arm' ? '20260910-dual-arm-media' : '20260909-remediation';
+          assert.ok(html.includes(`/product-details.css?v=${version}`));
+        }
       }
       for (const match of html.matchAll(/href="(\/(?:cn|en)\/[^"?#]*)/g)) {
         if (!/\.[a-z0-9]+$/i.test(match[1])) assert.ok(match[1].endsWith('/'), `${path}: ${match[1]}`);
