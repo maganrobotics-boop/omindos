@@ -90,6 +90,8 @@
 .origin-theme .hero.full .hero-copy{max-width:none}
 /* Balance Chinese headings and keep one arrow on product-card links. */
 html[lang="zh-CN"] .origin-theme h2{text-wrap:balance}
+/* Fit the Chinese homepage invitation on one line, including narrow phones. */
+html[lang="zh-CN"] .origin-theme .cta h2{font-size:clamp(1.25rem,6.4vw,2.375rem);text-wrap:wrap}
 .origin-theme .sale-actions .text-link>span[aria-hidden="true"]{display:none}
 @media(min-width:768px){
  .origin-theme .hero.full h1{font-size:clamp(1.875rem,3.2vw,3.5rem);letter-spacing:-.035em;white-space:normal;text-wrap:wrap}
