@@ -477,9 +477,11 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     assert.doesNotMatch(detail, /dual-arm-(?:service|digital-twin)-demo/);
     assert.ok(detail.includes('id="videos"'));
     assert.ok(detail.includes('href="#videos"'));
+    assert.ok(detail.includes('/product-details.css?v=20260910-catalogue'));
     assert.ok(detail.includes('/assets/covers/dual-arm-cover-20260909.webp'));
     for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
       const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
+      assert.ok(product.includes('/product-details.css?v=20260910-catalogue'));
       assert.ok(product.includes('/robot-covers.css?v=20260909'));
       assert.ok(product.includes(`/assets/covers/${coverNames[model]}`));
       assert.match(product, /class="media product-detail-image" data-robot-cover/);
