@@ -118,12 +118,22 @@ for (const asset of [
     assert.equal(response.status, 404);
   });
 }
-for (const path of ['/ja/', '/index.ja.html', '/founding-oem.ja.html', '/oem/ja/', '/why/ja/', '/robots/ja/', '/404.ja.html']) {
+for (const path of ['/ja/', '/index.ja.html']) {
   await check(`retired Japanese path ${path} redirects to English`, async () => {
     const response = await request(`https://omindos.ai${path}`);
     assert.equal(response.status, 308);
     assert.equal(response.headers.get('Location'), 'https://omindos.ai/en/');
     await response.body?.cancel();
+  });
+}
+for (const path of ['/founding-oem.ja.html', '/founding-oem.ja.js', '/oem/ja/', '/oem/ja/index.html', '/why/ja/', '/why/ja/index.html',
+  '/robots/ja/', '/robots/ja/index.html', '/404.ja.html']) {
+  await check(`retired Japanese path ${path} returns English 404`, async () => {
+    const response = await request(`https://omindos.ai${path}`);
+    assert.equal(response.status, 404);
+    assert.equal(response.headers.get('Content-Language'), 'en');
+    assert.match(response.headers.get('Cache-Control'), /no-store/);
+    assert.doesNotMatch(await response.text(), /[ぁ-ゖァ-ヺ]|日本語/u);
   });
 }
 await check('Japanese brochure removed', async () => {
