@@ -78,9 +78,14 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
       if (route === 'robots/dual-arm') {
         const name = locale === 'cn' ? '双臂协同操作平台' : 'Dual-arm manipulation platform';
         assert.ok(html.includes(`<h1 class="dual-arm-title">${name}</h1>`));
+        assert.ok(html.includes('/assets/covers/dual-arm-cover-20260909.webp'));
         assert.ok(html.includes('/assets/dual-arm-platform-manual.jpg'));
-        assert.ok(html.includes('/assets/dual-arm-digital-twin-manual.png'));
-        assert.doesNotMatch(html, /dual-arm-(?:service|digital-twin)-demo|id="videos"/);
+        assert.ok(html.includes('id="videos"'));
+        assert.ok(html.includes('/assets/videos/dual-arm-coffee-service.mp4'));
+        assert.ok(html.includes('/assets/videos/dual-arm-digital-twin.mp4'));
+        assert.ok(html.includes('/assets/dual-arm-coffee-service-poster.jpg'));
+        assert.ok(html.includes('/assets/dual-arm-digital-twin-poster.jpg'));
+        assert.doesNotMatch(html, /dual-arm-(?:service|digital-twin)-demo|dual-arm-digital-twin-manual\.png/);
       }
     });
   }
@@ -97,9 +102,9 @@ for (const [locale, contentLanguage] of [['cn', 'zh-CN'], ['en', 'en']]) {
   });
 }
 
-const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'];
+const productDemos = ['mobile-inspection-demo', 'wheel-legged-demo', 'articulated-gait-demo', 'spider-mechanism-demo', 'open-frame-field-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded', 'dual-arm-coffee-service', 'dual-arm-digital-twin'];
 const productCovers = ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm'];
-for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/omindos-system-overview-20260910-balanced.webp', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-manual.jpg', 'assets/dual-arm-motion-plan-manual.jpg', 'assets/dual-arm-digital-twin-manual.png', ...productCovers.map(name => `assets/covers/${name}-cover-20260909.webp`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
+for (const asset of ['og-card.png?v=20260909-omindos', 'assets/videos/open-frame-lab.mp4', 'assets/videos/originmind-home-film.mp4', 'assets/underground-robot-team.jpg', 'assets/omindos-inspection-console-20260909.jpg', 'assets/omindos-system-overview-20260910-balanced.webp', 'assets/wheel-legged-bracket-model.png', 'assets/wheel-legged-bracket-photo.jpg', 'assets/third-party-quadruped-platform.jpg', 'assets/dual-arm-platform-manual.jpg', ...productCovers.map(name => `assets/covers/${name}-cover-20260909.webp`), ...productDemos.flatMap(name => [`assets/videos/${name}.mp4`, `assets/${name}-poster.jpg`])]) {
   await check(`asset ${asset}`, async () => {
     const response = await fetch(`https://omindos.ai/${asset}`, { method: 'HEAD', signal: AbortSignal.timeout(15_000) });
     assert.equal(response.status, 200); assert.ok(Number(response.headers.get('Content-Length')) > 1000);
