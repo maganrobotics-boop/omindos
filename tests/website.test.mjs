@@ -345,10 +345,13 @@ test('explicit old bilingual homepage links remain reachable and Japanese conten
     assert.equal(removed.status, 308, path);
     assert.equal(removed.headers.get('Location'), 'https://omindos.ai/en/', path);
   }
-  for (const path of ['/oem/ja/', '/why/ja/', '/robots/ja/', '/404.ja.html']) {
+  for (const path of ['/founding-oem.ja.html', '/founding-oem.ja.js', '/oem/ja/', '/oem/ja/index.html',
+    '/why/ja/', '/why/ja/index.html', '/robots/ja/', '/robots/ja/index.html', '/404.ja.html']) {
     const removed = await worker.fetch(new Request(`https://omindos.ai${path}`), env);
     assert.equal(removed.status, 404, path);
-    assert.notEqual(removed.headers.get('Content-Language'), 'ja-JP', path);
+    assert.equal(removed.headers.get('Content-Language'), 'en', path);
+    assert.match(removed.headers.get('Cache-Control'), /no-store/, path);
+    assert.doesNotMatch(await removed.text(), /[ぁ-ゖァ-ヺ]|日本語/u, path);
   }
   const { payload, send } = await oemFixture();
   const rejectedJapaneseForm = await send({ ...payload, language: 'ja' });
