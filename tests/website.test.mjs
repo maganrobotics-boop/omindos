@@ -268,7 +268,7 @@ test('product details are readable inline and keep model-specific specifications
 
 test('uploaded product demonstrations use accessible players and fast-start MP4 assets', async () => {
   const demos = {
-    'wheel-legged': ['wheel-legged-demo', 'wheel-legged-exploded', 'wheel-legged-leg-exploded'],
+    'wheel-legged': ['wheel-legged-demo'],
     'open-frame': ['open-frame-field-demo'],
     'articulated': ['articulated-gait-demo', 'spider-mechanism-demo'],
     'wheeled': ['mobile-inspection-demo'],
@@ -303,6 +303,10 @@ test('uploaded product demonstrations use accessible players and fast-start MP4 
       assert.ok(atoms.includes('moov') && atoms.includes('mdat'));
       assert.ok(atoms.indexOf('moov') < atoms.indexOf('mdat'), 'metadata precedes the video payload');
     }
+  }
+  for (const locale of ['cn', 'en']) {
+    const wheelLegged = await readFile(new URL(`${locale}/robots/wheel-legged/index.html`, root), 'utf8');
+    assert.doesNotMatch(wheelLegged, /wheel-legged-(?:exploded|leg-exploded)/);
   }
 });
 
@@ -422,6 +426,14 @@ test('explicit old bilingual homepage links remain reachable and Japanese conten
 });
 
 test('approved bilingual naming, privacy links and legacy catalogue scope stay consistent', async () => {
+  const coverNames = {
+    'wheel-legged': 'wheel-legged-cover-20260910.webp',
+    quadruped: 'quadruped-cover-20260909.webp',
+    articulated: 'articulated-cover-20260910.webp',
+    'open-frame': 'open-frame-cover-20260910.webp',
+    wheeled: 'wheeled-cover-20260910.webp',
+    'dual-arm': 'dual-arm-cover-20260909.webp',
+  };
   const current = {};
   for (const locale of ['cn', 'en']) {
     current[locale] = await Promise.all(portalRoutes.map(async route =>
@@ -450,8 +462,8 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
       assert.ok(html.includes(name));
       assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="/${locale}/robots/dual-arm/">${name}</a></h3>`));
       assert.ok(html.includes('/robot-covers.css?v=20260909'));
-      for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled', 'dual-arm']) {
-        assert.ok(html.includes(`/assets/covers/${model}-cover-20260909.webp`));
+      for (const [model, cover] of Object.entries(coverNames)) {
+        assert.ok(html.includes(`/assets/covers/${cover}`));
         assert.match(html, new RegExp(`data-robot-cover href="/${locale}/robots/${model}/"`));
       }
     }
@@ -469,8 +481,19 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     for (const model of ['wheel-legged', 'quadruped', 'articulated', 'open-frame', 'wheeled']) {
       const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
       assert.ok(product.includes('/robot-covers.css?v=20260909'));
-      assert.ok(product.includes(`/assets/covers/${model}-cover-20260909.webp`));
+      assert.ok(product.includes(`/assets/covers/${coverNames[model]}`));
       assert.match(product, /class="media product-detail-image" data-robot-cover/);
+    }
+  }
+
+  for (const [locale, name, retiredName] of [
+    ['cn', '并联轮足机器人', '开放式轮足机器人'],
+    ['en', 'Parallel-linkage wheel-legged robot', 'Open-frame wheel-legged robot'],
+  ]) {
+    for (const route of ['', 'robots', 'robots/open-frame']) {
+      const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
+      assert.ok(html.includes(name));
+      assert.ok(!html.includes(retiredName));
     }
   }
 
