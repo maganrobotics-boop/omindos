@@ -73,6 +73,27 @@ test('removed meeting pages and APIs return 404 without credentials',async()=>{
   assert.doesNotMatch(source,/MEETING_|OPENAI|api\.openai|CLOUDFLARE_TURN/);
   await assert.rejects(access(new URL('meeting',root)));
 });
+test('retired public assets bypass stale successful asset responses', async () => {
+  const retired = [
+    '/assets/unitree-originmind-hardware.jpg',
+    '/assets/dual-arm-digital-twin-demo-poster.jpg',
+    '/assets/dual-arm-service-demo-poster.jpg',
+    '/assets/videos/dual-arm-digital-twin-demo.mp4',
+    '/assets/videos/dual-arm-service-demo.mp4',
+  ];
+  const staleEnv = { ASSETS: { async fetch(request) {
+    const path = new URL(request.url).pathname;
+    if (retired.includes(path)) return new Response('stale retired asset', { status: 200 });
+    return env.ASSETS.fetch(request);
+  } } };
+  for (const path of retired) {
+    const response = await worker.fetch(new Request(`https://omindos.ai${path}`), staleEnv);
+    assert.equal(response.status, 404, path);
+    assert.equal(response.headers.get('Content-Language'), 'en', path);
+    assert.match(response.headers.get('Cache-Control'), /no-store/, path);
+    assert.doesNotMatch(await response.text(), /stale retired asset/, path);
+  }
+});
 test('original legacy-host redirects remain',async()=>{
   for(const host of ['originmindos.com','www.originmindos.com','www.omindos.ai','originmindos.cn','jp.originmindos.com']) {
     const r=await worker.fetch(new Request(`https://${host}/`),env); assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');

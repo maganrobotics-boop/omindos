@@ -33,6 +33,13 @@ const INTERNAL_ROBOT_PATH = /^\/robots\/(en|zh)(?:\/index(?:\.html)?)?\/?$/;
 const NOT_FOUND_PATH = /^\/404(?:\.(en|zh))?(?:\.html)?\/?$/;
 const REMOVED_JAPANESE_HOME_PATH = /^\/(?:ja\/?|index\.ja(?:\.html)?\/?)$/u;
 const REMOVED_JAPANESE_CONTENT_PATH = /^\/(?:founding-oem\.ja(?:\.html|\.js)?\/?|(?:oem|why|robots)\/ja(?:\/index(?:\.html)?)?\/?|404\.ja(?:\.html)?\/?|assets\/brochures\/OriginMind_Intelligent_Mobile_Robot_Product_Brochure_JA\.pdf)$/u;
+const RETIRED_PUBLIC_ASSETS = new Set([
+  "/assets/unitree-originmind-hardware.jpg",
+  "/assets/dual-arm-digital-twin-demo-poster.jpg",
+  "/assets/dual-arm-service-demo-poster.jpg",
+  "/assets/videos/dual-arm-digital-twin-demo.mp4",
+  "/assets/videos/dual-arm-service-demo.mp4",
+]);
 
 function jsonResponse(body, status = 200, extraHeaders = {}) {
   return Response.json(body, {
@@ -386,6 +393,7 @@ export default {
 
       if (url.pathname === VISITS_ENDPOINT) return handleVisits(request, env, url);
       if (url.pathname === "/api/oem-applications") return handleOemApplication(request, env, url);
+      if (RETIRED_PUBLIC_ASSETS.has(url.pathname)) return renderNotFound(request, env, url, "en");
 
       const explicitPortal = url.pathname.match(/^\/(cn|en)(\/.*)?$/);
       if (explicitPortal) {
