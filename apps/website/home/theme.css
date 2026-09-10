@@ -97,14 +97,17 @@ html[lang="zh-CN"] .origin-theme .cta h2{font-size:clamp(1.25rem,6.4vw,2.375rem)
  .origin-theme .hero.full h1{font-size:clamp(1.875rem,3.2vw,3.5rem);letter-spacing:-.035em;white-space:normal;text-wrap:wrap}
 }
 
-/* Show robot hardware above its software interface in one framed group. */
-.hardware-system-pair{min-width:0;width:100%;max-width:650px;justify-self:end;overflow:hidden;border:1px solid #d7e1ed;border-radius:6px;background:#f0f4f9}
+/* Pair hardware and software below their introduction, without an empty text column. */
+.hardware-overview{display:block}
+.hardware-overview h2{max-width:none}
+.hardware-overview p{max-width:950px}
+.hardware-system-pair{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.65fr);min-width:0;width:100%;margin-top:34px;overflow:hidden;border:1px solid #d7e1ed;border-radius:6px;background:#f0f4f9}
 .hardware-system-pair figure{margin:0}
 .hardware-system-pair img{display:block;width:100%;object-fit:contain}
 .hardware-system-pair .paired-hardware{background:#e7edf4}
-.hardware-system-pair .paired-hardware img{height:clamp(220px,22vw,300px)}
-.hardware-system-pair .paired-software{padding:18px 18px 0;background:#f7faff;border-top:1px solid #d7e1ed}
-.hardware-system-pair .paired-software img{height:auto;aspect-ratio:2/1;background:#101e28}
+.hardware-system-pair .paired-hardware img{height:clamp(220px,24vw,340px)}
+.hardware-system-pair .paired-software{padding:0 18px;background:#f7faff;border-left:1px solid #d7e1ed}
+.hardware-system-pair .paired-software img{height:clamp(220px,24vw,340px);aspect-ratio:2/1;background:#f7faff}
 .hardware-system-pair figcaption{padding:10px 16px;color:#485c78;font-size:.875rem;line-height:1.45;background:#f7faff}
 .hardware-system-pair .paired-software figcaption{padding-inline:0}
 
@@ -125,9 +128,10 @@ html[lang="zh-CN"] .origin-theme .cta h2{font-size:clamp(1.25rem,6.4vw,2.375rem)
  .origin-theme .footer-top{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:700px){
- .hardware-system-pair{max-width:none;justify-self:stretch}
- .hardware-system-pair .paired-hardware img{height:260px}
- .hardware-system-pair .paired-software{padding:12px 12px 0}
+ .hardware-system-pair{grid-template-columns:minmax(0,1fr);margin-top:28px}
+ .hardware-system-pair .paired-hardware img{height:220px}
+ .hardware-system-pair .paired-software{padding:12px 12px 0;border-left:0;border-top:1px solid #d7e1ed}
+ .hardware-system-pair .paired-software img{height:auto;aspect-ratio:2/1}
  .hardware-system-pair figcaption{font-size:.8125rem;padding:9px 12px}
  .origin-theme .workflow-benefits{padding:18px;gap:24px}
  .workflow-benefits .accordion summary{font-size:1.25rem;padding:19px 0}

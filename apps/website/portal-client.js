@@ -1,4 +1,12 @@
 (() => {
+  // The URL selects the language; switching keeps the current page and context.
+  document.querySelectorAll('.locale-switch a').forEach(link => {
+    const destination = new URL(link.getAttribute('href'), location.origin);
+    destination.search = location.search;
+    destination.searchParams.delete('lang');
+    destination.hash = location.hash;
+    link.href = destination.href;
+  });
   // Retain bookmarks from the former homepage after the move to /cn and /en.
   const home = location.pathname.match(/^\/(cn|en)\/$/);
   if (home) {

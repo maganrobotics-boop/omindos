@@ -30,7 +30,7 @@ document.addEventListener('keydown', event => {
     else if (!event.shiftKey && document.activeElement === last) {event.preventDefault(); first.focus();}
   }
 });
-matchMedia('(min-width:821px)').addEventListener('change', event => {
+matchMedia('(min-width:1100px)').addEventListener('change', event => {
   if (event.matches && menu && !menu.hidden) setMenu(false, false);
 });
 
