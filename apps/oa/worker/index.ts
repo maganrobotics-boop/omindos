@@ -2,7 +2,7 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { legacyOaRedirect } from "../lib/legacy-oa-redirect.mjs";
-import { ensureMigrationWriteFreezeMarker, isMigrationWriteFrozen, shouldBlockForMigrationFreeze } from "../lib/migration-freeze";
+import { deactivateMigrationWriteFreeze, ensureMigrationWriteFreezeMarker, isMigrationWriteFrozen, migrationControlPlaneUnfreezeState, shouldBlockForMigrationFreeze, shouldServeMigrationRecoveryPage } from "../lib/migration-freeze";
 import { archiveApprovalPdfsToFeishu, type FeishuArchiveEnv } from "../lib/feishu-drive-archive";
 import { processApprovalNotifications } from "../lib/feishu-notifications";
 
@@ -17,6 +17,9 @@ interface Env {
     };
   };
   OA_MIGRATION_WRITE_FROZEN?: string;
+  OA_MIGRATION_UNFREEZE_ENABLED?: string;
+  OA_MIGRATION_EXPORT_NOT_AFTER?: string;
+  OA_MIGRATION_CONTROL_UNFREEZE_ID?: string;
   OA_LEGACY_REDIRECT_ENABLED?: string;
   OA_MIGRATION_FREEZE_ID?: string;
   FEISHU_PDF_ARCHIVE_ENABLED?: string;
@@ -53,6 +56,44 @@ function isApprovalJsonResponse(request: Request, response: Response) {
   return pathname === "/api/approvals" || /^\/api\/approvals\/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u.test(pathname);
 }
 
+function migrationRecoveryPage(request: Request) {
+  return withSecurityHeaders(request, new Response(`<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>解除数据库迁移栅栏</title></head>
+<body>
+  <main>
+    <h1>解除数据库迁移栅栏</h1>
+    <p>本次迁移包已经过期。继续后将停用当前迁移冻结代次；此前下载的迁移包必须销毁。</p>
+    <form method="post" action="/api/admin/migration-unfreeze">
+      <button type="submit" name="confirmation" value="discard-current-migration-package">确认废弃当前迁移包并解除栅栏</button>
+    </form>
+  </main>
+</body>
+</html>`, {
+    status: 200,
+    headers: { "cache-control": "private, no-store, max-age=0", "content-type": "text/html; charset=utf-8" },
+  }));
+}
+
+async function controlPlaneMigrationUnfreeze(request: Request, env: Env, freezeId: string) {
+  let released = false;
+  try {
+    released = await deactivateMigrationWriteFreeze(env.DB, freezeId);
+  } catch {
+    // Fail closed. The execute latch keeps every request in maintenance mode.
+  }
+  const readOnlyRequest = request.method === "GET" || request.method === "HEAD";
+  return withSecurityHeaders(request, Response.json(
+    released
+      ? { ok: true, maintenance: true, message: "数据库迁移栅栏已停用；网页写入仍等待控制面关闭冻结。" }
+      : { error: "迁移恢复控制未就绪；网页写入仍保持冻结。" },
+    {
+      status: released && readOnlyRequest ? 200 : 503,
+      headers: { "cache-control": "private, no-store, max-age=0", "retry-after": "60" },
+    },
+  ));
+}
+
 async function archiveApprovalsFromResponse(response: Response, env: Env) {
   try {
     const body = await response.json() as {
@@ -83,9 +124,23 @@ const worker = {
     if (!isMigrationWriteFrozen(env as unknown as Record<string, unknown>)) ctx.waitUntil(processApprovalNotifications(env));
   },
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const controlPlaneUnfreeze = migrationControlPlaneUnfreezeState(env as unknown as Record<string, unknown>);
+    if (controlPlaneUnfreeze.armed) {
+      if (!controlPlaneUnfreeze.freezeId) {
+        return withSecurityHeaders(request, Response.json(
+          { error: "迁移恢复控制未就绪；网页写入仍保持冻结。" },
+          { status: 503, headers: { "cache-control": "private, no-store, max-age=0", "retry-after": "60" } },
+        ));
+      }
+      return controlPlaneMigrationUnfreeze(request, env, controlPlaneUnfreeze.freezeId);
+    }
     const legacyRedirect = legacyOaRedirect(request, env.OA_LEGACY_REDIRECT_ENABLED);
     if (legacyRedirect) return legacyRedirect;
     const url = new URL(request.url);
+
+    if (shouldServeMigrationRecoveryPage(request, env as unknown as Record<string, unknown>)) {
+      return migrationRecoveryPage(request);
+    }
 
     if (isMigrationWriteFrozen(env as unknown as Record<string, unknown>)) {
       try {

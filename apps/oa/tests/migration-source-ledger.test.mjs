@@ -33,7 +33,7 @@ for (const name of ["d1_migrations", "__appgarden_migrations"]) {
       const adapter = { prepare(sql) { return { async all() { return { success: true, results: db.prepare(sql).all().map((row) => ({ ...row })) }; } }; } };
       const query = await migrationSourceLedgerStatement(adapter);
       assert.deepEqual(migrationNamesFromLedger(await query.all()), MIGRATION_EXPORT_EXPECTED_MIGRATIONS);
-      db.exec(`DELETE FROM ${name} WHERE id = 26`);
+      db.prepare(`DELETE FROM ${name} WHERE name = ?`).run(MIGRATION_EXPORT_EXPECTED_MIGRATIONS.at(-1));
       const incomplete = await query.all();
       assert.throws(() => migrationNamesFromLedger(incomplete), /required application schema/);
     } finally { db.close(); }

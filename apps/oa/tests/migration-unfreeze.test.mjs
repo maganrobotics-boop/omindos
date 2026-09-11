@@ -15,7 +15,8 @@ function initialState(overrides = {}) {
     authCalls: 0,
     batchCalls: 0,
     batchResults: [
-      { success: true, results: [{ freeze_id: "11111111-2222-4333-8444-555555555555" }] },
+      { success: true, results: [] },
+      { success: true, results: [{ freeze_id: "11111111-2222-4333-8444-555555555555", deactivated_at: "2026-09-02 00:10:00" }] },
       { success: true, results: [{ active_count: 0 }] },
     ],
     throwBatch: false,
@@ -47,7 +48,12 @@ const vite = await createServer({
             if (globalThis.${stateKey}.throwBatch) throw new Error("D1 unavailable");
             return globalThis.${stateKey}.batchResults;
           },
-        } };
+        },
+          get OA_MIGRATION_WRITE_FROZEN() { return process.env.OA_MIGRATION_WRITE_FROZEN; },
+          get OA_MIGRATION_UNFREEZE_ENABLED() { return process.env.OA_MIGRATION_UNFREEZE_ENABLED; },
+          get OA_MIGRATION_FREEZE_ID() { return process.env.OA_MIGRATION_FREEZE_ID; },
+          get OA_MIGRATION_EXPORT_NOT_AFTER() { return process.env.OA_MIGRATION_EXPORT_NOT_AFTER; },
+        };
       `;
       if (id === "\0migration-unfreeze-auth") return `
         export async function getAuthorizedUser() {
@@ -61,6 +67,7 @@ const vite = await createServer({
 });
 
 const route = await vite.ssrLoadModule("/app/api/admin/migration-unfreeze/route.ts");
+const recoveryRoute = await vite.ssrLoadModule("/app/migration-recovery/route.ts");
 
 after(async () => {
   for (const [key, value] of Object.entries(originalEnvironment)) {
@@ -92,6 +99,31 @@ function request(headers = {}, body = "confirmation=discard-current-migration-pa
     body,
   });
 }
+
+function getRequest() {
+  return new Request("https://oa.example.test/migration-recovery");
+}
+
+test("migration unfreeze recovery page is hidden unless enabled and restricted to admitted administrators", async () => {
+  let state = reset();
+  process.env.OA_MIGRATION_UNFREEZE_ENABLED = "false";
+  let response = await recoveryRoute.GET(getRequest());
+  assert.equal(response.status, 404);
+  assert.equal(state.authCalls, 0);
+
+  state = reset({ authorized: null });
+  response = await recoveryRoute.GET(getRequest());
+  assert.equal(response.status, 403);
+  assert.equal(state.authCalls, 1);
+
+  state = reset();
+  response = await recoveryRoute.GET(getRequest());
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "text/html; charset=utf-8");
+  assert.match(await response.text(), /name="confirmation" value="discard-current-migration-package"/u);
+  assert.equal(state.authCalls, 1);
+  assert.equal(state.batchCalls, 0);
+});
 
 test("migration unfreeze is hidden by default and rejects foreign origins before authentication", async () => {
   let state = reset();
@@ -135,7 +167,7 @@ test("migration unfreeze deactivates only the exact generation and verifies no a
   assert.equal(state.batchCalls, 1);
   assert.match((await response.json()).message, /迁移包.*必须销毁/u);
 
-  state = reset({ batchResults: [{ success: true, results: [] }, { success: true, results: [{ active_count: 1 }] }] });
+  state = reset({ batchResults: [{ success: true, results: [] }, { success: true, results: [{ freeze_id: "11111111-2222-4333-8444-555555555555", deactivated_at: null }] }, { success: true, results: [{ active_count: 1 }] }] });
   response = await route.POST(request());
   assert.equal(response.status, 409);
   assert.equal(state.batchCalls, 1);

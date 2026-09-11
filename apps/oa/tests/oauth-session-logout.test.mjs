@@ -11,11 +11,13 @@ const sqliteDialect = new SQLiteSyncDialect();
 
 function initialState() {
   return {
+    authorized: null,
     cookies: {},
     cookieWrites: [],
     hashInputs: [],
     deleteCalls: [],
     failDeletion: false,
+    environment: {},
   };
 }
 
@@ -33,12 +35,16 @@ const vite = await createServer({
       name: "oauth-session-logout-test-dependencies",
       enforce: "pre",
       resolveId(source) {
+        if (source === "cloudflare:workers") return "\0oauth-session-logout-test-cloudflare";
         if (source === "next/headers") return "\0oauth-session-logout-test-headers";
         if (/^(?:\.\.\/)+db$/u.test(source)) return "\0oauth-session-logout-test-db";
         if (/(^|\/)api\/_lib\/auth$/u.test(source) || /(^|\/)_lib\/auth$/u.test(source)) return "\0oauth-session-logout-test-auth";
         return null;
       },
       load(id) {
+        if (id === "\0oauth-session-logout-test-cloudflare") {
+          return `export const env = new Proxy({}, { get(_target, key) { return globalThis.${stateKey}.environment[key]; } });`;
+        }
         if (id === "\0oauth-session-logout-test-headers") {
           return `
             export async function cookies() {
@@ -56,7 +62,7 @@ const vite = await createServer({
         }
         if (id === "\0oauth-session-logout-test-auth") {
           return `
-            export async function getAuthorizedUser() { return null; }
+            export async function getAuthorizedUser() { return globalThis.${stateKey}.authorized; }
             export async function getCurrentUser() { return null; }
             export async function hashToken(value) {
               globalThis.${stateKey}.hashInputs.push(value);
@@ -114,6 +120,38 @@ function clearedCookieSummary(state) {
 function oauthDeletionQuery(state) {
   return sqliteDialect.sqlToQuery(state.deleteCalls[0].predicate);
 }
+
+test("session advertises migration recovery from live Cloudflare bindings", async () => {
+  const expiredAt = new Date(Date.now() - 6 * 60 * 1000).toISOString();
+  const state = resetState({
+    authorized: {
+      user: { email: "admin@example.com", displayName: "Admin", authProvider: "feishu" },
+      role: "member",
+      canReviewMembers: true,
+      canReviewKnowledge: true,
+      canGrantMemberPermissions: true,
+      isAdmin: true,
+      isFinanceOwner: true,
+      ndaCompleted: true,
+      ndaApprovalId: "nda-1",
+    },
+    environment: {
+      OA_MIGRATION_WRITE_FROZEN: "true",
+      OA_MIGRATION_UNFREEZE_ENABLED: "true",
+      OA_MIGRATION_FREEZE_ID: "11111111-2222-4333-8444-555555555555",
+      OA_MIGRATION_EXPORT_NOT_AFTER: expiredAt,
+      OA_MIGRATION_EXPORT_ENABLED: "false",
+    },
+  });
+
+  const response = await sessionRoute.GET();
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(body.registered, true);
+  assert.equal(body.migrationUnfreezeEnabled, true);
+  assert.equal(body.migrationExportEnabled, false);
+  assert.equal(state.deleteCalls.length, 0);
+});
 
 test("注销时同时撤销通用与旧 GitHub OAuth 会话并清除两个 Cookie", async () => {
   const state = resetState({ cookies: oauthCookies() });

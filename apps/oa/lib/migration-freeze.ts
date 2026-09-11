@@ -27,6 +27,35 @@ export function shouldBlockForMigrationFreeze(request: Request, environment: Rec
   return BLOCKED_METHODS.has(request.method);
 }
 
+export function shouldServeMigrationRecoveryPage(request: Request, environment: Record<string, unknown>, now = Date.now()) {
+  const pathname = new URL(request.url).pathname;
+  return request.method === "GET"
+    && (pathname === "/" || pathname === "/guide")
+    && isMigrationUnfreezeEnabled(environment, now);
+}
+
+export function migrationControlPlaneUnfreezeState(environment: Record<string, unknown>, now = Date.now()) {
+  const executionId = environment.OA_MIGRATION_CONTROL_UNFREEZE_ID;
+  if (typeof executionId !== "string") return { armed: false, freezeId: null } as const;
+  if (!isMigrationUnfreezeEnabled(environment, now)) return { armed: true, freezeId: null } as const;
+  const freezeId = migrationWriteFreezeId(environment);
+  return { armed: true, freezeId: executionId === freezeId ? freezeId : null } as const;
+}
+
+export async function deactivateMigrationWriteFreeze(database: D1Database, freezeId: string) {
+  const results = await database.batch([
+    database.prepare("UPDATE migration_control SET deactivated_at = CURRENT_TIMESTAMP WHERE freeze_id = ? AND deactivated_at IS NULL AND NOT EXISTS (SELECT 1 FROM migration_control WHERE deactivated_at IS NULL AND freeze_id <> ?)").bind(freezeId, freezeId),
+    database.prepare("SELECT freeze_id, deactivated_at FROM migration_control WHERE freeze_id = ? LIMIT 1").bind(freezeId),
+    database.prepare("SELECT COUNT(*) AS active_count FROM migration_control WHERE deactivated_at IS NULL"),
+  ]);
+  const target = results[1]?.results?.[0] as Record<string, unknown> | undefined;
+  const active = results[2]?.results?.[0] as Record<string, unknown> | undefined;
+  return target?.freeze_id === freezeId
+    && typeof target.deactivated_at === "string"
+    && target.deactivated_at.length > 0
+    && Number(active?.active_count) === 0;
+}
+
 export function migrationWriteFreezeId(environment: Record<string, unknown>) {
   const freezeId = typeof environment.OA_MIGRATION_FREEZE_ID === "string" ? environment.OA_MIGRATION_FREEZE_ID.trim().toLowerCase() : "";
   if (!UUID_V4_PATTERN.test(freezeId)) throw new Error("Migration freeze generation is unavailable");

@@ -43,6 +43,7 @@ export type AuthorizedUser = {
   memberId?: string;
   memberMutationRevision?: string;
   canReviewMembers: boolean;
+  canReviewKnowledge: boolean;
   canGrantMemberPermissions: boolean;
   isAdmin: boolean;
   isFinanceOwner: boolean;
@@ -335,6 +336,7 @@ export async function getAuthorizedUser(options: AuthenticationReadOptions = {})
       memberId: member?.id,
       memberMutationRevision: member?.mutationRevision,
       canReviewMembers: canReviewMemberRegistrations(isAdmin),
+      canReviewKnowledge: isAdmin || role === "project_owner",
       canGrantMemberPermissions: isAdmin,
       isAdmin,
       isFinanceOwner: isConfiguredFinanceOwner || isAdmin,
@@ -359,6 +361,7 @@ export async function getAuthorizedUser(options: AuthenticationReadOptions = {})
     memberId: member.id,
     memberMutationRevision: member.mutationRevision,
     canReviewMembers: canReviewMemberRegistrations(false),
+    canReviewKnowledge: role === "project_owner",
     canGrantMemberPermissions: false,
     isAdmin: false,
     isFinanceOwner: isFinanceOwner(user.email, user.accountUserId),

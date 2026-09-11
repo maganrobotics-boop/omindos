@@ -52,7 +52,7 @@ test("migration journal keeps one continuous snapshot chain", () => {
 });
 
 test("production-shaped v32 data safely migrates through the GitHub identity migration", () => {
-  assert.equal(migrationFiles.at(-1), "0025_restore_feishu_login.sql");
+  assert.equal(migrationFiles.at(-1), "0026_rich_jocasta.sql");
   const db = new DatabaseSync(":memory:");
   applyMigrationRange(db, 0, 7);
 
@@ -168,6 +168,10 @@ test("database migration gate fences every persistent business table at commit t
     "auth_identities",
     "account_profiles",
     "direct_messages",
+    "knowledge_items",
+    "knowledge_revisions",
+    "knowledge_chunks",
+    "knowledge_events",
   ];
   for (const table of persistentTables) {
     const count = db.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'trigger' AND tbl_name = ? AND name LIKE ?")

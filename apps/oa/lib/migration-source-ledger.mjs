@@ -128,6 +128,11 @@ export const EXPECTED_DRIZZLE_LEDGER = Object.freeze([
     "name": "0025_restore_feishu_login.sql",
     "createdAt": 1788540890418,
     "hash": "41d1ad4911f290162d1ea9b0699a60d355a25ce88b678b6df2edeffcfdf03ef0"
+  },
+  {
+    "name": "0026_rich_jocasta.sql",
+    "createdAt": 1789052305895,
+    "hash": "51878069d3f62b3d291002bfe1fb8f0b129ee58493109bfb8c57befb99fb2194"
   }
 ]);
 

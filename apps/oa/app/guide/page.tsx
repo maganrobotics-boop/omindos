@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowUpRight, BookOpen, ClipboardCheck, PackageCheck, CircleDollarSign, GitBranch } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BookOpen, Bot, ClipboardCheck, PackageCheck, CircleDollarSign, GitBranch } from "lucide-react";
 import "./guide.css";
 
 export const metadata: Metadata = {
   title: "项目章程与使用指南｜OriginMind × ARTS Robotics 联合研发 OA",
-  description: "了解联合研发 OA 的用途、项目协作规则，以及成果、采购、保密协议和劳务申请的操作方法。",
+  description: "了解联合研发 OA 的用途、项目协作规则，以及成果、采购、保密协议、劳务申请和实验室知识助手的操作方法。",
 };
 
 const scenarios = [
@@ -13,6 +13,7 @@ const scenarios = [
   { id: "technical", icon: ClipboardCheck, title: "完成了一项研发成果", entry: "技术审核", text: "记录做了什么、由谁完成，以及如何验证。" },
   { id: "purchase", icon: PackageCheck, title: "需要买零件或设备", entry: "采购审核", text: "先说明用途、规格和预算，再按审核结果采购。" },
   { id: "labor", icon: CircleDollarSign, title: "申请本月劳务报酬", entry: "劳务报酬", text: "关联已归档成果，说明本月工作与个人贡献。" },
+  { id: "knowledge", icon: Bot, title: "分享或查询实验室知识", entry: "实验室 AI", text: "成员投稿，管理员审核入库；问答时显示引用依据。" },
 ];
 
 const roles = [
@@ -35,7 +36,7 @@ export default function GuidePage() {
       <section className="guide-purpose" aria-labelledby="purpose-title">
         <h2 id="purpose-title">OA 是什么？</h2>
         <p>OA 是 Office Automation（办公自动化）的简称。在我们的项目里，它是一个<strong>研发协作、申请审核和成果归档平台</strong>。</p>
-        <p>你在这里记录研发贡献、申请采购和劳务报酬、签署保密协议，并查看谁在处理、还缺什么材料、最后的结果是什么。</p>
+        <p>你在这里记录研发贡献、申请采购和劳务报酬、签署保密协议、沉淀实验室知识，并查看谁在处理、还缺什么材料、最后的结果是什么。</p>
         <div className="guide-purpose-note">对同学：工作和贡献有据可查，申请进度看得见。对团队：任务责任、审核意见和最终材料放在一起，交接时找得到。</div>
       </section>
       <nav className="guide-contents" aria-label="指南目录"><a href="#getting-started">第一次使用</a><a href="#tasks">我要办什么事</a><a href="#charter">项目章程</a><a href="#faq">常见问题</a></nav>
@@ -59,6 +60,7 @@ export default function GuidePage() {
         <article className="guide-task" id="purchase"><h3>采购审核：先说明需求，再按批准内容执行</h3><ol><li>选择“采购审核”，填写物品、规格型号、数量、用途、预计金额和供应商，补充清单。</li><li>说明它用于哪项任务，以及为什么需要采购，提交技术顾问和项目负责人审核。</li><li>项目负责人从符合准入条件的成员中指定采购人；采购人按批准内容执行并完成采购确认。</li><li>实际金额不得超过批准金额，超额需要退回重审。按页面要求填写实际金额和采购说明。</li></ol><p className="guide-note">“已提交”表示申请已发出，不表示已经获准采购。采购审核记录用于记录项目需求与批准过程；涉及学校经费时，还需办理对应的学校采购和财务手续。</p></article>
         <article className="guide-task" id="nda"><h3>保密协议：本人阅读、本人签署</h3><p>首次加入或系统提示补签、重签时，打开保密协议待办，核对身份和文件类型，阅读、手写签名、预览后提交。普通成员签完后自动归档；负责人承诺书按页面提示提交管理员确认。归档后可在本人有权限的申请记录中查阅。</p><p>如果仍提示未完成，先刷新查看是否已成功提交；有错误提示时保留提示文字，联系管理员，避免反复新建同一份申请。</p></article>
         <article className="guide-task" id="labor"><h3>劳务报酬：按月说明工作和贡献依据</h3><ol><li>每月申请一次，选择“劳务报酬”，核对申请月份。</li><li>关联本人参与的已归档技术成果，填写月度工作总结；其他工时不得重复包含已选成果的工时。</li><li>系统按“成果总工时 × 个人贡献率”折算成果工时；项目负责人填写建议金额及依据，经费负责人终审。</li><li>查看审核结果与归档记录。申请提交、建议金额和归档记录均不等于实际款项已到账。</li></ol><div className="guide-example"><strong>工时示例</strong><p>一项成果总工时为 40 小时，你的贡献率为 25%，对应折算工时为 10 小时。已计入该成果的工作不要再重复填到“其他工时”。</p></div></article>
+        <article className="guide-task" id="knowledge"><h3>实验室 AI：把可靠经验沉淀为可引用知识</h3><ol><li>进入“实验室 AI”，先搜索或提问，确认知识库里是否已有相同内容。</li><li>需要补充时选择“提交知识”，写清标题、分类、摘要、完整正文；有原始记录时可附来源名称和 HTTP/HTTPS 链接。</li><li>提交后在“我的提交”查看状态。被退回时按审核意见修改并重新提交；被拒绝的版本不会进入知识库。</li><li>项目管理员核对准确性、适用范围和敏感信息后决定是否入库。只有“已入库”且未撤销的版本会用于知识问答，回答会附引用条目和原文片段。</li></ol><p className="guide-note">不要提交账号密码、访问密钥或不应在项目内部共享的个人隐私。知识助手的回答用于协作参考，关键操作仍应回看引用原文并按负责人要求执行。</p></article>
       </section>
 
       <section className="guide-section" id="charter" aria-labelledby="charter-title">
@@ -82,6 +84,7 @@ export default function GuidePage() {
           <article><h3>“已通过”和“已归档”一样吗？</h3><p>“已通过”表示审核已通过；“已归档”表示记录已形成保留版本。采购确认、签署或其他环节是否已完成，要看详情页；关联劳务成果时以已归档记录为准。</p></article>
           <article><h3>为什么看不到别人的申请或某个审核按钮？</h3><p>申请和操作入口按本人参与情况与权限显示。先确认登录账户和自己的角色；需要调整时联系管理员。</p></article>
           <article><h3>怎么保存自己的申请材料？</h3><p>进入有权查看的申请详情，使用 PDF 导出入口。需要最终存档材料时，先确认申请状态为“已归档”。</p></article>
+          <article><h3>为什么我提交的知识还不能被问到？</h3><p>新投稿需要先由项目管理员审核。请到“实验室 AI—我的提交”查看状态；只有显示“已入库”且未被撤销的当前版本会参与问答。</p></article>
           <article><h3>应该找谁解决问题？</h3><p>任务和验收问题找项目负责人，技术问题找技术顾问，身份、权限或系统异常找 OA 管理员，劳务金额和支付进度找经费负责人或财务。反馈时带上申请编号、报错文字和发生步骤。</p></article>
         </div>
       </section>
