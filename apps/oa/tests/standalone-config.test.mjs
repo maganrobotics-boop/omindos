@@ -42,7 +42,7 @@ test("standalone staging config is isolated and contains every runtime binding",
   assert.doesNotMatch(JSON.stringify(config.vars), /secret|token/iu);
 });
 
-test("standalone staging config rejects placeholders, missing admin tuples, and production targets", () => {
+test("standalone staging config rejects placeholders, missing admin tuples, and unsafe origins", () => {
   assert.throws(() => buildStandaloneConfig("staging", {
     ...validEnvironment,
     OA_STAGING_D1_DATABASE_ID: "00000000-0000-4000-8000-000000000000",
@@ -51,7 +51,6 @@ test("standalone staging config rejects placeholders, missing admin tuples, and 
     ...validEnvironment,
     OA_ADMIN_NAMES: "",
   }), /configured together/u);
-  assert.throws(() => buildStandaloneConfig("production", validEnvironment), /Only the isolated staging/u);
   assert.throws(() => buildStandaloneConfig("staging", {
     ...validEnvironment,
     OA_STAGING_PUBLIC_ORIGIN: "https://oa.omindos.ai",
@@ -72,4 +71,49 @@ test("standalone staging config rejects placeholders, missing admin tuples, and 
     ...validEnvironment,
     OA_STAGING_PUBLIC_ORIGIN: "https://originmind-internal-oa-staging.example.workers.dev:8443",
   }), /workers\.dev origin/u);
+});
+
+test("standalone production config is fixed and cannot be redirected by the environment", () => {
+  const config = buildStandaloneConfig("production", {
+    CLOUDFLARE_ACCOUNT_ID: "ffffffffffffffffffffffffffffffff",
+    OA_PUBLIC_ORIGIN: "https://attacker.example",
+    OA_STAGING_D1_DATABASE_ID: "00000000-0000-4000-8000-000000000000",
+  });
+  assert.deepEqual(config, {
+    $schema: "../../node_modules/wrangler/config-schema.json",
+    account_id: "41e8b3404be24e1dd288556d77ffc951",
+    name: "originmind-internal-oa-staging",
+    main: "../../worker/standalone.ts",
+    compatibility_date: "2026-05-15",
+    compatibility_flags: ["nodejs_compat"],
+    workers_dev: false,
+    preview_urls: false,
+    keep_vars: true,
+    assets: {
+      binding: "ASSETS",
+      not_found_handling: "none",
+      run_worker_first: ["/api/*", "/_vinext/*", "/__vinext/*"],
+    },
+    images: { binding: "IMAGES" },
+    d1_databases: [
+      {
+        binding: "DB",
+        database_name: "originmind-internal-oa-production",
+        database_id: "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
+        migrations_dir: "../../drizzle",
+      },
+      {
+        binding: "WEBSITE_DB",
+        database_name: "omindos-website-visits",
+        database_id: "3651ff92-d9fb-45aa-9d1d-623d25bf3459",
+      },
+    ],
+    vars: { OA_PUBLIC_ORIGIN: "https://oa.omindos.ai" },
+    triggers: { crons: ["* * * * *"] },
+    secrets: { required: ["GITHUB_OAUTH_CLIENT_SECRET", "FEISHU_LOGIN_APP_SECRET"] },
+    observability: { enabled: true },
+  });
+  assert.equal("route" in config, false);
+  assert.equal("routes" in config, false);
+  assert.throws(() => buildStandaloneConfig("preview", validEnvironment), /Only staging or production/u);
 });
