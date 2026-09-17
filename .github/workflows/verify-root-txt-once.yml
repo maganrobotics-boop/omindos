@@ -1,0 +1,74 @@
+name: Verify root TXT without deployment
+
+on:
+  push:
+    branches: ['diag/verify-root-txt-20260917']
+    paths: ['.github/workflows/verify-root-txt-once.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Read public TXT and compare exact bytes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Verify HTTPS root file and immutable deployment
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import datetime
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+
+          filename = 'e65b71e4db18f75cc4a1971e5b51e172.txt'
+          expected = b'ca344d9ef00ea96240c6d9bc35a84aea7995ec34'
+          targets = [
+              ('production', 'https://omindos.ai/' + filename),
+              ('deployment_snapshot', 'https://49319c37.omindos-website.pages.dev/' + filename),
+          ]
+          results = []
+          for label, url in targets:
+              result = {'target': label, 'requested_url': url,
+                        'checked_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+              request = urllib.request.Request(url, headers={
+                  'User-Agent': 'OriginMind-Root-TXT-Verification/1.0',
+                  'Cache-Control': 'no-cache', 'Accept': 'text/plain',
+              })
+              try:
+                  try:
+                      response = urllib.request.urlopen(request, timeout=20)
+                  except urllib.error.HTTPError as error:
+                      response = error
+                  with response:
+                      body = response.read(4097)
+                      result.update({
+                          'status_code': response.status,
+                          'final_url': response.geturl(),
+                          'content_type': response.headers.get('Content-Type'),
+                          'cf_cache_status': response.headers.get('CF-Cache-Status'),
+                          'body_length': len(body),
+                          'body_preview': body[:512].decode('utf-8', errors='replace'),
+                          'exact_match': body == expected,
+                          'no_redirect': response.geturl() == url,
+                      })
+                      result['passed'] = response.status == 200 and body == expected and response.geturl() == url
+              except Exception as error:
+                  result.update({'passed': False, 'error': str(error)})
+              results.append(result)
+              print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
+              message = json.dumps(result, ensure_ascii=True)
+              message = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              severity = 'notice' if result['passed'] else 'warning'
+              print(f'::{severity} title=Root TXT {label}::{message}', flush=True)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as summary:
+              summary.write('# Public root TXT verification\n\n```json\n')
+              summary.write(json.dumps(results, ensure_ascii=False, indent=2))
+              summary.write('\n```\n')
+          if not results[0]['passed']:
+              raise SystemExit('Production TXT verification FAILED; no deployment or production changes were performed.')
+          print('PRODUCTION TXT VERIFIED: HTTP 200, no redirect, exact expected bytes.')
+          PY
