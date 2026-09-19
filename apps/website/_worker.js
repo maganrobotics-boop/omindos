@@ -391,6 +391,12 @@ export default {
       const preserveLegacyWeChatApex = requestHost === "originmindos.com" && isWeChatBrowser(request);
       if (canonicalHost && !preserveLegacyWeChatApex) return permanentRedirect(url, url.pathname, canonicalHost);
 
+      // Keep the short /go link on the normal homepage language-selection path.
+      if (url.pathname === "/go" || url.pathname === "/go/") {
+        if (request.method !== "GET" && request.method !== "HEAD") return methodNotAllowed(["GET", "HEAD"]);
+        return permanentRedirect(url, "/");
+      }
+
       if (url.pathname === VISITS_ENDPOINT) return handleVisits(request, env, url);
       if (url.pathname === "/api/oem-applications") return handleOemApplication(request, env, url);
       if (RETIRED_PUBLIC_ASSETS.has(url.pathname)) return renderNotFound(request, env, url, "en");
