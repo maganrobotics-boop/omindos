@@ -3,6 +3,14 @@ name: Deploy Chinese website to Aliyun
 on:
   workflow_dispatch:
     inputs:
+      server_user:
+        description: 'Aliyun SSH username'
+        required: true
+        default: 'root'
+      server_password:
+        description: 'Aliyun SSH password for this one deployment'
+        required: true
+        type: string
       domain:
         description: 'Chinese website domain for Nginx server_name'
         required: false
@@ -25,10 +33,13 @@ jobs:
     timeout-minutes: 15
     env:
       ALIYUN_HOST: '39.108.50.65'
-      ALIYUN_USER: ${{ secrets.ALIYUN_USER || 'root' }}
+      ALIYUN_USER: ${{ inputs.server_user }}
       DEPLOY_PATH: ${{ inputs.deploy_path }}
       SERVER_NAME: ${{ inputs.domain }}
     steps:
+      - name: Mask password
+        run: echo '::add-mask::${{ inputs.server_password }}'
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
@@ -49,23 +60,27 @@ jobs:
           printf '%s\n' "commit=${GITHUB_SHA}" "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > /tmp/omindos-cn-site/DEPLOY_VERSION.txt
           tar -C /tmp/omindos-cn-site -czf /tmp/omindos-cn-site.tar.gz .
 
-      - name: Install SSH key
+      - name: Install SSH password helper
         run: |
           set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y sshpass
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.ALIYUN_SSH_PRIVATE_KEY }}" > ~/.ssh/aliyun
-          chmod 600 ~/.ssh/aliyun
-          ssh-keyscan -H "$ALIYUN_HOST" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$ALIYUN_HOST" >> ~/.ssh/known_hosts || true
 
       - name: Upload artifact
+        env:
+          SSHPASS: ${{ inputs.server_password }}
         run: |
           set -euo pipefail
-          scp -i ~/.ssh/aliyun /tmp/omindos-cn-site.tar.gz "$ALIYUN_USER@$ALIYUN_HOST:/tmp/omindos-cn-site.tar.gz"
+          sshpass -e scp -o StrictHostKeyChecking=no /tmp/omindos-cn-site.tar.gz "$ALIYUN_USER@$ALIYUN_HOST:/tmp/omindos-cn-site.tar.gz"
 
       - name: Install Nginx and activate site
+        env:
+          SSHPASS: ${{ inputs.server_password }}
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/aliyun "$ALIYUN_USER@$ALIYUN_HOST" \
+          sshpass -e ssh -o StrictHostKeyChecking=no "$ALIYUN_USER@$ALIYUN_HOST" \
             "DEPLOY_PATH='$DEPLOY_PATH' SERVER_NAME='$SERVER_NAME' bash -s" <<'REMOTE'
           set -euo pipefail
           if command -v apt-get >/dev/null 2>&1; then
