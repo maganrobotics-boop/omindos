@@ -124,5 +124,5 @@ jobs:
       - name: Smoke test server IP
         run: |
           set -euo pipefail
-          curl -fsS --max-time 10 "http://$ALIYUN_HOST/" | head -c 500 >/tmp/aliyun-cn-home.html
+          curl -fsS --max-time 10 "http://$ALIYUN_HOST/" -o /tmp/aliyun-cn-home.html
           grep -Eq 'OriginMind|OmindOS|机器人智能操作系统' /tmp/aliyun-cn-home.html
