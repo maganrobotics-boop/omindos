@@ -60,11 +60,11 @@ jobs:
             apps/website/ /tmp/omindos-cn-site/
 
           mkdir -p /tmp/omindos-cn-site/cn
-          cp apps/website/index.zh.html /tmp/omindos-cn-site/index.html
-          cp apps/website/index.zh.html /tmp/omindos-cn-site/cn/index.html
+          cp apps/website/cn/index.html /tmp/omindos-cn-site/index.html
+          cp apps/website/cn/index.html /tmp/omindos-cn-site/cn/index.html
           cp apps/website/404.zh.html /tmp/omindos-cn-site/404.html
 
-          perl -0pi -e 's#href="/\?lang=en"#href="https://omindos.ai/"#g; s#href="/\?lang=zh"#href="/cn/"#g; s#href="https://omindos.ai/"#href="https://omindos.ai/"#g' \
+          perl -0pi -e 's#href="/en/"#href="https://omindos.ai/"#g; s#href="/\?lang=en"#href="https://omindos.ai/"#g; s#href="/\?lang=zh"#href="/cn/"#g' \
             /tmp/omindos-cn-site/index.html \
             /tmp/omindos-cn-site/cn/index.html \
             /tmp/omindos-cn-site/404.html
@@ -150,4 +150,4 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsS --max-time 10 "http://$ALIYUN_HOST/" -o /tmp/aliyun-cn-home.html
-          grep -Eq 'OriginMind|OmindOS|机器人智能操作系统' /tmp/aliyun-cn-home.html
+          grep -Eq '面向复杂环境的智能机器人|机器人本体与智能系统协同研发|OriginMind' /tmp/aliyun-cn-home.html
