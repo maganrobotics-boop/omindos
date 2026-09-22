@@ -44,28 +44,29 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Prepare static bilingual website artifact
+      - name: Prepare Chinese website artifact
         run: |
           set -euo pipefail
           rm -rf /tmp/omindos-cn-site
           mkdir -p /tmp/omindos-cn-site
           rsync -a \
             --exclude '_worker.js' \
+            --exclude 'index.en.html' \
+            --exclude '404.en.html' \
+            --exclude 'en/' \
             --exclude '*.sql' \
             --exclude '.wrangler/' \
             --exclude 'node_modules/' \
             apps/website/ /tmp/omindos-cn-site/
 
-          mkdir -p /tmp/omindos-cn-site/cn /tmp/omindos-cn-site/en
+          mkdir -p /tmp/omindos-cn-site/cn
           cp apps/website/index.zh.html /tmp/omindos-cn-site/index.html
           cp apps/website/index.zh.html /tmp/omindos-cn-site/cn/index.html
-          cp apps/website/index.en.html /tmp/omindos-cn-site/en/index.html
           cp apps/website/404.zh.html /tmp/omindos-cn-site/404.html
 
-          perl -0pi -e 's#href="/\?lang=en"#href="/en/"#g; s#href="/\?lang=zh"#href="/cn/"#g; s#href="https://omindos.ai/"#href="/"#g' \
+          perl -0pi -e 's#href="/\?lang=en"#href="https://omindos.ai/"#g; s#href="/\?lang=zh"#href="/cn/"#g; s#href="https://omindos.ai/"#href="https://omindos.ai/"#g' \
             /tmp/omindos-cn-site/index.html \
             /tmp/omindos-cn-site/cn/index.html \
-            /tmp/omindos-cn-site/en/index.html \
             /tmp/omindos-cn-site/404.html
 
           printf '%s\n' "commit=${GITHUB_SHA}" "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > /tmp/omindos-cn-site/DEPLOY_VERSION.txt
@@ -100,6 +101,7 @@ jobs:
           elif command -v yum >/dev/null 2>&1; then
             yum install -y nginx tar
           fi
+          rm -rf "$DEPLOY_PATH"
           mkdir -p "$DEPLOY_PATH"
           tar -xzf /tmp/omindos-cn-site.tar.gz -C "$DEPLOY_PATH"
           chown -R root:root "$DEPLOY_PATH"
@@ -115,8 +117,12 @@ jobs:
               access_log /var/log/nginx/omindos-cn.access.log;
               error_log /var/log/nginx/omindos-cn.error.log;
 
+              location = /en/ {
+                  return 302 https://omindos.ai/;
+              }
+
               location = /index.en.html {
-                  return 302 /en/;
+                  return 302 https://omindos.ai/;
               }
 
               location = /index.zh.html {
@@ -144,6 +150,4 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsS --max-time 10 "http://$ALIYUN_HOST/" -o /tmp/aliyun-cn-home.html
-          curl -fsS --max-time 10 "http://$ALIYUN_HOST/en/" -o /tmp/aliyun-en-home.html
           grep -Eq 'OriginMind|OmindOS|机器人智能操作系统' /tmp/aliyun-cn-home.html
-          grep -Eq 'OriginMind|OmindOS|Robot Agent OS|Every Robot Needs Intelligence' /tmp/aliyun-en-home.html
