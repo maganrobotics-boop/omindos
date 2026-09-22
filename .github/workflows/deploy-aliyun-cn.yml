@@ -1,0 +1,113 @@
+name: Deploy Chinese website to Aliyun
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: 'Chinese website domain for Nginx server_name'
+        required: false
+        default: 'omindos.cn www.omindos.cn'
+      deploy_path:
+        description: 'Server directory for the Chinese website'
+        required: false
+        default: '/var/www/omindos-cn'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aliyun-cn-website
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      ALIYUN_HOST: '39.108.50.65'
+      ALIYUN_USER: ${{ secrets.ALIYUN_USER || 'root' }}
+      DEPLOY_PATH: ${{ inputs.deploy_path }}
+      SERVER_NAME: ${{ inputs.domain }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Prepare Chinese website artifact
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/omindos-cn-site
+          mkdir -p /tmp/omindos-cn-site
+          rsync -a \
+            --exclude '_worker.js' \
+            --exclude '*.sql' \
+            --exclude '.wrangler/' \
+            --exclude 'node_modules/' \
+            apps/website/ /tmp/omindos-cn-site/
+          cp apps/website/index.zh.html /tmp/omindos-cn-site/index.html
+          cp apps/website/404.zh.html /tmp/omindos-cn-site/404.html
+          printf '%s\n' "commit=${GITHUB_SHA}" "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > /tmp/omindos-cn-site/DEPLOY_VERSION.txt
+          tar -C /tmp/omindos-cn-site -czf /tmp/omindos-cn-site.tar.gz .
+
+      - name: Install SSH key
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.ALIYUN_SSH_PRIVATE_KEY }}" > ~/.ssh/aliyun
+          chmod 600 ~/.ssh/aliyun
+          ssh-keyscan -H "$ALIYUN_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload artifact
+        run: |
+          set -euo pipefail
+          scp -i ~/.ssh/aliyun /tmp/omindos-cn-site.tar.gz "$ALIYUN_USER@$ALIYUN_HOST:/tmp/omindos-cn-site.tar.gz"
+
+      - name: Install Nginx and activate site
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/aliyun "$ALIYUN_USER@$ALIYUN_HOST" \
+            "DEPLOY_PATH='$DEPLOY_PATH' SERVER_NAME='$SERVER_NAME' bash -s" <<'REMOTE'
+          set -euo pipefail
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update
+            DEBIAN_FRONTEND=noninteractive apt-get install -y nginx tar
+          elif command -v yum >/dev/null 2>&1; then
+            yum install -y nginx tar
+          fi
+          mkdir -p "$DEPLOY_PATH"
+          tar -xzf /tmp/omindos-cn-site.tar.gz -C "$DEPLOY_PATH"
+          chown -R root:root "$DEPLOY_PATH"
+          cat >/etc/nginx/conf.d/omindos-cn.conf <<NGINX
+          server {
+              listen 80;
+              listen [::]:80;
+              server_name ${SERVER_NAME};
+              root ${DEPLOY_PATH};
+              index index.html;
+
+              charset utf-8;
+              access_log /var/log/nginx/omindos-cn.access.log;
+              error_log /var/log/nginx/omindos-cn.error.log;
+
+              location / {
+                  try_files \$uri \$uri/ /index.html;
+              }
+
+              location ~* \\.(?:css|js|jpg|jpeg|gif|png|webp|svg|ico|woff2?|mp4)$ {
+                  expires 30d;
+                  add_header Cache-Control "public, max-age=2592000, immutable";
+                  try_files \$uri =404;
+              }
+          }
+          NGINX
+          nginx -t
+          systemctl enable nginx || true
+          systemctl reload nginx || systemctl restart nginx
+          rm -f /tmp/omindos-cn-site.tar.gz
+          REMOTE
+
+      - name: Smoke test server IP
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 10 "http://$ALIYUN_HOST/" | head -c 500 >/tmp/aliyun-cn-home.html
+          grep -Eq 'OriginMind|OmindOS|机器人智能操作系统' /tmp/aliyun-cn-home.html
