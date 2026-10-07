@@ -215,7 +215,8 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       for (const card of cards) {
         const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
         const isDualArm = card.includes(`/${locale}/robots/dual-arm`);
-        const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : sale;
+        const isResearchPrototype = locale === 'cn' && route === 'robots' && /\/cn\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
+        const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : isResearchPrototype ? '研发样机' : sale;
         assert.match(card, new RegExp(`>${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="(\/(?:cn|en)\/robots\/[^"#]+)"/)[1];
