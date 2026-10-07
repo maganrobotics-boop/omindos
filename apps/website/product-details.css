@@ -53,6 +53,7 @@
 .wheel-product .detail-content,.wheel-product .product-structure-videos{margin-top:22px}
 .wheel-product .selection-guide{margin-top:22px;padding:20px}
 .wheel-product .product-detail-image{margin:0}
+.wheel-product .research-feature-title{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px;font-size:20px;line-height:1.5}
 @media(max-width:760px){
  .wheel-product .section{padding:26px 0}
  .wheel-product .page-opening{padding-bottom:12px}
