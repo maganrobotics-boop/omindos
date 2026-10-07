@@ -65,4 +65,14 @@
  .pwl-product th,.pwl-product td{padding:12px 8px;white-space:normal}
  .pwl-product .button{max-width:100%;white-space:normal}
 }
+/* Stack label and value on phones so CJK labels do not become vertical. */
+@media(max-width:600px){
+ .pwl-product .table-scroll{overflow:visible}
+ .pwl-product table,.pwl-product tbody{display:block;width:100%}
+ .pwl-product caption{display:block;text-align:left}
+ .pwl-product tr{display:block;padding:14px 0;border-bottom:1px solid var(--line)}
+ .pwl-product th,.pwl-product td{display:block;width:100%;max-width:none;padding:0;border:0;font-size:16px;line-height:1.7;white-space:normal;word-break:normal;overflow-wrap:break-word;text-align:left}
+ .pwl-product th{margin-bottom:4px;color:var(--muted);font-weight:500}
+ .pwl-product td{color:var(--ink)}
+}
 @media(max-width:600px){.page-intro .product-model{display:block}.page-intro>.lead{line-height:1.7;max-width:28em}.section-links{display:flex;flex-wrap:wrap;gap:12px 18px}}
