@@ -218,7 +218,7 @@ test('quadruped availability agrees across both homepages, catalogues and produc
         const prefix = locale === 'cn' ? '' : '/en';
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
-        const isResearchPrototype = locale === 'cn' && route === 'robots' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
+        const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
         const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : isResearchPrototype ? '研发样机' : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
@@ -781,4 +781,5 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
+
 
