@@ -85,3 +85,8 @@ legacy_urls = ['https://omindos.ai/founding-oem', 'https://omindos.ai/why-origin
 urls += legacy_urls
 (website / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{url}</loc></url>\n' for url in urls) + '</urlset>\n')
 print(f'Prepared {len(urls) - len(legacy_urls)} bilingual pages and production search metadata.')
+
+# Chinese primary URLs use a separate host/root route map. Preserve this policy
+# when importing a future portal; the international sitemap is released separately.
+from cn_seo import apply as apply_chinese_seo
+apply_chinese_seo(website)
