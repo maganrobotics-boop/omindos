@@ -42,7 +42,12 @@ await check('International sitemap',async()=>{
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
 });
 for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
- const r=await fetch(base+path,{method:'HEAD',signal:AbortSignal.timeout(15000)});assert.equal(r.status,200);assert.ok(Number(r.headers.get('Content-Length'))>100);
+ const r=await request(base+path,{Range:'bytes=0-1023'});assert.ok([200,206].includes(r.status));
+ const type=r.headers.get('Content-Type')||'';assert.doesNotMatch(type,/text\/html/);
+ assert.match(type,path.includes('.css')?/text\/css/:path.includes('.js')?/javascript/:path.includes('.mp4')?/video\/mp4/:/image\/webp/);
+ const reader=r.body.getReader();let bytes=0;
+ try{while(bytes<=100){const chunk=await reader.read();if(chunk.done)break;bytes+=chunk.value.byteLength;}}finally{await reader.cancel();}
+ assert.ok(bytes>100,'asset response must contain actual content');
 });
 for(const path of ['/meeting','/api/meeting/login','/cn/unknown/','/founding-oem.js'])await check('Removed '+path,async()=>{
  const r=await request(base+path);assert.equal(r.status,404);await r.body?.cancel();
