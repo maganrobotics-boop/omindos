@@ -215,8 +215,9 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       for (const card of cards) {
         const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
         const isDualArm = card.includes(`/${locale}/robots/dual-arm`);
-        const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : sale;
-        assert.match(card, new RegExp(`>${expectedStatus}<`, 'i'));
+        const isResearchPrototype = locale === 'cn' && route === 'robots' && /\/cn\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
+        const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : isResearchPrototype ? '研发样机' : sale;
+        assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="(\/(?:cn|en)\/robots\/[^"#]+)"/)[1];
         const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
@@ -338,7 +339,9 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       assert.equal(r.headers.get('Location'), null, path);
       assert.equal(r.headers.get('Content-Language'), locale === 'cn' ? 'zh-CN' : 'en');
       const html = await r.text();
-      assert.ok(html.includes(`rel="canonical" href="https://omindos.ai${path}"`), path);
+      const cnPrototype = locale === 'cn' && ['robots', 'robots/articulated', 'robots/wheel-legged', 'robots/open-frame'].includes(route);
+      const canonical = cnPrototype ? `https://omindos.cn${path.slice(3)}` : `https://omindos.ai${path}`;
+      assert.ok(html.includes(`rel="canonical" href="${canonical}"`), path);
       assert.ok(html.includes('name="robots" content="index,follow"'), path);
       assert.match(html, /<a class="skip-link" href="#main-content">/);
       assert.match(html, /<main\b[^>]*\bid="main-content"[^>]*>/);
@@ -485,8 +488,14 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
       const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
       assert.ok(product.includes('/product-details.css?v=20260910-structure-video'));
       assert.ok(product.includes('/robot-covers.css?v=20260909'));
-      assert.ok(product.includes(`/assets/covers/${coverNames[model]}`));
-      assert.match(product, /class="media product-detail-image" data-robot-cover/);
+      if (locale === 'cn' && model === 'articulated') {
+        assert.ok(product.includes('/assets/articulated-research-model-20261006.png'));
+        assert.match(product, /class="ar-hero-figure"/);
+        assert.match(product, /研究原型数据，非交付性能承诺/);
+      } else {
+        assert.ok(product.includes(`/assets/covers/${coverNames[model]}`));
+        assert.match(product, /class="media product-detail-image" data-robot-cover/);
+      }
     }
   }
 
@@ -765,3 +774,4 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
+

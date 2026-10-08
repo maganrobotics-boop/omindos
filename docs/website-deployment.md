@@ -6,10 +6,18 @@
 
 ## 触发方式
 
-- Push 到 `main`，并修改官网目录 `apps/website`、官网测试、发布校验脚本或此工作流时，先运行测试，通过后自动发布。
+- Push 到 `main` 时先运行网站回归与发布范围测试。只有国际站页面、共享资源或 Worker 发生变化时才自动发布 `omindos.ai`。`apps/website/cn/**`、关节式研发页专用样式/模型图，以及仅文档或测试改动，不触发国际站发布；混合改动仍会触发。
 - Pull Request 只运行测试，不读取 Cloudflare 密钥，也不发布。
 - 在 GitHub Actions 的 `Deploy website` 页面选择 `Run workflow`，并使用 `main`，可以重新发布当前版本。
 - OA、文档、API 或说明文档的单独修改不触发官网发布。OA 继续使用独立的受控生产发布流程。
+
+## 中文站定点发布（2026-10-08）
+
+当前 `omindos.cn` 由腾讯服务器 Nginx 提供，根目录为 `/var/www/omindos.cn/current`，并通过 `cn/` 回退映射 `/robots/` 等路径。旧 Aliyun workflow 不是当前中文站发布入口。
+
+PR #36 仅定点替换中文产品目录、关节式/轮足/并联轮足详情与其专用资源；必须从当前 release 复制候选目录后覆盖白名单文件，不用仓库整站覆盖现网。保留首页、其他产品、课程/竞技场链接和服务器配置。完整核对候选差异、服务用户读权限、图片/视频与桌面/手机后，原子切换 `current`；记录旧 symlink、文件 SHA256 和 GitHub commit。失败则原子恢复旧 symlink。
+
+现网额外参数和手册已纳入 PR：关节式参数来自用户提供的 Micromachines 13(9), 1404 (2022)，第 3–4、15–17 页；0.390/0.174 m/s 为论文原型的峰值/均值，保留 20 s、0.2 r/s 与 IMU 积分条件。PWL-R1 名称及内嵌手册保留现网已确认版本。轮足/并联轮足未公布的尺寸、载荷、续航和接口数值不补造。
 
 ## 凭据
 
@@ -28,3 +36,4 @@
 优先在 GitHub 撤销导致问题的官网提交，再 push 到 `main`，由同一流程发布。紧急情况下可在 Cloudflare Pages 的 Deployments 中选择已验证的历史生产版本并回滚，然后同步修正 GitHub，以免下一次 push 重新发布错误版本。
 
 现有项目属于 Direct Upload，因此通过 GitHub Actions 使用 Wrangler；不新建 Pages 项目或迁移自定义域名。参考 [Cloudflare 的 CI 部署说明](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)。
+
