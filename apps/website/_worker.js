@@ -378,7 +378,8 @@ async function servePortal(request, env, url, locale, route) {
   });
 }
 
-export default {
+// The existing handlers remain regression-tested independently of host policy.
+export const legacyWorker = {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
@@ -514,5 +515,53 @@ export default {
       if (url.pathname.startsWith("/api/")) return errorResponse("Service temporarily unavailable", 500, "internal_error");
       return new Response("Service temporarily unavailable", { status: 500, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
     }
+  },
+};
+
+function chinesePrimaryRedirect(url, path) {
+  const destination = new URL('https://omindos.cn' + path);
+  destination.search = url.search;
+  destination.searchParams.delete('lang');
+  return new Response(null, { status: 308, headers: {
+    Location: destination.toString(), 'Cache-Control': 'public, max-age=3600',
+  } });
+}
+
+// Public international policy: English only. Intercept retired Chinese URLs
+// before ASSETS.fetch, including stale successful asset-cache responses.
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const host = url.hostname.toLowerCase();
+    if (host !== 'omindos.ai' && !host.endsWith('.pages.dev') && host !== 'localhost') {
+      return legacyWorker.fetch(request, env);
+    }
+    if (url.pathname.startsWith('/api/')) return legacyWorker.fetch(request, env);
+    const chinese = url.pathname.match(/^\/cn(\/.*)?$/);
+    if (chinese) {
+      const route = (chinese[1] || '/').replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
+      if (PORTAL_ROUTES.has(route)) return chinesePrimaryRedirect(url, route === '/' ? '/' : route + '/');
+      return renderNotFound(request, env, url, 'en');
+    }
+    if (/^\/index\.zh(?:\.html)?\/?$/.test(url.pathname)) return chinesePrimaryRedirect(url, '/');
+    if (/^\/(?:oem\/zh(?:\/index(?:\.html)?)?\/?|founding-oem\.zh(?:\.html)?\/?|why\/zh(?:\/index(?:\.html)?)?\/?|robots\/zh(?:\/index(?:\.html)?)?\/?)$/.test(url.pathname)) {
+      return chinesePrimaryRedirect(url, url.pathname.startsWith('/robots/') ? '/robots/' : url.pathname.startsWith('/why/') ? '/about/' : '/integration/');
+    }
+    if (url.pathname === '/founding-oem.js' || /^\/404\.zh(?:\.html)?\/?$/.test(url.pathname)) return renderNotFound(request, env, url, 'en');
+    const route = url.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
+    if (PORTAL_ROUTES.has(route)) {
+      // Language cookies and Chinese browser preferences no longer choose a
+      // Chinese mirror at the international entry.
+      return portalRedirect(url, '/en' + (route === '/' ? '/' : route + '/'), true);
+    }
+    if (/^\/en(?:\/|$)/.test(url.pathname)) return legacyWorker.fetch(request, env);
+    if (['zh', 'cn'].includes(url.searchParams.get('lang'))) {
+      return chinesePrimaryRedirect(url, url.pathname === '/robot-products' ? '/robots/' : url.pathname === '/why-originmind' ? '/about/' : '/integration/');
+    }
+    const headers = new Headers(request.headers);
+    const cookies = (headers.get('Cookie') || '').split(';').filter(part => !part.trim().startsWith(LANGUAGE_COOKIE + '=')).join(';');
+    headers.set('Cookie', cookies + (cookies ? '; ' : '') + LANGUAGE_COOKIE + '=en');
+    headers.set('Accept-Language', 'en');
+    return legacyWorker.fetch(new Request(request, { headers }), env);
   },
 };

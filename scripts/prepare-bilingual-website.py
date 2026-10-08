@@ -90,3 +90,9 @@ print(f'Prepared {len(urls) - len(legacy_urls)} bilingual pages and production s
 # when importing a future portal; the international sitemap is released separately.
 from cn_seo import apply as apply_chinese_seo
 apply_chinese_seo(website)
+from cn_seo import english_references, routes
+for page in (website / 'en').rglob('index.html'):
+    page.write_text(english_references(page.read_text(), routes(website)))
+# The international sitemap lists only international canonical URLs.
+international = [url for url in urls if not url.startswith('https://omindos.ai/cn/')]
+(website / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{url}</loc></url>\n' for url in international) + '</urlset>\n')

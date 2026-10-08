@@ -27,6 +27,7 @@ async function checkProject() {
   assert.equal(project.production_branch, 'main');
   assert.ok(project.domains.includes('omindos.ai'), 'Production domain is missing');
   assert.equal(project.deployment_configs.production.d1_databases?.VISITS_DB?.id, databaseId, 'Statistics database binding changed');
+  if (!deployed) console.log(`Rollback deployment: ${project.canonical_deployment?.id}; commit: ${project.canonical_deployment?.deployment_trigger?.metadata?.commit_hash}`);
   if (deployed) {
     const live = project.canonical_deployment;
     assert.equal(live?.id, process.env.EXPECTED_DEPLOYMENT_ID, 'Production deployment ID has not updated');

@@ -90,6 +90,23 @@ def search_files(known_routes):
     sitemap += ''.join(f'  <url><loc>{CN_ORIGIN}{route}</loc></url>\n' for route in known_routes)
     return sitemap + '</urlset>\n', f'User-agent: *\nAllow: /\nSitemap: {CN_ORIGIN}/sitemap.xml\n'
 
+def english_references(source, known_routes):
+    def tag(match):
+        raw = match[0]; attrs = attributes(raw)
+        if attrs.get('hreflang') == 'zh-CN' and attrs.get('rel') == 'alternate':
+            path = urlsplit(attrs.get('href', '')).path
+            route = normalize_path(path[3:]) if path.startswith('/cn/') else None
+            if route in known_routes:
+                return attribute(raw, 'href', CN_ORIGIN + route)
+        if raw.lower().startswith('<a') and 'href' in attrs:
+            href = attrs['href']; u = urlsplit(urljoin(EN_ORIGIN, href))
+            if u.hostname == 'omindos.ai' and u.path.startswith('/cn/'):
+                route = normalize_path(u.path[3:])
+                if route in known_routes:
+                    return attribute(raw, 'href', urlunsplit(('https', 'omindos.cn', route, u.query, u.fragment)).replace('&', '&amp;'))
+        return raw
+    return re.sub(r'<(?:link|a)\b[^>]*>', tag, source, flags=re.I)
+
 def apply(root):
     known = routes(root)
     for page in (root / 'cn').rglob('*.html'):
