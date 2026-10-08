@@ -10,7 +10,9 @@ function siteFooter(html) {
     .map(match => match[0]).at(-1);
 }
 const source = await readFile(new URL('_worker.js', root), 'utf8');
-const { default: worker } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+// Historical handler/API contracts remain covered; public host policy is
+// tested separately in international-english-only.test.mjs.
+const { legacyWorker: worker } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const env = { ASSETS: { async fetch(request) {
   const path = new URL(request.url).pathname;
   for (const file of [path, path.endsWith('/') ? `${path}index.html` : `${path}.html`]) {
@@ -423,9 +425,8 @@ test('explicit old bilingual homepage links remain reachable and Japanese conten
   assert.doesNotMatch(policy, /Cloudflare Managed|User-agent:/);
   assert.equal((policy.match(/Sitemap:/g) || []).length, 1);
   const sitemap = await readFile(new URL('sitemap.xml', root), 'utf8');
-  assert.ok(sitemap.includes('https://omindos.ai/cn/robots/wheeled/'));
+  assert.doesNotMatch(sitemap, /https:\/\/omindos\.ai\/cn\//);
   assert.ok(sitemap.includes('https://omindos.ai/en/robots/wheeled/'));
-  assert.ok(sitemap.includes('https://omindos.ai/cn/privacy/'));
   assert.ok(sitemap.includes('https://omindos.ai/en/privacy/'));
   assert.doesNotMatch(sitemap, /\/ja\//);
   assert.doesNotMatch(sitemap, /\/robot-products/);
@@ -586,7 +587,7 @@ test('language links preserve the current page, query and section', async () => 
         fetch: async () => ({ body: { cancel() {} } }),
       });
       for (const [i, targetLocale] of ['cn', 'en'].entries()) {
-        const expected = locale === 'cn' && targetLocale === 'cn'
+        const expected = targetLocale === 'cn'
           ? `https://omindos.cn/${route ? route + '/' : ''}?source=partner#features`
           : `https://omindos.ai/${targetLocale}/${route ? route + '/' : ''}?source=partner#features`;
         assert.equal(links[i].href, expected);
