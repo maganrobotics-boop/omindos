@@ -6,6 +6,9 @@ on:
     paths:
       - 'apps/website/**'
       - 'tests/website.test.mjs'
+      - 'tests/website-release-scope.test.mjs'
+      - 'tests/cn-research-prototypes.test.mjs'
+      - 'scripts/website-release-scope.mjs'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
       - '.github/workflows/deploy-website.yml'
@@ -14,6 +17,9 @@ on:
     paths:
       - 'apps/website/**'
       - 'tests/website.test.mjs'
+      - 'tests/website-release-scope.test.mjs'
+      - 'tests/cn-research-prototypes.test.mjs'
+      - 'scripts/website-release-scope.mjs'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
       - '.github/workflows/deploy-website.yml'
@@ -31,19 +37,25 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    outputs:
+      deploy_international: ${{ steps.scope.outputs.deploy_international }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
       - name: Check website behavior
-        run: node --test tests/website.test.mjs
+        run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs
+      - name: Determine international release scope
+        id: scope
+        run: node scripts/website-release-scope.mjs
 
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.test.outputs.deploy_international == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -82,3 +94,4 @@ jobs:
         run: node scripts/check-website-project.mjs --deployed
       - name: Check the public website after deployment
         run: node scripts/verify-website-live.mjs
+
