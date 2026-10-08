@@ -213,15 +213,16 @@ test('quadruped availability agrees across both homepages, catalogues and produc
         .map(match => match[0]).filter(card => /class="[^"]*\b(?:sale-image|product-picture)\b[^"]*"/.test(card));
       assert.equal(cards.length, 6);
       for (const card of cards) {
-        const isQuadruped = card.includes(`/${locale}/robots/quadruped`);
-        const isDualArm = card.includes(`/${locale}/robots/dual-arm`);
-        const isResearchPrototype = locale === 'cn' && route === 'robots' && /\/cn\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
+        const prefix = locale === 'cn' ? '' : '/en';
+        const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
+        const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
+        const isResearchPrototype = locale === 'cn' && route === 'robots' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
         const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : isResearchPrototype ? '研发样机' : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
-        const destination = card.match(/href="(\/(?:cn|en)\/robots\/[^"#]+)"/)[1];
+        const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
         const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
-        assert.deepEqual(actions.map(([, href]) => href), [destination, `/${locale}/contact/`]);
+        assert.deepEqual(actions.map(([, href]) => href), [destination, `${prefix}/contact/`]);
         assert.deepEqual(actions.map(([, , label]) => label), locale === 'cn' ? ['产品详情', '联系我们'] : ['Details', 'Contact us']);
         if (isQuadruped) {
           assert.doesNotMatch(card, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
@@ -339,15 +340,14 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       assert.equal(r.headers.get('Location'), null, path);
       assert.equal(r.headers.get('Content-Language'), locale === 'cn' ? 'zh-CN' : 'en');
       const html = await r.text();
-      const cnPrototype = locale === 'cn' && ['robots', 'robots/articulated', 'robots/wheel-legged', 'robots/open-frame'].includes(route);
-      const canonical = cnPrototype ? `https://omindos.cn${path.slice(3)}` : `https://omindos.ai${path}`;
+      const canonical = locale === 'cn' ? `https://omindos.cn${path.slice(3)}` : `https://omindos.ai${path}`;
       assert.ok(html.includes(`rel="canonical" href="${canonical}"`), path);
       assert.ok(html.includes('name="robots" content="index,follow"'), path);
       assert.match(html, /<a class="skip-link" href="#main-content">/);
       assert.match(html, /<main\b[^>]*\bid="main-content"[^>]*>/);
       const footer = siteFooter(html);
       assert.ok(footer, `${path}: site footer`);
-      assert.ok(footer.includes(`href="/${locale}/privacy/"`), `${path}: privacy footer link`);
+      assert.ok(footer.includes(`href="${locale === 'cn' ? '/privacy/' : '/en/privacy/'}"`), `${path}: privacy footer link`);
       assert.doesNotMatch(html, /data-language=|class="language-switch|mujin|framerusercontent/i);
       assert.ok(html.includes('https://omindos.ai/og-card.png?v=20260909-omindos'), `${path}: social image version`);
       if (route === '') {
@@ -371,7 +371,8 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       for (const match of html.matchAll(/(?:src|poster|href|data-video-src|data-src)="(\/[^"#]*)"/g)) {
         const target = new URL(match[1].replaceAll('&amp;', '&'), 'https://omindos.ai').pathname;
         if (target === '/founding-oem') continue;
-        const asset = /\.[a-z0-9]+$/i.test(target) ? target : target.replace(/\/$/, '') + '/index.html';
+        const localized = locale === 'cn' && !/\.[a-z0-9]+$/i.test(target) ? '/cn' + target : target;
+        const asset = /\.[a-z0-9]+$/i.test(localized) ? localized : localized.replace(/\/$/, '') + '/index.html';
         await access(new URL('.' + asset, root));
       }
     }
@@ -465,11 +466,12 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     for (const route of ['', 'robots']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       assert.ok(html.includes(name));
-      assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="/${locale}/robots/dual-arm/">${name}</a></h3>`));
+      const prefix = locale === 'cn' ? '' : '/en';
+      assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="${prefix}/robots/dual-arm/">${name}</a></h3>`));
       assert.ok(html.includes('/robot-covers.css?v=20260909'));
       for (const [model, cover] of Object.entries(coverNames)) {
         assert.ok(html.includes(`/assets/covers/${cover}`));
-        assert.match(html, new RegExp(`data-robot-cover href="/${locale}/robots/${model}/"`));
+        assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
       }
     }
     const detail = await readFile(new URL(`${locale}/robots/dual-arm/index.html`, root), 'utf8');
@@ -575,7 +577,8 @@ test('language links preserve the current page, query and section', async () => 
         href: match[1], getAttribute() { return this.href; },
       }));
       assert.equal(links.length, 2);
-      const location = new URL(`https://omindos.ai${path}?source=partner&lang=zh#features`);
+      const originPath = locale === 'cn' ? `https://omindos.cn${path.slice(3)}` : `https://omindos.ai${path}`;
+      const location = new URL(`${originPath}?source=partner&lang=zh#features`);
       runInNewContext(portalClient, {
         URL, location,
         document: { querySelectorAll: () => links },
@@ -583,7 +586,10 @@ test('language links preserve the current page, query and section', async () => 
         fetch: async () => ({ body: { cancel() {} } }),
       });
       for (const [i, targetLocale] of ['cn', 'en'].entries()) {
-        assert.equal(links[i].href, `https://omindos.ai/${targetLocale}/${route ? route + '/' : ''}?source=partner#features`);
+        const expected = locale === 'cn' && targetLocale === 'cn'
+          ? `https://omindos.cn/${route ? route + '/' : ''}?source=partner#features`
+          : `https://omindos.ai/${targetLocale}/${route ? route + '/' : ''}?source=partner#features`;
+        assert.equal(links[i].href, expected);
       }
     }
   }

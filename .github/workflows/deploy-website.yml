@@ -49,6 +49,8 @@ jobs:
           node-version: '24'
       - name: Check website behavior
         run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs
+      - name: Check Chinese search addresses
+        run: python3 -m unittest discover -s tests -p test_cn_seo.py
       - name: Determine international release scope
         id: scope
         run: node scripts/website-release-scope.mjs
