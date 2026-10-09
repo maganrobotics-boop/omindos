@@ -334,7 +334,7 @@ async function serveRobotBrochure(request, env, url) {
 // retain the existing language cookie and API bindings.
 const PORTAL_ROUTES = new Set([
   "/", "/robots", "/robots/wheel-legged", "/robots/quadruped",
-  "/robots/articulated", "/robots/open-frame", "/robots/wheeled", "/robots/dual-arm",
+  "/robots/articulated", "/robots/open-frame", "/robots/wheeled", "/robots/dual-arm", "/robots/mobile-dual-arm",
   "/omindos", "/integration", "/field-work", "/field-work/mining",
   "/field-work/warehouse", "/mobility", "/about", "/contact", "/privacy",
 ]);

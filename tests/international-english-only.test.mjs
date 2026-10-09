@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 const root=new URL('../apps/website/',import.meta.url);
 const source=await readFile(new URL('_worker.js',root),'utf8');
 const {default:worker}=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-const routes=['','about','contact','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
+const routes=['','about','contact','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
 const env={ASSETS:{async fetch(request){
  const path=new URL(request.url).pathname;
  for(const name of [path,path.endsWith('/')?path+'index.html':path+'.html']){

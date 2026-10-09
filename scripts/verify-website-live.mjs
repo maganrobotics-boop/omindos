@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {setTimeout as delay} from 'node:timers/promises';
 const base='https://omindos.ai';
-const routes=['','about','contact','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
+const routes=['','about','contact','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
 async function request(url,headers={}){
  return fetch(url,{headers:{'User-Agent':'Mozilla/5.0 (compatible; OMINDOS-Deployment-Check/1.0)',...headers},redirect:'manual',signal:AbortSignal.timeout(15000)});
 }
@@ -38,7 +38,7 @@ for(const path of ['/index.zh.html','/oem/zh/','/why/zh/','/robots/zh/'])await c
  const r=await request(base+path);assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).host,'omindos.cn');await r.body?.cancel();
 });
 await check('International sitemap',async()=>{
- const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);assert.equal((xml.match(/https:\/\/omindos\.ai\/en\//g)||[]).length,17);
+ const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);assert.equal((xml.match(/https:\/\/omindos\.ai\/en\//g)||[]).length,18);
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
 });
 for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
