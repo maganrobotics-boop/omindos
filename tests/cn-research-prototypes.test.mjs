@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 const root = new URL('../apps/website/', import.meta.url);
 test('three Chinese prototypes retain their names, visible status, demonstrations and research enquiries', async () => {
-  for (const [model, name] of [['articulated','OriginMind HEX-R1'],['wheel-legged','OriginMind WL-R1'],['open-frame','OriginMind PWL-R1']]) {
+  for (const [model, name] of [['articulated','HX1'],['wheel-legged','WL1'],['open-frame','PW1']]) {
     const html = await readFile(new URL(`cn/robots/${model}/index.html`, root),'utf8');
     const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/)[0];
     assert.ok(main.replace(/<[^>]*>/g, '').includes(name), model);
