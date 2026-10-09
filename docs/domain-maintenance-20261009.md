@@ -26,7 +26,7 @@ The `.ai` website remains on the existing Cloudflare Pages project. Do not recre
 
 ## Website change prepared separately
 
-PR #43 supplies the approved Chinese product groups and was merged and released by the concurrent Chinese-site work. The current Chinese release observed at handoff is `/var/www/omindos.cn/releases/20261009-product-editions-pr43-lang`, with repository main at `df9080c43c47efd9b2d2699732573b46aa103678`. Its MDA1 language link points to the English homepage because the English detail page does not yet exist.
+PR #43 supplies the approved Chinese product groups and was merged and released by the concurrent Chinese-site work. The current Chinese release observed at handoff is `/var/www/omindos.cn/releases/20261009-product-editions-pr43-lang`, with repository main at `df9080c43c47efd9b2d2699732573b46aa103678`. Its MDA1 language link points to the English catalogue because the English detail page does not yet exist.
 
 PR #44 follows it with English model names, prototype/development status, six products in two groups, the MDA1 English page and matching language links. It was reconciled onto this latest main. PR #44 remains unmerged pending an explicitly authorized public website release; the international production deployment is unchanged by these source edits. Its Chinese MDA1 link must be published together with the new English page.
 
