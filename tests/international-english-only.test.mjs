@@ -43,5 +43,21 @@ test('legacy public pages cannot select Chinese HTML, and old Chinese routes are
  for(const path of ['/oem/zh/','/why/zh/','/robots/zh/','/founding-oem.zh.html']){
   const r=await worker.fetch(new Request('https://omindos.ai'+path),env);assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).host,'omindos.cn');
  }
- assert.equal((await worker.fetch(new Request('https://omindos.ai/cn/does-not-exist/'),env)).status,404);
+ const oldMissing=await worker.fetch(new Request('https://omindos.ai/cn/does-not-exist/'),env);assert.equal(oldMissing.status,308);assert.equal(oldMissing.headers.get('Location'),'https://omindos.cn/does-not-exist/');
+});
+
+test('explicit Chinese requests redirect to the corresponding cn page while English pages remain English',async()=>{
+ for(const route of routes){
+  const path=route?'/'+route+'/':'/';
+  for(const lang of ['zh','cn']){
+   const r=await worker.fetch(new Request('https://omindos.ai'+path+'?lang='+lang+'&source=old'),env);
+   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn'+path+'?source=old');
+  }
+ }
+ for(const path of ['/cn/assets/mda1-robot-cutout-20261009.webp','/cn/product-showcase.css']){
+  const r=await worker.fetch(new Request('https://omindos.ai'+path+'?v=1'),env);
+  assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn'+path+'?v=1');
+ }
+ const english=await worker.fetch(new Request('https://omindos.ai/en/robots/?lang=zh'),env);
+ assert.equal(english.status,200);assert.equal(english.headers.get('Content-Language'),'en');
 });

@@ -539,9 +539,13 @@ export default {
     if (url.pathname.startsWith('/api/')) return legacyWorker.fetch(request, env);
     const chinese = url.pathname.match(/^\/cn(\/.*)?$/);
     if (chinese) {
-      const route = (chinese[1] || '/').replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
-      if (PORTAL_ROUTES.has(route)) return chinesePrimaryRedirect(url, route === '/' ? '/' : route + '/');
-      return renderNotFound(request, env, url, 'en');
+      const path = chinese[1] || '/';
+      // Chinese-only media/styles retain the cn namespace on the primary site.
+      if (/^\/(?:assets\/|product-showcase\.(?:css|js)$)/.test(path)) {
+        return chinesePrimaryRedirect(url, '/cn' + path);
+      }
+      const route = path.replace(/\/index\.html$/, '/');
+      return chinesePrimaryRedirect(url, route);
     }
     if (/^\/index\.zh(?:\.html)?\/?$/.test(url.pathname)) return chinesePrimaryRedirect(url, '/');
     if (/^\/(?:oem\/zh(?:\/index(?:\.html)?)?\/?|founding-oem\.zh(?:\.html)?\/?|why\/zh(?:\/index(?:\.html)?)?\/?|robots\/zh(?:\/index(?:\.html)?)?\/?)$/.test(url.pathname)) {
@@ -550,6 +554,9 @@ export default {
     if (url.pathname === '/founding-oem.js' || /^\/404\.zh(?:\.html)?\/?$/.test(url.pathname)) return renderNotFound(request, env, url, 'en');
     const route = url.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
     if (PORTAL_ROUTES.has(route)) {
+      if (['zh', 'cn'].includes((url.searchParams.get('lang') || '').toLowerCase())) {
+        return chinesePrimaryRedirect(url, route === '/' ? '/' : route + '/');
+      }
       // Language cookies and Chinese browser preferences no longer choose a
       // Chinese mirror at the international entry.
       return portalRedirect(url, '/en' + (route === '/' ? '/' : route + '/'), true);
