@@ -25,7 +25,7 @@
 .development-visual strong{font-size:clamp(44px,5vw,76px);font-weight:600;line-height:1;letter-spacing:-.045em}
 .development-caption{font-size:16px;color:#d0e1ec;letter-spacing:.1em}
 .development-state{font-size:12px;letter-spacing:.12em;border:1px solid #718a9c;padding:5px 12px;border-radius:20px}
-.development-hero{min-height:350px}
+.development-hero{min-height:350px;width:100%;min-width:0;aspect-ratio:auto!important}
 .industrial-comparison{width:100%;min-width:640px}
 .industrial-comparison th,.industrial-comparison td{padding:16px;text-align:left;border-bottom:1px solid #d5dfe7}
 .industrial-comparison thead{background:#e5edf4}
