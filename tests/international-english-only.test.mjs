@@ -61,3 +61,10 @@ test('explicit Chinese requests redirect to the corresponding cn page while Engl
  const english=await worker.fetch(new Request('https://omindos.ai/en/robots/?lang=zh'),env);
  assert.equal(english.status,200);assert.equal(english.headers.get('Content-Language'),'en');
 });
+
+test('the international sitemap includes every current English route',async()=>{
+ const sitemap=await readFile(new URL('sitemap.xml',root),'utf8');
+ const urls=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
+ for(const route of routes)assert.ok(urls.includes('https://omindos.ai/en/'+(route?route+'/':'')),route||'homepage');
+ assert.equal(new Set(urls).size,urls.length);assert.doesNotMatch(sitemap,/omindos\.cn|\/cn\//);
+});
