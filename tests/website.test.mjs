@@ -463,7 +463,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     assert.ok(privacy.includes('<code>originmind_language</code>'));
   }
 
-  for (const [locale, name] of [['cn', '双臂协同操作平台'], ['en', 'Dual-arm manipulation platform']]) {
+  for (const [locale, name] of [['cn', 'DA1 双臂协同操作平台'], ['en', 'Dual-arm manipulation platform']]) {
     for (const route of ['', 'robots']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       assert.ok(html.includes(name));
