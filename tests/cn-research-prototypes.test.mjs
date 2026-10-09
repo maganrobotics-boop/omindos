@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 const root = new URL('../apps/website/', import.meta.url);
 test('three Chinese prototypes retain their names, visible status, demonstrations and research enquiries', async () => {
-  for (const [model, name] of [['articulated','HX1'],['wheel-legged','WL1'],['open-frame','PW1']]) {
+  for (const [model, name] of [['articulated','HX1'],['wheel-legged','WL1-EDU'],['open-frame','PW1-EDU']]) {
     const html = await readFile(new URL(`cn/robots/${model}/index.html`, root),'utf8');
     const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/)[0];
     assert.ok(main.replace(/<[^>]*>/g, '').includes(name), model);
-    assert.match(main, />研发样机</);
+    assert.match(main, model === 'articulated' ? />研发样机</ : />产品样机</);
     assert.match(main, /咨询研发合作/);
     assert.doesNotMatch(decodeURIComponent(main), /在售|咨询报价|采购数量|交付范围|报价单/);
     assert.match(main, /<video controls playsinline preload="none"/);

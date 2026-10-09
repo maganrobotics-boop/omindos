@@ -17,7 +17,7 @@ class Tags(HTMLParser):
 class ChineseSEO(unittest.TestCase):
     def test_all_pages_use_verified_primary_urls_and_language_targets(self):
         known = cn_seo.routes(ROOT)
-        self.assertEqual(len(known), 17)
+        self.assertEqual(len(known), 18)
         for route in known:
             with self.subTest(route=route):
                 page = ROOT / 'cn' / route.strip('/') / 'index.html'
@@ -27,9 +27,13 @@ class ChineseSEO(unittest.TestCase):
                 alternates = {a['hreflang']:a['href'] for t,a in tags if t=='link' and a.get('rel')=='alternate'}
                 self.assertEqual(canonical, [cn_seo.CN_ORIGIN + route])
                 self.assertEqual(og, canonical)
-                self.assertEqual(alternates, {'en':cn_seo.EN_ORIGIN+'/en'+route,'zh-CN':canonical[0]})
+                expected_alternates = {'zh-CN':canonical[0]}
+                if route != '/robots/mobile-dual-arm/':
+                    expected_alternates['en'] = cn_seo.EN_ORIGIN+'/en'+route
+                self.assertEqual(alternates, expected_alternates)
                 self.assertEqual(cn_seo.rewrite(source, route, known), source)
-                self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
+                if route != '/robots/mobile-dual-arm/':
+                    self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
                 for t,a in tags:
                     if t=='a':
                         href=a.get('href','')

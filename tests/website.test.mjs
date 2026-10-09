@@ -208,7 +208,7 @@ test('localized page titles prefer natural wrapping', async () => {
 });
 
 test('quadruped availability agrees across both homepages, catalogues and product pages', async () => {
-  for (const [locale, development, sale] of [['cn', '在研', '在售'], ['en', 'IN DEVELOPMENT', 'FOR SALE']]) {
+  for (const [locale, development, sale] of [['cn', '研发阶段', '产品样机'], ['en', 'IN DEVELOPMENT', 'FOR SALE']]) {
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
@@ -219,7 +219,8 @@ test('quadruped availability agrees across both homepages, catalogues and produc
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
         const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
-        const expectedStatus = isQuadruped ? development : isDualArm ? (locale === 'cn' ? '平台方案' : 'PLATFORM') : isResearchPrototype ? '研发样机' : sale;
+        const isMobileDualArm = card.includes(`${prefix}/robots/mobile-dual-arm/`);
+        const expectedStatus = locale === 'cn' ? ((isQuadruped || isMobileDualArm) ? development : '产品样机') : isQuadruped ? development : isDualArm ? 'PLATFORM' : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
@@ -463,20 +464,26 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     assert.ok(privacy.includes('<code>originmind_language</code>'));
   }
 
-  for (const [locale, name] of [['cn', 'DA1 双臂协同操作平台'], ['en', 'Dual-arm manipulation platform']]) {
+  for (const [locale, name] of [['cn', 'DA1-EDU 双臂协同操作平台'], ['en', 'Dual-arm manipulation platform']]) {
     for (const route of ['', 'robots']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
-      assert.ok(html.includes(name));
+      assert.ok(html.replace(/<[^>]*>/g, '').includes(name));
       const prefix = locale === 'cn' ? '' : '/en';
-      assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="${prefix}/robots/dual-arm/">${name}</a></h3>`));
+      if (locale === 'en') assert.ok(html.includes(`<h3 class="dual-arm-card-title"><a href="${prefix}/robots/dual-arm/">${name}</a></h3>`));
+      else assert.match(html, /href="\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
       assert.ok(html.includes('/robot-covers.css?v=20260909'));
       for (const [model, cover] of Object.entries(coverNames)) {
+        if (locale === 'cn' && model === 'articulated') {
+          assert.doesNotMatch(html, /href="\/robots\/articulated\/"/);
+          continue;
+        }
         assert.ok(html.includes(`/assets/covers/${cover}`));
         assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
       }
     }
     const detail = await readFile(new URL(`${locale}/robots/dual-arm/index.html`, root), 'utf8');
-    assert.ok(detail.includes(`<h1 class="dual-arm-title">${name}</h1>`));
+    if (locale === 'en') assert.ok(detail.includes(`<h1 class="dual-arm-title">${name}</h1>`));
+    else assert.ok(detail.match(/<h1\b[^>]*>(.*?)<\/h1>/s)[1].replace(/<[^>]*>/g, '').includes(name));
     assert.ok(detail.includes(`<meta property="og:title" content="${name} | OriginMind">`));
     assert.ok(detail.includes('/assets/dual-arm-platform-photo-20260910.jpg'));
     assert.ok(detail.includes('/assets/dual-arm-platform-cad-20260910.jpg'));
