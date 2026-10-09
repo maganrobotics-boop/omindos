@@ -16,9 +16,19 @@ Each server retains its original configuration and deployment receipt in the roo
 
 On Aliyun, `originmind-services.conf.original` is the original configuration and `certificate-activation.original` is the HTTPS-hardened configuration before certificate activation. The previous manual certificates were retained. On Tencent, `omindos-cn.original` is the original site configuration. Before any restore, compare the current configuration with the saved receipt so later edits are not overwritten; validate with `/usr/sbin/nginx -t`, then reload Nginx.
 
-## Settings still awaiting console access
+## DNS console review — consolidation not submitted
 
-The `.cn` parent delegation currently lists both AliDNS and DNSPod nameservers. Both provide the same public web addresses, but only AliDNS supplies the observed Tencent enterprise-mail MX records. Export and compare the complete zones before consolidating delegation to one provider. Check registrar expiry and auto-renewal in the registrar console; certificate expiry is a separate setting.
+The signed-in Aliyun registrar and AliDNS consoles were reviewed on 2026-10-09. The registrar and two `.cn` authoritative servers still show four nameservers: `vole.dnspod.net`, `harlan.dnspod.net`, `dns11.hichina.com`, and `dns12.hichina.com`. The intended consolidated pair is `dns11.hichina.com` and `dns12.hichina.com`; this change has **not** been submitted.
+
+AliDNS contains nine enabled default-line records, all with a 600-second TTL: apex A, www CNAME, OA A, chat A, two enterprise-mail MX records, the QQ-mail verification CNAME, and two certificate-verification TXT records. Direct queries to all four providers agree on the web and certificate-verification records, but DNSPod has no MX records and returns NXDOMAIN for the QQ-mail verification CNAME. Authoritative parent queries to `a.dns.cn` and `ns.cernet.net` return no DS record.
+
+A structured transcription of all nine AliDNS records and the original four nameservers is retained at `/opt/omindos-domain-maintenance/20261009-https-canonical/dns-console-before.json`, alongside `dns-before.json` containing the direct DNS responses. The console's zone-export task completed, but the browser download did not return a file; do not describe the transcription as a downloaded zone export.
+
+Aliyun requires SMS verification to submit the nameserver change. Automatic approval rejected the secure OTP step because its generic sign-in prompt did not accurately describe the consequential DNS change. No code was collected or submitted and the verification dialog was cancelled. Resume only after specific user authorization and an accurately described secure verification or user-controlled submission. After consolidation, verify the registrar's saved pair, parent delegation, recursive resolution, HTTPS entry pages and MX records; the console allows 24–48 hours for cache propagation.
+
+Registrar expiry is 2029-09-22 21:26:56 China time for `omindos.cn`, 2027-08-12 11:46:16 for `originmindos.cn`, and 2027-08-12 11:42:31 for `originmindos.com`. The registrar list's auto-renew switches were off; no paid renewal setting was changed.
+
+## Remaining console work
 
 The old `originmindos.cn` redirect currently reaches the English entry. Its zone redirect should point to `https://omindos.cn/` after console access is available. Preserve useful legacy paths where corresponding pages exist.
 
