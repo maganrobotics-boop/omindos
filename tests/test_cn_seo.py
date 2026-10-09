@@ -28,12 +28,10 @@ class ChineseSEO(unittest.TestCase):
                 self.assertEqual(canonical, [cn_seo.CN_ORIGIN + route])
                 self.assertEqual(og, canonical)
                 expected_alternates = {'zh-CN':canonical[0]}
-                if route != '/robots/mobile-dual-arm/':
-                    expected_alternates['en'] = cn_seo.EN_ORIGIN+'/en'+route
+                expected_alternates['en'] = cn_seo.EN_ORIGIN+'/en'+route
                 self.assertEqual(alternates, expected_alternates)
                 self.assertEqual(cn_seo.rewrite(source, route, known), source)
-                if route != '/robots/mobile-dual-arm/':
-                    self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
+                self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
                 for t,a in tags:
                     if t=='a':
                         href=a.get('href','')
