@@ -37,6 +37,11 @@ for(const path of ['/founding-oem','/why-originmind','/robot-products'])await ch
 for(const path of ['/index.zh.html','/oem/zh/','/why/zh/','/robots/zh/'])await check('Retired alias '+path,async()=>{
  const r=await request(base+path);assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).host,'omindos.cn');await r.body?.cancel();
 });
+await check('All retired Chinese URLs redirect to the Chinese primary site',async()=>{
+ for(const [path,target] of [['/cn/unknown/','/unknown/'],['/robots/?lang=zh','/robots/'],['/?lang=cn','/'],['/cn/assets/mda1-robot-cutout-20261009.webp','/cn/assets/mda1-robot-cutout-20261009.webp']]){
+  const r=await request(base+path);assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn'+target);await r.body?.cancel();
+ }
+});
 await check('International sitemap',async()=>{
  const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);assert.equal((xml.match(/https:\/\/omindos\.ai\/en\//g)||[]).length,18);
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
@@ -49,7 +54,7 @@ for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-poli
  try{while(bytes<=100){const chunk=await reader.read();if(chunk.done)break;bytes+=chunk.value.byteLength;}}finally{await reader.cancel();}
  assert.ok(bytes>100,'asset response must contain actual content');
 });
-for(const path of ['/meeting','/api/meeting/login','/cn/unknown/','/founding-oem.js'])await check('Removed '+path,async()=>{
+for(const path of ['/meeting','/api/meeting/login','/founding-oem.js'])await check('Removed '+path,async()=>{
  const r=await request(base+path);assert.equal(r.status,404);await r.body?.cancel();
 });
 await check('API remains inaccessible to public reads',async()=>{
