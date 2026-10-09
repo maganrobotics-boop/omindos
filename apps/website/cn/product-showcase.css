@@ -34,3 +34,11 @@
 #learning-resources article .text-link{margin-top:20px;align-self:flex-start}
 @media(max-width:1000px){.product-edition-track{grid-auto-columns:calc((100% - 20px)/2);gap:20px}.robot-group-heading{display:block}.robot-group-heading p{margin-top:10px}}
 @media(max-width:700px){.product-edition-track{grid-auto-columns:88%;gap:16px}.robot-group{margin:28px 0 46px}.robot-group-heading h2{font-size:25px}.robot-showcase .sale-card h3,.robot-showcase .product-card h3{font-size:26px}.development-hero{min-height:280px}.robot-name{font-size:.68em}}
+
+/* User-supplied MDA1 workbench image: preserve the full screenshot. */
+.mda-preview-card{background:#edf4f5!important}
+.mda-preview-card>img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;transform:none!important}
+.mda-preview-hero{min-width:0;width:100%;margin:0;align-self:start}
+.mda-preview-hero>a{display:block;max-width:100%}
+.mda-preview-hero img{display:block;width:100%;height:auto;object-fit:contain;border-radius:4px}
+.mda-preview-hero figcaption{font-size:14px;line-height:1.6;color:#58697b;margin-top:10px}
