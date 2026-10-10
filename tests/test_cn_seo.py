@@ -17,7 +17,7 @@ class Tags(HTMLParser):
 class ChineseSEO(unittest.TestCase):
     def test_all_pages_use_verified_primary_urls_and_language_targets(self):
         known = cn_seo.routes(ROOT)
-        self.assertEqual(len(known), 18)
+        self.assertEqual(len(known), 19)
         for route in known:
             with self.subTest(route=route):
                 page = ROOT / 'cn' / route.strip('/') / 'index.html'
@@ -63,3 +63,4 @@ class ChineseSEO(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
