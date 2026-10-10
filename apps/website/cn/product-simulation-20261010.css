@@ -1,0 +1,15 @@
+/* Scoped simulation media; native controls remain available without JavaScript. */
+.product-simulation .simulation-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.product-simulation .simulation-heading .eyebrow{margin-bottom:12px}
+.product-simulation .simulation-badge{display:inline-block;padding:7px 14px;border:1px solid #b6c9cf;border-radius:24px;font-size:14px;color:#385665;white-space:nowrap}
+.product-simulation .simulation-figure{margin:30px 0 0;min-width:0}
+.product-simulation video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#09121e;border-radius:8px}
+.product-simulation figcaption{display:flex;justify-content:space-between;align-items:center;gap:12px 24px;flex-wrap:wrap;margin-top:12px;color:#52657a;font-size:16px;line-height:1.6}
+.product-simulation figcaption a{display:inline-flex;align-items:center;min-height:44px;text-underline-offset:4px}
+.product-simulation .simulation-scope{max-width:1000px;font-size:16px;line-height:1.8;margin-top:14px;color:#52657a}
+.product-simulation .simulation-transcript{max-width:1000px;margin-top:18px;font-size:16px;line-height:1.8}
+.product-simulation summary{cursor:pointer;min-height:44px;padding:9px 0}
+.product-simulation .simulation-transcript p{margin:8px 0 0;color:#52657a}
+.product-simulation :is(a,summary,video):focus-visible{outline:3px solid #2458df;outline-offset:4px}
+@media(max-width:600px){.product-simulation .simulation-heading{gap:14px}.product-simulation .simulation-figure{margin-top:22px}.product-simulation figcaption{align-items:flex-start;gap:2px}.product-simulation .simulation-scope{font-size:15px}}
+
