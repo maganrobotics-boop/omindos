@@ -44,7 +44,8 @@ await check('All retired Chinese URLs redirect to the Chinese primary site',asyn
 });
 await check('International sitemap',async()=>{
  const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);
- assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),routes.map(route=>base+'/en/'+(route?route+'/':'')).sort());
+ const expectedUrls=[...routes.map(route=>base+'/en/'+(route?route+'/':'')),base+'/founding-oem',base+'/why-originmind'];
+ assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),expectedUrls.sort());
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
 });
 for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/developer-docs.css?v=20261010','/developer-docs.js?v=20261010','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
