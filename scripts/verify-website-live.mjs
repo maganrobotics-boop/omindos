@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {setTimeout as delay} from 'node:timers/promises';
 const base='https://omindos.ai';
-const routes=['','about','contact','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
+const routes=['','about','contact','developers','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
 async function request(url,headers={}){
  return fetch(url,{headers:{'User-Agent':'Mozilla/5.0 (compatible; OMINDOS-Deployment-Check/1.0)',...headers},redirect:'manual',signal:AbortSignal.timeout(15000)});
 }
@@ -43,10 +43,11 @@ await check('All retired Chinese URLs redirect to the Chinese primary site',asyn
  }
 });
 await check('International sitemap',async()=>{
- const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);assert.equal((xml.match(/https:\/\/omindos\.ai\/en\//g)||[]).length,18);
+ const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);
+ assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),routes.map(route=>base+'/en/'+(route?route+'/':'')).sort());
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
 });
-for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
+for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/developer-docs.css?v=20261010','/developer-docs.js?v=20261010','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
  const r=await request(base+path,{Range:'bytes=0-1023'});assert.ok([200,206].includes(r.status));
  const type=r.headers.get('Content-Type')||'';assert.doesNotMatch(type,/text\/html/);
  assert.match(type,path.includes('.css')?/text\/css/:path.includes('.js')?/javascript/:path.includes('.mp4')?/video\/mp4/:/image\/webp/);
@@ -63,3 +64,4 @@ await check('API remains inaccessible to public reads',async()=>{
 for(const host of ['www.omindos.ai','originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
  const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();
 });
+
