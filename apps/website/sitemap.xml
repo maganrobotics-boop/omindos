@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://omindos.ai/en/about/</loc></url>
   <url><loc>https://omindos.ai/en/contact/</loc></url>
+  <url><loc>https://omindos.ai/en/developers/</loc></url>
   <url><loc>https://omindos.ai/en/field-work/</loc></url>
   <url><loc>https://omindos.ai/en/field-work/mining/</loc></url>
   <url><loc>https://omindos.ai/en/field-work/warehouse/</loc></url>
@@ -21,3 +22,4 @@
   <url><loc>https://omindos.ai/founding-oem</loc></url>
   <url><loc>https://omindos.ai/why-originmind</loc></url>
 </urlset>
+

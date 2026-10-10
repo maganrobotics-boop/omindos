@@ -1,0 +1,114 @@
+[
+  {
+    "route": "/developers/",
+    "width": 360,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/developers/",
+    "width": 360,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/omindos/",
+    "width": 360,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/omindos/",
+    "width": 360,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/developers/",
+    "width": 390,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/developers/",
+    "width": 390,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/omindos/",
+    "width": 390,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/omindos/",
+    "width": 390,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/developers/",
+    "width": 768,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/developers/",
+    "width": 768,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/omindos/",
+    "width": 768,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/omindos/",
+    "width": 768,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/developers/",
+    "width": 1366,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/developers/",
+    "width": 1366,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/omindos/",
+    "width": 1366,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  },
+  {
+    "route": "/en/omindos/",
+    "width": 1366,
+    "status": "passed",
+    "page_errors": [],
+    "failed_responses": []
+  }
+]
