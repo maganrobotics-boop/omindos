@@ -18,28 +18,24 @@ for(const route of routes){
   assert.equal(r.status,200);assert.equal(r.headers.get('Content-Language'),'en');
   const html=await r.text();assert.ok(html.includes('rel="canonical" href="'+base+'/en/'+suffix+'"'));
   assert.ok(html.includes('property="og:url" content="'+base+'/en/'+suffix+'"'));
-  assert.ok(html.includes('hreflang="zh-CN" href="https://omindos.ai/'+suffix+'"'));
+  assert.ok(html.includes('hreflang="zh-CN" href="https://omindos.cn/'+suffix+'"'));
   assert.match(html,/<html lang="en"/);assert.match(html,/<main\b/);
   assert.doesNotMatch(html,/href="(?:https:\/\/omindos\.ai)?\/cn\//);
  });
- await check('Chinese root /'+suffix,async()=>{
+ await check('Chinese root redirects to domestic /'+suffix,async()=>{
   const r=await request(base+'/'+suffix,{'Accept-Language':'en-US',Cookie:'originmind_language=en'});
-  assert.equal(r.status,200);assert.equal(r.headers.get('Content-Language'),'zh-CN');
-  const html=await r.text();assert.match(html,/<html lang="zh-CN"/);
-  assert.ok(html.includes('rel="canonical" href="'+base+'/'+suffix+'"'));
-  assert.ok(html.includes('hreflang="en" href="'+base+'/en/'+suffix+'"'));
-  assert.doesNotMatch(html,/https:\/\/omindos\.cn/);
+  assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/'+suffix);await r.body?.cancel();
  });
  await check('Chinese alias /cn/'+suffix,async()=>{
   const r=await request(base+'/cn/'+suffix+'?source=deployment&lang=zh');
-  assert.equal(r.status,308);assert.equal(r.headers.get('Location'),base+'/'+suffix+'?source=deployment');await r.body?.cancel();
+  assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/'+suffix+'?source=deployment');await r.body?.cancel();
  });
 }
 for(const path of ['/founding-oem','/why-originmind','/robot-products'])await check('English legacy '+path,async()=>{
  const r=await request(base+path,{Cookie:'originmind_language=zh'});assert.equal(r.status,200);assert.equal(r.headers.get('Content-Language'),'en');assert.match(await r.text(),/<html lang="en"/);
 });
 for(const path of ['/index.zh.html','/oem/zh/','/why/zh/','/robots/zh/'])await check('Retired alias '+path,async()=>{
- const r=await request(base+path);assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).host,'omindos.ai');await r.body?.cancel();
+ const r=await request(base+path);assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).host,'omindos.cn');await r.body?.cancel();
 });
 await check('Explicit English selection remains available',async()=>{
  const r=await request(base+'/?lang=en&source=deployment');
@@ -47,7 +43,7 @@ await check('Explicit English selection remains available',async()=>{
 });
 await check('International sitemap',async()=>{
  const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);
- const expectedUrls=[...routes.flatMap(route=>['','/en'].map(prefix=>base+prefix+'/'+(route?route+'/':''))),base+'/founding-oem',base+'/why-originmind'];
+ const expectedUrls=[...routes.map(route=>base+'/en/'+(route?route+'/':'')),base+'/founding-oem',base+'/why-originmind'];
  assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),expectedUrls.sort());
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
 });
@@ -66,6 +62,7 @@ await check('API remains inaccessible to public reads',async()=>{
  const r=await request(base+'/api/visits');assert.equal(r.status,405);assert.doesNotMatch(await r.text(),/visits|countries|last24Hours/);
 });
 for(const host of ['www.omindos.ai','originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
- const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();
+ const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,host==='www.omindos.ai'?'omindos.cn':'omindos.ai');await r.body?.cancel();
 });
+
 
