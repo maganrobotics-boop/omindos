@@ -32,9 +32,9 @@ OA 与 Cloud 继续使用原子域名。中文官网平台栏只列 OA、Cloud�
 
 本次版本为 `20261011-arena-v4`，调整前网关为 `20261011-learning-v3`、中文官网为 `20261011-learning-entry-pr61`。两台服务器的备份和发布记录存于 `/opt/omindos-arena-entry-20261011/`；回滚时还原本轮 Nginx 备份及这两个 symlink，不影响原始仿真服务及数据。
 
-## 2026-10-11 部署记录与回滚
+## 2026-10-11 课程独立发布的历史记录
 
-- 当前网关版本：`/opt/omindos-chat-entry/releases/20261011-learning-v3`；课程静态文件与 Python 沙箱 CSP 使用独立 `/learning` 路径，保留隔离限制。
+- 课程独立发布时的网关版本：`/opt/omindos-chat-entry/releases/20261011-learning-v3`；课程静态文件与 Python 沙箱 CSP 使用独立 `/learning` 路径，保留隔离限制。
 - 本次调整前网关：`/opt/omindos-chat-entry/releases/20261011-v2`，官网：`/var/www/omindos.cn/releases/20261011-chat-entry-pr60`。
 - 本次配置备份和 release.json：两台服务器各自的 `/opt/omindos-learning-entry-20261011/`；仅撤回本次调整时恢复上述网关、官网和该目录的 Nginx 备份。
 - 腾讯 Nginx 原配置：`/opt/omindos-site-maintenance/chat-entry-20261011/nginx-before.conf`。
