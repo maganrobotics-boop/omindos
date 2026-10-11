@@ -10,6 +10,7 @@ html[lang="zh-CN"] .cn-scope-note{margin-top:36px;padding:24px 28px;border-left:
 .cn-scope-note p{max-width:58em;margin:0;color:#52657a;font-size:16px}
 html[lang="zh-CN"] .cn-validation-grid{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;padding:0;margin:36px 0}
 .cn-validation-grid li{min-width:0;padding-top:22px;border-top:2px solid #bdcddd}
+.cn-validation-grid .cn-step{display:block;color:#2458df;font-size:13px;font-weight:600;letter-spacing:.08em}
 .cn-validation-grid h3{font-size:22px;font-weight:600;margin:10px 0 12px}
 .cn-validation-grid p{margin:0;color:#52657a;font-size:17px}
 html[lang="zh-CN"] .cn-field-team{max-width:880px;margin:36px auto 0}
