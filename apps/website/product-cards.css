@@ -44,3 +44,5 @@
 .sale-card h3{min-height:2.5em}
 .sale-card h3,.product-card-copy h3{white-space:normal;text-wrap:pretty}
 @media(max-width:600px){.sale-card h3{min-height:0}}
+/* Course entry shared by the education sections on home and catalogue pages. */
+.robot-group-heading .education-course-link{min-height:44px;margin-top:10px;max-width:100%;line-height:1.4}
