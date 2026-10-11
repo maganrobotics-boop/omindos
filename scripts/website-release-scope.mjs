@@ -2,14 +2,11 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, appendFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
-// These assets are referenced only by the Chinese research prototype pages.
-const chineseAssets = new Set([
-  'apps/website/assets/articulated-product-20261006.css',
-  'apps/website/assets/articulated-research-model-20261006.png',
-]);
+// Both language trees are published on .ai. Build/routing changes also deploy.
 export function needsInternationalDeployment(paths) {
-  return paths.some(path => path.startsWith('apps/website/') &&
-    !path.startsWith('apps/website/cn/') && !chineseAssets.has(path));
+  return paths.some(path => path.startsWith('apps/website/') ||
+    ['scripts/prepare-international-artifact.py', 'scripts/website-release-scope.mjs',
+     '.github/workflows/deploy-website.yml'].includes(path));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

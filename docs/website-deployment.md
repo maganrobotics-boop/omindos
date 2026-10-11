@@ -1,5 +1,14 @@
 # 官网自动发布
 
+## Current policy — 2026-10-11
+
+The owner confirmed that `omindos.ai` is the main website entry and must show the current Chinese homepage by default. English remains under `/en/`, with same-domain language switches on every portal page. This supersedes the English-only international policy dated 2026-10-08.
+
+The release artifact now includes the checked-in Chinese portal, styles and media. Build-time metadata rewriting maps website URLs from `.cn` to `.ai`; service subdomains (Cloud, courses, OA) are preserved. `.cn` sources and production are unchanged. Both locale trees and artifact configuration now trigger the existing international deployment workflow. No DNS or database bindings change.
+
+Rollback: restore the previous verified international deployment `0d3e395b-5767-4546-8275-352e19247165` / commit `6fb5b4d97c395e489db1e7f442a509889298452c`, then revert the routing/artifact policy commit before subsequent releases. Prior release: GitHub Actions run `38116529489`.
+
+
 工作流：`.github/workflows/deploy-website.yml`，目标为现有 Cloudflare Pages 项目 `omindos-website` 和正式域名 https://omindos.ai。
 
 已于 2026-09-07 启用并完成首次 push 自动发布验收：[运行记录](https://github.com/maganrobotics-boop/omindos/actions/runs/34081030685)。13 项回归测试、发布和 16 项线上检查全部通过。Cloudflare 正式部署 `5c32a4d0-b28b-4cdf-9371-4845081ce7de` 对应 GitHub 提交 `d1397dd70234c2ec7543d17874a0154dc5ac1b35`。
