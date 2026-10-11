@@ -1,0 +1,30 @@
+/* Homepage: first-hand mining research and the path to an in-house robot. */
+.origin-theme .mining-hero.full{padding:128px 0 72px;background:radial-gradient(ellipse at 85% 15%,#193b51 0,transparent 57%),#091923}
+.origin-theme .mining-hero.full h1{font-size:clamp(32px,3.6vw,56px);line-height:1.25;letter-spacing:-.025em}
+.origin-theme .mining-hero .lead{max-width:30em;color:#cad8df}
+.mining-hero-visual img{border:1px solid #3a4a55;border-radius:4px}
+.origin-theme .home-field-story{background:#f4f3ef;padding:88px 0}
+.field-story-heading{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:48px;align-items:end;margin-bottom:40px}
+.field-story-heading .eyebrow{margin:0 0 14px;color:#51655f}
+.origin-theme .field-story-heading h2{font-size:clamp(27px,2.7vw,40px);line-height:1.35;margin:0;font-weight:600;max-width:none}
+.field-story-heading>p{margin:0;color:#52626c;font-size:17px;max-width:32em}
+.field-story-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.field-story-card{min-width:0;background:#fff;border:1px solid #dedfda;border-radius:4px;overflow:hidden}
+.field-story-card figure{margin:0}
+.field-story-card img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.field-story-card .field-survey-photo{object-position:50% 25%}
+.field-story-card .field-product-figure img{object-fit:contain;background:#fff}
+.field-story-card figcaption{padding:12px 22px;border-bottom:1px solid #e6e8e4;font-size:13px;line-height:1.7;color:#566770}
+.field-story-copy{padding:24px 22px 28px}
+.field-story-step{font-size:12px;line-height:1.6;color:#46675b;font-weight:600;letter-spacing:.05em}
+.origin-theme .field-story-copy h3{font-size:23px;line-height:1.5;margin:12px 0}
+.field-story-copy p{font-size:16px;color:#53636e;margin:0}
+.field-story-footer{border-top:1px solid #d7dcd7;margin-top:32px;padding-top:22px}
+.field-story-footer>p{color:#5c6a72;font-size:14px;margin:0 0 14px}
+.field-story-links{display:flex;align-items:center;flex-wrap:wrap;gap:12px 30px}
+.field-story-links .text-link{margin:0;font-size:15px;min-height:44px;display:inline-flex;align-items:center}
+.home-field-story :is(a,button):focus-visible{outline:2px solid #2458df;outline-offset:5px}
+#field-journey{scroll-margin-top:96px}
+@media(max-width:960px){.origin-theme .mining-hero.full{padding:102px 0 48px}.field-story-heading{grid-template-columns:1fr;gap:20px}.field-story-grid{gap:16px}.field-story-copy{padding:20px 18px}.field-story-card figcaption{padding:12px 18px}.origin-theme .field-story-copy h3{font-size:21px}}
+@media(max-width:700px){.origin-theme .home-field-story{padding:56px 0}.field-story-heading{margin-bottom:28px}.field-story-grid{grid-template-columns:1fr;gap:24px}.field-story-card img{aspect-ratio:4/3}.field-story-copy{padding:22px}.field-story-card figcaption{padding:12px 22px}.field-story-heading>p{font-size:16px}.field-story-links{align-items:flex-start;gap:6px 24px}.field-story-footer{margin-top:28px}}
+@media(max-width:600px){.origin-theme .mining-hero.full{padding-top:88px}.origin-theme .mining-hero.full h1{font-size:clamp(29px,7.7vw,40px)}}
