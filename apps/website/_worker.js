@@ -518,17 +518,30 @@ export const legacyWorker = {
   },
 };
 
-// The primary .ai website defaults to Chinese at root; English has explicit
-// /en/ URLs. Old cookies and browser preferences cannot silently change entry.
+function chinesePortalRedirect(request, url, pathname) {
+  if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
+  const destination = new URL(url);
+  destination.protocol = 'https:';
+  destination.host = 'omindos.cn';
+  destination.pathname = pathname;
+  destination.searchParams.delete('lang');
+  return new Response(null, {
+    status: 308,
+    headers: { Location: destination.toString(), 'Cache-Control': 'public, max-age=300' },
+  });
+}
+
+// Chinese entry points go directly to the domestic production site.
+// The overseas English site remains available at explicit /en/ URLs.
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const host = url.hostname.toLowerCase();
-    if (host !== 'omindos.ai' && !host.endsWith('.pages.dev') && host !== 'localhost' && host !== '127.0.0.1') {
+    if (!['omindos.ai', 'www.omindos.ai', 'localhost', '127.0.0.1'].includes(host) && !host.endsWith('.pages.dev')) {
       return legacyWorker.fetch(request, env);
     }
     if (url.pathname.startsWith('/api/')) return legacyWorker.fetch(request, env);
-    // Chinese-only media and styles are now part of the same deployment.
+    // Keep existing asset URLs for cached pages and shared English resources.
     if (/^\/cn\/(?:assets\/|[^/]+\.(?:css|js)$)/.test(url.pathname)) {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
       return withPublicAssetCache(await env.ASSETS.fetch(request), url);
@@ -536,24 +549,23 @@ export default {
     const chinese = url.pathname.match(/^\/cn(\/.*)?$/);
     if (chinese) {
       const route = (chinese[1] || '/').replace(/\/index\.html$/, '/');
-      return portalRedirect(url, route);
+      return chinesePortalRedirect(request, url, route);
     }
-    if (/^\/index(?:\.zh)?(?:\.html)?\/?$/.test(url.pathname)) return portalRedirect(url, '/');
+    if (/^\/index(?:\.zh)?(?:\.html)?\/?$/.test(url.pathname)) return chinesePortalRedirect(request, url, '/');
     if (/^\/(?:oem\/zh(?:\/index(?:\.html)?)?\/?|founding-oem\.zh(?:\.html)?\/?|why\/zh(?:\/index(?:\.html)?)?\/?|robots\/zh(?:\/index(?:\.html)?)?\/?)$/.test(url.pathname)) {
-      return portalRedirect(url, url.pathname.startsWith('/robots/') ? '/robots/' : url.pathname.startsWith('/why/') ? '/about/' : '/integration/');
+      return chinesePortalRedirect(request, url, url.pathname.startsWith('/robots/') ? '/robots/' : url.pathname.startsWith('/why/') ? '/about/' : '/integration/');
     }
     const route = url.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '') || '/';
     if (PORTAL_ROUTES.has(route)) {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
       const path = route === '/' ? '/' : route + '/';
       if ((url.searchParams.get('lang') || '').toLowerCase() === 'en') return portalRedirect(url, '/en' + path, true);
-      if (url.pathname !== path || url.searchParams.has('lang')) return portalRedirect(url, path);
-      return servePortal(request, env, url, 'cn', route);
+      return chinesePortalRedirect(request, url, path);
     }
     if (/^\/en(?:\/|$)/.test(url.pathname)) return legacyWorker.fetch(request, env);
     if (url.pathname === '/founding-oem.js' || /^\/404\.zh(?:\.html)?\/?$/.test(url.pathname)) return renderNotFound(request, env, url, 'zh');
     if (['zh', 'cn'].includes(url.searchParams.get('lang'))) {
-      return portalRedirect(url, url.pathname === '/robot-products' ? '/robots/' : url.pathname === '/why-originmind' ? '/about/' : '/integration/');
+      return chinesePortalRedirect(request, url, url.pathname === '/robot-products' ? '/robots/' : url.pathname === '/why-originmind' ? '/about/' : '/integration/');
     }
     // Preserve the established English legacy OEM URLs and existing API logic.
     const headers = new Headers(request.headers);
@@ -563,3 +575,4 @@ export default {
     return legacyWorker.fetch(new Request(request, { headers }), env);
   },
 };
+
