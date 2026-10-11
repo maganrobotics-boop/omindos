@@ -63,8 +63,42 @@ test('learning is served directly and former nested URLs redirect without losing
  }
  assert.equal((await handle(new Request('https://omindos.cn/learning-other'))).status,404);
 });
-test('logging out clears both application cookie scopes with the original security flags',async()=>{
+test('logging out clears all application cookie scopes with the original security flags',async()=>{
  const r=await handle(new Request('https://omindos.cn/chat/api/visitor/logout',{method:'POST',headers:{origin:'https://omindos.cn'}}),async()=>new Response(null,{headers:{'Set-Cookie':'session=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Lax'}}));
- assert.deepEqual(r.headers.getSetCookie(),['session=; Path=/chat/; Max-Age=0; Secure; HttpOnly; SameSite=Lax','session=; Path=/learning; Max-Age=0; Secure; HttpOnly; SameSite=Lax']);
+ assert.deepEqual(r.headers.getSetCookie(),['session=; Path=/chat/; Max-Age=0; Secure; HttpOnly; SameSite=Lax','session=; Path=/learning; Max-Age=0; Secure; HttpOnly; SameSite=Lax','session=; Path=/arena; Max-Age=0; Secure; HttpOnly; SameSite=Lax']);
  assert.equal(scopedCookie('course=x; Path=/learning; Secure'),'course=x; Path=/learning; Secure');
+});
+test('arena pages and API URLs stay independent, including admin, replay and map parameters',async()=>{
+ let seen;
+ const upstream=async(url,init)=>{seen={url:String(url),init};return new Response('<script src="/arena/app.js"></script><a href="https://chat.omindos.cn/arena/admin">管理</a>',{headers:{'Content-Type':'text/html'}});};
+ for(const path of ['/arena/','/arena/admin','/arena/team.html?map=example','/arena/api/replay?id=12']){
+  const r=await handle(new Request('https://omindos.cn'+path,{headers:{referer:'https://omindos.cn/arena/'}}),upstream);
+  assert.equal(r.status,200);assert.equal(seen.url,'https://chat.omindos.cn'+path);
+  assert.equal(seen.init.headers.get('referer'),'https://chat.omindos.cn/arena/');
+  assert.equal(r.headers.get('x-omindos-entry'),'arena');
+  if(!path.startsWith('/arena/api/'))assert.ok((await r.text()).includes('src="/arena/app.js"'));
+  else await r.body.cancel();
+  const old=await handle(new Request('https://omindos.cn/chat'+path),()=>{throw new Error('no upstream for alias');});
+  assert.equal(old.status,302);assert.equal(old.headers.get('location'),path);
+ }
+ assert.equal(publicUrl('https://chat.omindos.cn/arena/admin'),'https://omindos.cn/arena/admin');
+ assert.equal((await handle(new Request('https://omindos.cn/arena-other'))).status,404);
+ const js=rewriteStatic("fetch('/arena/api/leaderboard');fetch('/api/visitor/status');location.href='/arena/admin';",'application/javascript','/arena/app.js');
+ assert.ok(js.includes("fetch('/arena/api/leaderboard')"));assert.ok(js.includes("fetch('/chat/api/visitor/status')"));
+});
+test('arena writes retain method, body and session, reject other origins and preserve API payloads',async()=>{
+ for(const origin of ['https://evil.example','null','']){
+  const denied=await handle(new Request('https://omindos.cn/arena/api/evaluate',{method:'POST',headers:origin?{origin}:{},body:'{}'}),()=>{throw new Error('must not forward');});
+  assert.equal(denied.status,403);
+ }
+ for(const prefix of ['', '/chat']){
+  const r=await handle(new Request('https://omindos.cn'+prefix+'/arena/api/evaluate',{method:'POST',headers:{origin:'https://omindos.cn',cookie:'__Host-om-chat-session=test','content-type':'application/json'},body:'{"policy":"/arena/example"}'}),async(url,init)=>{
+   assert.equal(String(url),'https://chat.omindos.cn/arena/api/evaluate');assert.equal(init.method,'POST');
+   assert.equal(init.headers.get('cookie'),'__Host-om-chat-session=test');
+   assert.equal(await new Response(init.body).text(),'{"policy":"/arena/example"}');
+   return Response.json({url:'/arena/raw'});
+  });
+  assert.equal(await r.text(),'{"url":"/arena/raw"}');assert.equal(r.headers.get('cache-control'),'no-store');
+ }
+ assert.equal(scopedCookie('arena=x; Path=/arena; Secure; HttpOnly'),'arena=x; Path=/arena; Secure; HttpOnly');
 });
