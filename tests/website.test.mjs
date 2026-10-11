@@ -203,7 +203,7 @@ test('localized page titles prefer natural wrapping', async () => {
   }
   const Chinese = await readFile(new URL('cn/field-work/mining/index.html', root), 'utf8');
   const English = await readFile(new URL('en/field-work/mining/index.html', root), 'utf8');
-  assert.ok(Chinese.includes('<h1>面向矿山巡检，推进四足机器人研发</h1>'));
+  assert.ok(Chinese.includes('<h1>矿山巡检与机器人研发</h1>'));
   assert.ok(English.includes('<h1>Robotics for underground environments</h1>'));
 });
 
