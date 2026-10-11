@@ -38,14 +38,14 @@
 .platform-source-quadruped img{left:-282.051282%}
 
 /* Full-screen opening; detailed context starts below. */
-.origin-theme .mining-hero-immersive{position:relative;isolation:isolate;min-height:680px;height:100svh;max-height:1100px;padding:0;background:#081a18;color:#fff;overflow:hidden}
-.origin-theme .mining-hero-immersive .mining-hero-grid{display:block;position:relative;min-height:100%;height:100%;width:100%;max-width:none;padding:0}
-.origin-theme .mining-hero-immersive .mining-hero-visual{position:absolute;inset:0;z-index:0;width:100%;height:100%;margin:0;border:0;border-radius:0;overflow:hidden;background:#081a18}
-.origin-theme .mining-hero-immersive .mining-hero-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,14,13,.55) 0%,rgba(1,14,13,.12) 35%,rgba(1,14,13,.2) 60%,rgba(1,14,13,.7) 100%);pointer-events:none}
-.origin-theme .mining-hero-immersive .mining-hero-visual img{display:block;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;object-position:55% center}
-.origin-theme .mining-hero-immersive .hero-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:inherit;text-align:center;padding:120px 24px}
-.origin-theme .mining-hero-immersive h1{font-size:clamp(56px,8vw,124px);font-weight:600;line-height:1.15;letter-spacing:.08em;margin:0;max-width:none;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.3);white-space:nowrap}
-.origin-theme .mining-hero-immersive .mining-hero-scroll{position:absolute;bottom:68px;left:50%;transform:translateX(-50%);display:flex;gap:18px;align-items:center;min-height:44px;font-size:15px;color:#fff;text-decoration:none;white-space:nowrap}
-.origin-theme .mining-hero-immersive .mining-hero-scroll span{font-size:24px}
-.origin-theme .mining-hero-immersive .mining-hero-visual figcaption{position:absolute;z-index:2;bottom:16px;right:24px;left:auto;background:none;padding:0;color:rgba(255,255,255,.78);font-size:12px;line-height:1.5}
-@media(max-width:700px){.origin-theme .mining-hero-immersive{min-height:560px;max-height:950px}.origin-theme .mining-hero-immersive .hero-copy{padding:100px 18px}.origin-theme .mining-hero-immersive h1{font-size:clamp(42px,10.5vw,70px);letter-spacing:.04em}.origin-theme .mining-hero-immersive .mining-hero-visual img{object-position:58% center}.origin-theme .mining-hero-immersive .mining-hero-visual figcaption{right:16px;bottom:14px;font-size:11px}}
+.origin-theme .hero.full.mining-hero-immersive{position:relative;isolation:isolate;min-height:680px;height:100svh;max-height:1100px;padding:0;background:#081a18;color:#fff;overflow:hidden}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-grid{display:block;position:relative;min-height:100%;height:100%;width:100%;max-width:none;padding:0}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual{position:absolute;inset:0;z-index:0;width:100%;height:100%;margin:0;border:0;border-radius:0;overflow:hidden;background:#081a18}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,14,13,.55) 0%,rgba(1,14,13,.12) 35%,rgba(1,14,13,.2) 60%,rgba(1,14,13,.7) 100%);pointer-events:none}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{display:block;width:100%;height:100%;max-height:none;aspect-ratio:auto;object-fit:cover;object-position:55% center;border:0;border-radius:0}
+.origin-theme .hero.full.mining-hero-immersive .hero-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:inherit;text-align:center;padding:120px 24px}
+.origin-theme .hero.full.mining-hero-immersive h1{font-size:clamp(56px,8vw,124px);font-weight:600;line-height:1.15;letter-spacing:.08em;margin:0;max-width:none;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.3);white-space:nowrap}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-scroll{position:absolute;bottom:68px;left:50%;transform:translateX(-50%);display:flex;gap:18px;align-items:center;min-height:44px;font-size:15px;color:#fff;text-decoration:none;white-space:nowrap}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-scroll span{font-size:24px}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual figcaption{position:absolute;z-index:2;bottom:16px;right:24px;left:auto;background:none;padding:0;color:rgba(255,255,255,.78);font-size:12px;line-height:1.5}
+@media(max-width:700px){.origin-theme .hero.full.mining-hero-immersive{min-height:560px;max-height:950px}.origin-theme .hero.full.mining-hero-immersive .hero-copy{padding:100px 18px}.origin-theme .hero.full.mining-hero-immersive h1{font-size:clamp(42px,10.5vw,70px);letter-spacing:.04em}.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{object-position:58% center}.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual figcaption{right:16px;bottom:14px;font-size:11px}}
