@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'ops/chat-entry/**'
       - 'apps/website/**'
       - 'tests/website.test.mjs'
       - 'tests/website-release-scope.test.mjs'
@@ -18,6 +19,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'ops/chat-entry/**'
       - 'apps/website/**'
       - 'tests/website.test.mjs'
       - 'tests/website-release-scope.test.mjs'
@@ -54,7 +56,7 @@ jobs:
         with:
           node-version: '24'
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs
+        run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
