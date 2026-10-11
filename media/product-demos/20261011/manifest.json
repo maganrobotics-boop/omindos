@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "assembly": "Concatenate parts in order; no transcoding.",
+  "files": [
+    {
+      "target": "apps/website/cn/assets/demos/20261011/OriginMind-Q1-Demo.mp4",
+      "bytes": 13174105,
+      "sha256": "e4c558877833381e831b45fac69cb1697ef582333944b333abe40aa71de68651",
+      "parts": [
+        {
+          "path": "OriginMind-Q1-Demo.mp4.part0",
+          "bytes": 7340032,
+          "sha256": "44157d4b90b10fb20423f4bcfb076acacbaa01edcd65e97410f57506f904a2a5"
+        },
+        {
+          "path": "OriginMind-Q1-Demo.mp4.part1",
+          "bytes": 5834073,
+          "sha256": "9ca8fbee527cec76900e675d05baa60b67eeaba3a9d33a7c45b406bf352d67de"
+        }
+      ]
+    },
+    {
+      "target": "apps/website/cn/assets/demos/20261011/OriginMind-MDA1-Demo.mp4",
+      "bytes": 10719710,
+      "sha256": "b9dbb6c5b2da7297f409afdb7678c6d955a0c8eee5eb3ac3d1e8305764a70b60",
+      "parts": [
+        {
+          "path": "OriginMind-MDA1-Demo.mp4.part0",
+          "bytes": 7340032,
+          "sha256": "ef2fba3a44a7de80d01b3ac79d0c436109e144af75007ed325f2e4d85dd7979d"
+        },
+        {
+          "path": "OriginMind-MDA1-Demo.mp4.part1",
+          "bytes": 3379678,
+          "sha256": "e59122932e086e58b248061fa3a028223722a7f3705065fc4c270818cd0b526b"
+        }
+      ]
+    }
+  ]
+}

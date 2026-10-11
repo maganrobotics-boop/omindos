@@ -1,0 +1,11 @@
+/* Product videos remain compact and use native controls. */
+.product-simulation{padding-top:44px;padding-bottom:44px}
+.product-simulation .simulation-layout{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,520px);gap:40px;align-items:center}
+.product-simulation .simulation-copy .eyebrow{margin-bottom:12px}
+.product-simulation h2{font-size:clamp(24px,2.3vw,32px);line-height:1.4;max-width:18em}
+.product-simulation .simulation-copy p:not(.eyebrow){color:#52657a;line-height:1.75;margin:16px 0 0;font-size:16px}
+.product-simulation .simulation-figure{margin:0;min-width:0;width:100%;max-width:520px}
+.product-simulation video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#09121e;border-radius:8px}
+.product-simulation figcaption{font-size:13px;line-height:1.6;color:#627589;margin-top:8px}
+.product-simulation video:focus-visible{outline:3px solid #2458df;outline-offset:4px}
+@media(max-width:760px){.product-simulation{padding-top:30px;padding-bottom:30px}.product-simulation .simulation-layout{grid-template-columns:1fr;gap:20px}.product-simulation .simulation-figure{max-width:480px}.product-simulation .simulation-copy p:not(.eyebrow){margin-top:10px}}

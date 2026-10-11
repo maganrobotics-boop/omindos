@@ -1,0 +1,47 @@
+{
+  "file": "OriginMind-Q1-Demo.mp4",
+  "duration_s": 45,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 1350,
+  "full_decode": "PASS",
+  "sha256": "e4c558877833381e831b45fac69cb1697ef582333944b333abe40aa71de68651",
+  "bytes": 13174105,
+  "source_sha256": "aa8f4a2c8f15075d9a6ea130e71554e8ce7ced0e1ebaf07b77ae48463b3a5e5a",
+  "gripper_dof_per_hand": null,
+  "gripper_model": null,
+  "hardware_validated": false,
+  "chapters": [
+    [
+      0,
+      10,
+      "低速行走",
+      "Walking"
+    ],
+    [
+      10,
+      20,
+      "对角小跑",
+      "Trotting"
+    ],
+    [
+      20,
+      32,
+      "原地转向",
+      "Turning"
+    ],
+    [
+      32,
+      38,
+      "起跳与落地",
+      "Jump and landing"
+    ],
+    [
+      38,
+      45,
+      "慢动作回放",
+      "Slow-motion replay"
+    ]
+  ]
+}

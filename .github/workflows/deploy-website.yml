@@ -6,6 +6,8 @@ on:
     paths:
       - 'ops/chat-entry/**'
       - 'apps/website/**'
+      - 'media/product-demos/**'
+      - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
@@ -21,6 +23,8 @@ on:
     paths:
       - 'ops/chat-entry/**'
       - 'apps/website/**'
+      - 'media/product-demos/**'
+      - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
@@ -55,6 +59,8 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
+      - name: Restore approved product demo media
+        run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
         run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
@@ -84,6 +90,8 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/check-website-project.mjs
+      - name: Restore approved product demo media
+        run: python3 scripts/prepare-product-demo-media.py
       - name: Prepare English site and domestic redirects
         run: python3 scripts/prepare-international-artifact.py apps/website /tmp/omindos-international
       - name: Publish existing Cloudflare Pages project
