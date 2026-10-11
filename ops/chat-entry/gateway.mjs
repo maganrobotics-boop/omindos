@@ -8,11 +8,15 @@ export const UPSTREAM_ORIGIN = 'https://chat.omindos.cn';
 export const PREFIX = '/chat';
 const SAFE = new Set(['GET', 'HEAD']);
 const ROOTS = /^(?:api|assets|learning|learning-media|arena|TA|ta|manage|technology|research|originmind|ius|newbie[^/]*|orientation[^/]*|platform-[^/]*|manifest\.webmanifest|service-worker\.js|zip-import-addon\.js|favicon\.svg|LICENSES\.md|_health|gold-vault)(?:[/?#]|$)/;
+const isLearning = value => /^\/learning(?:[/?#]|$)/.test(value);
+const publicPath = value => isLearning(value) ? value : PREFIX + value;
+const rewriteOrigins = value => value.replaceAll(UPSTREAM_ORIGIN, PUBLIC_ORIGIN + PREFIX)
+  .replace(/https:\/\/omindos\.cn\/chat\/learning(?=[/?#\s"'`<>]|$)/g, PUBLIC_ORIGIN + '/learning');
 
 export function publicUrl(value) {
-  if (value.startsWith(UPSTREAM_ORIGIN + '/')) return PUBLIC_ORIGIN + PREFIX + value.slice(UPSTREAM_ORIGIN.length);
+  if (value.startsWith(UPSTREAM_ORIGIN + '/')) return PUBLIC_ORIGIN + publicPath(value.slice(UPSTREAM_ORIGIN.length));
   if (value === UPSTREAM_ORIGIN) return PUBLIC_ORIGIN + PREFIX + '/';
-  if (value.startsWith('/') && !value.startsWith('//') && (value === '/' || ROOTS.test(value.slice(1)))) return PREFIX + value;
+  if (value.startsWith('/') && !value.startsWith('//') && (value === '/' || ROOTS.test(value.slice(1)))) return publicPath(value);
   return value;
 }
 
@@ -27,12 +31,12 @@ export function rewriteStatic(text, type, pathname) {
     for (const icon of manifest.icons || []) icon.src = publicUrl(icon.src);
     return JSON.stringify(manifest);
   }
-  text = text.replaceAll(UPSTREAM_ORIGIN, PUBLIC_ORIGIN + PREFIX);
-  text = text.replace(/(["'`])\/(?!\/)([a-zA-Z_][^"'`\s<>]*)/g, (match, quote, value) => ROOTS.test(value) ? quote + PREFIX + '/' + value : match);
+  text = rewriteOrigins(text);
+  text = text.replace(/(["'`])\/(?!\/)([a-zA-Z_][^"'`\s<>]*)/g, (match, quote, value) => ROOTS.test(value) ? quote + publicPath('/' + value) : match);
   text = text.replace(/(\b(?:href|src|action)\s*=\s*["'])\/(?=["'])/g, '$1' + PREFIX + '/');
   text = text.replace(/(\bnew URL\s*\(\s*["'])\/(?=["'])/g, '$1' + PREFIX + '/');
   text = text.replace(/(\b(?:href|start_url|scope)\s*:\s*["'])\/(?=["'])/g, '$1' + PREFIX + '/');
-  if (/css/.test(type)) text = text.replace(/url\(\s*\/(?!\/)([^\s)]+)/g, (match, value) => ROOTS.test(value) ? 'url(' + PREFIX + '/' + value : match);
+  if (/css/.test(type)) text = text.replace(/url\(\s*\/(?!\/)([^\s)]+)/g, (match, value) => ROOTS.test(value) ? 'url(' + publicPath('/' + value) : match);
   if (pathname === '/service-worker.js') text = text.replaceAll('^\\/assets\\/', '^\\/chat\\/assets\\/');
   return text;
 }
@@ -47,6 +51,7 @@ export function upstreamHeaders(input, clientIp = '') {
   if (origin) headers.set('origin', origin === PUBLIC_ORIGIN ? UPSTREAM_ORIGIN : origin);
   const referer = input.get('referer');
   if (referer?.startsWith(PUBLIC_ORIGIN + PREFIX + '/')) headers.set('referer', UPSTREAM_ORIGIN + referer.slice((PUBLIC_ORIGIN + PREFIX).length));
+  else if (referer?.startsWith(PUBLIC_ORIGIN + '/') && isLearning(referer.slice(PUBLIC_ORIGIN.length))) headers.set('referer', UPSTREAM_ORIGIN + referer.slice(PUBLIC_ORIGIN.length));
   headers.set('accept-encoding', 'identity');
   headers.set('x-omindos-chat-entry', '1');
   if (/^[0-9a-f:.]+$/i.test(clientIp)) headers.set('x-omindos-client-ip', clientIp);
@@ -57,16 +62,20 @@ export function scopedCookie(cookie) {
   // __Host- cookies require Path=/; keep their browser-enforced restrictions.
   const hostCookie = cookie.startsWith('__Host-');
   cookie = cookie.replace(/;\s*Domain=[^;]*/ig, '');
-  if (!hostCookie) cookie = cookie.replace(/;\s*Path=\/([^;]*)/i, (_, rest) => '; Path=' + PREFIX + '/' + rest);
+  if (!hostCookie) cookie = cookie.replace(/;\s*Path=\/([^;]*)/i, (_, rest) => '; Path=' + publicPath('/' + rest));
   return cookie;
 }
 
 export async function handle(request, fetchUpstream = fetch, clientIp = '') {
   const url = new URL(request.url);
-  if (url.origin !== PUBLIC_ORIGIN || !url.pathname.startsWith(PREFIX + '/')) return new Response('Not found', {status:404});
+  const learning = isLearning(url.pathname);
+  if (url.origin !== PUBLIC_ORIGIN || (!learning && !url.pathname.startsWith(PREFIX + '/'))) return new Response('Not found', {status:404});
+  if (!learning && isLearning(url.pathname.slice(PREFIX.length)) && SAFE.has(request.method)) {
+    return new Response(null,{status:302,headers:{Location:url.pathname.slice(PREFIX.length)+url.search,'Cache-Control':'no-store'}});
+  }
   if (!SAFE.has(request.method) && request.headers.get('origin') !== PUBLIC_ORIGIN) return new Response('Forbidden', {status:403, headers:{'Cache-Control':'no-store'}});
   const target = new URL(UPSTREAM_ORIGIN);
-  target.pathname = url.pathname.slice(PREFIX.length);
+  target.pathname = learning ? url.pathname : url.pathname.slice(PREFIX.length);
   target.search = url.search;
   const headers = upstreamHeaders(request.headers, clientIp);
   const response = await fetchUpstream(target, {
@@ -75,17 +84,24 @@ export async function handle(request, fetchUpstream = fetch, clientIp = '') {
   });
   const output = new Headers(response.headers);
   for (const name of ['content-encoding','content-length','transfer-encoding','connection','set-cookie','server','alt-svc']) output.delete(name);
-  for (const cookie of response.headers.getSetCookie()) output.append('set-cookie', scopedCookie(cookie));
+  for (const cookie of response.headers.getSetCookie()) {
+    output.append('set-cookie', scopedCookie(cookie));
+    // Share the existing account across the two disjoint application paths.
+    // Keep cookies off the rest of the website; __Host- already requires Path=/.
+    if (!cookie.startsWith('__Host-') && /;\s*Path=\/(?:;|$)/i.test(cookie)) {
+      output.append('set-cookie', cookie.replace(/;\s*Domain=[^;]*/ig,'').replace(/;\s*Path=\/(?=;|$)/i,'; Path=/learning'));
+    }
+  }
   const location = output.get('location');
   if (location) output.set('location', publicUrl(location));
   for (const name of ['content-security-policy', 'content-security-policy-report-only']) {
     const policy = output.get(name);
-    if (policy) output.set(name, policy.replaceAll(UPSTREAM_ORIGIN, PUBLIC_ORIGIN + PREFIX));
+    if (policy) output.set(name, rewriteOrigins(policy));
   }
   if (output.get('access-control-allow-origin') === UPSTREAM_ORIGIN) output.set('access-control-allow-origin', PUBLIC_ORIGIN);
   output.set('X-Content-Type-Options', 'nosniff');
-  output.set('Service-Worker-Allowed', PREFIX + '/');
-  output.set('X-OmindOS-Entry', 'chat');
+  output.set('Service-Worker-Allowed', learning ? '/learning/' : PREFIX + '/');
+  output.set('X-OmindOS-Entry', learning ? 'learning' : 'chat');
   const type = output.get('content-type') || '';
   const isStatic = !target.pathname.startsWith('/api/') && !target.pathname.startsWith('/arena/api/');
   const transform = isStatic && /(?:text\/html|(?:application|text)\/(?:javascript|x-javascript)|text\/css|application\/manifest\+json)/i.test(type);
