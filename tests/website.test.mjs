@@ -260,7 +260,7 @@ test('product details are readable inline and keep model-specific specifications
       assert.equal(ids.length, new Set(ids).size);
       if (model === 'quadruped') {
         assert.doesNotMatch(main, /Go2|15\s*kg|700\s*[×x]\s*310|760\s*[×x]\s*310|10\s*km|7\.5万元/i);
-        assert.match(main, locale === 'cn' ? /整机集成与场景验证/ : /full-system integration and application validation/);
+        assert.match(main, locale === 'cn' ? /样机集成与现场测试/ : /full-system integration and application validation/);
       }
       if (model === 'wheeled') {
         assert.match(main, /730 × 460 × 860 mm/);

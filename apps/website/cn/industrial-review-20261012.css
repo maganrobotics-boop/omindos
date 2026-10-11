@@ -4,7 +4,7 @@ html[lang="zh-CN"] main{overflow-wrap:break-word}
 html[lang="zh-CN"] main :is(h1,h2,h3){text-wrap:wrap;word-break:normal;overflow-wrap:normal}
 html[lang="zh-CN"] main p{line-height:1.8}
 html[lang="zh-CN"] .section-links a{display:inline-flex;align-items:center;min-height:36px}
-html[lang="zh-CN"] .note,html[lang="zh-CN"] figcaption{font-size:14px;color:#52657a}
+html[lang="zh-CN"] .note,html[lang="zh-CN"] figcaption{font-size:14px}
 html[lang="zh-CN"] .ink :is(.note,figcaption){color:#cad7e4}
 .cn-technical-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:36px}
 .cn-technical-grid article{min-width:0;padding-top:24px;border-top:2px solid #c9d8e8}
