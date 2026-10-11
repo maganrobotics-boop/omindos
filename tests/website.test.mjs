@@ -216,6 +216,17 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       assert.equal(cards.length, 6);
       for (const card of cards) {
         const prefix = locale === 'cn' ? '' : '/en';
+        const isTrackedResearchPlatform = locale === 'cn' && route === '' && card.includes('id="home-platform-tracked"');
+        if (isTrackedResearchPlatform) {
+          assert.match(card, />外购平台 · 算法适配</);
+          assert.match(card, /履带式巡检平台/);
+          assert.doesNotMatch(card, /MDA1|产品样机|研发阶段|在售/);
+          const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
+          assert.deepEqual(actions.map(([, href]) => href), ['#platform-scenes', '/contact/']);
+          assert.deepEqual(actions.map(([, , label]) => label), ['场景研究', '交流平台适配']);
+          assert.ok(page.includes('id="platform-scenes"'));
+          continue;
+        }
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
         const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
@@ -357,7 +368,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes('/home/base.css?v=20260910-polish'));
         assert.ok(html.includes(`/home/controls.js?v=${locale === 'cn' ? '20261011-cn-review' : '20260909-remediation'}`));
         assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
-        assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
+        assert.ok(html.includes(locale === 'cn' ? '/assets/omindos-inspection-console-20260909.jpg' : '/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
