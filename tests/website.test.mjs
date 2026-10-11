@@ -352,10 +352,10 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       assert.ok(footer, `${path}: site footer`);
       assert.ok(footer.includes(`href="${locale === 'cn' ? '/privacy/' : '/en/privacy/'}"`), `${path}: privacy footer link`);
       assert.doesNotMatch(html, /data-language=|class="language-switch|mujin|framerusercontent/i);
-      assert.ok(html.includes('https://omindos.ai/og-card.png?v=20260909-omindos'), `${path}: social image version`);
+      assert.ok(html.includes(`https://omindos.${locale === 'cn' ? 'cn' : 'ai'}/og-card.png?v=20260909-omindos`), `${path}: social image version`);
       if (route === '') {
         assert.ok(html.includes('/home/base.css?v=20260910-polish'));
-        assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
+        assert.ok(html.includes(`/home/controls.js?v=${locale === 'cn' ? '20261011-cn-review' : '20260909-remediation'}`));
         assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
@@ -474,7 +474,12 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
       assert.ok(html.includes('/robot-covers.css?v=20260909'));
       for (const [model, cover] of Object.entries(coverNames)) {
         if (model === 'articulated') {
-          assert.doesNotMatch(html, /href="(?:\/en)?\/robots\/articulated\/"/);
+          const researchEntry = html.match(/<aside class="cn-research-entry">[\s\S]*?<\/aside>/)?.[0] || '';
+          assert.doesNotMatch(html.replace(researchEntry, ''), /href="(?:\/en)?\/robots\/articulated\/"/);
+          if (locale === 'cn' && route === 'robots') {
+            assert.match(researchEntry, /研究原型/);
+            assert.match(researchEntry, /href="\/robots\/articulated\/"/);
+          }
           continue;
         }
         assert.ok(html.includes(`/assets/covers/${cover}`));
@@ -672,6 +677,21 @@ test('V1.5.17 keeps collapsed videos and product links while removing the final 
     }
   }
   assert.equal(await readFile(new URL('index.html', homepageRoot), 'utf8'), await readFile(new URL('index.en.html', homepageRoot), 'utf8'));
+});
+
+test('domestic static pages skip unavailable visit writes while international statistics remain', async () => {
+  const script = await readFile(new URL('portal-client.js', root), 'utf8');
+  for (const hostname of ['omindos.cn', 'www.omindos.cn', 'omindos.ai']) {
+    const calls = [];
+    runInNewContext(script, {
+      document: { querySelectorAll: () => [] },
+      location: { hostname, pathname: '/robots/', origin: `https://${hostname}` },
+      AbortSignal,
+      fetch: (...args) => { calls.push(args); return Promise.resolve({ body: { cancel() {} } }); },
+    });
+    assert.equal(calls.length, hostname === 'omindos.ai' ? 1 : 0, hostname);
+    if (calls.length) { assert.equal(calls[0][0], '/api/visits'); assert.equal(calls[0][1].method, 'POST'); }
+  }
 });
 
 test('every updated page loads its own styles and keeps the current shared script', async () => {

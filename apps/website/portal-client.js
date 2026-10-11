@@ -26,7 +26,9 @@
       return;
     }
   }
-  // Keep the existing anonymous visit counter without a visible counter UI.
+  // The domestic static host has no visit database; skip unsupported POSTs.
+  if (['omindos.cn', 'www.omindos.cn'].includes(location.hostname)) return;
+  // Keep the international anonymous visit counter without a visible counter UI.
   fetch('/api/visits', {
     method: 'POST', credentials: 'same-origin',
     headers: { 'Content-Type': 'application/json' }, body: '{}',

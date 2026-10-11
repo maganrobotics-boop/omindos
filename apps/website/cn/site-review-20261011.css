@@ -1,0 +1,38 @@
+/* Chinese editorial refinements, loaded after existing page styles. */
+html[lang="zh-CN"] .page-intro h1{line-height:1.2;letter-spacing:-.025em}
+html[lang="zh-CN"] .page-intro>.lead{line-height:1.7;max-width:44em}
+.cn-product-page .page-opening{padding-top:44px;padding-bottom:16px}
+.cn-product-page .page-opening+.section{padding-top:20px}
+.cn-product-page .page-intro{gap:16px}
+.cn-product-page .page-intro h1{font-size:clamp(34px,3.8vw,54px)}
+.cn-product-page .page-intro>.lead{font-size:20px;margin-top:0}
+.cn-product-page .product-detail-layout{gap:40px;align-items:start}
+.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{width:100%;max-height:430px;object-fit:contain;background:#fff}
+.cn-product-page .product-details .section-links{display:flex;flex-wrap:wrap;gap:12px 20px}
+html[lang="zh-CN"] .field-stories{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+html[lang="zh-CN"] .field-story:last-child{padding-top:0}
+html[lang="zh-CN"] .field-stories .media>img{aspect-ratio:4/3}
+html[lang="zh-CN"] .field-story-copy{display:block}
+html[lang="zh-CN"] .field-story-copy>p{margin-top:16px}
+html[lang="zh-CN"] .footer-grid nav{min-width:0}
+.cn-research-entry{margin-top:40px;padding-top:28px;border-top:1px solid var(--line,#d5dfe7)}
+.cn-research-entry h3{font-size:26px}
+.cn-research-entry p{margin:16px 0;color:var(--muted,#58697b)}
+.cn-demo-index{padding-top:20px}
+.cn-demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:32px}
+.cn-demo-grid article{min-width:0;border-top:2px solid var(--line,#d5dfe7);padding-top:24px}
+.cn-demo-grid h3{font-size:25px;line-height:1.4}
+.cn-demo-grid p{margin-bottom:16px;color:var(--muted,#58697b)}
+.cn-demo-grid h3+p{margin-top:16px}
+.cn-demo-grid nav{display:flex;flex-direction:column;align-items:start;gap:14px}
+.cn-demo-grid a{color:var(--blue,#2458df);text-decoration:underline;text-underline-offset:5px}
+html[lang="zh-CN"] .table-scroll:focus-visible{outline:2px solid #2458df;outline-offset:5px}
+@media(max-width:800px){.cn-demo-grid{grid-template-columns:1fr;gap:32px}.cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:24px}}
+@media(max-width:600px){
+ .cn-product-page .page-opening{padding-top:32px;padding-bottom:8px}
+ .cn-product-page .page-opening+.section{padding-top:16px}
+ .cn-product-page .page-intro>.lead{font-size:18px}
+ .cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{max-height:320px}
+ html[lang="zh-CN"] .field-stories{grid-template-columns:1fr}
+ .cn-research-entry{margin-top:28px}
+}
