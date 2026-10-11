@@ -1,15 +1,16 @@
-# Chat 主域名入口
+# Chat 与课程主域名入口
 
 用户约定：减少服务子域名，保留原 Chat 首页及课程。公开入口为
-`https://omindos.cn/chat/`，课程为 `/chat/learning`，`/learning` 兼容跳转到课程。
+`https://omindos.cn/chat/`，课程独立使用 `https://omindos.cn/learning`。
+旧 `/chat/learning` 及旧 Chat 子域名课程入口均跳转到 `/learning`，保留后续路径和查询参数。
 OA 与 Cloud 继续使用原子域名。中文官网平台栏只列 OA、Cloud，AI 助手和挑战赛归入站内链接。
 
-腾讯 Nginx 的 `/chat/` 转给仅监听 `127.0.0.1:18887` 的 Node 网关。
+腾讯 Nginx 的 `/chat/`、`/learning` 及 `/learning/` 子路径转给仅监听 `127.0.0.1:18887` 的 Node 网关。
 网关固定连接 `https://chat.omindos.cn`，保留阿里云 Chat 服务、数据库、邮件和课程接口。
 不迁移或重置账号、成绩、上传文件；新域名可能需要重新登录。
 
 网关只转换静态应用中的站内地址，API JSON、聊天 SSE、上传内容和二进制资源原样传输。
-写请求必须来自 `https://omindos.cn`；身份头不从客户端透传，Cookie 路径与 PWA scope 限制在 `/chat/`。
+写请求必须来自 `https://omindos.cn`；身份头不从客户端透传。账号 Cookie 分别设置在 `/chat/` 与 `/learning`，保留安全标记，退出同时清除两个路径；课程专用 Cookie 保持 `/learning`。Chat PWA scope 限制在 `/chat/`。
 上游 TLS 使用 Node 默认验证，不跳过证书检查。旧入口页面 GET/HEAD 返回 302，保留查询参数；旧 API 保持兼容。
 
 ## 部署
@@ -24,7 +25,9 @@ OA 与 Cloud 继续使用原子域名。中文官网平台栏只列 OA、Cloud�
 
 ## 2026-10-11 部署记录与回滚
 
-- 网关版本：`/opt/omindos-chat-entry/releases/20261011-v2`；包含 Python 沙箱 CSP 精确路径迁移，保留原有隔离限制。
+- 当前网关版本：`/opt/omindos-chat-entry/releases/20261011-learning-v3`；课程静态文件与 Python 沙箱 CSP 使用独立 `/learning` 路径，保留隔离限制。
+- 本次调整前网关：`/opt/omindos-chat-entry/releases/20261011-v2`，官网：`/var/www/omindos.cn/releases/20261011-chat-entry-pr60`。
+- 本次配置备份和 release.json：两台服务器各自的 `/opt/omindos-learning-entry-20261011/`；仅撤回本次调整时恢复上述网关、官网和该目录的 Nginx 备份。
 - 腾讯 Nginx 原配置：`/opt/omindos-site-maintenance/chat-entry-20261011/nginx-before.conf`。
 - 阿里云原配置：`/opt/omindos-deploy/chat-entry-20261011/originmind-services-before.conf`。
 - 中文官网原版本：`/var/www/omindos.cn/releases/20261011-omindos-overview-pr56`。

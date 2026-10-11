@@ -10,7 +10,7 @@
 - 合并代码和 Pull Request 继续自动测试，但不再自动发布 .ai。
 - 中文正式站验收完成后，英文内容按任务需要单独发布。中文内容更新不必重复发布到 .ai。每次发布仍遵守用户对该任务的授权范围。
 - 共用仓库、分别部署；不要把“代码已合并”报告成“线上已更新”。
-- OA 保持 oa.omindos.cn。Chat 对外入口收进 omindos.cn/chat/，课程使用 omindos.cn/chat/learning；原阿里云后端和学习数据保留，不通过国际入口绕行。部署与回滚见 ops/chat-entry/README.md。
+- OA 保持 oa.omindos.cn。Chat 对外入口为 omindos.cn/chat/，课程独立使用 omindos.cn/learning；旧课程地址跳到 /learning。原阿里云后端和学习数据保留，不通过国际入口绕行。部署与回滚见 ops/chat-entry/README.md。
 
 ## 中文站：先发布
 
@@ -29,7 +29,7 @@ Push 和 Pull Request 只执行验证，deploy job 跳过。中文站验收完�
 
 script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可以发布。测试、项目/域名/D1绑定检查、部署commit核对和线上检查继续执行。
 
-国际发布包保留已有样式、媒体和 API，便于英文页面及缓存客户端继续使用。中文入口由 Worker 返回到 .cn 的跳转，不再在 .ai 展示中文页面。语言链接与 hreflang 保持源码中的跨域关系，.ai sitemap 只列英文正式页面。Cloud、OA 保持原址；课程链接使用国内 /chat/learning 入口。页面 POST 不跨域重定向。
+国际发布包保留已有样式、媒体和 API，便于英文页面及缓存客户端继续使用。中文入口由 Worker 返回到 .cn 的跳转，不再在 .ai 展示中文页面。语言链接与 hreflang 保持源码中的跨域关系，.ai sitemap 只列英文正式页面。Cloud、OA 保持原址；课程链接使用国内 /learning 入口。页面 POST 不跨域重定向。
 
 此方案只修改官网应用路由，不修改 DNS、邮件或服务子域名。首次打开 .ai 仍需先收到 Cloudflare 的跳转响应；到达 .cn 后使用国内页面及资源。
 

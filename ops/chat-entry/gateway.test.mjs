@@ -10,7 +10,7 @@ test('static application URLs stay in /chat without changing external links or c
  assert.ok(result.includes("separator='/'"));assert.ok(result.includes("new URL('/chat/',origin)"));
  assert.ok(result.includes("href:'/chat/'"));assert.ok(result.includes('https://oa.omindos.cn/'));
  const html=rewriteStatic('<a href="/">首页</a><script src="/assets/app.js"></script><a href="/learning">课程</a>','text/html','/');
- assert.ok(html.includes('href="/chat/"'));assert.ok(html.includes('src="/chat/assets/app.js"'));assert.ok(html.includes('href="/chat/learning"'));
+ assert.ok(html.includes('href="/chat/"'));assert.ok(html.includes('src="/chat/assets/app.js"'));assert.ok(html.includes('href="/learning"'));
 });
 test('PWA scope and cookies do not cover unrelated website routes',()=>{
  const m=JSON.parse(rewriteStatic('{"id":"/","start_url":"/","scope":"/","icons":[{"src":"/assets/pwa/icon.png"}]}','application/manifest+json','/manifest.webmanifest'));
@@ -33,9 +33,10 @@ test('upstream target is fixed; redirects, multiple cookies and dynamic payloads
  assert.equal(seen.url,'https://chat.omindos.cn/api/status?source=qa');
  assert.equal(await r.text(),'{"answer":"/api/private https://chat.omindos.cn"}');
  assert.equal(r.headers.getSetCookie()[0],'session=x; Path=/chat/; Secure; HttpOnly');
+ assert.equal(r.headers.getSetCookie()[1],'session=x; Path=/learning; Secure; HttpOnly');
  const s=await handle(new Request('https://omindos.cn/chat//evil.example/'),upstream);
  assert.ok(seen.url.startsWith('https://chat.omindos.cn/'));await s.body.cancel();
- assert.equal(publicUrl('https://chat.omindos.cn/learning?x=1'),'https://omindos.cn/chat/learning?x=1');
+ assert.equal(publicUrl('https://chat.omindos.cn/learning?x=1'),'https://omindos.cn/learning?x=1');
  assert.equal(publicUrl('https://oa.omindos.cn/'),'https://oa.omindos.cn/');
 });
 test('streaming chat data is passed through without buffering or rewriting',async()=>{
@@ -45,7 +46,25 @@ test('streaming chat data is passed through without buffering or rewriting',asyn
 });
 test('sandbox CSP moves its exact script and runtime paths without broadening permissions',async()=>{
  const policy="default-src 'none'; script-src https://chat.omindos.cn/learning/runner.js https://chat.omindos.cn/learning/runtime/ blob: 'wasm-unsafe-eval'; connect-src https://chat.omindos.cn/learning/runtime/; frame-ancestors 'self'; sandbox allow-scripts";
- const r=await handle(new Request('https://omindos.cn/chat/learning/runner.html'),async()=>new Response('<script src="/learning/runner.js"></script>',{headers:{'Content-Type':'text/html','Content-Security-Policy':policy}}));
- assert.equal(r.headers.get('content-security-policy'),policy.replaceAll('https://chat.omindos.cn','https://omindos.cn/chat'));
- assert.ok((await r.text()).includes('src="/chat/learning/runner.js"'));
+ const r=await handle(new Request('https://omindos.cn/learning/runner.html'),async()=>new Response('<script src="/learning/runner.js"></script>',{headers:{'Content-Type':'text/html','Content-Security-Policy':policy}}));
+ assert.equal(r.headers.get('content-security-policy'),policy.replaceAll('https://chat.omindos.cn','https://omindos.cn'));
+ assert.ok((await r.text()).includes('src="/learning/runner.js"'));
+});
+test('learning is served directly and former nested URLs redirect without losing parameters',async()=>{
+ let seen;
+ const upstream=async(url,init)=>{seen={url:String(url),init};return new Response('<script src="/learning/app.js"></script><img src="/learning-media/example.svg">',{headers:{'Content-Type':'text/html'}});};
+ for(const path of ['/learning','/learning/','/learning/admin?tab=projects']){
+  const r=await handle(new Request('https://omindos.cn'+path,{headers:{referer:'https://omindos.cn/learning'}}),upstream);
+  assert.equal(r.status,200);assert.equal(r.headers.get('location'),null);assert.equal(seen.url,'https://chat.omindos.cn'+path);
+  assert.equal(seen.init.headers.get('referer'),'https://chat.omindos.cn/learning');
+  const html=await r.text();assert.ok(html.includes('src="/learning/app.js"'));assert.ok(html.includes('src="/chat/learning-media/example.svg"'));
+  const old=await handle(new Request('https://omindos.cn/chat'+path),()=>{throw new Error('no upstream for alias');});
+  assert.equal(old.status,302);assert.equal(old.headers.get('location'),path);
+ }
+ assert.equal((await handle(new Request('https://omindos.cn/learning-other'))).status,404);
+});
+test('logging out clears both application cookie scopes with the original security flags',async()=>{
+ const r=await handle(new Request('https://omindos.cn/chat/api/visitor/logout',{method:'POST',headers:{origin:'https://omindos.cn'}}),async()=>new Response(null,{headers:{'Set-Cookie':'session=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Lax'}}));
+ assert.deepEqual(r.headers.getSetCookie(),['session=; Path=/chat/; Max-Age=0; Secure; HttpOnly; SameSite=Lax','session=; Path=/learning; Max-Age=0; Secure; HttpOnly; SameSite=Lax']);
+ assert.equal(scopedCookie('course=x; Path=/learning; Secure'),'course=x; Path=/learning; Secure');
 });
