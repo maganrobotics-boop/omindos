@@ -541,8 +541,8 @@ export default {
       return legacyWorker.fetch(request, env);
     }
     if (url.pathname.startsWith('/api/')) return legacyWorker.fetch(request, env);
-    // Keep existing asset URLs for cached pages and shared English resources.
-    if (/^\/cn\/(?:assets\/|[^/]+\.(?:css|js)$)/.test(url.pathname)) {
+    // Locale media must bypass page routing, including same-origin English captions.
+    if (/^\/(?:cn|en)\/(?:assets\/|[^/]+\.(?:css|js)$)/.test(url.pathname)) {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
       return withPublicAssetCache(await env.ASSETS.fetch(request), url);
     }

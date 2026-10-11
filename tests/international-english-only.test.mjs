@@ -82,6 +82,21 @@ test('Chinese media namespaces are served as assets and pages enforce safe metho
  const api=await worker.fetch(new Request('https://omindos.ai/api/visits'),env);
  assert.equal(api.status,405);
 });
+test('English product captions reach their exact same-origin media bytes',async()=>{
+ for(const model of ['quadruped','mobile-dual-arm']){
+  const page=await readFile(join(root,'en/robots',model,'index.html'),'utf8');
+  const caption=page.match(/<track\b[^>]*src="([^"]+\.vtt)"/)?.[1];
+  assert.ok(caption?.startsWith('/en/assets/'));
+  const url='https://omindos.ai'+caption;
+  for(const method of ['GET','HEAD']){
+   const response=await worker.fetch(new Request(url,{method}),env);
+   assert.equal(response.status,200);assert.equal(response.headers.get('Location'),null);
+   if(method==='GET')assert.equal(await response.text(),await readFile(join(root,caption),'utf8'));
+  }
+  const post=await worker.fetch(new Request(url,{method:'POST',body:'unaccepted'}),env);
+  assert.equal(post.status,405);assert.equal(post.headers.get('Location'),null);
+ }
+});
 test('international sitemap lists only English canonical pages',async()=>{
  const xml=await readFile(join(root,'sitemap.xml'),'utf8');
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
