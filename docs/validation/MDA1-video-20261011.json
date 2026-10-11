@@ -1,0 +1,77 @@
+{
+  "file": "OriginMind-MDA1-Demo.mp4",
+  "duration_s": 46,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 1380,
+  "full_decode": "PASS",
+  "sha256": "b9dbb6c5b2da7297f409afdb7678c6d955a0c8eee5eb3ac3d1e8305764a70b60",
+  "bytes": 10719710,
+  "source_sha256": "51fcea3fc8434a856f7ef4fbef547e0b1b1e5b8933c1c6196f5002a5b799bfbd",
+  "gripper_dof_per_hand": 2,
+  "gripper_model": "user-approved simulation geometry",
+  "hardware_validated": false,
+  "chapters": [
+    [
+      0,
+      2,
+      "MDA1 · 双臂协同转运",
+      "MDA1 · Cooperative tray transfer"
+    ],
+    [
+      2,
+      8,
+      "接近取盘桌",
+      "Approach the pickup table"
+    ],
+    [
+      8,
+      13,
+      "停车 · 双臂对位",
+      "Park and align both arms"
+    ],
+    [
+      13,
+      16,
+      "双手夹紧盘柄",
+      "Close both grippers"
+    ],
+    [
+      16,
+      21,
+      "抬盘离桌",
+      "Lift the tray"
+    ],
+    [
+      21,
+      31,
+      "底盘移动与转向",
+      "Move and turn the base"
+    ],
+    [
+      31,
+      36,
+      "停车并放盘",
+      "Park and lower the tray"
+    ],
+    [
+      36,
+      37.5,
+      "手爪松开放盘",
+      "Open the grippers"
+    ],
+    [
+      37.5,
+      44,
+      "双臂收回",
+      "Retract both arms"
+    ],
+    [
+      44,
+      46,
+      "任务完成",
+      "Task complete"
+    ]
+  ]
+}
