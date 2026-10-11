@@ -11,3 +11,35 @@
 
 #begin-your-journey .hardware-overview{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:center}
 @media(max-width:960px){#begin-your-journey .hardware-overview{grid-template-columns:1fr;gap:28px}.origin-theme .hardware-robot-only{max-width:650px;width:100%;margin:auto}}
+
+/* Soft, slow camera movement on the existing hero artwork. */
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{
+  filter:blur(2.2px) brightness(.88);
+  transform:scale(1.045);
+  transform-origin:55% 50%;
+}
+.origin-theme .hero.full.mining-hero-immersive[data-hero-motion] .mining-hero-visual img{
+  animation:originmind-mine-drift 18s ease-in-out infinite alternate;
+  animation-play-state:paused;
+}
+.origin-theme .hero.full.mining-hero-immersive[data-hero-motion="running"] .mining-hero-visual img{animation-play-state:running}
+@keyframes originmind-mine-drift{
+  from{transform:scale(1.045) translate3d(-.45%,.2%,0)}
+  to{transform:scale(1.11) translate3d(.45%,-.2%,0)}
+}
+.hero-motion-toggle{
+  position:absolute;z-index:2;left:24px;bottom:16px;
+  min-height:44px;padding:10px 14px;border:1px solid rgba(255,255,255,.45);
+  border-radius:22px;background:rgba(3,18,17,.65);color:#fff;
+  font:inherit;font-size:12px;line-height:1.4;cursor:pointer;
+}
+.hero-motion-toggle[hidden]{display:none}
+.hero-motion-toggle:hover{background:rgba(3,18,17,.85)}
+.hero-motion-toggle:focus-visible{outline:2px solid #fff;outline-offset:4px}
+@media(max-width:700px){
+  .origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{filter:blur(1.6px) brightness(.88)}
+  .hero-motion-toggle{left:16px;bottom:40px}
+}
+@media(prefers-reduced-motion:reduce){
+  .origin-theme .hero.full.mining-hero-immersive[data-hero-motion] .mining-hero-visual img{animation:none;transform:scale(1.045)}
+}
