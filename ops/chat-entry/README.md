@@ -1,8 +1,9 @@
-# Chat 与课程主域名入口
+# Chat、课程与竞技场主域名入口
 
 用户约定：减少服务子域名，保留原 Chat 首页及课程。公开入口为
-`https://omindos.cn/chat/`，课程独立使用 `https://omindos.cn/learning`。
+`https://omindos.cn/chat/`，课程独立使用 `https://omindos.cn/learning`，竞技场独立使用 `https://omindos.cn/arena/`，竞技场管理为 `/arena/admin`。
 旧 `/chat/learning` 及旧 Chat 子域名课程入口均跳转到 `/learning`，保留后续路径和查询参数。
+旧 `/chat/arena/`、`/chat/arena/admin` 及旧 Chat 子域名竞技场页面跳转到 `/arena/` 下的对应路径，地图和回放参数保留。旧 API 的 POST 仍直接代理，避免丢失请求体。
 OA 与 Cloud 继续使用原子域名。中文官网平台栏只列 OA、Cloud，AI 助手和挑战赛归入站内链接。
 
 腾讯 Nginx 的 `/chat/`、`/learning` 及 `/learning/` 子路径转给仅监听 `127.0.0.1:18887` 的 Node 网关。
@@ -10,7 +11,7 @@ OA 与 Cloud 继续使用原子域名。中文官网平台栏只列 OA、Cloud�
 不迁移或重置账号、成绩、上传文件；新域名可能需要重新登录。
 
 网关只转换静态应用中的站内地址，API JSON、聊天 SSE、上传内容和二进制资源原样传输。
-写请求必须来自 `https://omindos.cn`；身份头不从客户端透传。账号 Cookie 分别设置在 `/chat/` 与 `/learning`，保留安全标记，退出同时清除两个路径；课程专用 Cookie 保持 `/learning`。Chat PWA scope 限制在 `/chat/`。
+写请求必须来自 `https://omindos.cn`；身份头不从客户端透传。普通账号 Cookie 分别设置在 `/chat/`、`/learning` 与 `/arena`，保留安全标记，退出同时清除三个路径；已有 `__Host-` 登录 Cookie 保持浏览器要求的根路径，课程和竞技场专用 Cookie 保持原作用域。Chat PWA scope 限制在 `/chat/`。
 上游 TLS 使用 Node 默认验证，不跳过证书检查。旧入口页面 GET/HEAD 返回 302，保留查询参数；旧 API 保持兼容。
 
 ## 部署
@@ -22,6 +23,14 @@ OA 与 Cloud 继续使用原子域名。中文官网平台栏只列 OA、Cloud�
 5. 阿里云在 HTTP 层安装 `aliyun-maps.conf`，仅在原 Chat HTTPS server 包含 `aliyun-server.conf`。该 server 的普通应用代理设置 `CF-Connecting-IP $remote_addr`，竞技场原有设置保留。
 6. 只有腾讯固定 IP 能传递真实客户端地址并绕过旧页跳转；用 `$realip_remote_addr` 判断连接来源，防止伪造客户端头绕过。
 7. 中文官网从当前 release 复制，只替换授权入口和课程链接，原子切换 current。海外英文源码更新后可晚些单独发布。
+
+### 竞技场路由
+
+在腾讯现有每个 `/arena/` location（包含 team、gold-rush 的精确路径和静态文件）开头包含 `tencent-arena-public.conf`。保留原有仿真端口、alias、签名校验及请求大小限制，不新增重复 location。
+公网访问通过命名 location `@omindos_arena_entry` 转给网关，再使用阿里云已有账号和评测权限流程。命名跳转保留 HTTP 方法、请求体、路径和查询参数。
+仅原阿里云连接 IP `39.108.50.65` 仍使用腾讯已有仿真代理，避免两台服务器循环代理。必须检查 `$realip_remote_addr` 原始连接地址，不信任客户端提交的 X-Real-IP。`/arena` 的规范跳转需保留 `$is_args$args`。
+
+本次版本为 `20261011-arena-v4`，调整前网关为 `20261011-learning-v3`、中文官网为 `20261011-learning-entry-pr61`。两台服务器的备份和发布记录存于 `/opt/omindos-arena-entry-20261011/`；回滚时还原本轮 Nginx 备份及这两个 symlink，不影响原始仿真服务及数据。
 
 ## 2026-10-11 部署记录与回滚
 

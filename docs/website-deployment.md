@@ -10,7 +10,7 @@
 - 合并代码和 Pull Request 继续自动测试，但不再自动发布 .ai。
 - 中文正式站验收完成后，英文内容按任务需要单独发布。中文内容更新不必重复发布到 .ai。每次发布仍遵守用户对该任务的授权范围。
 - 共用仓库、分别部署；不要把“代码已合并”报告成“线上已更新”。
-- OA 保持 oa.omindos.cn。Chat 对外入口为 omindos.cn/chat/，课程独立使用 omindos.cn/learning；旧课程地址跳到 /learning。原阿里云后端和学习数据保留，不通过国际入口绕行。部署与回滚见 ops/chat-entry/README.md。
+- OA 保持 oa.omindos.cn。Chat 对外入口为 omindos.cn/chat/，课程独立使用 omindos.cn/learning，竞技场独立使用 omindos.cn/arena/，管理入口为 /arena/admin；旧课程和竞技场页面跳到各自独立路径。原阿里云后端和学习数据保留，不通过国际入口绕行。部署与回滚见 ops/chat-entry/README.md。
 
 ## 中文站：先发布
 

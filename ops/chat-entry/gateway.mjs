@@ -8,10 +8,10 @@ export const UPSTREAM_ORIGIN = 'https://chat.omindos.cn';
 export const PREFIX = '/chat';
 const SAFE = new Set(['GET', 'HEAD']);
 const ROOTS = /^(?:api|assets|learning|learning-media|arena|TA|ta|manage|technology|research|originmind|ius|newbie[^/]*|orientation[^/]*|platform-[^/]*|manifest\.webmanifest|service-worker\.js|zip-import-addon\.js|favicon\.svg|LICENSES\.md|_health|gold-vault)(?:[/?#]|$)/;
-const isLearning = value => /^\/learning(?:[/?#]|$)/.test(value);
-const publicPath = value => isLearning(value) ? value : PREFIX + value;
+const isIndependent = value => /^\/(?:learning|arena)(?:[/?#]|$)/.test(value);
+const publicPath = value => isIndependent(value) ? value : PREFIX + value;
 const rewriteOrigins = value => value.replaceAll(UPSTREAM_ORIGIN, PUBLIC_ORIGIN + PREFIX)
-  .replace(/https:\/\/omindos\.cn\/chat\/learning(?=[/?#\s"'`<>]|$)/g, PUBLIC_ORIGIN + '/learning');
+  .replace(/https:\/\/omindos\.cn\/chat\/(learning|arena)(?=[/?#\s"'`<>]|$)/g, PUBLIC_ORIGIN + '/$1');
 
 export function publicUrl(value) {
   if (value.startsWith(UPSTREAM_ORIGIN + '/')) return PUBLIC_ORIGIN + publicPath(value.slice(UPSTREAM_ORIGIN.length));
@@ -51,7 +51,7 @@ export function upstreamHeaders(input, clientIp = '') {
   if (origin) headers.set('origin', origin === PUBLIC_ORIGIN ? UPSTREAM_ORIGIN : origin);
   const referer = input.get('referer');
   if (referer?.startsWith(PUBLIC_ORIGIN + PREFIX + '/')) headers.set('referer', UPSTREAM_ORIGIN + referer.slice((PUBLIC_ORIGIN + PREFIX).length));
-  else if (referer?.startsWith(PUBLIC_ORIGIN + '/') && isLearning(referer.slice(PUBLIC_ORIGIN.length))) headers.set('referer', UPSTREAM_ORIGIN + referer.slice(PUBLIC_ORIGIN.length));
+  else if (referer?.startsWith(PUBLIC_ORIGIN + '/') && isIndependent(referer.slice(PUBLIC_ORIGIN.length))) headers.set('referer', UPSTREAM_ORIGIN + referer.slice(PUBLIC_ORIGIN.length));
   headers.set('accept-encoding', 'identity');
   headers.set('x-omindos-chat-entry', '1');
   if (/^[0-9a-f:.]+$/i.test(clientIp)) headers.set('x-omindos-client-ip', clientIp);
@@ -68,14 +68,14 @@ export function scopedCookie(cookie) {
 
 export async function handle(request, fetchUpstream = fetch, clientIp = '') {
   const url = new URL(request.url);
-  const learning = isLearning(url.pathname);
-  if (url.origin !== PUBLIC_ORIGIN || (!learning && !url.pathname.startsWith(PREFIX + '/'))) return new Response('Not found', {status:404});
-  if (!learning && isLearning(url.pathname.slice(PREFIX.length)) && SAFE.has(request.method)) {
+  const independent = isIndependent(url.pathname);
+  if (url.origin !== PUBLIC_ORIGIN || (!independent && !url.pathname.startsWith(PREFIX + '/'))) return new Response('Not found', {status:404});
+  if (!independent && isIndependent(url.pathname.slice(PREFIX.length)) && SAFE.has(request.method)) {
     return new Response(null,{status:302,headers:{Location:url.pathname.slice(PREFIX.length)+url.search,'Cache-Control':'no-store'}});
   }
   if (!SAFE.has(request.method) && request.headers.get('origin') !== PUBLIC_ORIGIN) return new Response('Forbidden', {status:403, headers:{'Cache-Control':'no-store'}});
   const target = new URL(UPSTREAM_ORIGIN);
-  target.pathname = learning ? url.pathname : url.pathname.slice(PREFIX.length);
+  target.pathname = independent ? url.pathname : url.pathname.slice(PREFIX.length);
   target.search = url.search;
   const headers = upstreamHeaders(request.headers, clientIp);
   const response = await fetchUpstream(target, {
@@ -86,10 +86,10 @@ export async function handle(request, fetchUpstream = fetch, clientIp = '') {
   for (const name of ['content-encoding','content-length','transfer-encoding','connection','set-cookie','server','alt-svc']) output.delete(name);
   for (const cookie of response.headers.getSetCookie()) {
     output.append('set-cookie', scopedCookie(cookie));
-    // Share the existing account across the two disjoint application paths.
+    // Share the existing account across the three disjoint application paths.
     // Keep cookies off the rest of the website; __Host- already requires Path=/.
     if (!cookie.startsWith('__Host-') && /;\s*Path=\/(?:;|$)/i.test(cookie)) {
-      output.append('set-cookie', cookie.replace(/;\s*Domain=[^;]*/ig,'').replace(/;\s*Path=\/(?=;|$)/i,'; Path=/learning'));
+      for (const scope of ['/learning', '/arena']) output.append('set-cookie', cookie.replace(/;\s*Domain=[^;]*/ig,'').replace(/;\s*Path=\/(?=;|$)/i,'; Path=' + scope));
     }
   }
   const location = output.get('location');
@@ -100,8 +100,9 @@ export async function handle(request, fetchUpstream = fetch, clientIp = '') {
   }
   if (output.get('access-control-allow-origin') === UPSTREAM_ORIGIN) output.set('access-control-allow-origin', PUBLIC_ORIGIN);
   output.set('X-Content-Type-Options', 'nosniff');
-  output.set('Service-Worker-Allowed', learning ? '/learning/' : PREFIX + '/');
-  output.set('X-OmindOS-Entry', learning ? 'learning' : 'chat');
+  const entry = independent ? url.pathname.split('/')[1] : 'chat';
+  output.set('Service-Worker-Allowed', '/' + entry + '/');
+  output.set('X-OmindOS-Entry', entry);
   const type = output.get('content-type') || '';
   const isStatic = !target.pathname.startsWith('/api/') && !target.pathname.startsWith('/arena/api/');
   const transform = isStatic && /(?:text\/html|(?:application|text)\/(?:javascript|x-javascript)|text\/css|application\/manifest\+json)/i.test(type);
