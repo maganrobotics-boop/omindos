@@ -1,0 +1,10 @@
+/* Chinese homepage: align robot imagery and platform types. */
+.origin-theme .hardware-robot-only{display:block}
+.origin-theme .hardware-robot-only .paired-hardware{width:100%;margin:0;background:#fff;border:1px solid #e0e5e2;border-radius:4px;overflow:hidden}
+.origin-theme .hardware-robot-only .paired-hardware img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;background:#fff}
+.origin-theme .hardware-robot-only figcaption{font-size:13px;line-height:1.7;color:#566770;padding:12px 18px;border-top:1px solid #e6e8e4}
+.platform-product-link{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-size:15px}
+#home-platform-tracked,#home-platform-wheeled,#home-platform-quadruped{scroll-margin-top:100px}
+.origin-theme .tracked-platform-preview{display:flex;align-items:center;justify-content:center;background:#061254;overflow:hidden}
+.tracked-source-window{position:relative;display:block;width:92%;aspect-ratio:280/205;overflow:hidden}
+.origin-theme .tracked-platform-preview .tracked-source-window img{position:absolute;display:block;width:685.714286%!important;max-width:none!important;height:auto!important;aspect-ratio:1920/1080!important;left:-114.285714%;top:-147.317073%;object-fit:contain!important;transform:none!important;border-radius:0!important}
