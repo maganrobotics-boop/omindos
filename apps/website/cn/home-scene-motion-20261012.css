@@ -1,0 +1,9 @@
+/* Keep the purchased robot imagery; animate its corresponding mine scene. */
+.platform-source-tracked .scene-motion{position:absolute;z-index:1;left:3%;top:41.5%;width:94%;height:57.5%;object-fit:contain;background:#061254;opacity:0}
+.platform-source-tracked .scene-motion.motion-visible{opacity:1}
+.platform-scene .scene-motion-caption{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px}
+.scene-motion-toggle{font:inherit;min-height:44px;padding:8px 12px;border:1px solid #607b6e;border-radius:22px;background:#fff;color:#254536;cursor:pointer}
+.scene-motion-toggle[hidden]{display:none}
+.scene-motion-toggle:focus-visible{outline:2px solid #2458df;outline-offset:3px}
+.scene-motion-status:empty{display:none}
+.scene-motion-status{flex-basis:100%}
