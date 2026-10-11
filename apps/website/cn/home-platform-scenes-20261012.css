@@ -29,3 +29,10 @@
 .origin-theme .hardware-console-only .paired-software img{width:100%;height:auto;aspect-ratio:2/1;object-fit:contain}
 @media(max-width:960px){.platform-scenes-grid{gap:18px}.origin-theme .platform-scene h3{font-size:22px}.origin-theme .field-story-development .field-story-copy{padding:22px}}
 @media(max-width:700px){.origin-theme .home-platform-scenes{padding:52px 0}.platform-scenes-grid{grid-template-columns:1fr;gap:32px}.platform-scene figure{max-width:440px;margin:0 auto}.platform-scenes-heading>p:last-child{font-size:16px}.platform-scene-copy{padding-top:20px}.origin-theme .platform-scene h3{font-size:24px}.platform-scenes-links{gap:6px 24px}.origin-theme .field-story-development .field-story-copy{padding:30px 22px}.origin-theme .field-story-development h3{font-size:25px}}
+
+/* Viewports into the original mining-scene slide; preserve its source pixels. */
+.platform-source-panel{position:relative;overflow:hidden;aspect-ratio:468/574;background:#061254}
+.platform-source-panel img{position:absolute;display:block;width:410.256410%;max-width:none;height:auto;aspect-ratio:1920/1080;top:-51.742160%;object-fit:contain;background:transparent}
+.platform-source-tracked img{left:-24.572650%}
+.platform-source-wheeled img{left:-152.350427%}
+.platform-source-quadruped img{left:-282.051282%}
