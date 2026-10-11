@@ -380,7 +380,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       }
     }
     const integration = await readFile(new URL(`${locale}/integration/index.html`, root), 'utf8');
-    assert.ok(integration.includes(`/founding-oem?lang=${locale === 'cn' ? 'zh' : 'en'}`));
+    assert.ok(integration.includes(locale === 'cn' ? '/contact/#project-brief' : '/founding-oem?lang=en'));
     const head = await worker.fetch(new Request(`https://omindos.ai/${locale}/`, { method: 'HEAD' }), env);
     assert.equal(head.status, 200); assert.equal(await head.text(), '');
     const short = await worker.fetch(new Request(`https://omindos.ai/${locale}`), env);
