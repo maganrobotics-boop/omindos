@@ -4,22 +4,34 @@ on:
   push:
     branches: [main]
     paths:
+      - 'ops/chat-entry/**'
       - 'apps/website/**'
+      - 'media/product-demos/**'
+      - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
+      - 'scripts/prepare-international-artifact.py'
+      - 'tests/international-english-only.test.mjs'
+      - 'tests/test_international_artifact.py'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
       - '.github/workflows/deploy-website.yml'
   pull_request:
     branches: [main]
     paths:
+      - 'ops/chat-entry/**'
       - 'apps/website/**'
+      - 'media/product-demos/**'
+      - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
+      - 'scripts/prepare-international-artifact.py'
+      - 'tests/international-english-only.test.mjs'
+      - 'tests/test_international_artifact.py'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
       - '.github/workflows/deploy-website.yml'
@@ -47,8 +59,10 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
+      - name: Restore approved product demo media
+        run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs
+        run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
@@ -59,7 +73,7 @@ jobs:
 
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.test.outputs.deploy_international == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && needs.test.outputs.deploy_international == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -76,7 +90,9 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/check-website-project.mjs
-      - name: Prepare English-only international artifact
+      - name: Restore approved product demo media
+        run: python3 scripts/prepare-product-demo-media.py
+      - name: Prepare English site and domestic redirects
         run: python3 scripts/prepare-international-artifact.py apps/website /tmp/omindos-international
       - name: Publish existing Cloudflare Pages project
         id: publish
@@ -100,4 +116,5 @@ jobs:
         run: node scripts/check-website-project.mjs --deployed
       - name: Check the public website after deployment
         run: node scripts/verify-website-live.mjs
+
 

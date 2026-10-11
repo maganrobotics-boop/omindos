@@ -7,16 +7,29 @@ spec=importlib.util.spec_from_file_location('artifact',Path(__file__).resolve().
 artifact=importlib.util.module_from_spec(spec);spec.loader.exec_module(artifact)
 
 class InternationalArtifact(unittest.TestCase):
-    def test_chinese_content_is_excluded_without_changing_sources_or_english_assets(self):
+    def test_english_artifact_preserves_domestic_links_services_and_media(self):
         with tempfile.TemporaryDirectory() as directory:
             source=Path(directory)/'source';target=Path(directory)/'artifact'
-            files=['en/index.html','_worker.js','assets/video.mp4','cn/index.html','design-study/index.html','index.zh.html','oem/zh/index.html','oem/en/index.html','robots/zh/index.html','why/zh/index.html','founding-oem.js']
-            for name in files:
-                p=source/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(name.encode())
+            html='<link rel="canonical" href="https://omindos.cn/"><a href="https://omindos.cn/robots/">中文</a><a href="https://chat.omindos.cn/learning">课程</a>'
+            files={'en/index.html':html,'cn/index.html':html,'_worker.js':'worker','cn/assets/video.mp4':'video','cn/style.css':'style','design-study/index.html':'private design'}
+            for name,content in files.items():
+                p=source/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(content)
             artifact.prepare(source,target)
-            for name in ['en/index.html','_worker.js','assets/video.mp4','oem/en/index.html']:
+            for name in ['cn/assets/video.mp4','cn/style.css','_worker.js']:
                 self.assertEqual((source/name).read_bytes(),(target/name).read_bytes())
-            for name in ['cn','design-study','index.zh.html','oem/zh','robots/zh','why/zh','founding-oem.js']:
-                self.assertTrue((source/name).exists());self.assertFalse((target/name).exists())
+            for name in ['cn/index.html','en/index.html']:
+                self.assertEqual((source/name).read_text(),html)
+                output=(target/name).read_text()
+                self.assertEqual(output,html)
+                self.assertIn('href="https://omindos.cn/"',output)
+                self.assertIn('href="https://omindos.cn/robots/"',output)
+                self.assertIn('https://chat.omindos.cn/learning',output)
+            self.assertFalse((target/'design-study').exists())
+            sitemap=(target/'sitemap.xml').read_text()
+            self.assertNotIn('<loc>https://omindos.ai/</loc>',sitemap)
+            self.assertIn('<loc>https://omindos.ai/en/</loc>',sitemap)
+            self.assertNotIn('/cn/',sitemap)
+            self.assertNotIn('omindos.cn',sitemap)
 
 if __name__=='__main__':unittest.main()
+

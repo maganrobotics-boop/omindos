@@ -5,3 +5,4 @@
 .wrangler/
 node_modules/
 *.log
+apps/website/cn/assets/demos/20261011/*.mp4

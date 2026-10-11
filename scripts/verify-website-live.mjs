@@ -22,25 +22,24 @@ for(const route of routes){
   assert.match(html,/<html lang="en"/);assert.match(html,/<main\b/);
   assert.doesNotMatch(html,/href="(?:https:\/\/omindos\.ai)?\/cn\//);
  });
- await check('Retired Chinese /cn/'+suffix,async()=>{
+ await check('Chinese root redirects to domestic /'+suffix,async()=>{
+  const r=await request(base+'/'+suffix,{'Accept-Language':'en-US',Cookie:'originmind_language=en'});
+  assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/'+suffix);await r.body?.cancel();
+ });
+ await check('Chinese alias /cn/'+suffix,async()=>{
   const r=await request(base+'/cn/'+suffix+'?source=deployment&lang=zh');
   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/'+suffix+'?source=deployment');await r.body?.cancel();
  });
 }
-await check('English homepage despite Chinese language preference',async()=>{
- const r=await request(base+'/?source=deployment',{'Accept-Language':'zh-CN',Cookie:'originmind_language=zh'});
- assert.equal(r.status,302);assert.equal(r.headers.get('Location'),base+'/en/?source=deployment');await r.body?.cancel();
-});
 for(const path of ['/founding-oem','/why-originmind','/robot-products'])await check('English legacy '+path,async()=>{
  const r=await request(base+path,{Cookie:'originmind_language=zh'});assert.equal(r.status,200);assert.equal(r.headers.get('Content-Language'),'en');assert.match(await r.text(),/<html lang="en"/);
 });
 for(const path of ['/index.zh.html','/oem/zh/','/why/zh/','/robots/zh/'])await check('Retired alias '+path,async()=>{
  const r=await request(base+path);assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).host,'omindos.cn');await r.body?.cancel();
 });
-await check('All retired Chinese URLs redirect to the Chinese primary site',async()=>{
- for(const [path,target] of [['/cn/unknown/','/unknown/'],['/robots/?lang=zh','/robots/'],['/?lang=cn','/'],['/cn/assets/mda1-robot-cutout-20261009.webp','/cn/assets/mda1-robot-cutout-20261009.webp']]){
-  const r=await request(base+path);assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn'+target);await r.body?.cancel();
- }
+await check('Explicit English selection remains available',async()=>{
+ const r=await request(base+'/?lang=en&source=deployment');
+ assert.equal(r.status,302);assert.equal(r.headers.get('Location'),base+'/en/?source=deployment');await r.body?.cancel();
 });
 await check('International sitemap',async()=>{
  const r=await request(base+'/sitemap.xml');assert.equal(r.status,200);const xml=await r.text();assert.doesNotMatch(xml,/\/cn\//);
@@ -48,7 +47,7 @@ await check('International sitemap',async()=>{
  assert.deepEqual([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match=>match[1]).sort(),expectedUrls.sort());
  const robots=await (await request(base+'/robots.txt')).text();assert.equal((robots.match(/Sitemap:/g)||[]).length,1);assert.ok(robots.includes(base+'/sitemap.xml'));
 });
-for(const path of ['/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/developer-docs.css?v=20261010','/developer-docs.js?v=20261010','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
+for(const path of ['/cn/assets/mda1-product-white-20261011.webp','/cn/product-showcase.css?v=20261011-white','/cn/assets/simulations/20261010/OriginMind-Quadruped-Website-1080p.mp4','/cn/assets/simulations/20261010/OriginMind-Dual-Arm-Website-1080p.mp4','/assets/originmind-mark-184.webp','/site.css?v=20260910-polish','/site.js?v=20260910-polish','/developer-docs.css?v=20261010','/developer-docs.js?v=20261010','/assets/videos/originmind-home-film.mp4','/assets/videos/open-frame-lab.mp4','/assets/videos/dual-arm-digital-twin.mp4','/assets/videos/wheel-legged-demo.mp4'])await check('Asset '+path,async()=>{
  const r=await request(base+path,{Range:'bytes=0-1023'});assert.ok([200,206].includes(r.status));
  const type=r.headers.get('Content-Type')||'';assert.doesNotMatch(type,/text\/html/);
  assert.match(type,path.includes('.css')?/text\/css/:path.includes('.js')?/javascript/:path.includes('.mp4')?/video\/mp4/:/image\/webp/);
@@ -63,6 +62,7 @@ await check('API remains inaccessible to public reads',async()=>{
  const r=await request(base+'/api/visits');assert.equal(r.status,405);assert.doesNotMatch(await r.text(),/visits|countries|last24Hours/);
 });
 for(const host of ['www.omindos.ai','originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
- const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();
+ const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,host==='www.omindos.ai'?'omindos.cn':'omindos.ai');await r.body?.cancel();
 });
+
 

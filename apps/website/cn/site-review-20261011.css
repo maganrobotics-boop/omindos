@@ -1,0 +1,96 @@
+/* Chinese editorial refinements, loaded after existing page styles. */
+html[lang="zh-CN"] .page-intro h1{line-height:1.2;letter-spacing:-.025em}
+html[lang="zh-CN"] .page-intro>.lead{line-height:1.7;max-width:44em}
+.cn-product-page .page-opening{padding-top:44px;padding-bottom:16px}
+.cn-product-page .page-opening+.section{padding-top:20px}
+.cn-product-page .page-intro{gap:16px}
+.cn-product-page .page-intro h1{font-size:clamp(34px,3.8vw,54px)}
+.cn-product-page .page-intro>.lead{font-size:20px;margin-top:0}
+.cn-product-page .product-detail-layout{gap:40px;align-items:start}
+.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{width:100%;max-height:430px;object-fit:contain;background:#fff}
+.cn-product-page .product-details .section-links{display:flex;flex-wrap:wrap;gap:12px 20px}
+html[lang="zh-CN"] .field-stories{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+html[lang="zh-CN"] .field-story:last-child{padding-top:0}
+html[lang="zh-CN"] .field-stories .media>img{aspect-ratio:4/3}
+html[lang="zh-CN"] .field-story-copy{display:block}
+html[lang="zh-CN"] .field-story-copy>p{margin-top:16px}
+html[lang="zh-CN"] .footer-grid nav{min-width:0}
+.cn-research-entry{margin-top:40px;padding-top:28px;border-top:1px solid var(--line,#d5dfe7)}
+.cn-research-entry h3{font-size:26px}
+.cn-research-entry p{margin:16px 0;color:var(--muted,#58697b)}
+.cn-demo-index{padding-top:20px}
+.cn-demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:32px}
+.cn-demo-grid article{min-width:0;border-top:2px solid var(--line,#d5dfe7);padding-top:24px}
+.cn-demo-grid h3{font-size:25px;line-height:1.4}
+.cn-demo-grid p{margin-bottom:16px;color:var(--muted,#58697b)}
+.cn-demo-grid h3+p{margin-top:16px}
+.cn-demo-grid nav{display:flex;flex-direction:column;align-items:start;gap:14px}
+.cn-demo-grid a{color:var(--blue,#2458df);text-decoration:underline;text-underline-offset:5px}
+html[lang="zh-CN"] .table-scroll:focus-visible{outline:2px solid #2458df;outline-offset:5px}
+@media(max-width:800px){.cn-demo-grid{grid-template-columns:1fr;gap:32px}.cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:24px}}
+@media(max-width:600px){
+ .cn-product-page .page-opening{padding-top:32px;padding-bottom:8px}
+ .cn-product-page .page-opening+.section{padding-top:16px}
+ .cn-product-page .page-intro>.lead{font-size:18px}
+ .cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{max-height:320px}
+ html[lang="zh-CN"] .field-stories{grid-template-columns:1fr}
+ .cn-research-entry{margin-top:28px}
+}
+
+/* Editorial hierarchy: concise openings, readable text and consistent product stages. */
+html[lang="zh-CN"] .robot-showcase .product-picture{box-sizing:border-box;aspect-ratio:3/2;border:1px solid #e4eaf0;border-radius:10px;background:#fff;overflow:hidden}
+html[lang="zh-CN"] .robot-showcase .product-picture>img{width:100%;height:100%;object-fit:contain;object-position:center}
+html[lang="zh-CN"] .robot-showcase .product-card{display:flex;flex-direction:column;min-width:0}
+html[lang="zh-CN"] .robot-showcase .product-card-copy{display:flex;flex-direction:column;flex:1;padding:22px 12px 0}
+html[lang="zh-CN"] .robot-showcase .product-links{margin-top:auto;padding-top:16px}
+html[lang="zh-CN"]{line-break:strict}
+html[lang="zh-CN"] .page-opening{padding-top:52px;padding-bottom:28px}
+html[lang="zh-CN"] .page-opening+.section{padding-top:28px}
+html[lang="zh-CN"] .page-intro h1{font-size:clamp(34px,4vw,56px);font-weight:600;line-height:1.25;letter-spacing:-.02em;text-wrap:balance}
+html[lang="zh-CN"] .page-intro>.lead{max-width:38em;font-size:20px;line-height:1.75}
+html[lang="zh-CN"] main h2{line-height:1.35;letter-spacing:-.015em;text-wrap:balance}
+html[lang="zh-CN"] main h3{line-height:1.45}
+html[lang="zh-CN"] .story-split p,html[lang="zh-CN"] .statement p{max-width:38em;line-height:1.8}
+html[lang="zh-CN"] .product-section-intro{max-width:48em;line-height:1.8}
+html[lang="zh-CN"] .note,html[lang="zh-CN"] figcaption{line-height:1.7}
+html[lang="zh-CN"] .cn-product-page .page-opening{padding-top:40px;padding-bottom:12px}
+html[lang="zh-CN"] .cn-product-page .page-opening+.section{padding-top:16px}
+.cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px}
+.cn-product-page .product-detail-image,.cn-product-page .product-detail-layout>.mda-preview-hero{min-width:0;margin:0}
+.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{box-sizing:border-box;width:100%;height:400px;max-height:none;object-fit:contain;object-position:center;background:#fff;border:1px solid #e4eaf0;border-radius:12px;padding:12px}
+.cn-product-page .product-detail-layout>.mda-preview-hero img{filter:contrast(1.08) saturate(1.04)}
+html[lang="zh-CN"] .robot-showcase .sale-image{box-sizing:border-box;aspect-ratio:3/2;border:1px solid #e4eaf0;border-radius:10px;background:#fff;overflow:hidden}
+html[lang="zh-CN"] .robot-showcase .sale-image>img{width:100%;height:100%;object-fit:contain;object-position:center}
+html[lang="zh-CN"] .robot-showcase .mda-preview-card>img{filter:contrast(1.08) saturate(1.04)}
+html[lang="zh-CN"] .robot-showcase .sale-card .card-body{padding:22px 12px;display:flex;flex-direction:column;flex:1}
+html[lang="zh-CN"] .robot-showcase .sale-card{display:flex;flex-direction:column}
+html[lang="zh-CN"] .robot-showcase .sale-actions{margin-top:auto;padding-top:16px}
+html[lang="zh-CN"] .robot-showcase .card-body>p:not(.sale-badge){line-height:1.75;font-size:16px}
+.cn-development-status{max-width:850px;border-left:3px solid #2458df;background:#fff;padding:24px 28px;margin-top:24px}
+.cn-development-status p{font-size:18px;line-height:1.8;margin:0 0 14px}
+.cn-development-status p:last-child{margin-bottom:0}
+.cn-development-status .eyebrow{font-size:13px;color:#2458df;font-weight:600}
+.cn-section-intro{max-width:42em;color:#52657a;line-height:1.8;margin-top:18px}
+.cn-evidence-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:32px}
+.cn-evidence-cards article{min-width:0;border-top:2px solid #dce5ed;padding-top:24px;display:flex;flex-direction:column}
+.cn-evidence-cards h3{font-size:24px;margin:12px 0}
+.cn-evidence-cards p{line-height:1.8}
+.cn-evidence-cards .text-link{align-self:start;margin-top:auto;padding-top:20px}
+html[lang="zh-CN"] #learning-resources .product-feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+html[lang="zh-CN"] #learning-resources .note{margin-top:28px;max-width:60em}
+html[lang="zh-CN"] #manuals .product-feature-grid{gap:28px}
+@media(max-width:900px){
+ .cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:28px}
+ .cn-evidence-cards,html[lang="zh-CN"] #learning-resources .product-feature-grid{grid-template-columns:1fr}
+ html[lang="zh-CN"] .story-split{gap:32px}
+}
+@media(max-width:600px){
+ html[lang="zh-CN"] .page-opening{padding-top:32px;padding-bottom:20px}
+ html[lang="zh-CN"] .page-opening+.section{padding-top:20px}
+ html[lang="zh-CN"] .page-intro>.lead{font-size:18px;line-height:1.75}
+ html[lang="zh-CN"] .cn-product-page .page-opening{padding-top:30px}
+ .cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{height:300px;padding:8px}
+ .cn-development-status{padding:20px}
+ .cn-development-status p{font-size:16px}
+ .cn-evidence-cards{gap:24px}
+}
