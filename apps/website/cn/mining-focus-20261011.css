@@ -1,0 +1,17 @@
+/* Chinese homepage: mining quadruped product focus. */
+.origin-theme .mining-hero.full{height:auto;min-height:620px;padding:112px 0 58px;background:#091c34}
+.origin-theme .mining-hero::after{display:none}
+.mining-hero-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:42px;align-items:center;width:100%}
+.origin-theme .mining-hero.full .hero-copy{padding:32px 0;min-width:0}
+.origin-theme .mining-hero.full h1{font-size:clamp(34px,3.65vw,58px);line-height:1.2;letter-spacing:-.02em;margin:16px 0 22px;max-width:7.5em}
+.origin-theme .mining-hero .lead{font-size:18px;line-height:1.8;color:#d4dfef;max-width:31em}
+.mining-hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:20px 24px;margin-top:30px}
+.origin-theme .mining-hero-actions .arrow-btn{margin:0;font-size:16px}
+.origin-theme .mining-hero-actions .text-link{font-size:15px;color:#c7dcff}
+.origin-theme .mining-hero .mining-stage{font-size:14px;color:#c1cde0;margin-top:25px}
+.mining-hero-visual{min-width:0;margin:0}
+.mining-hero-visual img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border:1px solid #35435a;border-radius:12px}
+.mining-hero-visual figcaption{font-size:13px;color:#bdcce0;margin-top:12px;line-height:1.6}
+.mining-film-link{display:inline-block;margin:24px 0 0 24px;font:inherit;cursor:pointer}
+@media(max-width:960px){.origin-theme .mining-hero.full{padding:94px 0 42px;min-height:0}.mining-hero-grid{grid-template-columns:minmax(0,1fr);gap:12px}.origin-theme .mining-hero.full .hero-copy{padding:18px 0}.origin-theme .mining-hero.full h1{font-size:clamp(34px,6vw,48px)}.mining-hero-visual img{max-height:420px;object-fit:contain;background:#102036}}
+@media(max-width:600px){.origin-theme .mining-hero.full{padding-top:82px}.origin-theme .mining-hero .lead{font-size:16px;line-height:1.75}.mining-hero-actions{gap:18px;margin-top:24px}.mining-film-link{display:block;margin-left:0}.mining-hero-visual figcaption{font-size:12px}}
