@@ -12,6 +12,14 @@
 - 共用仓库、分别部署；不要把“代码已合并”报告成“线上已更新”。
 - OA 保持 oa.omindos.cn。Chat 对外入口为 omindos.cn/chat/，课程独立使用 omindos.cn/learning，竞技场独立使用 omindos.cn/arena/，管理入口为 /arena/admin；旧课程和竞技场页面跳到各自独立路径。原阿里云后端和学习数据保留，不通过国际入口绕行。部署与回滚见 ops/chat-entry/README.md。
 
+## .com 品牌入口
+
+用户于 2026-10-11 21:05 确认使用 omindos.com 作为品牌入口，跳转到现有 omindos.cn，暂不维护独立网站。现有 .cn 业务路径与 .ai/en/ 保持原方案。
+
+omindos.com 的 A 记录指向阿里云 39.108.50.65，www 为该根域名的 CNAME。已有有效 HTTPS 证书覆盖两个名字。沿用当前 DNS、证书、ACME 和企微验证路径，仅将 /etc/nginx/conf.d/omindos-com.conf 的 HTTP/HTTPS 跳转从旧 Chat 域名改为 https://omindos.cn$request_uri，保留路径和查询参数，使用现有 302 状态。配置源码见 ops/domains/omindos-com.conf。
+
+公网验收存在明确阻塞：阿里云返回 HTTP 403 的 Non-compliance ICP Filing 页面，HTTPS 连接被重置。源站跳转配置完成不等于公网已可用；需要在阿里云备案后台核对该 .com 的备案或接入状态，不通过更换 IP 规避拦截。本轮不改 DNS、业务站点、证书或备案资料。
+
 ## 中文站：先发布
 
 omindos.cn 由腾讯服务器 Nginx 提供，根目录为 /var/www/omindos.cn/current，通过 cn/ 回退映射 /robots/ 等路径。旧 deploy-aliyun-cn.yml 不是当前中文站发布入口。
