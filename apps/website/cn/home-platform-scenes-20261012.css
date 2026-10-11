@@ -49,3 +49,5 @@
 .origin-theme .hero.full.mining-hero-immersive .mining-hero-scroll span{font-size:24px}
 .origin-theme .hero.full.mining-hero-immersive .mining-hero-visual figcaption{position:absolute;z-index:2;bottom:16px;right:24px;left:auto;background:none;padding:0;color:rgba(255,255,255,.78);font-size:12px;line-height:1.5}
 @media(max-width:700px){.origin-theme .hero.full.mining-hero-immersive{min-height:560px;max-height:950px}.origin-theme .hero.full.mining-hero-immersive .hero-copy{padding:100px 18px}.origin-theme .hero.full.mining-hero-immersive h1{font-size:clamp(42px,10.5vw,70px);letter-spacing:.04em}.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{object-position:58% center}.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual figcaption{right:16px;bottom:14px;font-size:11px}}
+
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-purpose{color:#fff;font-size:clamp(17px,1.5vw,23px);line-height:1.6;letter-spacing:.12em;margin:24px 0 0;text-shadow:0 2px 16px rgba(0,0,0,.5)}
