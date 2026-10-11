@@ -6,7 +6,7 @@
   const status = document.getElementById('enquiry-status');
   const mail = document.getElementById('enquiry-mail');
   const copy = document.getElementById('enquiry-copy');
-  const fields = ['topic', 'organisation', 'contact', 'requirements'];
+  const fields = ['topic', 'organisation', 'contact', 'environment', 'result', 'requirements'];
   form.hidden = false;
   function compose() {
     const values = Object.fromEntries(fields.map(name => [name, form.elements[name].value.trim()]));
@@ -14,7 +14,9 @@
       subject: 'OriginMind 项目咨询：' + values.topic,
       body: ['您好，我想咨询以下项目：', '', '咨询方向：' + values.topic,
         '单位与联系人：' + (values.organisation || '待补充'),
-        '联系方式：' + (values.contact || '待补充'), '',
+        '联系方式：' + (values.contact || '待补充'),
+        '作业场景：' + (values.environment || '待补充'),
+        '期望结果：' + (values.result || '待补充'), '',
         '项目需求：', values.requirements].join('\n')
     };
   }
