@@ -65,7 +65,7 @@ jobs:
 
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.test.outputs.deploy_international == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && needs.test.outputs.deploy_international == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
