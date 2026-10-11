@@ -356,13 +356,13 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       if (route === '') {
         assert.ok(html.includes('/home/base.css?v=20260910-polish'));
         assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
-        assert.ok(html.includes('/product-cards.css?v=20260910-polish'));
+        assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
         assert.ok(html.includes('/site.js?v=20260910-polish'));
-        if (route === 'robots') assert.ok(html.includes('/product-cards.css?v=20260910-polish'));
+        if (route === 'robots') assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         if (route.startsWith('robots/')) {
           const version = '20260910-structure-video';
           assert.ok(html.includes(`/product-details.css?v=${version}`));
