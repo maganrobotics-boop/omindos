@@ -207,7 +207,7 @@ test('localized page titles prefer natural wrapping', async () => {
   assert.ok(English.includes('<h1>Robotics for underground environments</h1>'));
 });
 
-test('quadruped availability agrees across both homepages, catalogues and product pages', async () => {
+test('robot availability distinguishes Chinese mine development from catalogue prototypes', async () => {
   for (const [locale, development, sale] of [['cn', '研发阶段', '产品样机'], ['en', 'IN DEVELOPMENT', 'PRODUCT PROTOTYPE']]) {
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
@@ -216,14 +216,20 @@ test('quadruped availability agrees across both homepages, catalogues and produc
       assert.equal(cards.length, 6);
       for (const card of cards) {
         const prefix = locale === 'cn' ? '' : '/en';
-        const isTrackedResearchPlatform = locale === 'cn' && route === '' && card.includes('id="home-platform-tracked"');
+        const isMineDevelopment = locale === 'cn' && route === '' && /id="home-platform-(?:tracked|wheeled|quadruped)"/.test(card);
+        if (isMineDevelopment) {
+          assert.match(card, />实机研发中</);
+          assert.doesNotMatch(card, />(?:在售|产品样机)</);
+        }
+        const isTrackedResearchPlatform = isMineDevelopment && card.includes('id="home-platform-tracked"');
         if (isTrackedResearchPlatform) {
-          assert.match(card, />外购平台 · 算法适配</);
+          assert.match(card, /图示为前期外购验证平台/);
           assert.match(card, /履带式巡检平台/);
           assert.doesNotMatch(card, /MDA1|产品样机|研发阶段|在售/);
           const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([^<]+)<\/a>/g)];
-          assert.deepEqual(actions.map(([, href]) => href), ['#platform-scenes', '/contact/']);
-          assert.deepEqual(actions.map(([, , label]) => label), ['场景研究', '交流平台适配']);
+          assert.deepEqual(actions.map(([, href]) => href), ['#tracked-field-records', '/contact/']);
+          assert.deepEqual(actions.map(([, , label]) => label), ['现场图片与视频', '交流研发需求']);
+          assert.ok(page.includes('id="tracked-field-records"'));
           assert.ok(page.includes('id="platform-scenes"'));
           continue;
         }
@@ -231,7 +237,7 @@ test('quadruped availability agrees across both homepages, catalogues and produc
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
         const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
         const isMobileDualArm = card.includes(`${prefix}/robots/mobile-dual-arm/`);
-        const expectedStatus = locale === 'cn' ? ((isQuadruped || isMobileDualArm) ? development : '产品样机') : (isQuadruped || isMobileDualArm) ? development : sale;
+        const expectedStatus = isMineDevelopment ? '实机研发中' : locale === 'cn' ? ((isQuadruped || isMobileDualArm) ? development : '产品样机') : (isQuadruped || isMobileDualArm) ? development : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
@@ -819,5 +825,3 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
-
-
