@@ -529,7 +529,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         }
         if (isFocusedChineseHome) {
           assert.ok(html.includes(`href="/robots/${model}/"`));
-          if (model === 'wheeled' || model === 'quadruped') assert.ok(html.includes(`/assets/covers/${cover}`));
+          if (model === 'wheeled' || model === 'quadruped') assert.ok(html.includes(`/cn/assets/home-visual-20261012/${model}.webp`));
         } else {
           assert.ok(html.includes(`/assets/covers/${cover}`));
           assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
