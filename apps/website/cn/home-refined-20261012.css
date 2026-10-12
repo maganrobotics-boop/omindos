@@ -63,14 +63,26 @@
 .mine-product-body .mine-actions{margin-top:auto;padding-top:20px;gap:8px 22px}
 .mine-home-refined .mine-product-body .mine-actions :is(a,button){font-size:12px;min-height:36px}
 .mine-twin{background:#0b1f31;color:#edf3f7}
-.mine-twin-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:center;gap:72px}
+.mine-twin-intro{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:center;gap:72px;margin-bottom:32px}
 .mine-home-refined .mine-twin h2{color:#f1f5f8}
 .mine-home-refined .mine-twin .mine-kicker{color:#8aaebf}
-.mine-twin .mine-section-copy>p:not(.mine-kicker){color:#b4c4ce}
+.mine-home-refined .mine-twin-intro h2{margin-bottom:0}
+.mine-twin-intro>p{color:#b4c4ce;font-size:16px;margin:0}
+.mine-twin-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:36px;align-items:start;padding:28px;border:1px solid #ffffff20;border-radius:8px;background:#142c44}
+.mine-twin-overview img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
+.mine-home-refined .mine-twin-overview figcaption{margin-top:12px;color:#afc3d5;font-size:12px}
+.mine-twin-capabilities{min-width:0}
+.mine-twin-capabilities .accordion{margin:0;padding:0;border:0;border-bottom:1px solid #ffffff26;background:none;border-radius:0}
+.mine-twin-capabilities .accordion summary{position:relative;padding:18px 36px 18px 0;font-size:18px;font-weight:600;line-height:1.5;list-style:none;color:#edf3f7;cursor:pointer}
+.mine-twin-capabilities .accordion summary::-webkit-details-marker{display:none}
+.mine-twin-capabilities .accordion summary::after{content:"+";position:absolute;right:2px;top:18px;font-size:22px;font-weight:400;line-height:27px;background:none;transform:none}
+.mine-twin-capabilities .accordion[open] summary{color:#a1c4ff}
+.mine-twin-capabilities .accordion[open] summary::after{content:"−"}
+.mine-home-refined .mine-twin-capabilities .accordion p{margin:0 0 18px;padding:0;color:#b4c4ce;font-size:14px;line-height:1.85}
+.mine-twin-capabilities .mine-actions{margin-top:22px;gap:8px 24px}
 .mine-home-refined .mine-twin .mine-actions a{color:#cce1ee}
-.mine-home-refined .mine-twin a:focus-visible{outline-color:#d4eafb}
-.mine-console img{display:block;width:100%;height:auto;border:1px solid #ffffff1a}
-.mine-console figcaption{margin-top:12px;color:#87a0ae!important}
+.mine-home-refined .mine-twin .mine-actions a{text-decoration:underline;text-underline-offset:6px;text-decoration-color:#5d7a96}
+.mine-home-refined .mine-twin :is(a,summary):focus-visible{outline:2px solid #d4eafb;outline-offset:4px}
 .mine-team{padding-block:56px;background:#fff}
 .mine-team-heading{display:flex;align-items:center;justify-content:space-between;gap:40px}
 .mine-home-refined .mine-team h2{font-size:clamp(24px,2.5vw,34px);margin-bottom:14px;letter-spacing:-.035em}
@@ -93,7 +105,8 @@
 #field-journey,#platform-scenes,#mine-digital-twin,#team,#home-platform-tracked,#home-platform-wheeled,#home-platform-quadruped{scroll-margin-top:90px}
 @media(max-width:1000px){
  .mine-wrap{padding-inline:28px}.mine-section{padding-block:56px}
- .mine-research-grid,.mine-twin-grid{gap:36px}
+ .mine-research-grid,.mine-twin-intro{gap:36px}
+ .mine-twin-panel{gap:24px;padding:24px}
  .mine-products{gap:16px}.mine-product-body{padding:16px}
  .mine-home-refined main h3{font-size:20px}
  .mine-section-heading{gap:24px}.mine-section-heading>p{max-width:22em}
@@ -115,7 +128,14 @@
  .mine-opening .mining-hero-visual::after{background:linear-gradient(180deg,transparent 45%,#06142020)}
  .mine-opening .mining-hero-visual figcaption{right:22px;bottom:24px;font-size:8px}
  .mine-opening .hero-motion-toggle{left:22px;bottom:14px;font-size:10px;padding-inline:10px}
- .mine-research-grid,.mine-twin-grid{grid-template-columns:1fr;gap:26px}
+ .mine-research-grid{grid-template-columns:1fr;gap:26px}
+ .mine-twin-intro{grid-template-columns:1fr;gap:18px;margin-bottom:24px}
+ .mine-twin-intro>p{font-size:14px}
+ .mine-twin-panel{grid-template-columns:1fr;gap:16px;padding:20px}
+ .mine-twin-capabilities .accordion summary{font-size:16px;padding-block:16px}
+ .mine-twin-capabilities .accordion summary::after{top:15px}
+ .mine-home-refined .mine-twin-capabilities .accordion p{font-size:14px}
+ .mine-home-refined .mine-twin-overview figcaption{font-size:11px;line-height:1.7}
  .mine-research-photo img{aspect-ratio:1.8;object-position:center 60%}
  .mine-section-copy>p:not(.mine-kicker){font-size:14px}
  .mine-research-steps{margin-top:20px}

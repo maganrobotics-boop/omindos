@@ -382,7 +382,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         assert.ok(html.includes(`/home/controls.js?v=${locale === 'cn' ? '20261011-cn-review' : '20260909-remediation'}`));
         if (locale === 'cn') assert.ok(html.includes('/cn/home-refined-20261012.css'));
         else assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
-        assert.ok(html.includes(locale === 'cn' ? '/assets/omindos-inspection-console-20260909.jpg' : '/assets/omindos-system-overview-20260910-balanced.webp'));
+        assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
