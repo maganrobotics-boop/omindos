@@ -230,7 +230,8 @@ test('robot availability distinguishes Chinese mine development from catalogue p
         const isTrackedResearchPlatform = isMineDevelopment && card.includes('id="home-platform-tracked"');
         if (isTrackedResearchPlatform) {
           assert.match(card, /前期外购履带平台/);
-          assert.match(card, /履带式巡检平台/);
+          assert.match(card, /<strong>T1<\/strong>/);
+          assert.match(card, /履带式巡检机器人/);
           assert.doesNotMatch(card, /MDA1|产品样机|研发阶段|在售/);
           const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
           assert.deepEqual(actions.map(([, href]) => href), ['/field-work/mining/#field-records']);
