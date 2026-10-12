@@ -1,0 +1,156 @@
+/* Focused Chinese homepage: research, robot platforms, digital twin and team. */
+.mine-home-refined{font-family:Arial,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","WenQuanYi Zen Hei",sans-serif;color:#182731;background:#fff;-webkit-font-smoothing:antialiased}
+.mine-home-refined main h1,.mine-home-refined main h2,.mine-home-refined main h3{font-family:inherit;letter-spacing:-.025em;font-weight:600}
+.mine-wrap{width:min(1248px,100%);margin-inline:auto;padding-inline:40px}
+.mine-section{padding-block:72px}
+.mine-anchor{display:block;height:0;scroll-margin-top:90px}
+.mine-home-refined main p{line-height:1.85}
+.mine-home-refined main .mine-kicker{margin:0 0 16px;color:#546c75;font-size:12px;font-weight:600;line-height:1.5;letter-spacing:.12em}
+.mine-home-refined main h2{font-size:clamp(28px,2.8vw,40px);line-height:1.35;margin:0 0 22px;max-width:none}
+.mine-home-refined main h3{font-size:23px;line-height:1.45;margin:0 0 12px}
+.mine-section-copy>p:not(.mine-kicker){max-width:32em;color:#5a6871;font-size:16px}
+.mine-home-refined main figure{margin:0}
+.mine-home-refined main figcaption{font-size:11px;line-height:1.6;color:#738189}
+.mine-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px 28px;margin-top:24px}
+.mine-home-refined main .mine-actions :is(a,button){display:inline-flex;align-items:center;gap:14px;min-height:44px;padding:0;border:0;border-radius:0;background:none;color:#243e4c;font:inherit;font-size:14px;font-weight:500;line-height:1.5;text-decoration:none;margin:0;width:auto;box-shadow:none}
+.mine-actions :is(a,button):hover{color:#2677af}
+.mine-actions :is(a,button) span{font-size:18px;transition:transform .2s}
+.mine-actions :is(a,button):hover span{transform:translate(2px,-2px)}
+.mine-home-refined main :is(a,button):focus-visible{outline:2px solid #3082b9;outline-offset:5px}
+.mine-opening{height:82svh;min-height:570px;max-height:720px;position:relative;isolation:isolate;overflow:hidden;background:#071720;color:white}
+.mine-opening .mining-hero-visual{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.mine-opening .mine-hero-picture{display:block;width:100%;height:100%}
+.mine-opening .mining-hero-visual img{width:100%;height:100%;object-fit:cover;object-position:center 48%;transform:scale(1.015);transform-origin:50% 60%;filter:brightness(.7)}
+.mine-opening .mining-hero-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,14,23,.48),rgba(2,14,23,.06) 50%,rgba(2,14,23,.6));pointer-events:none}
+.mine-opening .mining-hero-visual figcaption{position:absolute;bottom:22px;right:40px;z-index:2;color:#bac6cb;font-size:10px;letter-spacing:.02em}
+.mine-opening-copy{position:relative;z-index:1;text-align:center;padding:clamp(126px,18svh,174px) 24px 0}
+.mine-home-refined .mine-opening .mine-kicker{color:#d0dee5;font-size:12px;letter-spacing:.22em;margin-bottom:20px}
+.mine-home-refined .mine-opening h1{max-width:none;font-size:clamp(40px,4.5vw,66px);line-height:1.25;color:#fff;margin:0;text-wrap:balance}
+.mine-home-refined .mine-opening-subtitle{font-size:clamp(15px,1.5vw,19px);letter-spacing:.06em;margin:24px 0 0;color:#ecf2f5}
+.mine-opening-link{display:inline-flex;gap:24px;align-items:center;min-height:44px;margin-top:26px;font-size:13px;color:#fff;border-bottom:1px solid #ffffff5c}
+.mine-opening .hero-motion-toggle{position:absolute;z-index:2;left:40px;bottom:16px;min-height:44px;padding:8px 12px;border:1px solid #ffffff45;border-radius:2px;background:#06172366;color:#dde7ec;font:inherit;font-size:11px}
+.mine-opening[data-hero-motion] .mining-hero-visual img{animation:mine-refined-drift 20s ease-in-out infinite alternate;animation-play-state:paused}
+.mine-opening[data-hero-motion="running"] .mining-hero-visual img{animation-play-state:running}
+@keyframes mine-refined-drift{from{transform:scale(1.015) translate3d(-.15%,0,0)}to{transform:scale(1.055) translate3d(.15%,-.15%,0)}}
+.mine-research-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:80px;align-items:center}
+.mine-research-photo{position:relative;overflow:hidden;background:#122c3c}
+.mine-research-photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;object-position:50% 64%}
+.mine-research-photo figcaption{position:absolute;bottom:0;left:0;right:0;padding:22px 18px 12px;background:linear-gradient(transparent,#031421ba);color:#eef4f7!important}
+.mine-research-steps{display:flex;gap:0;margin-top:24px}
+.mine-research-steps span{font-size:12px;font-weight:500;line-height:1.5;color:#244653}
+.mine-research-steps span+span::before{content:"／";display:inline-block;color:#a3b0b5;margin:0 16px}
+.mine-platforms{background:#f3f5f6}
+.mine-section-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:30px}
+.mine-section-heading h2{margin-bottom:0!important}
+.mine-section-heading>p{max-width:28em;color:#64717a;font-size:14px;padding-bottom:2px}
+.mine-products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.mine-home-refined .mine-product{display:flex;flex-direction:column;min-width:0;width:auto;max-width:none;min-height:0;background:#fff;border:0;border-radius:0;padding:0;box-shadow:none;overflow:hidden}
+.mine-product figure{position:relative}
+.mine-home-refined .mine-product-media{display:block;position:relative;width:100%;height:auto;aspect-ratio:1.65;background:#fff;border:0;border-radius:0;overflow:hidden;padding:0}
+.mine-home-refined .mine-product-media img{display:block;width:100%;height:100%;max-height:none;object-fit:contain;aspect-ratio:auto;padding:10px 12px;transform:none}
+.mine-home-refined .mine-tracked-media img{object-fit:cover;padding:0}
+.mine-product .scene-motion{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;background:#0b161e}
+.mine-product .scene-motion.motion-visible{opacity:1}
+.mine-home-refined .mine-product figcaption{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;min-height:40px;padding:0 18px;color:#78858c;background:#fff}
+.mine-product .scene-motion-caption{justify-content:space-between}
+.mine-product .scene-motion-toggle{padding:0;min-height:40px;border:0;background:none;color:#455c68;font:inherit;font-size:11px;text-decoration:underline;text-underline-offset:4px}
+.mine-product .scene-motion-status{width:100%;font-size:11px;line-height:1.5;padding-bottom:4px}
+.scene-motion-status:empty{display:none}
+.mine-product-body{flex:1;display:flex;flex-direction:column;padding:16px 22px 18px;border-top:1px solid #edf0f2}
+.mine-product-body .mine-scene{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:11px;line-height:1.5;color:#486573;margin:0 0 12px}
+.mine-home-refined .sale-badge{position:static;display:inline-block;margin:0;padding:0;background:none;border:0;color:#839097;font-size:10px;line-height:1.5;font-weight:400;letter-spacing:.02em}
+.mine-product-body>p:not(.mine-scene){font-size:14px;line-height:1.8;color:#68747c;margin:0}
+.mine-product-body .mine-actions{margin-top:auto;padding-top:20px;gap:8px 22px}
+.mine-home-refined .mine-product-body .mine-actions :is(a,button){font-size:12px;min-height:36px}
+.mine-twin{background:#0b1f31;color:#edf3f7}
+.mine-twin-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:center;gap:72px}
+.mine-home-refined .mine-twin h2{color:#f1f5f8}
+.mine-home-refined .mine-twin .mine-kicker{color:#8aaebf}
+.mine-twin .mine-section-copy>p:not(.mine-kicker){color:#b4c4ce}
+.mine-home-refined .mine-twin .mine-actions a{color:#cce1ee}
+.mine-home-refined .mine-twin a:focus-visible{outline-color:#d4eafb}
+.mine-console img{display:block;width:100%;height:auto;border:1px solid #ffffff1a}
+.mine-console figcaption{margin-top:12px;color:#87a0ae!important}
+.mine-team{padding-block:56px;background:#fff}
+.mine-team-heading{display:flex;align-items:center;justify-content:space-between;gap:40px}
+.mine-home-refined .mine-team h2{font-size:clamp(24px,2.5vw,34px);margin-bottom:14px;letter-spacing:-.035em}
+.mine-team-heading>div>p:last-child{font-size:14px;color:#63727b;max-width:45em}
+.mine-team-heading>.mine-actions{flex-shrink:0;margin-top:0}
+.mine-education-links{margin-top:30px;padding-top:24px;border-top:1px solid #e3e8eb}
+.mine-education-links>p{font-size:11px;color:#7b8992;margin:0 0 14px}
+.mine-education-links .team-robot-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.mine-education-links .team-robot-links a{display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;min-height:48px;font-size:12px;font-weight:600;color:#243d4c;line-height:1.5}
+.mine-education-links .team-robot-links a span{grid-column:1;display:block;font-size:12px;font-weight:400;margin-top:4px;color:#647782}
+.mine-education-links .team-robot-links i{font-style:normal;grid-column:2;grid-row:1/3;font-size:18px;color:#8399a6}
+.mine-education-links .team-robot-links a:hover{color:#2677af}
+.mine-home-refined .footer{padding-top:42px;padding-bottom:24px}
+.mine-home-refined .footer-top{max-width:1168px;margin-inline:auto;gap:32px;padding-bottom:24px}
+.mine-home-refined .footer h4{font-size:13px;margin-bottom:12px}
+.mine-home-refined .footer :is(p,nav a){font-size:12px;line-height:1.8}
+.mine-home-refined .footer .origin-wordmark{font-size:23px;margin-bottom:18px}
+.mine-home-refined .footer-bottom{max-width:1168px;margin-inline:auto;font-size:11px;gap:16px;padding-top:18px}
+.mine-home-refined .footer .reference-note{font-size:10px;margin-top:18px}
+#field-journey,#platform-scenes,#mine-digital-twin,#team,#home-platform-tracked,#home-platform-wheeled,#home-platform-quadruped{scroll-margin-top:90px}
+@media(max-width:1000px){
+ .mine-wrap{padding-inline:28px}.mine-section{padding-block:56px}
+ .mine-research-grid,.mine-twin-grid{gap:36px}
+ .mine-products{gap:16px}.mine-product-body{padding:16px}
+ .mine-home-refined main h3{font-size:20px}
+ .mine-section-heading{gap:24px}.mine-section-heading>p{max-width:22em}
+ .mine-team-heading{align-items:flex-start}.mine-team-heading>.mine-actions{flex-direction:column;gap:0;align-items:flex-start}
+ .mine-home-refined .mine-product-body .mine-actions{gap:6px 18px}
+}
+@media(max-width:700px){
+ .mine-wrap{padding-inline:22px}.mine-section{padding-block:44px}
+ .mine-home-refined main h2{font-size:27px;margin-bottom:18px}
+ .mine-home-refined main .mine-kicker{font-size:10px;margin-bottom:13px}
+ .mine-opening{height:78svh;min-height:560px;max-height:680px}
+ .mine-opening-copy{padding:132px 22px 0}
+ .mine-home-refined .mine-opening h1{font-size:36px;max-width:10em;margin-inline:auto;line-height:1.32}
+ .mine-home-refined .mine-opening .mine-kicker{font-size:10px;margin-bottom:18px}
+ .mine-home-refined .mine-opening-subtitle{font-size:13px;letter-spacing:.035em;margin-top:18px}
+ .mine-opening-link{font-size:11px;margin-top:12px;gap:18px}
+ .mine-opening .mine-hero-picture{position:absolute;top:53%;left:0;width:100%;height:auto;aspect-ratio:1536/866;mask-image:linear-gradient(180deg,transparent,#000 12%,#000 87%,transparent)}
+ .mine-opening .mining-hero-visual img{object-fit:contain;filter:brightness(.86)}
+ .mine-opening .mining-hero-visual::after{background:linear-gradient(180deg,transparent 45%,#06142020)}
+ .mine-opening .mining-hero-visual figcaption{right:22px;bottom:24px;font-size:8px}
+ .mine-opening .hero-motion-toggle{left:22px;bottom:14px;font-size:10px;padding-inline:10px}
+ .mine-research-grid,.mine-twin-grid{grid-template-columns:1fr;gap:26px}
+ .mine-research-photo img{aspect-ratio:1.8;object-position:center 60%}
+ .mine-section-copy>p:not(.mine-kicker){font-size:14px}
+ .mine-research-steps{margin-top:20px}
+ .mine-research-steps span{font-size:11px}
+ .mine-research-steps span+span::before{margin-inline:12px}
+ .mine-actions{margin-top:18px;gap:6px 24px}
+ .mine-home-refined main .mine-actions :is(a,button){font-size:12px}
+ .mine-section-heading{display:block;margin-bottom:24px}
+ .mine-section-heading>p{font-size:13px;max-width:30em;margin-top:18px}
+ .mine-desktop-break{display:none}
+ .mine-products{grid-template-columns:1fr;gap:20px}
+ .mine-home-refined .mine-product{display:grid;grid-template-columns:128px minmax(0,1fr);gap:0;align-items:center;padding:16px 12px}
+ .mine-home-refined .mine-product-media{aspect-ratio:1.15}
+ .mine-home-refined .mine-product-media img{padding:2px}
+ .mine-home-refined .mine-tracked-media img{padding:0}
+ .mine-product .scene-motion{object-fit:contain}
+ .mine-home-refined .mine-product figcaption{padding:6px 2px 0;font-size:9px;min-height:32px;gap:2px 6px}
+ .mine-product .scene-motion-toggle{min-height:32px;font-size:10px}
+ .mine-product-body{border-top:0;padding:0 0 0 14px}
+ .mine-product-body .mine-scene{font-size:10px;gap:3px;margin-bottom:7px}
+ .mine-home-refined .sale-badge{font-size:9px}
+ .mine-home-refined .mine-product h3{font-size:18px;line-height:1.4;margin-bottom:9px}
+ .mine-product-body>p:not(.mine-scene){font-size:13px;line-height:1.75}
+ .mine-home-refined .mine-product-body .mine-actions{padding-top:12px;gap:0 16px}
+ .mine-home-refined .mine-product-body .mine-actions :is(a,button){font-size:10px;gap:8px;min-height:36px}
+ .mine-product-body .mine-actions span{font-size:13px}
+ .mine-team-heading{display:block}.mine-team-heading>.mine-actions{flex-direction:row;margin-top:16px;gap:24px}
+ .mine-home-refined .mine-team h2{font-size:23px}
+ .mine-team-heading>div>p:last-child{font-size:13px}
+ .mine-education-links{margin-top:24px;padding-top:20px}
+ .mine-education-links .team-robot-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px}
+ .mine-education-links .team-robot-links a{font-size:11px}.mine-education-links .team-robot-links a span{font-size:10px}
+ .mine-home-refined .footer{padding:34px 22px 22px}
+ .mine-home-refined .footer-top{gap:24px}.mine-home-refined .footer-top>.footer-address{grid-column:1/-1}
+ .mine-home-refined .footer-bottom{gap:12px}
+}
+@media(max-width:360px){.mine-wrap{padding-inline:18px}.mine-home-refined .mine-opening h1{font-size:32px}.mine-home-refined .mine-product{grid-template-columns:104px minmax(0,1fr);padding:14px 10px}.mine-product-body{padding-left:12px}.mine-home-refined .mine-product h3{font-size:16px}.mine-home-refined .mine-product-body .mine-actions{gap:0 12px}.mine-product-body>p:not(.mine-scene){font-size:12px}}
+@media(prefers-reduced-motion:reduce){.mine-opening[data-hero-motion] .mining-hero-visual img{animation:none;transform:none}.mine-actions :is(a,button) span{transition:none}}
