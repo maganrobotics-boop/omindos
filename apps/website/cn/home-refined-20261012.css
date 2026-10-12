@@ -76,9 +76,6 @@
 .mine-twin-overview img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
 .mine-home-refined .mine-twin-overview figcaption{margin-top:12px;color:#afc3d5;font-size:12px}
 .mine-twin-capabilities{min-width:0}
-.software-environments{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;padding-top:18px;border-top:1px solid #ffffff20;color:#d3e2ed;font-size:12px;line-height:1.7}
-.software-environments span+span{border-left:1px solid #50677d;padding-left:18px}
-.mine-home-refined .software-overview-note{color:#9fb6ca;font-size:13px;margin:12px 0 0;line-height:1.8}
 .software-modules-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;color:#d4e3ef;font-size:13px}
 .software-modules-heading small{font-size:10px;color:#a0b7ca}
 .software-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
@@ -191,9 +188,6 @@
  .software-api>span:first-child{font-size:11px}
  .api-adapters{gap:4px}
  .api-adapters>i{font-size:8px;padding:2px 5px}
- .software-environments{font-size:11px;gap:6px 12px;margin-top:16px;padding-top:14px}
- .software-environments span+span{padding-left:12px}
- .mine-home-refined .software-overview-note{font-size:12px}
  .mine-home-refined .mine-twin-overview figcaption{font-size:11px;line-height:1.7}
  .mine-research-photo img{aspect-ratio:1.8;object-position:center 60%}
  .mine-section-copy>p:not(.mine-kicker){font-size:14px}
