@@ -216,9 +216,9 @@ test('robot availability distinguishes Chinese mine development from catalogue p
       const isFocusedChineseHome = locale === 'cn' && route === '';
       assert.equal(cards.length, isFocusedChineseHome ? 3 : 6);
       if (isFocusedChineseHome) {
-        const fieldRecords = page.match(/<section\b[^>]*id="field-journey"[\s\S]*?<\/section>/)?.[0] || '';
-        assert.match(fieldRecords, /id="roadway-motion"/);
-        assert.match(fieldRecords, /id="field-mapping-motion"/);
+        const fieldRecords = page.match(/<section\b[^>]*id="field"[\s\S]*?<\/section>/)?.[0] || '';
+        assert.match(fieldRecords, /data-video="\/assets\/videos\/roadway-field-20261012.mp4"/);
+        assert.match(fieldRecords, /data-video="\/assets\/videos\/1000087153-web.mp4"/);
         for (const card of cards) assert.doesNotMatch(card, /<video\b/, 'scene and validation media must not imply a product demonstration');
         for (const model of ['mobile-dual-arm', 'dual-arm', 'wheel-legged', 'open-frame']) {
           assert.ok(page.includes('href="/robots/' + model + '/"'), model + ' remains reachable from the homepage');
@@ -228,21 +228,27 @@ test('robot availability distinguishes Chinese mine development from catalogue p
         const prefix = locale === 'cn' ? '' : '/en';
         const isMineDevelopment = locale === 'cn' && route === '' && /id="home-platform-(?:tracked|wheeled|quadruped)"/.test(card);
         if (isMineDevelopment) {
-          assert.match(card, />实机研发中</);
+          assert.match(card, />研发中</);
           assert.doesNotMatch(card, />(?:在售|产品样机)</);
         }
         const isTrackedResearchPlatform = isMineDevelopment && card.includes('id="home-platform-tracked"');
         if (isTrackedResearchPlatform) {
           assert.match(card, /前期外购履带平台/);
-          assert.match(card, /<strong>T1<\/strong>/);
+          assert.match(card, />T1<\/span>/);
           assert.match(card, /履带式巡检机器人/);
           assert.doesNotMatch(card, /MDA1|产品样机|研发阶段|在售/);
           const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
-          assert.deepEqual(actions.map(([, href]) => href), ['/field-work/mining/#field-records']);
-          assert.match(card, /data-video-src="\/assets\/videos\/1000087153-web.mp4"/);
+          assert.deepEqual(actions.map(([, href]) => href), ['#field']);
+          assert.doesNotMatch(card, /data-video(?:-src)?=/);
           assert.doesNotMatch(card, /<video\b/);
-          assert.match(page, /id="scene-panel-longwall"[\s\S]*?id="longwall-motion"/);
+          assert.match(page, /id="scenes"[\s\S]*?longwall.webp/);
           assert.ok(page.includes('id="platform-scenes"'));
+          continue;
+        }
+        if (isMineDevelopment) {
+          const model = card.includes('home-platform-wheeled') ? 'wheeled' : 'quadruped';
+          assert.match(card, new RegExp('href="/robots/' + model + '/"'));
+          assert.doesNotMatch(card, /data-video(?:-src)?=|咨询报价|在售/);
           continue;
         }
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
@@ -383,11 +389,19 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       assert.doesNotMatch(html, /data-language=|class="language-switch|mujin|framerusercontent/i);
       assert.ok(html.includes(`https://omindos.${locale === 'cn' ? 'cn' : 'ai'}/og-card.png?v=20260909-omindos`), `${path}: social image version`);
       if (route === '') {
-        assert.ok(html.includes('/home/base.css?v=20260910-polish'));
-        assert.ok(html.includes(`/home/controls.js?v=${locale === 'cn' ? '20261011-cn-review' : '20260909-remediation'}`));
-        if (locale === 'cn') assert.ok(html.includes('/cn/home-refined-20261012.css'));
-        else assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
-        assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
+        if (locale === 'cn') {
+          assert.ok(html.includes('/cn/home-visual-20261012.css'));
+          assert.ok(html.includes('/cn/home-visual-20261012.js'));
+          assert.ok(html.includes('/cn/assets/home-visual-20261012/system-scene.webp'));
+          assert.match(html, /id="function-detail"[^>]*hidden/);
+          assert.equal((html.match(/class="function"/g) || []).length, 4);
+          assert.doesNotMatch(html, /首页预览|data:image\//);
+        } else {
+          assert.ok(html.includes('/home/base.css?v=20260910-polish'));
+          assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
+          assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
+          assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
+        }
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
@@ -515,7 +529,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         }
         if (isFocusedChineseHome) {
           assert.ok(html.includes(`href="/robots/${model}/"`));
-          if (model === 'wheeled' || model === 'quadruped') assert.ok(html.includes(`/assets/covers/${cover}`));
+          if (model === 'wheeled' || model === 'quadruped') assert.ok(html.includes(`/cn/assets/home-visual-20261012/${model}.webp`));
         } else {
           assert.ok(html.includes(`/assets/covers/${cover}`));
           assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
