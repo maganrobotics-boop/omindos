@@ -1,0 +1,44 @@
+/* Chinese homepage: field research, validation, hardware and mine digital twin. */
+.home-field-story .field-story-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.home-field-story .field-story-card img{aspect-ratio:16/10}
+.origin-theme .home-algorithm-proof{background:#f4f3ef;padding:80px 0}
+.mine-story-heading{max-width:900px;margin-bottom:32px}
+.mine-story-heading .eyebrow,.mine-robot-development .eyebrow{color:#46675b;margin:0 0 14px}
+.origin-theme .mine-story-heading h2{font-size:clamp(27px,2.7vw,40px);line-height:1.4;max-width:none;margin:0 0 18px}
+.mine-story-heading>p:last-child{color:#53636e;font-size:17px;line-height:1.85;max-width:48em}
+.algorithm-capabilities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;list-style:none;margin:0;padding:0}
+.algorithm-capabilities li{padding:22px 24px;background:#fff;border-top:2px solid #315d51;color:#53636e;font-size:15px;line-height:1.8}
+.algorithm-capabilities span{display:block;font-size:22px;font-weight:600;color:#263e35;margin-bottom:8px}
+.home-algorithm-proof .tracked-field-records{margin-bottom:0}
+.origin-theme .mine-robot-development .intro{margin-bottom:36px}
+.mine-robot-development .robot-group-heading{margin-bottom:24px}
+.origin-theme .mine-robot-development .robot-group-heading h3{font-size:23px;line-height:1.5;margin:0}
+.home-mine-twin .intro .eyebrow{color:#b5d4c5}
+.home-mine-twin .intro>p:last-child{max-width:48em}
+.twin-connections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:38px 0 48px}
+.twin-connections>div{padding:24px 0;border-top:1px solid #668177}
+.twin-connections span{color:#b5d4c5;font-size:13px;letter-spacing:.08em}
+.origin-theme .twin-connections h3{font-size:25px;line-height:1.4;margin:12px 0;color:#fff}
+.twin-connections p{color:#c8d8d0;font-size:16px;line-height:1.8;margin:0;max-width:23em}
+.mine-twin-actions{display:flex;align-items:center;flex-wrap:wrap;gap:20px 28px;margin-top:24px}
+.home-mine-twin .mine-twin-actions .text-link{color:#fff;font-size:15px;min-height:44px;display:inline-flex;align-items:center;margin:0}
+.home-mine-twin :is(a,summary):focus-visible{outline:2px solid #fff;outline-offset:5px}
+#algorithm-validation,#begin-your-journey,#mine-digital-twin{scroll-margin-top:100px}
+.origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{object-position:50% center;filter:brightness(.84);transform-origin:50% 65%}
+.origin-theme .hero.full.mining-hero-immersive .hero-copy{padding-top:clamp(150px,20svh,240px)}
+@media(max-width:700px){
+ .home-field-story .field-story-grid{grid-template-columns:1fr}
+ .origin-theme .home-algorithm-proof{padding:56px 0}
+ .algorithm-capabilities{grid-template-columns:1fr;gap:12px}
+ .algorithm-capabilities li{padding:18px 20px}
+ .algorithm-capabilities span{font-size:20px;margin-bottom:4px}
+ .mine-story-heading>p:last-child{font-size:16px}
+ .twin-connections{grid-template-columns:1fr;gap:0;margin:28px 0 36px}
+ .twin-connections>div{padding:22px 0}
+ .origin-theme .twin-connections h3{font-size:23px;margin:8px 0}
+ .origin-theme .hero.full.mining-hero-immersive{height:88svh;min-height:590px;max-height:780px}
+ .origin-theme .hero.full.mining-hero-immersive .hero-copy{padding-top:clamp(144px,22svh,190px)}
+ .origin-theme .hero.full.mining-hero-immersive .mine-hero-picture{position:absolute;inset:43% 0 auto;height:auto;aspect-ratio:1536/866;mask-image:linear-gradient(180deg,transparent,#000 12%,#000 88%,transparent)}
+ .origin-theme .hero.full.mining-hero-immersive .mining-hero-visual img{object-fit:contain;filter:brightness(.96)}
+ .origin-theme .hero.full.mining-hero-immersive .mining-hero-purpose{font-size:16px;letter-spacing:.06em;margin-top:18px}
+}
