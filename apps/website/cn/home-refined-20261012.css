@@ -90,7 +90,7 @@
 .mine-twin-capabilities .accordion[open] summary::after{content:"−"}
 .mine-home-refined .mine-twin-capabilities .accordion p{margin:0 0 18px;padding:0;color:#b4c4ce;font-size:14px;line-height:1.85}
 .mine-twin-capabilities .software-module{border:1px solid #39536b;border-radius:4px;background:#102539;overflow:hidden}
-.mine-twin-capabilities .software-module summary{padding:16px;font-size:15px;line-height:1.4}
+.mine-twin-capabilities .software-module summary{display:block;padding:16px;font-size:15px;line-height:1.4}
 .software-module-title{display:block;padding-right:19px;font-weight:600}
 .mine-twin-capabilities .software-module summary::after{right:13px;top:13px;font-size:20px}
 .software-module-visual{display:flex;align-items:center;width:100%;height:80px;margin:14px 0 10px;background:#142d43;border-radius:2px;overflow:hidden;color:#a8c9e6}
