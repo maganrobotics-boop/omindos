@@ -72,10 +72,13 @@
 .mine-home-refined .mine-twin .mine-kicker{color:#8aaebf}
 .mine-home-refined .mine-twin-intro h2{margin-bottom:0}
 .mine-twin-intro>p{color:#b4c4ce;font-size:16px;margin:0}
-.mine-twin-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:36px;align-items:start;padding:28px;border:1px solid #ffffff20;border-radius:8px;background:#142c44}
+.mine-twin-panel{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:32px;align-items:start;padding:28px;border:1px solid #ffffff20;border-radius:8px;background:#142c44}
 .mine-twin-overview img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
 .mine-home-refined .mine-twin-overview figcaption{margin-top:12px;color:#afc3d5;font-size:12px}
 .mine-twin-capabilities{min-width:0}
+.software-modules-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;color:#d4e3ef;font-size:13px}
+.software-modules-heading small{font-size:10px;color:#a0b7ca}
+.software-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch}
 .mine-twin-capabilities .accordion{margin:0;padding:0;border:0;border-bottom:1px solid #ffffff26;background:none;border-radius:0}
 .mine-twin-capabilities .accordion summary{position:relative;padding:18px 36px 18px 0;font-size:18px;font-weight:600;line-height:1.5;list-style:none;color:#edf3f7;cursor:pointer}
 .mine-twin-capabilities .accordion summary::-webkit-details-marker{display:none}
@@ -83,7 +86,32 @@
 .mine-twin-capabilities .accordion[open] summary{color:#a1c4ff}
 .mine-twin-capabilities .accordion[open] summary::after{content:"−"}
 .mine-home-refined .mine-twin-capabilities .accordion p{margin:0 0 18px;padding:0;color:#b4c4ce;font-size:14px;line-height:1.85}
+.mine-twin-capabilities .software-module{border:1px solid #39536b;border-radius:4px;background:#102539;overflow:hidden}
+.mine-twin-capabilities .software-module summary{display:block;padding:16px;font-size:15px;line-height:1.4}
+.software-module-title{display:block;padding-right:19px;font-weight:600}
+.mine-twin-capabilities .software-module summary::after{right:13px;top:13px;font-size:20px}
+.software-module-visual{display:flex;align-items:center;width:100%;height:80px;margin:14px 0 10px;background:#142d43;border-radius:2px;overflow:hidden;color:#a8c9e6}
+.software-module-visual svg{display:block;width:100%;height:100%}
+.software-module-caption{display:block;color:#a8bdcd;font-size:11px;font-weight:400;line-height:1.5}
+.software-module-detail{padding:0 16px 15px}
+.mine-home-refined .software-module-detail h3{font-size:12px;color:#d1e2f0;font-weight:500;margin:0 0 7px;line-height:1.6;letter-spacing:0}
+.mine-home-refined .mine-twin-capabilities .software-module .software-module-detail p{font-size:12px;line-height:1.75;margin:0;color:#b4c7d7}
+.software-schedule{flex-direction:column;justify-content:center;gap:7px;padding:12px}
+.software-schedule>span{display:flex;align-items:center;gap:5px;width:100%;height:12px;background:linear-gradient(90deg,transparent 25px,#284359 25px)}
+.software-schedule b{font-size:9px;font-weight:400;width:20px;flex-shrink:0}
+.task-block{display:block;height:12px;border-radius:1px;background:#9bc3eb;flex-shrink:0}
+.task-a{width:31%}.task-b{width:29%;background:#527798}.task-c{width:48%;background:#527798}.task-d{width:19%}.task-e{width:18%}.task-f{width:40%;background:#527798}
+.software-records{gap:12px;padding:12px}
+.record-thumb{display:block;width:52px;height:52px;flex-shrink:0;background:#26485f;border:1px solid #4c6d84}
+.record-lines{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.record-lines>i{display:block;width:85%;height:3px;background:#7d9eb7}.record-lines>i:nth-child(2){width:64%}.record-lines>i:nth-child(3){width:76%}
+.record-lines>span{font-size:9px;white-space:nowrap;font-weight:400;color:#a9bfce}
+.software-api{flex-direction:column;justify-content:center;gap:10px;padding:10px}
+.software-api>span:first-child{font-size:13px;font-weight:500;letter-spacing:.02em;color:#b5d6f5}
+.api-adapters{display:flex;gap:7px;width:100%;justify-content:center}
+.api-adapters>i{font-size:10px;font-style:normal;font-weight:400;padding:3px 8px;border:1px solid #4a677f;color:#b6cbdc}
 .mine-twin-capabilities .mine-actions{margin-top:22px;gap:8px 24px}
+.mine-home-refined .mine-twin-capabilities .mine-actions :is(a,button){font-size:12px}
 .mine-home-refined .mine-twin .mine-actions :is(a,button){color:#cce1ee}
 .mine-home-refined .mine-twin .mine-actions a{text-decoration:underline;text-underline-offset:6px;text-decoration-color:#5d7a96}
 .mine-home-refined .mine-twin :is(a,summary):focus-visible{outline:2px solid #d4eafb;outline-offset:4px}
@@ -135,10 +163,31 @@
  .mine-research-summary>p{font-size:14px}
  .mine-twin-intro{grid-template-columns:1fr;gap:18px;margin-bottom:24px}
  .mine-twin-intro>p{font-size:14px}
- .mine-twin-panel{grid-template-columns:1fr;gap:16px;padding:20px}
+ .mine-twin-panel{grid-template-columns:1fr;gap:24px;padding:16px}
  .mine-twin-capabilities .accordion summary{font-size:16px;padding-block:16px}
  .mine-twin-capabilities .accordion summary::after{top:15px}
  .mine-home-refined .mine-twin-capabilities .accordion p{font-size:14px}
+ .software-modules-heading{font-size:12px;margin-bottom:12px}
+ .software-modules-heading small{font-size:9px}
+ .software-module-grid{gap:10px}
+ .mine-twin-capabilities .software-module summary{padding:12px;font-size:14px}
+ .mine-twin-capabilities .software-module summary::after{right:10px;top:8px;font-size:18px}
+ .software-module-visual{height:64px;margin:12px 0 9px}
+ .software-module-title{padding-right:16px}
+ .software-module-caption{font-size:10px;line-height:1.6}
+ .software-module-detail{padding:0 12px 12px}
+ .mine-home-refined .software-module-detail h3{font-size:11px}
+ .software-schedule{padding:7px;gap:5px}
+ .software-schedule b{font-size:8px;width:17px}
+ .software-schedule>span{gap:3px;height:10px}
+ .task-block{height:10px}
+ .software-records{gap:7px;padding:8px}
+ .record-thumb{width:33px;height:40px}
+ .record-lines>span{font-size:7px;white-space:normal}
+ .software-api{gap:8px;padding:6px}
+ .software-api>span:first-child{font-size:11px}
+ .api-adapters{gap:4px}
+ .api-adapters>i{font-size:8px;padding:2px 5px}
  .mine-home-refined .mine-twin-overview figcaption{font-size:11px;line-height:1.7}
  .mine-research-photo img{aspect-ratio:1.8;object-position:center 60%}
  .mine-section-copy>p:not(.mine-kicker){font-size:14px}
