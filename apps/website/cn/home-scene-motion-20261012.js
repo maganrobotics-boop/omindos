@@ -10,7 +10,7 @@
   let userChoice = null;
   let failed = false;
   let pending = false;
-  const shouldPlay = () => !failed && visible && !document.hidden &&
+  const shouldPlay = () => !failed && visible && !document.hidden && !video.closest('[hidden]') &&
     (userChoice === true || (userChoice === null && !reduced.matches));
   const label = () => {
     toggle.textContent = video.paused ? '播放视频' : '暂停视频';
@@ -50,6 +50,7 @@
   });
   reduced.addEventListener('change', () => { userChoice = null; update(); });
   document.addEventListener('visibilitychange', update);
+  document.addEventListener('home:panelchange', update);
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting; update();

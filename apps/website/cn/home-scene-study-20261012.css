@@ -1,0 +1,87 @@
+/* Present field evidence, operating environments and robot development separately. */
+.mine-home-refined [data-content-tabs] [hidden]{display:none!important}
+.content-tabs{display:flex;align-items:stretch;gap:28px;border-bottom:1px solid #d4dee4}
+.mine-home-refined .content-tabs button{appearance:none;width:auto;min-height:48px;padding:0 0 1px;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;box-shadow:none;color:#71838e;font:inherit;font-size:14px;font-weight:500;line-height:1.5;text-align:center;cursor:pointer}
+.mine-home-refined .content-tabs button[aria-selected="true"]{border-bottom-color:#234f6c;color:#183e52}
+.content-tabs button:focus-visible{outline-offset:-4px!important}
+.field-records-player{min-width:0;background:#f0f4f6}
+.field-record-tabs{padding-inline:20px;background:#f0f4f6}
+.field-records-player .field-record-panel{display:block}
+.field-records-player .field-record-panel[hidden]{display:none}
+.mine-home-refined .field-records-player .field-record-panel figcaption{padding:15px 20px;min-height:94px;background:#f0f4f6}
+.field-records-player .field-film-controls{gap:18px}
+.mine-scene-study{background:#f3f5f6}
+.mine-scene-study .mine-section-heading{margin-bottom:36px}
+.scene-tabs{display:none}
+.scene-study-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.scene-study{min-width:0}
+.mine-home-refined .scene-study h3{font-size:21px;color:#203d4d;font-weight:500;margin:0 0 16px;letter-spacing:0}
+.scene-study .match-scene-figure{position:relative;background:#122e3d}
+.mine-home-refined .scene-study .match-scene-figure>figcaption{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0 8px;min-height:44px;padding:0 14px;background:#122e3d;color:#c1d1dc;font-size:11px;line-height:1.6}
+.mine-home-refined .scene-study .scene-motion-toggle,.mine-home-refined .scene-study .scene-gallery-controls button{min-width:44px;min-height:44px;padding:0;border:0;background:none;color:#e0ebf0;font:inherit;font-size:11px;text-underline-offset:4px;cursor:pointer}
+.scene-study .scene-motion-status{width:100%;padding-bottom:8px;font-size:11px}
+.scene-study .scene-gallery-controls{gap:12px}
+.scene-study .match-scene-media{aspect-ratio:16/9}
+.scene-study .scene-gallery-progress{bottom:44px}
+.mine-home-refined .scene-task{margin:0;padding:16px 0 0;color:#274756;font-size:15px;line-height:1.65}
+.scene-task>span{display:block;margin-bottom:4px;color:#7b8d96;font-size:10px;letter-spacing:.08em}
+.platform-lineup-heading{display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-top:44px;padding-top:32px;border-top:1px solid #ced9df;margin-bottom:22px}
+.mine-home-refined .platform-lineup-heading h3{font-size:24px;font-weight:500;margin:0;letter-spacing:-.02em;color:#203d4d}
+.mine-home-refined .platform-lineup-heading p{font-size:12px;color:#6c7e89;margin:0}
+.mine-home-refined .platform-lineup{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;background:#fff}
+.mine-home-refined .platform-lineup .platform-unit{display:block;padding:26px 26px 22px;border:0;border-radius:0;background:none;overflow:visible}
+.platform-lineup .platform-unit+.platform-unit{border-left:1px solid #edf1f4}
+.platform-unit .match-platform{display:flex;flex-direction:column;gap:0;padding:0;height:100%;align-items:stretch}
+.mine-home-refined .platform-unit .match-robot-picture{padding:0;background:none}
+.mine-home-refined .platform-unit .match-robot-picture img{display:block;width:100%;height:200px;object-fit:contain;padding:0;background:none}
+.mine-home-refined .platform-unit .match-robot-picture figcaption{display:block;min-height:0;margin:12px 0 0;padding:0;background:none;color:#7b8c96;font-size:10px;line-height:1.6}
+.platform-unit .match-platform-copy{padding:22px 0 0;display:flex;flex-direction:column;flex:1}
+.platform-unit .match-model{margin-bottom:10px!important}
+.platform-unit .match-model strong{font-size:34px;font-weight:500}
+.mine-home-refined .platform-unit .match-model .sale-badge{padding:0;border:0;background:none;font-size:10px;color:#748b99}
+.mine-home-refined .platform-unit .match-platform-copy h3{font-size:20px;font-weight:500}
+.mine-home-refined .platform-unit .match-platform-copy>p:not(.match-model){font-size:13px;line-height:1.8;min-height:47px}
+.mine-home-refined .platform-unit .mine-actions :is(a,button){font-size:12px}
+@media(max-width:1000px){
+ .scene-study-grid{gap:18px}
+ .mine-home-refined .platform-lineup .platform-unit{padding:22px 20px 18px}
+ .mine-home-refined .platform-unit .match-robot-picture img{height:170px}
+ .mine-home-refined .scene-task{font-size:14px}
+ .mine-home-refined .scene-study h3{font-size:20px}
+}
+@media(max-width:760px){
+ .mine-scene-study .mine-section-heading{margin-bottom:25px}
+ .mine-scene-study .mine-section-heading>p{margin-top:16px;font-size:13px}
+ .scene-showcase.tabs-ready .scene-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-bottom:20px}
+ .scene-showcase.tabs-ready .scene-study h3{display:none}
+ .scene-study-grid{grid-template-columns:1fr;gap:28px}
+ .mine-home-refined .content-tabs button{font-size:14px;min-height:48px}
+ .scene-showcase .content-tabs button{padding-inline:4px}
+ .mine-home-refined .scene-task{font-size:15px;padding-top:14px}
+ .scene-task>span{display:inline;margin-right:12px;font-size:10px}
+ .platform-lineup-heading{display:block;margin-top:34px;padding-top:26px;margin-bottom:18px}
+ .mine-home-refined .platform-lineup-heading h3{font-size:23px;margin-bottom:7px}
+ .mine-home-refined .platform-lineup-heading p{font-size:11px}
+ .mine-home-refined .platform-lineup{grid-template-columns:1fr}
+ .mine-home-refined .platform-lineup .platform-unit{padding:24px 18px;border-left:0}
+ .platform-lineup .platform-unit+.platform-unit{border-top:1px solid #e5ebef}
+ .platform-unit .match-platform{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:18px;height:auto}
+ .mine-home-refined .platform-unit .match-robot-picture img{height:146px}
+ .mine-home-refined .platform-unit .match-robot-picture figcaption{margin-top:10px;font-size:9px}
+ .platform-unit .match-platform-copy{padding:0}
+ .platform-unit .match-model strong{font-size:30px}
+ .mine-home-refined .platform-unit .match-model .sale-badge{font-size:9px}
+ .mine-home-refined .platform-unit .match-platform-copy h3{font-size:17px;line-height:1.45;margin-bottom:8px}
+ .mine-home-refined .platform-unit .match-platform-copy>p:not(.match-model){font-size:12px;min-height:0}
+ .platform-unit .match-platform-copy .mine-actions{padding-top:10px;gap:0 16px}
+ .mine-home-refined .platform-unit .mine-actions :is(a,button){font-size:11px;min-height:44px}
+ .field-record-tabs{padding-inline:16px;gap:28px}
+ .mine-home-refined .field-records-player .field-record-panel figcaption{padding:12px 16px;min-height:100px}
+}
+@media(max-width:360px){
+ .mine-home-refined .platform-lineup .platform-unit{padding:22px 12px}
+ .platform-unit .match-platform{gap:12px;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+ .mine-home-refined .platform-unit .match-robot-picture img{height:120px}
+ .mine-home-refined .platform-unit .match-platform-copy h3{font-size:16px}
+ .mine-home-refined .content-tabs button{font-size:13px}
+}
