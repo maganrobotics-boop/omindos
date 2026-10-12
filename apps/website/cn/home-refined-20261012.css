@@ -31,7 +31,12 @@
 .mine-opening[data-hero-motion] .mining-hero-visual img{animation:mine-refined-drift 20s ease-in-out infinite alternate;animation-play-state:paused}
 .mine-opening[data-hero-motion="running"] .mining-hero-visual img{animation-play-state:running}
 @keyframes mine-refined-drift{from{transform:scale(1.015) translate3d(-.15%,0,0)}to{transform:scale(1.055) translate3d(.15%,-.15%,0)}}
-.mine-research-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:80px;align-items:center}
+.mine-research-grid{display:block}
+.mine-research .mine-section-copy{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:72px;align-items:center;margin-bottom:28px}
+.mine-research .mine-section-copy h2{margin-bottom:0}
+.mine-research-summary>p{margin:0;color:#5a6871;font-size:16px}
+.mine-research-summary .mine-research-steps{margin-top:16px}
+.mine-research-grid>.mine-actions{margin-top:18px}
 .mine-research-photo{position:relative;overflow:hidden;background:#122c3c}
 .mine-research-photo img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;object-position:50% 64%}
 .mine-research-photo figcaption{position:absolute;bottom:0;left:0;right:0;padding:22px 18px 12px;background:linear-gradient(transparent,#031421ba);color:#eef4f7!important}
@@ -79,7 +84,7 @@
 .mine-twin-capabilities .accordion[open] summary::after{content:"−"}
 .mine-home-refined .mine-twin-capabilities .accordion p{margin:0 0 18px;padding:0;color:#b4c4ce;font-size:14px;line-height:1.85}
 .mine-twin-capabilities .mine-actions{margin-top:22px;gap:8px 24px}
-.mine-home-refined .mine-twin .mine-actions a{color:#cce1ee}
+.mine-home-refined .mine-twin .mine-actions :is(a,button){color:#cce1ee}
 .mine-home-refined .mine-twin .mine-actions a{text-decoration:underline;text-underline-offset:6px;text-decoration-color:#5d7a96}
 .mine-home-refined .mine-twin :is(a,summary):focus-visible{outline:2px solid #d4eafb;outline-offset:4px}
 .mine-team{padding-block:56px;background:#fff}
@@ -103,7 +108,7 @@
 #field-journey,#platform-scenes,#mine-digital-twin,#team,#home-platform-tracked,#home-platform-wheeled,#home-platform-quadruped{scroll-margin-top:90px}
 @media(max-width:1000px){
  .mine-wrap{padding-inline:28px}.mine-section{padding-block:56px}
- .mine-research-grid,.mine-twin-intro{gap:36px}
+ .mine-research .mine-section-copy,.mine-twin-intro{gap:36px}
  .mine-twin-panel{gap:24px;padding:24px}
  .mine-products{gap:16px}.mine-product-body{padding:16px}
  .mine-home-refined main h3{font-size:20px}
@@ -126,7 +131,8 @@
  .mine-opening .mining-hero-visual::after{background:linear-gradient(180deg,transparent 45%,#06142020)}
  .mine-opening .mining-hero-visual figcaption{right:22px;bottom:24px;font-size:8px}
  .mine-opening .hero-motion-toggle{left:22px;bottom:14px;font-size:10px;padding-inline:10px}
- .mine-research-grid{grid-template-columns:1fr;gap:26px}
+ .mine-research .mine-section-copy{grid-template-columns:1fr;gap:18px;margin-bottom:24px}
+ .mine-research-summary>p{font-size:14px}
  .mine-twin-intro{grid-template-columns:1fr;gap:18px;margin-bottom:24px}
  .mine-twin-intro>p{font-size:14px}
  .mine-twin-panel{grid-template-columns:1fr;gap:16px;padding:20px}
