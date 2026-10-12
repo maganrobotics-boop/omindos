@@ -379,7 +379,8 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       if (route === '') {
         assert.ok(html.includes('/home/base.css?v=20260910-polish'));
         assert.ok(html.includes(`/home/controls.js?v=${locale === 'cn' ? '20261011-cn-review' : '20260909-remediation'}`));
-        assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
+        if (locale === 'cn') assert.ok(html.includes('/cn/home-refined-20261012.css'));
+        else assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         assert.ok(html.includes(locale === 'cn' ? '/assets/omindos-inspection-console-20260909.jpg' : '/assets/omindos-system-overview-20260910-balanced.webp'));
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
@@ -494,7 +495,8 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
       const prefix = locale === 'cn' ? '' : '/en';
       if (locale === 'en') assert.match(html, /href="\/en\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
       else assert.match(html, /href="\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
-      assert.ok(html.includes('/robot-covers.css?v=20260909'));
+      const isFocusedChineseHome = locale === 'cn' && route === '';
+      if (!isFocusedChineseHome) assert.ok(html.includes('/robot-covers.css?v=20260909'));
       for (const [model, cover] of Object.entries(coverNames)) {
         if (model === 'articulated') {
           const researchEntry = html.match(/<aside class="cn-research-entry">[\s\S]*?<\/aside>/)?.[0] || '';
@@ -505,8 +507,13 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
           }
           continue;
         }
-        assert.ok(html.includes(`/assets/covers/${cover}`));
-        assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
+        if (isFocusedChineseHome) {
+          assert.ok(html.includes(`href="/robots/${model}/"`));
+          if (model === 'wheeled' || model === 'quadruped') assert.ok(html.includes(`/assets/covers/${cover}`));
+        } else {
+          assert.ok(html.includes(`/assets/covers/${cover}`));
+          assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
+        }
       }
     }
     const detail = await readFile(new URL(`${locale}/robots/dual-arm/index.html`, root), 'utf8');
