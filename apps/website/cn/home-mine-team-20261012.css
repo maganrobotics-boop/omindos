@@ -23,6 +23,7 @@
 .tracked-field-records figcaption{color:#566770;font-size:13px;line-height:1.6;margin-top:10px}
 .tracked-records-links{display:flex;flex-wrap:wrap;align-items:center;gap:8px 28px;margin-top:20px}
 .tracked-records-links .text-link{display:inline-flex;align-items:center;min-height:44px;margin:0;font-size:15px}
+.tracked-records-links button.text-link{background:none;border:0;padding:0;font-family:inherit;color:inherit;cursor:pointer}
 .tracked-field-records :is(a,button,video):focus-visible{outline:2px solid #2458df;outline-offset:4px}
 @media(max-width:900px){.tracked-records-grid{grid-template-columns:1fr}.tracked-record-images img{aspect-ratio:16/10}.tracked-record-images figure:first-child img{object-position:50% 28%}}
 @media(max-width:700px){
