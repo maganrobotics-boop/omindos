@@ -216,6 +216,10 @@ test('robot availability distinguishes Chinese mine development from catalogue p
       const isFocusedChineseHome = locale === 'cn' && route === '';
       assert.equal(cards.length, isFocusedChineseHome ? 3 : 6);
       if (isFocusedChineseHome) {
+        const fieldRecords = page.match(/<section\b[^>]*id="field-journey"[\s\S]*?<\/section>/)?.[0] || '';
+        assert.match(fieldRecords, /id="roadway-motion"/);
+        assert.match(fieldRecords, /id="field-mapping-motion"/);
+        for (const card of cards) assert.doesNotMatch(card, /<video\b/, 'scene and validation media must not imply a product demonstration');
         for (const model of ['mobile-dual-arm', 'dual-arm', 'wheel-legged', 'open-frame']) {
           assert.ok(page.includes('href="/robots/' + model + '/"'), model + ' remains reachable from the homepage');
         }
@@ -236,7 +240,8 @@ test('robot availability distinguishes Chinese mine development from catalogue p
           const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
           assert.deepEqual(actions.map(([, href]) => href), ['/field-work/mining/#field-records']);
           assert.match(card, /data-video-src="\/assets\/videos\/1000087153-web.mp4"/);
-          assert.match(card, /id="longwall-motion"/);
+          assert.doesNotMatch(card, /<video\b/);
+          assert.match(page, /id="scene-panel-longwall"[\s\S]*?id="longwall-motion"/);
           assert.ok(page.includes('id="platform-scenes"'));
           continue;
         }
