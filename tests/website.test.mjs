@@ -531,9 +531,9 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         if (isFocusedChineseHome) {
           assert.ok(html.includes(`href="/robots/${model}/"`));
           if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-white-20261013/w1.webp'));
-          if (model === 'quadruped') assert.ok(html.includes('/cn/assets/robot-white-20261013/q1.webp'));
+          if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-cad-20261013/q1-original-sensors.webp'));
         } else {
-          const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-20261013/q1-gloss.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${cover}`;
+          const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${cover}`;
           assert.ok(html.includes(expectedCover));
           assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
         }
@@ -561,7 +561,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         assert.match(product, /class="ar-hero-figure"/);
         assert.match(product, /研究原型数据，非交付性能承诺/);
       } else {
-        const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-20261013/q1-gloss.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${coverNames[model]}`;
+        const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${coverNames[model]}`;
         assert.ok(product.includes(expectedCover));
         assert.match(product, /class="media product-detail-image" data-robot-cover/);
       }

@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-13",
+  "scope": "Chinese Q1 product cover images and simulation poster",
+  "source": {
+    "name": "Q1_original_sensor_preview.jpg",
+    "sha256": "30be1c42381871b68f86bfc99b3a564ad87b601e82061bda1b23220f37bbffd5",
+    "description": "Q1 exterior CAD concept with original camera and both MID-360 placements, matte graphite housings"
+  },
+  "asset": {
+    "path": "apps/website/cn/assets/q1-cad-20261013/q1-original-sensors.webp",
+    "sha256": "2fd683903fe730dd0d353232f3c7de54b1b5e0f249bf1ff357bd7f216477f577",
+    "bytes": 53840,
+    "width": 1800,
+    "height": 1200
+  },
+  "routes": [
+    "/",
+    "/robots/",
+    "/robots/quadruped/",
+    "/integration/"
+  ],
+  "candidate_checks": {
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "passed": 12,
+    "overflow": false,
+    "page_errors": [],
+    "audit_new_findings": []
+  },
+  "rollback_release": "20261013-cn-home-white-robots-pr95"
+}
