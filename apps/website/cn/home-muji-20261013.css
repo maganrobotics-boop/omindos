@@ -1,0 +1,112 @@
+/* Homepage palette and type scale, aligned with the Chinese inner pages. */
+:root {
+  --paper: #f5f3ef;
+  --ink: #30302d;
+  --muted: #68665f;
+  --line: #dcd8d0;
+  --night: #292a27;
+  --pale: #cccac3;
+  --night-line: #ffffff26;
+  --gold: #c9bc9f;
+  --cn-title: clamp(30px, 3.5vw, 48px);
+  --cn-heading: clamp(26px, 2.6vw, 36px);
+}
+
+html[lang="zh-CN"] { line-break: strict; }
+html[lang="zh-CN"] .hero h1 {
+  font-size: var(--cn-title);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -.02em;
+  text-shadow: none;
+}
+html[lang="zh-CN"] main .section h2,
+html[lang="zh-CN"] main .section .team-title {
+  font-size: var(--cn-heading) !important;
+  font-weight: 500;
+  line-height: 1.35 !important;
+  letter-spacing: -.015em !important;
+  text-wrap: wrap;
+}
+html[lang="zh-CN"] main .section h3 {
+  font-size: clamp(20px, 1.6vw, 23px);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.kicker { font-size: 13px; letter-spacing: .06em; margin-bottom: 16px; }
+.section-heading { margin-bottom: 36px; }
+.scene-section, .team-section { background: var(--paper); }
+.night { color: #f5f3ef; }
+.night .kicker, .night .section-foot { color: var(--pale); }
+.night .text-link { color: #f5f3ef; }
+.team-sub { font-size: 18px; margin-top: 16px; }
+.team-foot-copy { font-size: 20px; font-weight: 500; letter-spacing: 0; }
+
+/* A calm, opaque navigation bar shared in wording and destinations with inner pages. */
+.site-header { background: var(--paper); color: var(--ink); border-bottom: 1px solid var(--line); }
+.header-inner { gap: 28px; }
+.main-nav { gap: 24px; }
+.brand { font-weight: 500; letter-spacing: -.025em; }
+.header-contact { border-color: #aaa59b; }
+.locale-switch { color: var(--muted); }
+.locale-switch a[aria-current] { color: var(--ink); }
+.mobile-nav { background: var(--paper); color: var(--ink); border-color: var(--line); }
+.mobile-nav a { border-color: var(--line); }
+
+/* Blur only the background; the copy and navigation stay crisp. */
+.hero { background: #292a27; }
+.hero-image { filter: brightness(.72) saturate(.58) blur(3px); }
+.hero:after {
+  background: linear-gradient(90deg, #181914a8, #18191420 78%),
+    linear-gradient(180deg, #18191430, transparent 45%, #1819144a);
+}
+.hero-copy { top: 37%; }
+.hero .kicker, .hero-sub { color: #eeeae2; }
+.hero-sub { font-size: 20px; margin-top: 18px; }
+.hero .text-link { border-color: #d0c9bb; }
+.hero-bottom, .hero-motion-toggle { color: #ded9ce; }
+.hero-motion-toggle { border-color: #ded9ce80; }
+
+/* Remove the blue cast from UI surfaces, while retaining the original media. */
+.scene-card figure { background: #dedbd3; }
+.system-scene, .field-image { background: var(--night); }
+.system-shade {
+  background: radial-gradient(ellipse 35% 49% at 52% 31%, #1819149a 0%, #18191469 55%, transparent 100%),
+    linear-gradient(180deg, #292a274a, transparent 45%, transparent 75%, #292a2785);
+}
+.system-kicker, .function small, .exchange, .function-detail p { color: #ded9ce; }
+.function { color: #f5f3ef; }
+.function svg { stroke: #d1cbbb; }
+.connectors { stroke: #d1cbbb; }
+.nodes { fill: #eeeae2; stroke: #c9bc9f66; }
+.functions, .function:nth-child(even), .function:nth-child(n+3) { border-color: #ffffff26; }
+.robot-label { color: #f5f3ef; }
+.detail-close { color: var(--pale); }
+.status { background: #eeece6; color: #646157; }
+.platform-caption { color: var(--muted); }
+.play-icon { background: #292a2740; }
+.footer { background: #232420; color: #ded9ce; }
+.footer .brand, .footer h3 { color: #f5f3ef; }
+.footer-description, .footer nav a, .research-links, .top-link { color: #ccc7bc; }
+.footer-bottom { color: #b8b3a8; }
+.video-dialog { background: var(--night); border-color: #777267; }
+.video-help { color: var(--pale); }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline-color: #9e8764; }
+::selection { color: #fff; background: #6d6659; }
+
+@media (max-width: 1100px) {
+  .main-nav, .header-contact { display: none; }
+  .menu-toggle { display: block; }
+  .locale-switch { margin-left: auto; }
+}
+@media (max-width: 760px) {
+  .hero-image { filter: brightness(.7) saturate(.58) blur(2.5px); }
+  .hero-copy { top: 34%; }
+  .hero-sub { font-size: 16px; }
+  .kicker { font-size: 12px; margin-bottom: 14px; }
+  .team-sub { font-size: 17px; }
+  .team-title .team-name { white-space: normal; }
+  .system-shade { background: linear-gradient(180deg, #292a27 0%, #292a27 48%, transparent 63%, transparent 82%, #292a27 99%); }
+  .exchange:after { border-color: #d1cbbb6e; }
+}
