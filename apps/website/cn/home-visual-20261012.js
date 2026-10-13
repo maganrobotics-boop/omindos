@@ -1,11 +1,12 @@
 (() => {
   const menuToggle=document.querySelector('.menu-toggle');
-  const menu=document.getElementById('mobile-nav');
-  const setMenu=open=>{menu.hidden=!open;menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'关闭导航':'打开导航');};
+  const menu=document.getElementById('mobile-menu');
+  const setMenu=open=>{menu.hidden=!open;document.body.classList.toggle('menu-open',open);menuToggle.setAttribute('aria-expanded',String(open));menuToggle.setAttribute('aria-label',open?'关闭菜单':'打开菜单');if(open)menu.querySelector('a')?.focus();};
   menuToggle.addEventListener('click',()=>setMenu(menu.hidden));
   menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){setMenu(false);menuToggle.focus();}});
-  window.matchMedia('(min-width:1101px)').addEventListener('change',e=>{if(e.matches)setMenu(false);});
+  document.addEventListener('keydown',e=>{if(menu.hidden||e.key!=='Tab')return;const items=[menuToggle,...menu.querySelectorAll('a')];const first=items[0],last=items[items.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}});
+  window.matchMedia('(min-width:1100px)').addEventListener('change',e=>{if(e.matches)setMenu(false);});
 
   const descriptions={map:['地图与孪生','组织环境地图、巡检点位与机器人位置。'],task:['任务与调度','编排巡检路线、动作与采集步骤。'],data:['数据与反馈','查看机器人状态与任务执行记录。'],api:['接口与集成','适配感知、导航和控制接口，支持部署验证。']};
   const featureButtons=[...document.querySelectorAll('.function')];
