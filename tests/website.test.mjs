@@ -269,7 +269,8 @@ test('robot availability distinguishes Chinese mine development from catalogue p
       }
     }
     const page = await readFile(new URL(`${locale}/robots/quadruped/index.html`, root), 'utf8');
-    assert.match(page, new RegExp(`>${development}<`, 'i'));
+    assert.match(page, new RegExp(`>${locale === 'cn' ? '工程样机研发中' : development}<`, 'i'));
+    if (locale === 'cn') assert.equal((page.match(/研发中/g) || []).length, 1, 'Q1 development status appears once');
     assert.doesNotMatch(page, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
     assert.match(page, /id="specifications"/);
     assert.match(page, /id="videos"/);
