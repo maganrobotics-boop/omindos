@@ -23,7 +23,7 @@ html[lang="zh-CN"] .hero h1 {
 html[lang="zh-CN"] main .section h2,
 html[lang="zh-CN"] main .section .team-title {
   font-size: var(--cn-heading) !important;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.35 !important;
   letter-spacing: -.015em !important;
   text-wrap: wrap;
