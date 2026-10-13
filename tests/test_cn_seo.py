@@ -17,7 +17,8 @@ class Tags(HTMLParser):
 class ChineseSEO(unittest.TestCase):
     def test_all_pages_use_verified_primary_urls_and_language_targets(self):
         known = cn_seo.routes(ROOT)
-        self.assertEqual(len(known), 19)
+        self.assertEqual(len(known), 23)
+        chinese_only = {'/join/', '/careers/', '/lab/', '/lab/join/'}
         for route in known:
             with self.subTest(route=route):
                 page = ROOT / 'cn' / route.strip('/') / 'index.html'
@@ -28,10 +29,15 @@ class ChineseSEO(unittest.TestCase):
                 self.assertEqual(canonical, [cn_seo.CN_ORIGIN + route])
                 self.assertEqual(og, canonical)
                 expected_alternates = {'zh-CN':canonical[0]}
-                expected_alternates['en'] = cn_seo.EN_ORIGIN+'/en'+route
+                if route not in chinese_only:
+                    expected_alternates['en'] = cn_seo.EN_ORIGIN+'/en'+route
                 self.assertEqual(alternates, expected_alternates)
                 self.assertEqual(cn_seo.rewrite(source, route, known), source)
-                self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
+                if route not in chinese_only:
+                    self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
+                else:
+                    self.assertIn('href="https://omindos.ai/en/"', source)
+                    self.assertNotIn('href="https://omindos.ai/en'+route+'"', source)
                 for t,a in tags:
                     if t=='a':
                         href=a.get('href','')
