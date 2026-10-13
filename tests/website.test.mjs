@@ -214,7 +214,7 @@ test('robot availability distinguishes Chinese mine development from catalogue p
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
         .map(match => match[0]).filter(card => /class="[^"]*\b(?:mine-product|sale-image|product-picture)\b[^"]*"/.test(card));
       const isFocusedChineseHome = locale === 'cn' && route === '';
-      assert.equal(cards.length, isFocusedChineseHome ? 4 : 6);
+      assert.equal(cards.length, isFocusedChineseHome ? 4 : locale === 'cn' ? 7 : 6);
       if (isFocusedChineseHome) {
         const fieldRecords = page.match(/<section\b[^>]*id="field"[\s\S]*?<\/section>/)?.[0] || '';
         assert.match(fieldRecords, /data-video="\/assets\/videos\/roadway-field-20261012.mp4"/);
@@ -253,10 +253,18 @@ test('robot availability distinguishes Chinese mine development from catalogue p
           continue;
         }
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
+        if (locale === 'cn' && card.includes('id="catalogue-platform-tracked"')) {
+          assert.match(card, /T1<\/span>/);
+          assert.match(card, /BUNKER MINI/);
+          assert.match(card, /href="\/field-work\/mining\/#field-records"/);
+          assert.doesNotMatch(card, /<video\b|产品样机|在售/);
+          continue;
+        }
+        const isChineseWheeled = locale === 'cn' && card.includes('/robots/wheeled/');
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
         const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
         const isMobileDualArm = card.includes(`${prefix}/robots/mobile-dual-arm/`);
-        const expectedStatus = isMineDevelopment ? '实机研发中' : locale === 'cn' ? ((isQuadruped || isMobileDualArm) ? development : '产品样机') : (isQuadruped || isMobileDualArm) ? development : sale;
+        const expectedStatus = isMineDevelopment ? '实机研发中' : locale === 'cn' ? ((isQuadruped || isMobileDualArm || isChineseWheeled) ? development : '产品样机') : (isQuadruped || isMobileDualArm) ? development : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
@@ -534,7 +542,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
           if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-white-20261013/w1.webp'));
           if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-cad-20261013/q1-original-sensors.webp'));
         } else {
-          const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${cover}`;
+          const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${cover}`;
           assert.ok(html.includes(expectedCover));
           assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
         }
@@ -562,7 +570,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         assert.match(product, /class="ar-hero-figure"/);
         assert.match(product, /研究原型数据，非交付性能承诺/);
       } else {
-        const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${coverNames[model]}`;
+        const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${coverNames[model]}`;
         assert.ok(product.includes(expectedCover));
         assert.match(product, /class="media product-detail-image" data-robot-cover/);
       }
@@ -863,3 +871,4 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
+
