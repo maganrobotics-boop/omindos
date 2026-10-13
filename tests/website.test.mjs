@@ -530,8 +530,8 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         }
         if (isFocusedChineseHome) {
           assert.ok(html.includes(`href="/robots/${model}/"`));
-          if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-shells-20261013/w1.webp'));
-          if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-20261013/q1-gloss.webp'));
+          if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-white-20261013/w1.webp'));
+          if (model === 'quadruped') assert.ok(html.includes('/cn/assets/robot-white-20261013/q1.webp'));
         } else {
           const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-20261013/q1-gloss.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-shells-20261013/w1.webp' : `/assets/covers/${cover}`;
           assert.ok(html.includes(expectedCover));

@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-13",
+  "tool": "built-in image_gen",
+  "scope": "Chinese homepage product lineup only",
+  "assets": [
+    {
+      "model": "Q1",
+      "source": "apps/website/cn/assets/q1-20261013/q1-gloss.webp",
+      "output": "apps/website/cn/assets/robot-white-20261013/q1.webp",
+      "prompt": "Use case: precise-object-edit. Edit target: the attached Q1 product image. For the existing Chinese robotics website product card, change ONLY the gray studio background and floor to pure clean white #FFFFFF, corner to corner. Preserve the exact robot design, red and black colors, all four legs, camera, sensors, mechanical details, OriginMind Q1 lettering, pose, camera angle and proportions. Keep the full robot with comfortable white margin, centered, landscape 3:2 composition. Keep only a very subtle soft contact shadow under the feet, eliminate gray backdrop gradients and mirror floor reflection. Do not redesign, add, or remove any robot parts. High fidelity background replacement, no added text or frame."
+    },
+    {
+      "model": "T1",
+      "source": "apps/website/cn/assets/robot-shells-20261013/t1.webp",
+      "output": "apps/website/cn/assets/robot-white-20261013/t1.webp",
+      "prompt": "Use case: precise-object-edit. Edit target: the attached T1 tracked robot image. For its existing website product card, change ONLY the gray studio background and floor to pure clean white #FFFFFF, corner to corner. Preserve the exact BUNKER MINI-based tracked robot, both tracks and wheels, silver armor, dark panels, red highlights, sensors and camera mast, screen, emergency stop and OriginMind T1 markings. Same pose, camera angle and proportions. Full robot centered with comfortable white margin, landscape 3:2 composition. Keep only subtle soft contact shadow directly beneath the tracks, no gray background gradient. No redesign, extra parts, added text or frame."
+    },
+    {
+      "model": "W1",
+      "source": "apps/website/cn/assets/robot-shells-20261013/w1.webp",
+      "output": "apps/website/cn/assets/robot-white-20261013/w1.webp",
+      "prompt": "Use case: precise-object-edit. Edit target: the attached W1 wheeled robot image. For its existing website product card, change ONLY the gray studio background and floor to pure clean white #FFFFFF, corner to corner. Preserve this exact SCOUT MINI-based four-wheeled robot, all wheels, red hubs, silver bodywork, dark bumper, camera and lidar mast, red emergency stop, screen and OriginMind markings. Same camera angle, stance, proportions, materials and precise design. Full robot centered with comfortable white margin, landscape 3:2 composition. Keep only very subtle soft contact shadow below the tires, remove all gray backdrop gradients. No redesign, extra parts, added text or frame."
+    },
+    {
+      "model": "MDA1",
+      "source": "apps/website/cn/assets/mda1-product-white-20261011.webp",
+      "output": "apps/website/cn/assets/robot-white-20261013/mda1.webp",
+      "prompt": "Use case: style-transfer. Edit target: the attached existing MDA1 mobile dual-arm robot simulation render. Turn this exact robot into a crisp, refined industrial product visualization on a seamless PURE WHITE #FFFFFF background, for a robotics company's website product lineup. Preserve its actual structure and silhouette: ONE compact rectangular wheeled mobile base with the same lower wheel arrangement, ONE central broad dark articulated waist/torso, TWO blue-and-white articulated robot arms in the same bent pose, ONE parallel-jaw gripper on each arm, and the small black rounded sensor head. Preserve the geometry, proportions, joint count, gripper shape, torso angles, base dimensions and overall design. Do not turn it into a humanoid with legs or add fingers, extra arms, screens, armor fins or new hardware. Improve only render quality: precise clean edges, realistic satin charcoal metal torso and base, polished light-blue joint housings and soft white arm links, controlled soft studio highlights, clear material separation, believable restrained ambient occlusion. Avoid plastic toy look and rough polygon shading. Maintain three-quarter view. Center the full robot, enlarge within a landscape 3:2 frame to about 80% of canvas height, leave all parts uncropped with balanced white margins. Pure white floor with subtle contact shadow. No text, no watermark, no UI."
+    }
+  ],
+  "encoding": "WebP quality 90, original 1536×1024; format conversion only",
+  "note": "Product concept imagery; existing development status retained."
+}
