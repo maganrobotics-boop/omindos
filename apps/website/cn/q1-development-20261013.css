@@ -1,0 +1,10 @@
+/* Chinese Q1 concept imagery and its visible development status. */
+[data-q1-concept]{position:relative;isolation:isolate}
+.q1-development-badge{position:absolute;top:14px;right:14px;z-index:2;display:inline-block;padding:6px 11px;border:1px solid #ffffff36;border-radius:4px;background:#102b3fe8;color:#fff;font-size:12px;font-weight:500;line-height:1.6;letter-spacing:.04em;pointer-events:none}
+.q1-hero-status{position:absolute;right:6%;bottom:100px;z-index:2;margin:0;padding:9px 13px;border-left:2px solid #ddbc82;background:#0d243bd6;color:#fff;font-size:14px;font-weight:500;line-height:1.6;letter-spacing:.04em}
+.q1-hero-status span{display:block;margin-top:2px;color:#d5e4ed;font-size:11px;font-weight:400}
+.product-picture[data-q1-concept]>img,.product-detail-image[data-q1-concept]>img{background:#f2f4f7;padding:0}
+.product-detail-image[data-q1-concept]>img{aspect-ratio:1487/1058}
+#home-platform-quadruped [data-q1-concept]>img{mix-blend-mode:normal}
+.robot-label.right small{display:block;font-size:11px;line-height:1.5;margin-top:4px;color:#e5edf3}
+@media(max-width:760px){.q1-development-badge{top:10px;right:10px;font-size:11px;padding:5px 9px}.q1-hero-status{bottom:78px;font-size:12px;padding:7px 10px}.q1-hero-status span{font-size:10px}.robot-label.right small{display:block;font-size:9px}}

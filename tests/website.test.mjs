@@ -392,7 +392,7 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         if (locale === 'cn') {
           assert.ok(html.includes('/cn/home-visual-20261012.css'));
           assert.ok(html.includes('/cn/home-visual-20261012.js'));
-          assert.ok(html.includes('/cn/assets/home-visual-20261012/system-scene.webp'));
+          assert.ok(html.includes('/cn/assets/q1-20261013/q1-system-scene.webp'));
           assert.match(html, /id="function-detail"[^>]*hidden/);
           assert.equal((html.match(/class="function"/g) || []).length, 4);
           assert.doesNotMatch(html, /首页预览|data:image\//);
@@ -529,9 +529,11 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         }
         if (isFocusedChineseHome) {
           assert.ok(html.includes(`href="/robots/${model}/"`));
-          if (model === 'wheeled' || model === 'quadruped') assert.ok(html.includes(`/cn/assets/home-visual-20261012/${model}.webp`));
+          if (model === 'wheeled') assert.ok(html.includes(`/cn/assets/home-visual-20261012/${model}.webp`));
+          if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-20261013/q1-gloss.webp'));
         } else {
-          assert.ok(html.includes(`/assets/covers/${cover}`));
+          const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-20261013/q1-gloss.webp' : `/assets/covers/${cover}`;
+          assert.ok(html.includes(expectedCover));
           assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
         }
       }
@@ -558,7 +560,8 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         assert.match(product, /class="ar-hero-figure"/);
         assert.match(product, /研究原型数据，非交付性能承诺/);
       } else {
-        assert.ok(product.includes(`/assets/covers/${coverNames[model]}`));
+        const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-20261013/q1-gloss.webp' : `/assets/covers/${coverNames[model]}`;
+        assert.ok(product.includes(expectedCover));
         assert.match(product, /class="media product-detail-image" data-robot-cover/);
       }
     }
