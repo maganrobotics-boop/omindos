@@ -5,7 +5,7 @@
   menuToggle.addEventListener('click',()=>setMenu(menu.hidden));
   menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){setMenu(false);menuToggle.focus();}});
-  window.matchMedia('(min-width:921px)').addEventListener('change',e=>{if(e.matches)setMenu(false);});
+  window.matchMedia('(min-width:1101px)').addEventListener('change',e=>{if(e.matches)setMenu(false);});
 
   const descriptions={map:['地图与孪生','组织环境地图、巡检点位与机器人位置。'],task:['任务与调度','编排巡检路线、动作与采集步骤。'],data:['数据与反馈','查看机器人状态与任务执行记录。'],api:['接口与集成','适配感知、导航和控制接口，支持部署验证。']};
   const featureButtons=[...document.querySelectorAll('.function')];
@@ -40,3 +40,4 @@
   toggle.addEventListener('click',()=>{paused=!paused;updateMotion();});reduced.addEventListener('change',updateMotion);document.addEventListener('visibilitychange',updateMotion);
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;updateMotion();});observer.observe(hero);}updateMotion();
 })();
+
