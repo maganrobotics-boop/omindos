@@ -214,7 +214,7 @@ test('robot availability distinguishes Chinese mine development from catalogue p
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
         .map(match => match[0]).filter(card => /class="[^"]*\b(?:mine-product|sale-image|product-picture)\b[^"]*"/.test(card));
       const isFocusedChineseHome = locale === 'cn' && route === '';
-      assert.equal(cards.length, isFocusedChineseHome ? 3 : 6);
+      assert.equal(cards.length, isFocusedChineseHome ? 4 : 6);
       if (isFocusedChineseHome) {
         const fieldRecords = page.match(/<section\b[^>]*id="field"[\s\S]*?<\/section>/)?.[0] || '';
         assert.match(fieldRecords, /data-video="\/assets\/videos\/roadway-field-20261012.mp4"/);
@@ -226,7 +226,7 @@ test('robot availability distinguishes Chinese mine development from catalogue p
       }
       for (const card of cards) {
         const prefix = locale === 'cn' ? '' : '/en';
-        const isMineDevelopment = locale === 'cn' && route === '' && /id="home-platform-(?:tracked|wheeled|quadruped)"/.test(card);
+        const isMineDevelopment = locale === 'cn' && route === '' && /id="home-platform-(?:tracked|wheeled|quadruped|mobile-dual-arm)"/.test(card);
         if (isMineDevelopment) {
           assert.match(card, />研发中</);
           assert.doesNotMatch(card, />(?:在售|产品样机)</);
@@ -247,7 +247,7 @@ test('robot availability distinguishes Chinese mine development from catalogue p
           continue;
         }
         if (isMineDevelopment) {
-          const model = card.includes('home-platform-wheeled') ? 'wheeled' : 'quadruped';
+          const model = card.includes('home-platform-mobile-dual-arm') ? 'mobile-dual-arm' : card.includes('home-platform-wheeled') ? 'wheeled' : 'quadruped';
           assert.match(card, new RegExp('href="/robots/' + model + '/"'));
           assert.doesNotMatch(card, /data-video(?:-src)?=|咨询报价|在售/);
           continue;
