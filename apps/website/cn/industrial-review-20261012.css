@@ -9,36 +9,36 @@ html[lang="zh-CN"] .ink :is(.note,figcaption){color:#cad7e4}
 .cn-technical-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:36px}
 .cn-technical-grid article{min-width:0;padding-top:24px;border-top:2px solid #c9d8e8}
 .cn-technical-grid h3{margin:8px 0 12px;font-size:24px;font-weight:600}
-.cn-technical-grid p{margin:0;color:#52657a;font-size:17px}
-.cn-technical-grid .cn-step{display:block;color:#2458df;font-size:13px;font-weight:600;letter-spacing:.08em}
-.cn-research-intro{max-width:54em;margin:20px 0 0;color:#52657a}
+.cn-technical-grid p{margin:0;color:var(--muted);font-size:17px}
+.cn-technical-grid .cn-step{display:block;color:var(--blue);font-size:13px;font-weight:600;letter-spacing:.08em}
+.cn-research-intro{max-width:54em;margin:20px 0 0;color:var(--muted)}
 .cn-research-proof{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px;align-items:center;margin-top:44px;padding-top:36px;border-top:1px solid #dce5ed}
 .cn-research-proof figure{margin:0;min-width:0}
 .cn-research-proof img{display:block;width:100%;height:auto;border-radius:10px;background:#102335}
 .cn-research-proof figcaption{padding-top:12px}
 .cn-research-proof h3{font-size:26px;margin:0 0 16px}
-.cn-research-proof p{color:#52657a;margin:0 0 16px}
-.cn-next-steps{padding:26px 28px;border-left:3px solid #2458df;background:#f2f6fa;margin:32px 0}
+.cn-research-proof p{color:var(--muted);margin:0 0 16px}
+.cn-next-steps{padding:26px 28px;border-left:3px solid var(--blue);background:#f2f6fa;margin:32px 0}
 .cn-next-steps h3{font-size:22px;margin:0 0 12px}
-.cn-next-steps p{margin:0;color:#52657a}
+.cn-next-steps p{margin:0;color:var(--muted)}
 .cn-faq{margin-top:32px;border-top:1px solid #dce5ed}
 .cn-faq details{border-bottom:1px solid #dce5ed;padding:0 4px}
 .cn-faq summary{padding:22px 0;cursor:pointer;font-size:20px;font-weight:600;line-height:1.5}
-.cn-faq details p{max-width:54em;color:#52657a;margin:0 0 24px}
-.cn-faq summary:focus-visible{outline:2px solid #2458df;outline-offset:4px}
+.cn-faq details p{max-width:54em;color:var(--muted);margin:0 0 24px}
+.cn-faq summary:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
 .cn-contact-tools{margin-top:32px;padding:32px;border:1px solid #d5e0ea;border-radius:12px;background:#f5f8fb}
 .cn-contact-tools h2{margin:0 0 16px}
 .cn-contact-tools p{max-width:54em}
 .cn-enquiry-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin:28px 0}
 .cn-enquiry-fields label{display:flex;flex-direction:column;gap:10px;font-size:16px;font-weight:600;min-width:0}
 .cn-enquiry-fields .wide{grid-column:1/-1}
-.cn-contact-tools :is(input,select,textarea){box-sizing:border-box;width:100%;min-width:0;border:1px solid #aebdcb;border-radius:5px;background:#fff;color:#0b2034;font:inherit;padding:12px;line-height:1.6}
+.cn-contact-tools :is(input,select,textarea){box-sizing:border-box;width:100%;min-width:0;border:1px solid #aebdcb;border-radius:5px;background:#fff;color:var(--ink);font:inherit;padding:12px;line-height:1.6}
 .cn-contact-tools textarea{resize:vertical;min-height:140px}
-.cn-contact-tools :is(input,select,textarea):focus-visible{outline:2px solid #2458df;outline-offset:3px}
+.cn-contact-tools :is(input,select,textarea):focus-visible{outline:2px solid var(--blue);outline-offset:3px}
 .cn-contact-tools [hidden]{display:none!important}
 .cn-enquiry-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 .cn-enquiry-actions button{cursor:pointer;font:inherit;min-height:48px}
-.cn-enquiry-actions .secondary{background:#fff;color:#0b2034;border:1px solid #aebdcb}
+.cn-enquiry-actions .secondary{background:#fff;color:var(--ink);border:1px solid #aebdcb}
 .cn-contact-tools .cn-enquiry-status{min-height:28px;color:#344d64;font-size:15px;margin:16px 0 0}
 .cn-enquiry-preview{margin:24px 0 0}
 .cn-enquiry-preview label{display:block;margin-bottom:10px;font-weight:600}

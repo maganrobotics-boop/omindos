@@ -25,8 +25,8 @@ html[lang="zh-CN"] .footer-grid nav{min-width:0}
 .cn-demo-grid p{margin-bottom:16px;color:var(--muted,#58697b)}
 .cn-demo-grid h3+p{margin-top:16px}
 .cn-demo-grid nav{display:flex;flex-direction:column;align-items:start;gap:14px}
-.cn-demo-grid a{color:var(--blue,#2458df);text-decoration:underline;text-underline-offset:5px}
-html[lang="zh-CN"] .table-scroll:focus-visible{outline:2px solid #2458df;outline-offset:5px}
+.cn-demo-grid a{color:var(--blue,var(--blue));text-decoration:underline;text-underline-offset:5px}
+html[lang="zh-CN"] .table-scroll:focus-visible{outline:2px solid var(--blue);outline-offset:5px}
 @media(max-width:800px){.cn-demo-grid{grid-template-columns:1fr;gap:32px}.cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:24px}}
 @media(max-width:600px){
  .cn-product-page .page-opening{padding-top:32px;padding-bottom:8px}
@@ -38,7 +38,7 @@ html[lang="zh-CN"] .table-scroll:focus-visible{outline:2px solid #2458df;outline
 }
 
 /* Editorial hierarchy: concise openings, readable text and consistent product stages. */
-html[lang="zh-CN"] .robot-showcase .product-picture{box-sizing:border-box;aspect-ratio:3/2;border:1px solid #e4eaf0;border-radius:10px;background:#fff;overflow:hidden}
+html[lang="zh-CN"] .robot-showcase .product-picture{box-sizing:border-box;aspect-ratio:3/2;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
 html[lang="zh-CN"] .robot-showcase .product-picture>img{width:100%;height:100%;object-fit:contain;object-position:center}
 html[lang="zh-CN"] .robot-showcase .product-card{display:flex;flex-direction:column;min-width:0}
 html[lang="zh-CN"] .robot-showcase .product-card-copy{display:flex;flex-direction:column;flex:1;padding:22px 12px 0}
@@ -57,20 +57,20 @@ html[lang="zh-CN"] .cn-product-page .page-opening{padding-top:40px;padding-botto
 html[lang="zh-CN"] .cn-product-page .page-opening+.section{padding-top:16px}
 .cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px}
 .cn-product-page .product-detail-image,.cn-product-page .product-detail-layout>.mda-preview-hero{min-width:0;margin:0}
-.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{box-sizing:border-box;width:100%;height:400px;max-height:none;object-fit:contain;object-position:center;background:#fff;border:1px solid #e4eaf0;border-radius:12px;padding:12px}
+.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{box-sizing:border-box;width:100%;height:400px;max-height:none;object-fit:contain;object-position:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
 .cn-product-page .product-detail-layout>.mda-preview-hero img{filter:contrast(1.08) saturate(1.04)}
-html[lang="zh-CN"] .robot-showcase .sale-image{box-sizing:border-box;aspect-ratio:3/2;border:1px solid #e4eaf0;border-radius:10px;background:#fff;overflow:hidden}
+html[lang="zh-CN"] .robot-showcase .sale-image{box-sizing:border-box;aspect-ratio:3/2;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
 html[lang="zh-CN"] .robot-showcase .sale-image>img{width:100%;height:100%;object-fit:contain;object-position:center}
 html[lang="zh-CN"] .robot-showcase .mda-preview-card>img{filter:contrast(1.08) saturate(1.04)}
 html[lang="zh-CN"] .robot-showcase .sale-card .card-body{padding:22px 12px;display:flex;flex-direction:column;flex:1}
 html[lang="zh-CN"] .robot-showcase .sale-card{display:flex;flex-direction:column}
 html[lang="zh-CN"] .robot-showcase .sale-actions{margin-top:auto;padding-top:16px}
 html[lang="zh-CN"] .robot-showcase .card-body>p:not(.sale-badge){line-height:1.75;font-size:16px}
-.cn-development-status{max-width:850px;border-left:3px solid #2458df;background:#fff;padding:24px 28px;margin-top:24px}
+.cn-development-status{max-width:850px;border-left:3px solid var(--blue);background:#fff;padding:24px 28px;margin-top:24px}
 .cn-development-status p{font-size:18px;line-height:1.8;margin:0 0 14px}
 .cn-development-status p:last-child{margin-bottom:0}
-.cn-development-status .eyebrow{font-size:13px;color:#2458df;font-weight:600}
-.cn-section-intro{max-width:42em;color:#52657a;line-height:1.8;margin-top:18px}
+.cn-development-status .eyebrow{font-size:13px;color:var(--blue);font-weight:600}
+.cn-section-intro{max-width:42em;color:var(--muted);line-height:1.8;margin-top:18px}
 .cn-evidence-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:32px}
 .cn-evidence-cards article{min-width:0;border-top:2px solid #dce5ed;padding-top:24px;display:flex;flex-direction:column}
 .cn-evidence-cards h3{font-size:24px;margin:12px 0}

@@ -207,14 +207,14 @@ test('localized page titles prefer natural wrapping', async () => {
   assert.ok(English.includes('<h1>Robotics for underground environments</h1>'));
 });
 
-test('robot availability distinguishes Chinese mine development from catalogue prototypes', async () => {
+test('robot availability distinguishes development platforms from catalogue prototypes in both languages', async () => {
   for (const [locale, development, sale] of [['cn', '研发阶段', '产品样机'], ['en', 'IN DEVELOPMENT', 'PRODUCT PROTOTYPE']]) {
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
         .map(match => match[0]).filter(card => /class="[^"]*\b(?:mine-product|sale-image|product-picture)\b[^"]*"/.test(card));
       const isFocusedChineseHome = locale === 'cn' && route === '';
-      assert.equal(cards.length, isFocusedChineseHome ? 4 : locale === 'cn' ? 7 : 6);
+      assert.equal(cards.length, isFocusedChineseHome ? 4 : 7);
       if (isFocusedChineseHome) {
         const fieldRecords = page.match(/<section\b[^>]*id="field"[\s\S]*?<\/section>/)?.[0] || '';
         assert.match(fieldRecords, /data-video="\/assets\/videos\/roadway-field-20261012.mp4"/);
@@ -252,6 +252,14 @@ test('robot availability distinguishes Chinese mine development from catalogue p
           assert.doesNotMatch(card, /data-video(?:-src)?=|咨询报价|在售/);
           continue;
         }
+        if (locale === 'en' && card.includes('id="catalogue-platform-tracked"')) {
+          assert.match(card, />IN DEVELOPMENT</);
+          assert.match(card, /BUNKER MINI/);
+          assert.match(card, /T1<\/span>/);
+          assert.match(card, /href="\/en\/field-work\/mining\/#field-records"/);
+          assert.doesNotMatch(card, /<video\b|PRODUCT PROTOTYPE|Request a quote/);
+          continue;
+        }
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
         if (locale === 'cn' && card.includes('id="catalogue-platform-tracked"')) {
           assert.match(card, /T1<\/span>/);
@@ -260,11 +268,11 @@ test('robot availability distinguishes Chinese mine development from catalogue p
           assert.doesNotMatch(card, /<video\b|产品样机|在售/);
           continue;
         }
-        const isChineseWheeled = locale === 'cn' && card.includes('/robots/wheeled/');
+        const isWheeled = card.includes('/robots/wheeled/');
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
         const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
         const isMobileDualArm = card.includes(`${prefix}/robots/mobile-dual-arm/`);
-        const expectedStatus = isMineDevelopment ? '实机研发中' : locale === 'cn' ? ((isQuadruped || isMobileDualArm || isChineseWheeled) ? development : '产品样机') : (isQuadruped || isMobileDualArm) ? development : sale;
+        const expectedStatus = isMineDevelopment ? '实机研发中' : locale === 'cn' ? ((isQuadruped || isMobileDualArm || isWheeled) ? development : '产品样机') : (isQuadruped || isMobileDualArm || isWheeled) ? development : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
@@ -542,7 +550,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
           if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-white-20261013/w1.webp'));
           if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-cad-20261013/q1-original-sensors.webp'));
         } else {
-          const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${cover}`;
+          const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${cover}`;
           assert.ok(html.includes(expectedCover));
           assert.match(html, new RegExp(`data-robot-cover href="${prefix}/robots/${model}/"`));
         }

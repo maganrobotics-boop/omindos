@@ -138,3 +138,47 @@
 @media (prefers-reduced-motion: reduce) {
   .cn-header .menu-button span { transition: none; }
 }
+
+/* Shared content tokens keep inner pages in the same visual system as the shell. */
+html[lang="zh-CN"] body,
+html[lang="zh-CN"] :is(.wheel-product, .pwl-product) {
+  --ink: #30302d;
+  --muted: #68665f;
+  --blue: #635640;
+  --paper: #faf9f6;
+  --mist: #f0ede7;
+  --line: #dcd8d0;
+}
+html[lang="zh-CN"] body { color: var(--ink); background: var(--paper); }
+html[lang="zh-CN"] body main h1 {
+  font-size: clamp(30px, 3.5vw, 48px);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+html[lang="zh-CN"] body.cn-product-page main h1,
+html[lang="zh-CN"] body main.articulated-page h1 {
+  font-size: clamp(28px, 3.3vw, 46px);
+}
+html[lang="zh-CN"] body main h2 {
+  font-size: clamp(26px, 2.6vw, 36px);
+  font-weight: 500;
+  line-height: 1.35;
+}
+html[lang="zh-CN"] body main h1 :is(.robot-model, .robot-name, .product-model, .topic-phrase) {
+  display: inline-block;
+  white-space: nowrap;
+}
+html[lang="zh-CN"] main .button:not(.light):not(.secondary) {
+  background: #45453e;
+  border-color: #45453e;
+  color: #fff;
+}
+html[lang="zh-CN"] main .button:not(.light):not(.secondary):hover { background: #30302d; }
+html[lang="zh-CN"] main :is(.prototype-label, .research-status) { background: var(--mist); color: var(--blue); }
+html[lang="zh-CN"] main .cn-development-status { border-left-color: var(--blue); }
+html[lang="zh-CN"] main :is(.cn-step, .cn-development-status .eyebrow, .os-hero .eyebrow) { color: var(--blue); }
+html[lang="zh-CN"] main :is(.cn-section-intro, .cn-technical-grid p, .cn-research-proof p) { color: var(--muted); }
+html[lang="zh-CN"] main :is(.cn-contact-tools, .prototype-label) { background: var(--mist); }
+html[lang="zh-CN"] main :is(a, button, input, textarea, select, summary):focus-visible { outline: 3px solid #9e8764; outline-offset: 4px; }
