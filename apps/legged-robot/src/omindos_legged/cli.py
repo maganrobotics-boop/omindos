@@ -233,6 +233,9 @@ def _parser():
     subparsers.add_parser("list", help="List registered robot profiles")
     fetch = subparsers.add_parser("fetch-assets", help="Download and verify the pinned upstream assets")
     fetch.add_argument("--asset-dir", type=Path, default=default_asset_root())
+    describe = subparsers.add_parser("describe", help="Verify URDF/MJCF and joint mapping without a policy or simulator")
+    describe.add_argument("--asset-dir", type=Path, default=default_asset_root())
+    describe.add_argument("--output", type=Path, help="Write description.json and resolved robot.urdf in this local directory")
     simulate = subparsers.add_parser("simulate", help="Run the official policy in a local MuJoCo simulation")
     simulate.add_argument("--robot", default="roboto-origin")
     simulate.add_argument("--asset-dir", type=Path, default=default_asset_root())
@@ -247,6 +250,8 @@ def _parser():
     ros2 = subparsers.add_parser("ros2", help="Bridge the simulation to ROS2 cmd_vel, joint states, and odometry")
     ros2.add_argument("--robot", default="roboto-origin")
     ros2.add_argument("--asset-dir", type=Path, default=default_asset_root())
+    ros2.add_argument("--namespace", default="legged_robot", help="ROS2 topic namespace for this robot")
+    ros2.add_argument("--frame-prefix", default=None, help="TF frame prefix (default: namespace; empty explicitly uses global frames)")
     return parser
 
 
@@ -263,6 +268,17 @@ def main(argv=None) -> int:
     if args.command == "simulate":
         return _simulate(args)
     try:
+        if args.command == "describe":
+            from .description import load_description
+            description = load_description(args.asset_dir)
+            metadata = description.to_dict()
+            if args.output:
+                output = args.output.expanduser().resolve()
+                output.mkdir(parents=True, exist_ok=True)
+                (output / "description.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+                (output / "robot.urdf").write_text(description.urdf_xml(), encoding="utf-8")
+            print(json.dumps(metadata, ensure_ascii=False, indent=2, allow_nan=False))
+            return 0
         if args.command == "fetch-assets":
             result = fetch_assets(args.asset_dir)
             print(json.dumps({"asset_dir": str(args.asset_dir.expanduser().resolve()), "result": result}, ensure_ascii=False, indent=2, default=str))
@@ -270,7 +286,8 @@ def main(argv=None) -> int:
         if extra and extra[0] != "--ros-args":
             parser.error("ROS2 remappings must start with --ros-args")
         from .ros2_bridge import run_ros2
-        return run_ros2(args.robot, args.asset_dir, ros_args=extra)
+        return run_ros2(args.robot, args.asset_dir, ros_args=extra,
+                        namespace=args.namespace, frame_prefix=args.frame_prefix)
     except (RuntimeError, ValueError, FileNotFoundError, ImportError, OSError) as exc:
         print(str(exc), file=sys.stderr)
         return 1

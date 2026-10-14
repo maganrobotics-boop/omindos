@@ -62,6 +62,19 @@ def test_profile_list_does_not_require_simulator(monkeypatch, capsys):
     assert json.loads(capsys.readouterr().out)[0]["id"] == "roboto-origin"
 
 
+def test_description_export_requires_no_policy_or_simulator(monkeypatch, capsys, tmp_path):
+    from omindos_legged import description
+    monkeypatch.setitem(sys.modules, "mujoco", None)
+    monkeypatch.setitem(sys.modules, "onnxruntime", None)
+    metadata = {"status": "description_loaded", "dof": 23}
+    monkeypatch.setattr(description, "load_description", lambda *_: SimpleNamespace(
+        to_dict=lambda: metadata, urdf_xml=lambda: '<robot name="rpo"/>'))
+    assert cli.main(["describe", "--asset-dir", "model-only", "--output", str(tmp_path)]) == 0
+    assert json.loads(capsys.readouterr().out) == metadata
+    assert json.loads((tmp_path / "description.json").read_text()) == metadata
+    assert (tmp_path / "robot.urdf").read_text() == '<robot name="rpo"/>'
+
+
 @pytest.mark.parametrize("time_s, expected", [
     (0.0, VelocityCommand()), (2.99, VelocityCommand()),
     (3.0, VelocityCommand(0.3)), (9.99, VelocityCommand(0.3)),
@@ -141,10 +154,12 @@ def test_missing_ros2_has_actionable_message(monkeypatch):
 def test_ros2_remapping_arguments_forwarded(monkeypatch):
     from omindos_legged import ros2_bridge
     recorded = {}
-    def run(robot, assets, ros_args):
-        recorded.update(robot=robot, assets=assets, ros_args=ros_args)
+    def run(robot, assets, ros_args, **interface):
+        recorded.update(robot=robot, assets=assets, ros_args=ros_args, **interface)
         return 0
     monkeypatch.setattr(ros2_bridge, "run_ros2", run)
     assert cli.main(["ros2", "--ros-args", "-r", "/legged_robot/cmd_vel:=/cmd_vel"]) == 0
     assert recorded["robot"] == "roboto-origin"
     assert recorded["ros_args"] == ["--ros-args", "-r", "/legged_robot/cmd_vel:=/cmd_vel"]
+    assert recorded["namespace"] == "legged_robot"
+    assert recorded["frame_prefix"] is None

@@ -31,3 +31,22 @@ def test_profile_updates_cannot_change_registered_limits():
     json.dumps(list_profiles(), allow_nan=False)
     with pytest.raises(ValueError, match="Unknown robot"):
         get_profile("unregistered-hardware")
+
+
+@pytest.mark.parametrize("now", [math.nan, math.inf, -math.inf])
+def test_invalid_clock_clears_command_until_new_input(now):
+    gate = CommandGate()
+    gate.accept(VelocityCommand(0.3), 2)
+    with pytest.raises(ValueError, match="Timestamp must be finite"):
+        gate.current(now)
+    assert gate.current(2.1) == VelocityCommand()
+
+
+def test_reversed_clock_and_expiry_cannot_revive_old_command():
+    gate = CommandGate()
+    gate.accept(VelocityCommand(0.3), 2)
+    assert gate.current(1) == VelocityCommand()
+    assert gate.current(2.1) == VelocityCommand()
+    gate.accept(VelocityCommand(0.3), 3)
+    assert gate.current(3.5) == VelocityCommand()
+    assert gate.current(3.1) == VelocityCommand()

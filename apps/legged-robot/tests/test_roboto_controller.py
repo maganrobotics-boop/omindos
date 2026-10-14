@@ -75,6 +75,7 @@ def controller():
 def test_actual_policy_step_enforces_official_command_limits(controller):
     assert controller.policy_period == 0.02
     assert len(controller.joint_names) == 23
+    assert controller.joint_names == controller.description.joint_names
     state = controller.step(VelocityCommand(10, -10, 10))
     assert state.command == VelocityCommand(0.6, -0.4, 0.8)
     assert state.status == "running"

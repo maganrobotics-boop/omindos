@@ -1,0 +1,333 @@
+{
+  "checked_at": "2026-10-15T06:53:51.800866+08:00",
+  "source_base": "f1ab715437ba7e43cbfb219305be1e35d679df58",
+  "scope": "Independent follow-up development; no release dispatch, formal Navigation package change, or hardware I/O",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "backend": "CPUExecutionProvider",
+    "mujoco": "3.16.0",
+    "onnxruntime": "1.31.0",
+    "numpy": "2.3.5",
+    "pytest": "9.1.1"
+  },
+  "tests": {
+    "passed": 66,
+    "failed": 0,
+    "skipped": 0,
+    "command": "OMINDOS_LEGGED_TEST_ASSETS=/path/to/legged-assets python -m pytest -q"
+  },
+  "model_only": {
+    "status": "description_loaded",
+    "links": 24,
+    "joints": 23,
+    "meshes": 24,
+    "verified_description_files": 27,
+    "policy_files_present": false,
+    "site_packages_disabled": true,
+    "command": "PYTHONPATH=src python -S -m omindos_legged.cli describe --asset-dir /path/to/model-only-cache --output outputs/description"
+  },
+  "asset_fetch": {
+    "verified_files": 34,
+    "pinned_sources": [
+      {
+        "name": "rpo_description",
+        "repository": "Roboparty/rpo_description",
+        "commit": "8e0f8f78903dc147a5c094c0fdc14b4a78f1b667"
+      }
+    ],
+    "strategy": "explicit fetch; all files size/SHA256 verified before controller initialization"
+  },
+  "baseline": {
+    "robot": "roboto-origin",
+    "backend": "mujoco",
+    "scope": "simulation_only",
+    "scenario": "baseline",
+    "requested_duration_s": 20.0,
+    "requested_command": {
+      "vx": 0.3,
+      "vy": 0.0,
+      "wz": 0.0
+    },
+    "status": "completed",
+    "simulated_duration_s": 20.00000000000146,
+    "control_steps": 1000,
+    "policy_period_s": 0.02,
+    "command_limits": [
+      -0.4,
+      0.6,
+      -0.4,
+      0.4,
+      -0.8,
+      0.8
+    ],
+    "effective_constant_command": {
+      "vx": 0.3,
+      "vy": 0.0,
+      "wz": 0.0
+    },
+    "initial_state": {
+      "time_s": 0.0,
+      "joint_names": [
+        "left_thigh_yaw_joint",
+        "left_thigh_roll_joint",
+        "left_thigh_pitch_joint",
+        "left_knee_joint",
+        "left_ankle_pitch_joint",
+        "left_ankle_roll_joint",
+        "right_thigh_yaw_joint",
+        "right_thigh_roll_joint",
+        "right_thigh_pitch_joint",
+        "right_knee_joint",
+        "right_ankle_pitch_joint",
+        "right_ankle_roll_joint",
+        "torso_joint",
+        "left_arm_pitch_joint",
+        "left_arm_roll_joint",
+        "left_arm_yaw_joint",
+        "left_elbow_pitch_joint",
+        "left_elbow_yaw_joint",
+        "right_arm_pitch_joint",
+        "right_arm_roll_joint",
+        "right_arm_yaw_joint",
+        "right_elbow_pitch_joint",
+        "right_elbow_yaw_joint"
+      ],
+      "joint_positions": [
+        0.0,
+        0.0,
+        -0.1,
+        0.3,
+        -0.2,
+        0.0,
+        0.0,
+        0.0,
+        -0.1,
+        0.3,
+        -0.2,
+        0.0,
+        0.0,
+        0.18,
+        0.06,
+        0.0,
+        0.78,
+        0.0,
+        0.18,
+        -0.06,
+        0.0,
+        0.78,
+        0.0
+      ],
+      "joint_velocities": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "base_position": [
+        0.0,
+        0.0,
+        0.75
+      ],
+      "base_orientation_wxyz": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "linear_velocity_body": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angular_velocity_body": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "command": {
+        "vx": 0.0,
+        "vy": 0.0,
+        "wz": 0.0
+      },
+      "status": "running",
+      "fault_reason": null
+    },
+    "final_state": {
+      "time_s": 20.00000000000146,
+      "joint_names": [
+        "left_thigh_yaw_joint",
+        "left_thigh_roll_joint",
+        "left_thigh_pitch_joint",
+        "left_knee_joint",
+        "left_ankle_pitch_joint",
+        "left_ankle_roll_joint",
+        "right_thigh_yaw_joint",
+        "right_thigh_roll_joint",
+        "right_thigh_pitch_joint",
+        "right_knee_joint",
+        "right_ankle_pitch_joint",
+        "right_ankle_roll_joint",
+        "torso_joint",
+        "left_arm_pitch_joint",
+        "left_arm_roll_joint",
+        "left_arm_yaw_joint",
+        "left_elbow_pitch_joint",
+        "left_elbow_yaw_joint",
+        "right_arm_pitch_joint",
+        "right_arm_roll_joint",
+        "right_arm_yaw_joint",
+        "right_elbow_pitch_joint",
+        "right_elbow_yaw_joint"
+      ],
+      "joint_positions": [
+        -0.024590697946601,
+        0.026643581462491194,
+        -0.054148612739993794,
+        0.25905541566027473,
+        -0.2009044925211526,
+        -0.025849783575233532,
+        0.07172265736599974,
+        0.006777824637565809,
+        -0.09125421105142503,
+        0.25191498422884956,
+        -0.15470491346286455,
+        0.037856278402308624,
+        0.00044849295636540976,
+        0.16069664715318352,
+        0.05956640997732701,
+        -0.0006092337909496364,
+        0.7789126742576689,
+        -0.0010616938054905203,
+        0.15541407104036303,
+        -0.05856289068898324,
+        0.0009448398619690512,
+        0.7784254076052017,
+        0.002732408448314639
+      ],
+      "joint_velocities": [
+        0.001466122233687531,
+        0.0022089431241816572,
+        -0.0005971425127731382,
+        0.0008917334805099253,
+        -0.0007906125329545353,
+        -0.0010478173192482083,
+        -0.0009839900081705314,
+        -0.0023109489474268333,
+        -0.00044430499207756845,
+        0.0004987020745834648,
+        -0.0008941019184753092,
+        0.0012222398635708064,
+        6.100995468696849e-05,
+        0.0005010549548317912,
+        6.903015051946729e-05,
+        2.8753778725071003e-05,
+        3.940681506294761e-05,
+        6.585026623942837e-05,
+        0.0005138132647067432,
+        -2.3837250002472455e-05,
+        -1.8992798672105804e-05,
+        2.476806507952675e-05,
+        -5.337427564613365e-05
+      ],
+      "base_position": [
+        2.488591021673843,
+        0.6853176048149366,
+        0.7482217162048872
+      ],
+      "base_orientation_wxyz": [
+        0.8133008594729536,
+        -0.00241868727289315,
+        -0.004312915774433762,
+        0.5818223617995038
+      ],
+      "linear_velocity_body": [
+        0.000276199814438753,
+        0.0001377651811910619,
+        -7.357150131418358e-05
+      ],
+      "angular_velocity_body": [
+        -7.058680689794485e-05,
+        0.0004941243070170229,
+        0.0004900110869432439
+      ],
+      "command": {
+        "vx": 0.0,
+        "vy": 0.0,
+        "wz": 0.0
+      },
+      "status": "running",
+      "fault_reason": null
+    },
+    "minimum_base_height_m": 0.7358362760645076,
+    "displacement_xy_m": [
+      2.488591021673843,
+      0.6853176048149366
+    ],
+    "mean_forward_velocity_body_m_s": 0.25932022545592354
+  },
+  "baseline_log_sha256": "10774f9be0231f2c67e8a9665b93debd22598a62bc885a54bbf29526325323b2",
+  "wheel": {
+    "name": "omindos_legged_robot-0.1.0a1-py3-none-any.whl",
+    "sha256": "56921911b31040cd845c0a3eba6445858e66a330d2e06c110eb34411724284ab",
+    "built": true,
+    "embedded_third_party_assets": []
+  },
+  "ros2": {
+    "native_graph_validated": false,
+    "callback_tests": "6 passed with message/API stand-ins",
+    "default_topics": "/legged_robot/*",
+    "default_frames": [
+      "legged_robot/odom",
+      "legged_robot/base_link"
+    ]
+  },
+  "workbench": {
+    "structural_parser": "24 links / 23 joints; root base_link",
+    "visual_meshes_validated": false,
+    "browser_validated": false
+  },
+  "limitations": [
+    "Short flat-ground simulation only; no long-term gait stability or terrain acceptance",
+    "Native ROS2, full navigation graph and real hardware not validated",
+    "No Isaac Lab training or CAD import performed"
+  ],
+  "review": "Separate reviews of Navigation boundary, license/model versions and core/follow-up code; no remaining blocking finding",
+  "development_validation_package_version": "0.1.0a1",
+  "release_preparation": {
+    "version": "0.1.0a2",
+    "checked_at": "2026-10-15T07:04:56.885662+08:00",
+    "artifacts_built": [
+      "wheel",
+      "sdist",
+      "source ZIP",
+      "SHA256SUMS"
+    ],
+    "wheel_sha256": "d6e7e2573cab73d81c22bb1647b9d33164cc7b203babceb015c7437f8e8c4aa9",
+    "wheel_name": "omindos_legged_robot-0.1.0a2-py3-none-any.whl",
+    "embedded_third_party_assets": [],
+    "version_metadata_consistent": true,
+    "changes_since_control_validation": "module version and release documentation only",
+    "publication_authorized": true,
+    "navigation_release_changed": false
+  }
+}
