@@ -1,0 +1,95 @@
+name: Legged robot checks
+
+on:
+  pull_request:
+    paths:
+      - 'apps/legged-robot/**'
+      - '.github/workflows/legged-robot.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/legged-robot/**'
+      - '.github/workflows/legged-robot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/legged-robot
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned simulation environment
+        run: |
+          python -m pip install -r requirements-sim.txt
+          python -m pip install '.[sim,test]'
+      - name: Fetch and verify pinned official assets
+        run: legged-robot fetch-assets --asset-dir assets/roboto-origin
+      - name: Test interfaces and controller
+        env:
+          OMINDOS_LEGGED_TEST_ASSETS: ${{ github.workspace }}/apps/legged-robot/assets/roboto-origin
+        run: python -m pytest
+      - name: Execute 20 second baseline
+        run: legged-robot simulate --asset-dir assets/roboto-origin --scenario baseline --duration 20 --output outputs/ci-baseline
+      - name: Retain simulation record
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: legged-robot-simulation-record
+          path: apps/legged-robot/outputs/ci-baseline
+
+  release:
+    needs: simulator
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: apps/legged-robot
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Build wheel and source distributions
+        run: |
+          python -m pip install 'build>=1.2,<2'
+          python -m build --outdir dist
+          python scripts/package_release.py --output dist
+      - name: Publish the tested module version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          LEGGED_RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          LEGGED_RELEASE_VERSION=$(python -c 'import json; print(json.load(open("dist/release-metadata.json"))["version"])')
+          LEGGED_RELEASE_TAG=$(python -c 'import json; print(json.load(open("dist/release-metadata.json"))["tag"])')
+          LEGGED_RELEASE_PRERELEASE=$(python -c 'import json; print(str(json.load(open("dist/release-metadata.json"))["prerelease"]).lower())')
+          if gh release view "$LEGGED_RELEASE_TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
+            echo "This module version is already published; existing release is preserved."
+            exit 0
+          fi
+          legged_release_flags=()
+          if [ "$LEGGED_RELEASE_PRERELEASE" = true ]; then
+            legged_release_flags+=(--prerelease)
+          fi
+          gh release create "$LEGGED_RELEASE_TAG" \
+            dist/*.whl dist/*.tar.gz dist/*-source.zip dist/SHA256SUMS.txt \
+            --repo "$GH_REPO" --target "$LEGGED_RELEASE_COMMIT" \
+            --title "legged-robot $LEGGED_RELEASE_VERSION" \
+            --notes-file dist/RELEASE_NOTES.md "${legged_release_flags[@]}"

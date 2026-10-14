@@ -1,5 +1,13 @@
 # OMINDOS
 
+## Legged robots
+
+The `legged-robot` project is in [apps/legged-robot](apps/legged-robot). Its first
+platform is RoboParty Roboto Origin, with a pinned MuJoCo/ONNX simulation adapter,
+bounded velocity commands, state feedback, and an optional ROS2 bridge. Follow
+the module README for asset retrieval, simulation, validation, and upstream
+attribution. Hardware deployment and native ROS2 integration remain to be validated.
+
 Private monorepo for the website and OA. Documentation and API have separate private repositories reserved for future application code.
 
 | Service | Domain | Source status |
