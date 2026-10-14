@@ -1,6 +1,8 @@
-# 腾讯云双足仿真回放
+# OmindOS 双足仿真回放
 
 访问地址：[cloud.omindos.cn/legged-robot/](https://cloud.omindos.cn/legged-robot/)。页面只读取已生成的视频与状态记录，播放和阶段跳转不会提交计算任务。
+
+页面使用官网的透明 OriginMind 标识及 OmindOS 品牌。标识内嵌于 HTML，沿用现有 CSP；Roboto Origin 模型来源保留，原始 JSON 仍记录实际云服务商。
 
 2026-10-15 在腾讯云 `VM-0-3-ubuntu` 实际运行 `legged-robot 0.1.0a2`：20 秒平地基准、1,000 个控制步，结果 `completed`。H264 视频为 720×540、20 fps、400 帧；软件渲染耗时约 300.85 秒。来源为官方固定模型、策略及配置，34 个清单文件通过大小与 SHA256 核验。没有连接真实电机。
 
