@@ -578,7 +578,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
         assert.match(product, /class="ar-hero-figure"/);
         assert.match(product, /研究原型数据，非交付性能承诺/);
       } else {
-        const expectedCover = locale === 'cn' && model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : locale === 'cn' && model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${coverNames[model]}`;
+        const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : model === 'articulated' ? '/assets/articulated-research-model-20261006.png' : `/assets/covers/${coverNames[model]}`;
         assert.ok(product.includes(expectedCover));
         assert.match(product, /class="media product-detail-image" data-robot-cover/);
       }
