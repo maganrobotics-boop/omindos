@@ -1,7 +1,7 @@
 # OmindOS legged-robot
 
 OmindOS 足式机器人模块，首个平台为 **RoboParty Roboto Origin 双足机器人**。
-当前版本为 `0.1.0a1`，提供官方模型和策略的独立 MuJoCo 适配器，以及 ROS2 的速度指令和状态接口。
+当前版本为 `0.1.0a2`，提供官方模型和策略的独立 MuJoCo 适配器，以及 ROS2 的速度指令和状态接口。
 
 安装包与源码包通过 OmindOS 的 GitHub Releases 发布，标签使用 `legged-robot-v<版本>`。
 主分支检查与基准仿真通过后生成 wheel、tar.gz、独立源码 ZIP 和 SHA256 校验文件；已有版本不会被覆盖。

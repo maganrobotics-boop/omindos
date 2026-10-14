@@ -311,5 +311,23 @@
     "Native ROS2, full navigation graph and real hardware not validated",
     "No Isaac Lab training or CAD import performed"
   ],
-  "review": "Separate reviews of Navigation boundary, license/model versions and core/follow-up code; no remaining blocking finding"
+  "review": "Separate reviews of Navigation boundary, license/model versions and core/follow-up code; no remaining blocking finding",
+  "development_validation_package_version": "0.1.0a1",
+  "release_preparation": {
+    "version": "0.1.0a2",
+    "checked_at": "2026-10-15T07:04:56.885662+08:00",
+    "artifacts_built": [
+      "wheel",
+      "sdist",
+      "source ZIP",
+      "SHA256SUMS"
+    ],
+    "wheel_sha256": "d6e7e2573cab73d81c22bb1647b9d33164cc7b203babceb015c7437f8e8c4aa9",
+    "wheel_name": "omindos_legged_robot-0.1.0a2-py3-none-any.whl",
+    "embedded_third_party_assets": [],
+    "version_metadata_consistent": true,
+    "changes_since_control_validation": "module version and release documentation only",
+    "publication_authorized": true,
+    "navigation_release_changed": false
+  }
 }

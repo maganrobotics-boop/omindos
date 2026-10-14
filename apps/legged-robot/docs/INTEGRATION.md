@@ -83,7 +83,7 @@ legged-robot ros2 --robot roboto-origin \
 
 Navigation 的 `release/control-preview/compile_native.py` 显式列举编译模块与资源；`release/workbench/package_binary.py` 也显式列举模块、图片、配置和网格。当前列表不包含 `omindos_legged` 或 Roboto Origin 资产。
 
-此后续开发分支不合并、不调度发布，也不修改 Navigation 构建或版本号。模块不会自行进入 Navigation 的现有显式打包路径；加入任何安装包、公开发布或商业分发均需单独决定、检查许可范围，并做针对该成品的验收。独立进程和分开下载不能自动替代许可证义务，具体来源见 `THIRD_PARTY_NOTICES.md`。
+本轮在用户授权后发布独立 `legged-robot-v0.1.0a2` 仿真预览，不修改 Navigation 构建或版本号。模块不会自行进入 Navigation 的现有显式打包路径；公开代码包只包含模块源码、资产清单及文档，上游模型和策略仍由用户显式下载。后续若加入安装镜像或商业套件，须针对实际组成检查许可范围并验收。独立进程和分开下载不能自动替代许可证义务，具体来源见 `THIRD_PARTY_NOTICES.md`。
 
 ## 验收层级
 
