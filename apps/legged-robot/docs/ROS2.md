@@ -25,12 +25,16 @@ legged-robot ros2 --robot roboto-origin --asset-dir ./legged-assets
 | --- | --- | --- |
 | `/legged_robot/cmd_vel` | `geometry_msgs/Twist` | 读取 `linear.x`、`linear.y`、`angular.z`；分别表示机身前向、侧向速度和偏航角速度 |
 | `/legged_robot/joint_states` | `sensor_msgs/JointState` | 发布 23 个关节的位置与速度；关节名来自官方模型 |
-| `/legged_robot/odom` | `nav_msgs/Odometry` | `odom` 中的基座位置与姿态，`base_link` 中的线速度与角速度 |
+| `/legged_robot/odom` | `nav_msgs/Odometry` | `legged_robot/odom` 中的基座位置与姿态，`legged_robot/base_link` 中的线速度与角速度 |
 | `/legged_robot/state` | `std_msgs/String` | JSON：仿真时间、关节、机身状态、实际生效指令、故障状态及原因 |
 
-安装 `tf2_ros` 时同时广播 `odom → base_link`。没有 `tf2_ros` 时仍发布消息，并提示缺少 TF。姿态接口内部使用四元数 `w,x,y,z`，ROS2 消息按 `x,y,z,w` 对应赋值。位置和速度由 MuJoCo 直接读取，属于仿真真值，未模拟定位误差；消息协方差默认全零，不应解释为测得零误差。
+安装 `tf2_ros` 时同时广播 `legged_robot/odom → legged_robot/base_link`。没有 `tf2_ros` 时仍发布消息，并提示缺少 TF。姿态接口内部使用四元数 `w,x,y,z`，ROS2 消息按 `x,y,z,w` 对应赋值。位置和速度由 MuJoCo 直接读取，属于仿真真值，未模拟定位误差；消息协方差默认全零，不应解释为测得零误差。
+
+`--namespace fleet/rpo2` 同时更改相对话题的命名空间及默认 TF 前缀，避免与现有四足的 `odom/base_link` 冲突。`--frame-prefix` 可另行指定；显式传入空字符串会使用全局帧，此时必须为整套图隔离 `/tf`、`/tf_static`，或确保仅有一个基座 TF 发布者。重映射话题不会重写消息中的坐标系名。机器人关节 TF 可交给 `robot_state_publisher`，使用 `describe --output` 导出的 URDF和相同话题命名空间。该节点直接拼接帧前缀与连杆名，须设置 `frame_prefix:=legged_robot/`（自定义命名空间示例为 `fleet/rpo2/`），包含末尾 `/`；桥接的 `--frame-prefix legged_robot` 则自行补分隔符。本模块尚未在原生 ROS2 图验证这一组合。
 
 仿真每次计时器回调推进 20 ms，目标频率 50 Hz。ROS2 消息使用节点时钟盖戳，本模块不发布 `/clock`；默认按墙钟使用，并保持 `use_sim_time=false`。计算机执行过慢时仿真会低于实时速度，当前接口不会自动补偿丢失的周期。要集成其他使用仿真时钟的系统，需先统一 `/clock` 与所有节点的时间设置。
+
+同时隔离话题与 TF 时使用本模块的 `--namespace`。ROS 原生 `__ns` 重映射只修改话题命名空间，不会同步修改配置的帧前缀，须另行指定 `--frame-prefix`。
 
 ## 指令试验与停止
 

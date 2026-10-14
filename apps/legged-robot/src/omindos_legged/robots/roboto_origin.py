@@ -12,6 +12,7 @@ from pathlib import Path
 import numpy as np
 
 from ..assets import get_manifest, verify_assets
+from ..description import load_description
 from ..types import RobotState, VelocityCommand
 
 
@@ -77,6 +78,7 @@ class RobotoOriginController:
         self.asset_root = Path(asset_root).expanduser().resolve()
         manifest = Path(manifest) if manifest is not None else get_manifest()
         verify_assets(self.asset_root, manifest)
+        self.description = load_description(self.asset_root, manifest)
         locked = json.loads(Path(manifest).read_text(encoding="utf-8"))
         try:
             import mujoco
@@ -100,6 +102,7 @@ class RobotoOriginController:
             raise ValueError("Expected one actuator per locomotion joint")
         self.joint_names = tuple(mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_JOINT, int(jid))
                                  for jid in joint_ids)
+        self.description.validate_joint_names(self.joint_names)
         self._q_indices = self.model.jnt_qposadr[joint_ids].astype(int)
         self._dq_indices = self.model.jnt_dofadr[joint_ids].astype(int)
         if not np.array_equal(self._q_indices, np.arange(7, 30)):

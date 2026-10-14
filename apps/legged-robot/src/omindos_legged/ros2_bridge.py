@@ -1,11 +1,34 @@
 """Optional ROS2 adapter for the simulation controller; never opens robot I/O."""
 from __future__ import annotations
 
-from dataclasses import replace
+from dataclasses import dataclass, replace
 import json
+import re
 import time
 
 from .types import CommandGate, VelocityCommand
+
+
+@dataclass(frozen=True)
+class Ros2Interface:
+    """Separate topics and TF frames when multiple robot processes coexist."""
+
+    namespace: str = "legged_robot"
+    frame_prefix: str | None = None
+
+    def __post_init__(self):
+        namespace = self.namespace.strip("/")
+        prefix = namespace if self.frame_prefix is None else self.frame_prefix.strip("/")
+        pattern = r"[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*"
+        if not re.fullmatch(pattern, namespace):
+            raise ValueError("ROS2 namespace must contain nonempty valid name segments")
+        if prefix and not re.fullmatch(pattern, prefix):
+            raise ValueError("TF frame prefix must contain valid name segments")
+        object.__setattr__(self, "namespace", namespace)
+        object.__setattr__(self, "frame_prefix", prefix)
+
+    def frame(self, name):
+        return f"{self.frame_prefix}/{name}" if self.frame_prefix else name
 
 
 def _load_ros2():
@@ -29,22 +52,23 @@ def _load_ros2():
     return rclpy, Node, TransformStamped, Twist, Odometry, JointState, String, TransformBroadcaster
 
 
-def run_ros2(robot_id, asset_root, ros_args=None) -> int:
+def run_ros2(robot_id, asset_root, ros_args=None, *, namespace="legged_robot", frame_prefix=None) -> int:
     """Run a 50 Hz simulated base with a 0.5-second cmd_vel watchdog."""
+    interface = Ros2Interface(namespace, frame_prefix)
     rclpy, Node, TransformStamped, Twist, Odometry, JointState, String, TransformBroadcaster = _load_ros2()
     from .profiles import create_controller
 
     class LeggedSimulationNode(Node):
         def __init__(self, controller):
-            super().__init__("omindos_legged_robot")
+            super().__init__("omindos_legged_robot", namespace=interface.namespace)
             self.controller = controller
             self.gate = CommandGate(controller.command_limits, timeout_s=0.5)
             self.last_state = controller.state()
             self.fault = None
-            self.joint_publisher = self.create_publisher(JointState, "/legged_robot/joint_states", 10)
-            self.odom_publisher = self.create_publisher(Odometry, "/legged_robot/odom", 10)
-            self.state_publisher = self.create_publisher(String, "/legged_robot/state", 10)
-            self.subscription = self.create_subscription(Twist, "/legged_robot/cmd_vel", self.receive_command, 10)
+            self.joint_publisher = self.create_publisher(JointState, "joint_states", 10)
+            self.odom_publisher = self.create_publisher(Odometry, "odom", 10)
+            self.state_publisher = self.create_publisher(String, "state", 10)
+            self.subscription = self.create_subscription(Twist, "cmd_vel", self.receive_command, 10)
             self.tf_broadcaster = TransformBroadcaster(self) if TransformBroadcaster is not None else None
             if self.tf_broadcaster is None:
                 self.get_logger().warning("tf2_ros is unavailable; odom messages continue, odom->base_link TF is disabled")
@@ -81,7 +105,7 @@ def run_ros2(robot_id, asset_root, ros_args=None) -> int:
             stamp = self.get_clock().now().to_msg()
             joints = JointState()
             joints.header.stamp = stamp
-            joints.header.frame_id = "base_link"
+            joints.header.frame_id = interface.frame("base_link")
             joints.name = list(state.joint_names)
             joints.position = list(state.joint_positions)
             joints.velocity = list(state.joint_velocities)
@@ -89,8 +113,8 @@ def run_ros2(robot_id, asset_root, ros_args=None) -> int:
 
             odom = Odometry()
             odom.header.stamp = stamp
-            odom.header.frame_id = "odom"
-            odom.child_frame_id = "base_link"
+            odom.header.frame_id = interface.frame("odom")
+            odom.child_frame_id = interface.frame("base_link")
             odom.pose.pose.position.x, odom.pose.pose.position.y, odom.pose.pose.position.z = state.base_position
             qw, qx, qy, qz = state.base_orientation_wxyz
             odom.pose.pose.orientation.w, odom.pose.pose.orientation.x = qw, qx

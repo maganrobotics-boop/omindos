@@ -57,7 +57,14 @@ class CommandGate:
         return self._command
 
     def current(self, now):
-        if self._received_at is None or now - self._received_at >= self.timeout_s:
+        if not math.isfinite(now):
+            self.stop()
+            raise ValueError("Timestamp must be finite")
+        if self._received_at is None:
+            return VelocityCommand()
+        age = now - self._received_at
+        if age < 0 or age >= self.timeout_s:
+            self.stop()
             return VelocityCommand()
         return self._command
 

@@ -9,10 +9,12 @@ OmindOS 足式机器人模块，首个平台为 **RoboParty Roboto Origin 双足
 ## 已实现
 
 - 23 关节 MJCF 模型、780 维观测历史、公开 ONNX 策略和 PD 控制。
+- 无策略权重、GPU 或 MuJoCo 依赖的 URDF/MJCF 描述加载与关节名/执行器顺序核对，保持模型限位元数据独立。
 - 统一的 `VelocityCommand`、`RobotState` 和机器人平台注册入口。
 - 显式下载固定版本的上游模型与策略，逐文件检查大小和 SHA256；运行时不自动下载。
 - 站立、行走、转向、停车仿真，CSV 日志、JSON 结果及可选视频。
 - ROS2 速度指令、关节状态、里程计和状态消息桥接；过期指令归零。
+- ROS2 话题命名空间及 TF 帧前缀可配置，默认 `legged_robot/odom`、`legged_robot/base_link`。
 - 配置关节越限、倾斜、非有限数值和 MuJoCo 数值警告触发故障停止，故障保留至显式 reset。
 
 首次接入保持官方默认命令范围：`vx ∈ [-0.4, 0.6] m/s`、`vy ∈ [-0.4, 0.4] m/s`、`wz ∈ [-0.8, 0.8] rad/s`。
@@ -54,6 +56,14 @@ MUJOCO_GL=egl .venv/bin/legged-robot simulate \
 
 ## OmindOS 接口
 
+仅检查描述模型时，在预置经清单校验的 `rpo_description` 目录后运行以下命令；不需要策略、推理配置或仿真运行环境：
+
+```bash
+legged-robot describe --asset-dir assets/roboto-origin --output outputs/description
+```
+
+输出包括关节/连杆与模型限位 JSON，以及网格改为本地绝对 URI 的 URDF；上游缓存文件保持原样。`description.json` 记录的是模型加载与映射核对，不能据此认定机器人会行走。工作台接口、四足共存与发行包边界见 [INTEGRATION.md](docs/INTEGRATION.md)。
+
 ```python
 from omindos_legged.profiles import create_controller
 from omindos_legged.types import CommandGate, VelocityCommand
@@ -89,4 +99,4 @@ OMINDOS_LEGGED_TEST_ASSETS="$PWD/assets/roboto-origin" .venv/bin/python -m pytes
 
 上游模型、策略与配置保留 RoboParty 来源；本模块软件采用 GPL-3.0-only，机器人描述资产遵循其 CERN-OHL-W-2.0 声明。
 资产在首次显式请求时下载，未把上游二进制或机械制造文件复制进 OmindOS 源码。
-逐模块许可范围和 ONNX 授权信息的现有说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 与 [docs/UPSTREAM.md](docs/UPSTREAM.md)。
+逐模块许可范围和 ONNX 授权信息的现有说明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)、[docs/UPSTREAM.md](docs/UPSTREAM.md) 与 [LICENSE_SCOPE.md](docs/LICENSE_SCOPE.md)。模型和策略不会进入 wheel；独立进程和缓存不自动免除许可证义务。本次开发变更不修改 Navigation 正式包或连接真实电机。
