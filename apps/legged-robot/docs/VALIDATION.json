@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "module": "legged-robot",
+  "package_version": "0.1.0a1",
+  "python": "3.12.14",
+  "platform": "Linux x86_64",
+  "versions": {
+    "mujoco": "3.16.0",
+    "onnxruntime": "1.31.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "PyYAML": "6.0.3"
+  },
+  "pytest": {
+    "passed": 38,
+    "failed": 0,
+    "command": "OMINDOS_LEGGED_TEST_ASSETS=<asset_root> python -m pytest -q"
+  },
+  "baseline": {
+    "status": "completed",
+    "simulated_duration_s": 20.00000000000146,
+    "control_steps": 1000,
+    "policy_period_s": 0.02,
+    "minimum_base_height_m": 0.7358362760645076,
+    "mean_forward_velocity_body_m_s": 0.25932022545592354,
+    "displacement_xy_m": [
+      2.488591021673843,
+      0.6853176048149366
+    ],
+    "scenario": "3s stand, 7s forward 0.3m/s, 4s forward 0.3m/s with yaw 0.3rad/s, 6s stop",
+    "final_body_vx_m_s": 0.000276199814438753,
+    "fault_reason": null,
+    "log_sha256": "10774f9be0231f2c67e8a9665b93debd22598a62bc885a54bbf29526325323b2"
+  },
+  "constant_forward_0p6": {
+    "status": "completed",
+    "simulated_duration_s": 8.000000000001005,
+    "control_steps": 400,
+    "policy_period_s": 0.02,
+    "minimum_base_height_m": 0.7316372250337739,
+    "mean_forward_velocity_body_m_s": 0.5924526963423418,
+    "displacement_xy_m": [
+      4.543171006881007,
+      0.03709461607336414
+    ]
+  },
+  "assets": {
+    "downloaded_files": 34,
+    "total_size_bytes": 34141780,
+    "all_files_sha256_verified": true,
+    "sources": [
+      {
+        "name": "rpo_description",
+        "repository": "Roboparty/rpo_description",
+        "commit": "8e0f8f78903dc147a5c094c0fdc14b4a78f1b667"
+      },
+      {
+        "name": "roboparty_inference",
+        "repository": "Roboparty/roboparty_inference",
+        "commit": "c4238d1560bc795e61226074f4ee4b0a256a8901"
+      }
+    ]
+  },
+  "wheel": {
+    "built": true,
+    "asset_manifest_included": true
+  },
+  "ros2": {
+    "bridge_implemented": true,
+    "native_runtime_validated": false,
+    "nav2_integration_validated": false
+  },
+  "scope": "Pinned official model and ONNX policy on flat ground, independent simulation adapter. No hardware or Isaac Lab training acceptance."
+}

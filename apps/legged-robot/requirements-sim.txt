@@ -1,0 +1,6 @@
+# Versions used for the recorded Python 3.12 Linux simulation acceptance.
+mujoco==3.16.0
+onnxruntime==1.31.0
+numpy==2.3.5
+scipy==1.17.0
+PyYAML==6.0.3
