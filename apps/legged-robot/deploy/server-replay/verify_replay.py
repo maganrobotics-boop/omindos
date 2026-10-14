@@ -16,7 +16,7 @@ def verify(url, output, chrome):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     checks = []
-    with tempfile.TemporaryDirectory(prefix="legged-replay-chrome-") as profile:
+    with tempfile.TemporaryDirectory(prefix="legged-replay-chrome-", ignore_cleanup_errors=True) as profile:
         process = subprocess.Popen([chrome, "--headless=new", "--no-sandbox", "--disable-dev-shm-usage",
                                     "--disable-gpu", "--remote-debugging-address=127.0.0.1",
                                     "--remote-debugging-port=0", "--user-data-dir=" + profile, "about:blank"],
@@ -65,12 +65,20 @@ def verify(url, output, chrome):
                     result = evaluate("({width:innerWidth,scroll:document.documentElement.scrollWidth,version:document.getElementById('record-version').textContent,duration:document.getElementById('simulation-video').duration,path:!!document.querySelector('#trajectory path')})")
                     assert result["scroll"] <= width, result
                     assert result["version"] == "0.1.0a2" and abs(result["duration"] - 20) < 0.05 and result["path"], result
-                    evaluate("document.querySelector('[data-start=\"14\"]').click()")
-                    time.sleep(0.4)
+                    point = evaluate("(()=>{const r=document.querySelector('[data-start=\"14\"]').getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()")
+                    call("Input.dispatchMouseEvent", {"type": "mousePressed", "button": "left", "clickCount": 1, **point})
+                    call("Input.dispatchMouseEvent", {"type": "mouseReleased", "button": "left", "clickCount": 1, **point})
+                    deadline = time.monotonic() + 15
+                    while not evaluate("(()=>{const v=document.getElementById('simulation-video');return v.currentTime>=14.5&&!v.seeking&&v.readyState>=3})()"):
+                        if time.monotonic() > deadline:
+                            raise RuntimeError("Video did not seek and play after the stage click")
+                        time.sleep(0.2)
                     playback = evaluate("({time:document.getElementById('simulation-video').currentTime,stage:document.getElementById('stage-label').textContent,speed:document.getElementById('speed-value').textContent})")
                     assert playback["time"] >= 14 and "停车" in playback["stage"] and playback["speed"] != "—", playback
                     evaluate("document.getElementById('simulation-video').pause()")
-                    snapshot = call("Page.captureScreenshot", {"format": "png", "captureBeyondViewport": True})
+                    metrics = call("Page.getLayoutMetrics")["cssContentSize"]
+                    snapshot = call("Page.captureScreenshot", {"format": "png", "captureBeyondViewport": True,
+                                    "clip": {"x": 0, "y": 0, "width": width, "height": metrics["height"], "scale": 1}})
                     (output / f"replay-{width}.png").write_bytes(base64.b64decode(snapshot["data"]))
                     checks.append({"viewport": [width, height], "page": result, "playback": playback, "passed": True})
         finally:

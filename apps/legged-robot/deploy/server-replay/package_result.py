@@ -41,10 +41,13 @@ def package_result(run, output):
         "command_limits": summary["command_limits"], "samples": samples,
     }
     output.mkdir(parents=True, exist_ok=True)
+    output.chmod(0o755)
     (output / "preview.json").write_text(json.dumps(preview, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
     for name in ("simulation.mp4", "simulation.csv"):
         shutil.copy2(run / name, output / name)
     shutil.copy2(Path(__file__).with_name("index.html"), output / "index.html")
+    for name in ("preview.json", "simulation.mp4", "simulation.csv", "index.html"):
+        (output / name).chmod(0o644)
     return {"output": str(output), "samples": len(samples), "status": preview["status"], "version": __version__}
 
 
