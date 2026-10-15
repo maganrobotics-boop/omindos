@@ -3,7 +3,7 @@
   "robot": "originmind-q1",
   "robot_label": "OriginMind 四足机器人 V1.2",
   "scope": "cad_geometry",
-  "verified_at": "2026-10-15T02:14:18.242101+00:00",
+  "verified_at": "2026-10-15T02:35:21.566Z",
   "source_filename": "四足机器狗总装V1.2 (2).STEP",
   "source_sha256": "56f4b2a0e58398188691663f6a90f27250ab6ad1c91d2066f68a0ce2b6e8a23d",
   "model_sha256": "35a88fbe767a2a07cf6a3e8587705c316b42bf3494d05055d26b3d7a65c67f06",
@@ -45,7 +45,7 @@
   "actual_q1_browser_interactions_verified": true,
   "browser": {
     "server": "tencent",
-    "private": true,
+    "private": false,
     "viewports": [
       [
         1366,
@@ -68,11 +68,23 @@
     "console_errors": 0,
     "fixture": false,
     "record": "Q1_BROWSER_VALIDATION.json",
-    "desktop_mobile_screenshots_reviewed": true
+    "desktop_mobile_screenshots_reviewed": true,
+    "url": "https://cloud.omindos.cn/quadruped/",
+    "navigation_checks": 2,
+    "http_checks": 10
   },
   "motion_simulation_verified": false,
-  "published": false,
+  "published": true,
   "private_preview_service_stopped": true,
   "temporary_upload_route_removed": true,
-  "reference_validation": "REFERENCE_VALIDATION.json"
+  "reference_validation": "REFERENCE_VALIDATION.json",
+  "url": "https://cloud.omindos.cn/quadruped/",
+  "preflight_listener_stopped": true,
+  "release_gate_rejection_checks": 5,
+  "release": {
+    "id": "q1-v12-20261015T022706Z",
+    "published_at": "2026-10-15T02:29:52.426992+00:00",
+    "source_commit": "f65ba77446f20a54f749c4384f09ccde637060db",
+    "record": "Q1_RELEASE.json"
+  }
 }

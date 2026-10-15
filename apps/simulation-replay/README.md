@@ -27,7 +27,7 @@ python verify_q1.py --url http://127.0.0.1:18108/quadruped/ --output /private/qa
 
 2026-10-15 已使用真实 V1.2 网格完成腾讯云私有浏览器验收：1366、768、390、320px 四种宽度的 20 项检查通过，包含视角按钮、自动旋转、键盘、触摸拖动、双指缩放、复位及实际画布像素；无控制台异常。桌面与手机截图已人工核对，临时监听和上传入口已关闭。结果保存在 `VALIDATION.json` 与 `Q1_BROWSER_VALIDATION.json`；此前参考平台的结果保存在 `REFERENCE_VALIDATION.json`。
 
-规划入口为 `https://cloud.omindos.cn/quadruped/`，正式发布仅使用生成的 `index.html`。当前浏览器验收使用腾讯云 root 私有目录和 `127.0.0.1` 监听，不开放公网预览。`reference.html` 与以下 MEVIUS2 回放脚本保留用于独立工程对照，不属于自有模型页，也不得将其结果作为自有机器人验证结果。完整机械资产不写入公开源码仓库。
+正式入口为 `https://cloud.omindos.cn/quadruped/`，2026-10-15 已发布，仅部署生成的 `index.html`。网页支持下载展示用 GLB，原始 STEP 保留在私有文件中。`reference.html` 与以下 MEVIUS2 回放脚本保留用于独立工程对照，不属于自有模型页，也不得将其结果作为自有机器人验证结果。完整机械资产不写入公开源码仓库。
 
 ## 参考平台的独立仿真记录
 
@@ -72,13 +72,15 @@ python make_offline.py --package /path/to/new-preview --output /path/to/preview.
 
 ## 自有模型发布
 
-目标域名为 `cloud.omindos.cn`。本轮工作仅同步公开模板源码并完成腾讯云私有浏览器验收，没有切换生产路由；生产状态以服务器部署记录及线上验收为准。后续正式发布时，访问者可从页面下载展示用 GLB，不提供原始 STEP。
+目标域名为 `cloud.omindos.cn`。用户明确要求上线后，已于北京时间 2026-10-15 10:29 发布自有 V1.2 模型页，并在双足页面增加四足入口。原双足视频和数据保持原哈希。当前公开功能为 CAD 模型展示与交互，起身、行走等运动仿真尚未验收。
 
-候选文件和发布记录保留在 `/opt/omindos-quadruped-simulation/` 的私有目录。`deploy_q1.py stage` 创建全新的公开快照，生成仅监听 `127.0.0.1:18096` 的独立 Nginx 预检配置，不切换生产路由。浏览器测试在独立配额的临时 systemd 作业内运行；`verify_q1.mjs` 覆盖 1366、768、390、320px 四种尺寸、四个视角、键盘旋转、触摸拖动、双指缩放、自动旋转开关、画布实际像素、品牌图像及横向溢出。
+正式 HTTPS 页面已通过四种视口的 20 项模型交互检查、2 项双足导航检查和 10 项 HTTP 检查，桌面与手机截图已核对。线上 HTML 与发布前验收文件哈希一致，双足视频继续支持分段读取。发布记录见 `Q1_RELEASE.json`，浏览器记录见 `Q1_BROWSER_VALIDATION.json`。预检监听已关闭，原配置与双足快照保留用于回退。
+
+候选文件和发布记录保留在 `/opt/omindos-quadruped-simulation/` 的私有目录。`deploy_q1.py stage` 创建全新的公开快照，生成仅监听 `127.0.0.1:18096` 的独立 Nginx 预检配置，不切换生产路由。浏览器测试在独立配额的临时 systemd 作业内运行；`verify_q1.py` 覆盖 1366、768、390、320px 四种尺寸、四个视角、键盘旋转、触摸拖动、双指缩放、自动旋转开关、画布实际像素、品牌图像及横向溢出。传入 `--biped-url` 同时核对桌面和手机的双足导航、布局与视频元数据。Node 版本 `verify_q1.mjs` 可用于独立模型检查。
 
 发布自有模型时，只把已验收的便携 `index.html` 复制到 `/var/www/omindos-quadruped-replay/<release>/` 并原子切换 `current`，将 `nginx-headers.conf` 安装到 `/etc/nginx/snippets/omindos-quadruped-replay-headers.conf`，在既有 Cloud HTTPS server 中 include 本目录的 `nginx.conf`。新增 include 后执行 `nginx -t` 和 reload，检查页面 200、规范路径跳转 308、其他路径 404、写请求拒绝及手机触摸交互。自有模型页不部署参考回放的视频、CSV、JSON、策略或原始 STEP，也不修改私有源目录权限。
 
-`deploy_q1.py publish` 仅接受 20 项候选浏览器检查全部通过且没有异常的结果，要求明确的源码提交号，并校验候选 HTML 与双足媒体哈希。双足页从当前在线快照增加导航，保留视频、数据和样式。切换前保存当前配置及双足快照位置；配置校验或 reload 失败会恢复本次改动。发布后再次验收正式 HTTPS 页面。
+`deploy_q1.py publish` 仅接受 20 项候选浏览器检查全部通过且没有异常的实际模型结果，并要求报告的 HTML 哈希与发布快照一致；拒绝通用测试模型、缺失或失败的检查。发布要求明确的源码提交号，并校验候选 HTML 与双足媒体哈希。双足页从当前在线快照增加导航，保留视频、数据和样式。切换前保存当前配置及双足快照位置；配置校验或 reload 失败会恢复本次改动。发布后再次验收正式 HTTPS 页面。
 
 撤回时恢复发布记录中的双足 `current` 指向，移除此新增 include，再执行配置检查及 reload；保留转换与验收记录。Cloud 主应用、中文官网和阿里云服务不属于本次发布范围。
 
