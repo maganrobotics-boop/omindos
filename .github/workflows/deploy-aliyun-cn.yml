@@ -1,4 +1,4 @@
-name: Deploy Chinese website to Aliyun
+name: Retired - Chinese website to Aliyun
 
 on:
   workflow_dispatch:
@@ -29,6 +29,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ false }} # Retired: Chinese production is cloud-owned on Tencent; do not deploy from GitHub.
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
