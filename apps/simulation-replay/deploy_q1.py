@@ -47,6 +47,7 @@ def switch(path, target):
 
 
 def stage(candidate, output, expected):
+    raise RuntimeError('Detailed CAD publishing is retired. Use deploy_q1_shell.py.')
     html = candidate.read_text()
     if digest(candidate) != expected:
         raise ValueError('Candidate changed after verification')
@@ -108,6 +109,7 @@ def check_browser_report(qa, expected_html):
 
 
 def publish(output, source_commit):
+    raise RuntimeError('Detailed CAD publishing is retired. Use deploy_q1_shell.py.')
     if not re.fullmatch('[a-f0-9]{40}', source_commit):
         raise ValueError('An exact approved source commit is required')
     state = json.loads((output / 'release.json').read_text())

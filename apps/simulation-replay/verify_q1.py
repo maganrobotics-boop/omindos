@@ -13,13 +13,14 @@ import urllib.request
 from websockets.sync.client import connect
 
 
-def verify(url, output, chrome, fixture=False, biped_url=None):
+def verify(url, output, chrome, fixture=False, biped_url=None, local_origin=False):
     output.mkdir(parents=True, exist_ok=True)
     with urllib.request.urlopen(url, timeout=30) as response:
         html_sha256 = hashlib.sha256(response.read()).hexdigest()
     checks, errors, navigation_checks = [], [], []
     with tempfile.TemporaryDirectory(prefix="originmind-q1-", ignore_cleanup_errors=True) as profile:
-        process = subprocess.Popen([chrome, "--headless=new", "--no-sandbox", "--disable-dev-shm-usage",
+        origin_flags = ['--host-resolver-rules=MAP cloud.omindos.cn 127.0.0.1'] if local_origin else []
+        process = subprocess.Popen([chrome, *origin_flags, "--headless=new", "--no-sandbox", "--disable-dev-shm-usage",
             "--disable-gpu", "--enable-unsafe-swiftshader", "--renderer-process-limit=1", "--remote-debugging-address=127.0.0.1",
             "--remote-debugging-port=0", "--user-data-dir="+profile, "about:blank"],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -66,9 +67,8 @@ def verify(url, output, chrome, fixture=False, biped_url=None):
                     until("window.q1Viewer?.getState().ready&&q1Viewer.getState().frameRevision>0&&document.querySelector('#model-canvas').width>0")
                     info=evaluate("({state:q1Viewer.getState(),scroll:document.documentElement.scrollWidth,text:document.body.innerText,video:!!document.querySelector('video'),logo:document.querySelector('.brand img').naturalWidth})")
                     assert info["state"]["model"]=="originmind-q1" and info["state"]["geometryOnly"],info
-                    assert info["state"]["vertices"]>=(24 if fixture else 1000),info
-                    if not fixture:
-                        assert .5<info["state"]["boundsM"][1]<.75 and 1.0<info["state"]["boundsM"][2]<1.2,info
+                    assert info["state"]["scope"] == 'approximate_public_shell',info
+                    assert info["state"]["vertices"] == 372 and info["state"]["triangles"] == 124,info
                     assert info["scroll"]<=width and info["logo"]>0 and not info["video"],info
                     assert "MEVIUS" not in info["text"] and "关节与动力学参数待核对" in info["text"],info
                     for view in ["front","side","top","iso"]:
@@ -99,11 +99,16 @@ def verify(url, output, chrome, fixture=False, biped_url=None):
                     call("Input.dispatchTouchEvent",{"type":"touchEnd","touchPoints":[]})
                     assert evaluate("q1Viewer.getState().distance")<before
                     call("Emulation.setTouchEmulationEnabled",{"enabled":False})
+                    before=evaluate("q1Viewer.getState().distance")
+                    call("Input.dispatchMouseEvent",{"type":"mouseWheel",**point,"deltaX":0,"deltaY":100})
+                    until(f"q1Viewer.getState().distance>{before}")
+                    assert '仍可被下载或提取' in info['text']
+                    assert evaluate("document.getElementById('model-download').href.startsWith('blob:')")
                     rendered=evaluate("q1Viewer.getState().frameRevision")
                     evaluate("document.querySelector('button[data-view=iso]').click();scrollTo(0,0)")
                     until(f"q1Viewer.getState().frameRevision>{rendered}")
                     reset=evaluate("q1Viewer.getState()")
-                    assert reset['distance']==1.9 and reset['theta']==.94 and reset['phi']==1.12,reset
+                    assert reset['distance']==2.2 and reset['theta']==.94 and reset['phi']==1.12,reset
                     time.sleep(.3)
                     distinct=evaluate("(()=>{const c=document.querySelector('canvas'),g=c.getContext('webgl2'),p=new Uint8Array(4),a=[];for(let y=.25;y<.8;y+=.1)for(let x=.2;x<.8;x+=.1){g.readPixels(Math.round(c.width*x),Math.round(c.height*y),1,1,g.RGBA,g.UNSIGNED_BYTE,p);a.push([...p]);}return new Set(a.map(v=>v.join(','))).size})()")
                     assert distinct>=(2 if fixture else 9),distinct
@@ -115,10 +120,14 @@ def verify(url, output, chrome, fixture=False, biped_url=None):
                     for width,height in [(1366,900),(390,844)]:
                         call("Emulation.setDeviceMetricsOverride",{"width":width,"height":height,"deviceScaleFactor":1,"mobile":width<500})
                         call("Page.navigate",{"url":biped_url})
-                        until("document.querySelector('a[href=\"/quadruped/\"]')&&document.querySelector('video')?.readyState>=1")
+                        until("!!document.querySelector('a[href=\"/quadruped/\"]')&&!!document.querySelector('video')")
                         status=evaluate("({scroll:document.documentElement.scrollWidth,video:document.querySelector('video').readyState,quadruped:document.querySelector('a[href=\"/quadruped/\"]').href})")
-                        assert status['scroll']<=width and status['video']>=1,status
-                        navigation_checks.append({"viewport":[width,height],"biped_navigation":True,"passed":True})
+                        assert status['scroll']<=width and status['quadruped']=='https://cloud.omindos.cn/quadruped/',status
+                        # Navigation is independent of an unfinished video preload.
+                        call('Page.stopLoading')
+                        evaluate("document.querySelector('a[href=\"/quadruped/\"]').click()")
+                        until("location.pathname==='/quadruped/'&&window.q1Viewer?.getState().ready")
+                        navigation_checks.append({"viewport":[width,height],"biped_navigation":True,"video_ready_state_observed":status['video'],"video_playback_verified":False,"passed":True})
                 assert not errors,errors
         finally:
             process.terminate()
@@ -127,7 +136,7 @@ def verify(url, output, chrome, fixture=False, biped_url=None):
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
-    report={"passed":True,"fixture":fixture,"url":url,"html_sha256":html_sha256,"checks":checks,"navigation_checks":navigation_checks,"console_errors":errors}
+    report={"passed":True,"fixture":fixture,"url":url,"local_origin":local_origin,"html_sha256":html_sha256,"checks":checks,"navigation_checks":navigation_checks,"console_errors":errors}
     (output/"browser-check.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
     return report
 
@@ -139,6 +148,7 @@ if __name__=="__main__":
     parser.add_argument("--chrome",default="/usr/bin/google-chrome")
     parser.add_argument("--fixture",action="store_true")
     parser.add_argument("--biped-url")
+    parser.add_argument("--local-origin",action="store_true",help="On the production host, resolve cloud.omindos.cn to loopback; retain HTTPS certificate checks")
     args=parser.parse_args()
-    result=verify(args.url,args.output,args.chrome,args.fixture,args.biped_url)
+    result=verify(args.url,args.output,args.chrome,args.fixture,args.biped_url,args.local_origin)
     print(json.dumps({"passed":result["passed"],"checks":len(result["checks"]),"fixture":args.fixture}))

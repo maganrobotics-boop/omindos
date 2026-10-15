@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>OmindOS 四足仿真 · OriginMind V1.2</title>
-  <meta name="description" content="OriginMind 自有四足机器人 V1.2 原始装配模型，可旋转、缩放并切换三维视角。">
+  <title>OmindOS Q1 · 简化外壳展示</title>
+  <meta name="description" content="OriginMind Q1 简化外壳示意，支持旋转、缩放与多视角；不含内部机械结构，运动未验收。">
   <link rel="canonical" href="https://cloud.omindos.cn/quadruped/">
-  <meta property="og:title" content="OmindOS 四足仿真 · OriginMind V1.2">
-  <meta property="og:description" content="查看 OriginMind 自有四足机器人 V1.2 的实际机械装配，支持旋转、缩放与多视角。">
+  <meta property="og:title" content="OmindOS Q1 · 简化外壳展示">
+  <meta property="og:description" content="查看 Q1 简化外壳与腿部轮廓，支持旋转、缩放与多视角；非精确结构模型。">
   <meta property="og:url" content="https://cloud.omindos.cn/quadruped/">
   <style>
     :root{--paper:#f7f5f0;--panel:#fdfcf9;--ink:#292b28;--muted:#72776d;--line:#dedfd6;--soft:#eeeee6;--accent:#535c4b}
@@ -20,26 +20,26 @@
 </head>
 <body>
   <div class="shell">
-    <header class="top"><div class="brand"><img src="__ORIGINMIND_LOGO__" alt="" width="40" height="40"><div>OmindOS <small>OriginMind · 机器人仿真</small></div></div><div class="top-note">自有四足机器人<br>V1.2 原始装配</div></header>
+    <header class="top"><div class="brand"><img src="__ORIGINMIND_LOGO__" alt="" width="40" height="40"><div>OmindOS <small>OriginMind · 机器人展示</small></div></div><div class="top-note">自有四足机器人<br>Q1 简化外壳</div></header>
     <main>
-      <section class="intro"><div><p class="eyebrow">ORIGINMIND QUADRUPED</p><h1 id="page-title">OmindOS 四足仿真</h1><p class="subtitle">OriginMind 自有 V1.2 装配模型，保留原始结构与传感器位置。</p></div><div class="badge" id="model-status" role="status" aria-live="polite">正在加载自有模型</div></section>
-      <nav aria-label="仿真页面"><a href="#page-title" aria-current="page">四足仿真</a><a href="https://cloud.omindos.cn/legged-robot/">双足仿真</a><a href="https://cloud.omindos.cn/">返回 Cloud</a></nav>
+      <section class="intro"><div><p class="eyebrow">ORIGINMIND QUADRUPED</p><h1 id="page-title">Q1 简化外壳展示</h1><p class="subtitle">低细节外壳与腿部轮廓，仅用于外形示意。</p></div><div class="badge" id="model-status" role="status" aria-live="polite">正在加载自有模型</div></section>
+      <nav aria-label="仿真页面"><a href="#page-title" aria-current="page">四足展示</a><a href="https://cloud.omindos.cn/legged-robot/">双足仿真</a><a href="https://cloud.omindos.cn/">返回 Cloud</a></nav>
       <div class="workspace">
         <section class="panel" aria-labelledby="viewer-title">
-          <div class="heading"><h2 id="viewer-title">V1.2 三维模型</h2><span class="small">原始 STEP 装配导入</span></div>
-          <div class="viewport"><canvas id="model-canvas" tabindex="0" aria-label="OriginMind V1.2 四足机器人三维模型。拖动旋转，双指或滚轮缩放；键盘方向键旋转，加减键缩放，Home 复位。"></canvas><div class="model-tag">ORIGINMIND / V1.2</div><div class="axes">原始装配 · 可交互查看</div><div class="loading" id="loading" role="status">正在读取完整装配，请稍候</div></div>
+          <div class="heading"><h2 id="viewer-title">Q1 三维外形</h2><span class="small">独立生成的简化外形</span></div>
+          <div class="viewport"><canvas id="model-canvas" tabindex="0" aria-label="OriginMind Q1 简化外壳模型。拖动旋转，双指或滚轮缩放；键盘方向键旋转，加减键缩放，Home 复位。"></canvas><div class="model-tag">ORIGINMIND / Q1 SHELL</div><div class="axes">简化外壳 · 可交互查看</div><div class="loading" id="loading" role="status">正在加载简化外壳</div></div>
           <div class="controls" aria-label="三维视角"><button data-view="iso" disabled>复位视角</button><button data-view="front" disabled>正视</button><button data-view="side" disabled>侧视</button><button data-view="top" disabled>俯视</button><button id="rotate" aria-pressed="false" disabled>自动旋转</button></div>
           <div class="hint">拖动旋转 · 双指或滚轮缩放 · 支持手机触摸操作</div>
         </section>
         <section class="panel" aria-labelledby="model-title">
-          <div class="heading"><h2 id="model-title">OriginMind 四足机器人</h2><span class="small">V1.2</span></div>
-          <div class="details"><h3>四足机器人 V1.2</h3><p>来自 OriginMind V1.2 机械总装设计。</p><dl class="specs"><dt>模型版本</dt><dd>V1.2</dd><dt>模型来源</dt><dd>自有 STEP 总装</dd><dt>装配零件</dt><dd id="part-count">正在读取</dd><dt>几何尺寸</dt><dd id="model-size">正在读取</dd><dt>模型状态</dt><dd id="geometry-status">正在加载</dd><dt>运动仿真</dt><dd>关节与动力学参数待核对</dd></dl><div class="status"><strong>已切换为自有模型</strong><p>当前可查看实际机械结构。起身、行走与转向将在这套模型完成关节、质量惯量和电机配置后接入。</p></div></div>
-          <div class="download"><a id="model-download" download="OriginMind-Quadruped-V1.2.glb" hidden>下载预览模型 GLB</a><a id="info-download" download="OriginMind-Quadruped-V1.2.json" hidden>模型信息</a></div>
+          <div class="heading"><h2 id="model-title">OriginMind 四足机器人</h2><span class="small">SHELL V1</span></div>
+          <div class="details"><h3>Q1 外形示意</h3><p>独立创建的低面数外观，不含原详细网格。</p><dl class="specs"><dt>模型版本</dt><dd>Shell v1</dd><dt>模型来源</dt><dd>独立生成，无 CAD 输入</dd><dt>展示内容</dt><dd id="part-count">正在读取</dd><dt>外形比例</dt><dd id="model-size">正在读取</dd><dt>模型状态</dt><dd id="geometry-status">正在加载</dd><dt>运动仿真</dt><dd>关节与动力学参数待核对</dd></dl><div class="status"><strong>简化外形展示</strong><p>不展示内部装配、传动、电机或关节结构。当前仅支持外形查看，起身、行走与转向均未验收。</p></div></div>
+          <div class="download"><a id="model-download" download="OriginMind-Q1-Shell-v1.glb" hidden>下载简化外壳 GLB</a><a id="info-download" download="OriginMind-Q1-Shell-v1.json" hidden>模型信息</a></div>
         </section>
       </div>
-      <div class="notice">V1.2 原装配展示已接入。网页网格用于结构预览，不作尺寸测量。当前画面为模型查看，尚无这套机器人的运动仿真验收结果。</div>
+      <div class="notice">公开的简化模型仍可被下载或提取；不含原详细装配和精确结构，不用于尺寸测量或制造。当前为外形展示，运动仿真尚未验收。</div>
     </main>
-    <footer class="footer"><span>OriginMind · OmindOS</span><span>自有四足模型 · V1.2</span></footer>
+    <footer class="footer"><span>OriginMind · OmindOS</span><span>Q1 · 简化外壳 v1</span></footer>
   </div>
   <script type="application/json" id="model-info">__MODEL_INFO__</script>
   <script type="application/octet-stream" id="model-data">__MODEL_GZIP_BASE64__</script>
@@ -51,9 +51,9 @@
     let gl,modelReady=false;
     try{
       const info=JSON.parse(byId('model-info').textContent);
-      if(info.robot!=='originmind-q1'||info.scope!=='cad_geometry'||info.original_assembly_preserved!==true)throw new Error('模型信息无效');
-      byId('part-count').textContent=info.geometry_nodes.toLocaleString('zh-CN')+' 个实例';
-      byId('model-size').textContent='约 '+info.bounds_mm.size.map(v=>Math.round(v)).join(' × ')+' mm（CAD 包围尺寸）';
+      if(info.robot!=='originmind-q1'||info.scope!=='approximate_public_shell'||info.original_assembly_preserved!==false||info.cad_input_used!==false)throw new Error('模型信息无效');
+      byId('part-count').textContent='外壳与四条腿部轮廓';
+      byId('model-size').textContent='示意比例，不提供精确尺寸';
       const encoded=byId('model-data').textContent.trim();
       if(!window.DecompressionStream)throw new Error('请使用支持三维预览的新版浏览器打开');
       const packed=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));
@@ -85,12 +85,12 @@
       const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error('三维显示初始化失败');gl.useProgram(program);
       function vertexArray(data,index){const vao=gl.createVertexArray();gl.bindVertexArray(vao);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);for(const [i,n]of ['aPos','aNormal','aColor'].entries()){const a=gl.getAttribLocation(program,n);gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,3,gl.FLOAT,false,36,i*12);}if(index){const e=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,e);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,index,gl.STATIC_DRAW);}return vao;}
       const modelVAO=vertexArray(geometry,elements),floor=[];for(const [x,z]of[[-2,-2],[2,-2],[2,2],[-2,-2],[2,2],[-2,2]])floor.push(x,-.008,z,0,1,0,.9,.9,.87);const floorVAO=vertexArray(new Float32Array(floor));const uVP=gl.getUniformLocation(program,'uVP'),uGround=gl.getUniformLocation(program,'uGround');
-      let theta=.94,phi=1.12,distance=1.9,auto=false,dirty=true,lastTime=0,visible=true,frameRevision=0;const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+      let theta=.94,phi=1.12,distance=2.2,auto=false,dirty=true,lastTime=0,visible=true,frameRevision=0;const reduced=matchMedia('(prefers-reduced-motion: reduce)');
       const normalized=v=>{const l=Math.hypot(...v);return v.map(x=>x/l);},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
       function viewMatrix(eye){const z=normalized(eye.map((v,i)=>v-target[i])),x=normalized(cross([0,1,0],z)),y=cross(z,x);return[x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1];}
       function render(time){requestAnimationFrame(render);if(!visible)return;if(auto){theta+=(lastTime?Math.min(time-lastTime,60):0)*.00022;dirty=true;}lastTime=time;if(!dirty)return;dirty=false;const w=Math.max(1,Math.round(canvas.clientWidth*Math.min(devicePixelRatio||1,1.8))),h=Math.max(1,Math.round(canvas.clientHeight*Math.min(devicePixelRatio||1,1.8)));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}gl.viewport(0,0,w,h);gl.clearColor(.89,.90,.87,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);const near=.01,far=30,f=1/Math.tan(.62/2),aspect=w/h,projection=[f/aspect,0,0,0,0,f,0,0,0,0,(far+near)/(near-far),-1,0,0,2*far*near/(near-far),0];const eye=[target[0]+distance*Math.sin(phi)*Math.sin(theta),target[1]+distance*Math.cos(phi),target[2]+distance*Math.sin(phi)*Math.cos(theta)];gl.uniformMatrix4fv(uVP,false,new Float32Array(multiply(projection,viewMatrix(eye))));gl.uniform1i(uGround,1);gl.bindVertexArray(floorVAO);gl.drawArrays(gl.TRIANGLES,0,6);gl.uniform1i(uGround,0);gl.bindVertexArray(modelVAO);gl.drawElements(gl.TRIANGLES,elements.length,gl.UNSIGNED_INT,0);frameRevision++;}
       function stopAuto(){auto=false;byId('rotate').setAttribute('aria-pressed','false');}
-      function setView(view){stopAuto();distance=1.9;[theta,phi]=({iso:[.94,1.12],front:[0,1.45],side:[Math.PI/2,1.45],top:[0,.015]})[view];dirty=true;canvas.dataset.view=view;}
+      function setView(view){stopAuto();distance=2.2;[theta,phi]=({iso:[.94,1.12],front:[0,1.45],side:[Math.PI/2,1.45],top:[0,.015]})[view];dirty=true;canvas.dataset.view=view;}
       controls.forEach(b=>b.disabled=false);document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
       byId('rotate').addEventListener('click',()=>{auto=!auto;byId('rotate').setAttribute('aria-pressed',String(auto));dirty=true;});
       const points=new Map();let pinch=0,lastPoint=null;
@@ -101,7 +101,7 @@
       canvas.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','Home',' '].includes(e.key))return;e.preventDefault();stopAuto();if(e.key==='ArrowLeft')theta-=.12;if(e.key==='ArrowRight')theta+=.12;if(e.key==='ArrowUp')phi=Math.max(.015,phi-.12);if(e.key==='ArrowDown')phi=Math.min(Math.PI*.72,phi+.12);if(['+','='].includes(e.key))distance=Math.max(.8,distance*.9);if(e.key==='-')distance=Math.min(6,distance/ .9);if(e.key==='Home')setView('iso');if(e.key===' ')byId('rotate').click();dirty=true;});
       new ResizeObserver(()=>dirty=true).observe(canvas);document.addEventListener('visibilitychange',()=>{visible=!document.hidden;lastTime=0;dirty=true;});reduced.addEventListener('change',()=>{if(reduced.matches)stopAuto();});canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();modelReady=false;fail('三维显示已暂停，请重新打开预览');});
       byId('model-download').href=URL.createObjectURL(new Blob([buffer],{type:'model/gltf-binary'}));byId('model-download').hidden=false;byId('info-download').href=URL.createObjectURL(new Blob([JSON.stringify(info,null,2)],{type:'application/json'}));byId('info-download').hidden=false;
-      byId('loading').hidden=true;byId('model-status').textContent='自有模型已导入';byId('model-status').classList.add('ready');byId('geometry-status').textContent='原始装配已导入';modelReady=true;canvas.dataset.view='iso';canvas.dataset.model='originmind-q1';canvas.dataset.vertices=String(vertices);canvas.dataset.triangles=String(indices/3);window.q1Viewer={getState:()=>({ready:modelReady,theta,phi,distance,auto,vertices,triangles:indices/3,model:info.robot,geometryOnly:true,boundsM:sizes,frameRevision})};requestAnimationFrame(render);
+      byId('loading').hidden=true;byId('model-status').textContent='简化外壳已加载';byId('model-status').classList.add('ready');byId('geometry-status').textContent='简化外形，无内部结构';modelReady=true;canvas.dataset.view='iso';canvas.dataset.model='originmind-q1';canvas.dataset.vertices=String(vertices);canvas.dataset.triangles=String(indices/3);window.q1Viewer={getState:()=>({ready:modelReady,theta,phi,distance,auto,vertices,triangles:indices/3,model:info.robot,scope:info.scope,geometryOnly:true,boundsM:sizes,frameRevision})};requestAnimationFrame(render);
     }catch(error){console.error(error);fail(error.message||'模型暂时无法加载，请重新打开预览');}
   })();
   </script>

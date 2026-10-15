@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 def build(model_directory, output):
+    raise RuntimeError('Detailed CAD web publishing is retired. Use build_q1_shell.py; keep CAD files private.')
     model = model_directory / "model.glb"
     metadata = json.loads((model_directory / "model.json").read_text())
     if metadata.get("robot") != "originmind-q1" or metadata.get("scope") != "cad_geometry":
