@@ -43,12 +43,12 @@ try {
   for (const [width, height] of [[1366, 900], [768, 1024], [390, 844], [320, 740]]) {
     await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: width < 500 });
     await call('Page.navigate', { url });
-    await until("window.q1Viewer?.getState().ready && document.querySelector('#model-canvas').width > 0");
+    await until("window.q1Viewer?.getState().ready && q1Viewer.getState().frameRevision > 0 && document.querySelector('#model-canvas').width > 0");
     const info = await evaluate("({state:q1Viewer.getState(),width:innerWidth,scroll:document.documentElement.scrollWidth,oldVideo:!!document.querySelector('video'),text:document.body.innerText,logo:document.querySelector('.brand img').naturalWidth})");
     assert.equal(info.state.model, 'originmind-q1'); assert(info.state.geometryOnly); assert(info.state.vertices > 1000); assert(info.logo > 0); assert.equal(info.oldVideo, false); assert(!info.text.includes('MEVIUS')); assert(info.scroll <= width);
     assert(info.text.includes('运动仿真验收结果')); assert(info.text.includes('关节与动力学参数待核对'));
     for (const view of ['front', 'side', 'top', 'iso']) {
-      const point = await evaluate(`(()=>{const b=document.querySelector('[data-view=${view}]');b.scrollIntoView({block:'center'});const r=b.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
+      const point = await evaluate(`(()=>{const b=document.querySelector('button[data-view=${view}]');b.scrollIntoView({block:'center'});const r=b.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2}})()`);
       await call('Input.dispatchMouseEvent', { type: 'mousePressed', button: 'left', clickCount: 1, ...point }); await call('Input.dispatchMouseEvent', { type: 'mouseReleased', button: 'left', clickCount: 1, ...point });
       assert.equal(await evaluate("document.querySelector('#model-canvas').dataset.view"), view);
       checks.push({ viewport: [width, height], view, passed: true });
@@ -71,7 +71,11 @@ try {
     await call('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     assert((await evaluate('q1Viewer.getState()')).distance < pinchStart.distance);
     await call('Emulation.setTouchEmulationEnabled', { enabled: false });
-    await evaluate("document.querySelector('[data-view=iso]').click();scrollTo(0,0)"); await pause(300);
+    const rendered = await evaluate('q1Viewer.getState().frameRevision');
+    await evaluate("document.querySelector('button[data-view=iso]').click();scrollTo(0,0)");
+    await until('q1Viewer.getState().frameRevision > ' + rendered);
+    const reset = await evaluate('q1Viewer.getState()');
+    assert.equal(reset.distance, 1.9); assert.equal(reset.theta, .94); assert.equal(reset.phi, 1.12);
     const pixels = await evaluate("(()=>{const c=document.querySelector('canvas'),g=c.getContext('webgl2'),p=new Uint8Array(4),a=[];for(let y=.25;y<.8;y+=.1)for(let x=.2;x<.8;x+=.1){g.readPixels(Math.round(c.width*x),Math.round(c.height*y),1,1,g.RGBA,g.UNSIGNED_BYTE,p);a.push([...p]);}return new Set(a.map(v=>v.join(','))).size})()");
     assert(pixels > 8, 'Renderer produced a uniform canvas');
     const bounds = (await call('Page.getLayoutMetrics')).cssContentSize;

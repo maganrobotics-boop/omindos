@@ -5,6 +5,7 @@ import base64
 import gzip
 import hashlib
 import json
+import math
 from pathlib import Path
 
 
@@ -17,6 +18,10 @@ def build(model_directory, output):
         raise ValueError("The model changed after conversion")
     if metadata["dynamics"]["motion_simulation_verified"] is not False:
         raise ValueError("This viewer must not claim unverified motion")
+    if not metadata.get("web_mesh", {}).get("display_only"):
+        raise ValueError("Optimize the complete assembly for web display first")
+    if not all(math.isfinite(v) and 0 < v < 10000 for v in metadata["bounds_mm"]["size"]):
+        raise ValueError("Expected finite robot dimensions in millimeters")
     metadata["source_filename"] = "四足机器狗总装V1.2 (2).STEP"
     source = Path(__file__).parent
     logo = source.parent / "website" / "assets" / "brand" / "originmind-mark-184.webp"

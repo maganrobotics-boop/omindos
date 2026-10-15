@@ -1,95 +1,51 @@
 {
-  "schema_version": 1,
-  "robot": "mevius2",
-  "robot_label": "MEVIUS2 参考模型",
-  "version": "quadruped-replay-1",
-  "scope": "simulation_only",
-  "server": "腾讯云",
-  "created_at": "2026-10-14T23:59:45.961913+00:00",
-  "status": "completed",
-  "failure": null,
-  "duration_s": 22,
-  "control_steps": 4400,
-  "physics_hz": 200,
-  "policy_hz": 50,
-  "command_limits": [
-    -0.3,
-    0.3,
-    -0.2,
-    0.2,
-    -0.5,
-    0.5
-  ],
-  "phases": [
-    {
-      "name": "起身",
-      "start_s": 0,
-      "end_s": 4.2
-    },
-    {
-      "name": "站立",
-      "start_s": 4.2,
-      "end_s": 7
-    },
-    {
-      "name": "前进",
-      "start_s": 7,
-      "end_s": 13
-    },
-    {
-      "name": "转向",
-      "start_s": 13,
-      "end_s": 17
-    },
-    {
-      "name": "停车",
-      "start_s": 17,
-      "end_s": 22
-    }
-  ],
+  "schema_version": 2,
+  "robot": "originmind-q1",
+  "robot_label": "OriginMind 四足机器人 V1.2",
+  "scope": "cad_geometry",
+  "verified_at": "2026-10-15T02:14:18.242101+00:00",
+  "source_filename": "四足机器狗总装V1.2 (2).STEP",
+  "source_sha256": "56f4b2a0e58398188691663f6a90f27250ab6ad1c91d2066f68a0ce2b6e8a23d",
+  "model_sha256": "35a88fbe767a2a07cf6a3e8587705c316b42bf3494d05055d26b3d7a65c67f06",
+  "portable_html_sha256": "ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311",
+  "portable_html_bytes": 10489050,
+  "assembly_nodes": 1003,
+  "geometry_nodes": 926,
+  "solids": 982,
+  "bounds_mm": {
+    "min": [
+      -254.15000000000776,
+      64.91521117905174,
+      -461.45428666585207
+    ],
+    "max": [
+      254.15000000000344,
+      698.0013190821089,
+      638.521421157126
+    ],
+    "size": [
+      508.3000000000112,
+      633.0861079030572,
+      1099.9757078229782
+    ]
+  },
+  "source_up_axis": "Y",
+  "gltf_up_axis": "Y",
+  "export_axis_rotation_corrected": true,
   "checks": {
-    "complete": true,
-    "upright": true,
-    "clearance": true,
-    "forward_progress": true,
-    "turn_progress": true,
-    "stop_speed": true,
-    "policy_executed": true
+    "embedded_model_hash": true,
+    "owner_source_hash": true,
+    "assembly_hierarchy_preserved": true,
+    "child_placements_preserved": true,
+    "original_materials_preserved": true,
+    "python_compile": true,
+    "javascript_syntax": true,
+    "portable_html_audit": true
   },
-  "turn_yaw_change_rad": 1.0026069403092024,
-  "policy_inferences": 900,
-  "hardware_tested": false,
-  "customer_Q1_dynamics_tested": false,
-  "model_source": "https://github.com/haraduka/mevius2",
-  "upstream_commit": "4f09680bb575574377b903bbc971bdb2695d507b",
-  "policy_sha256": "392b4d3f30e856caedcb0ec25f125201e97b28795bc9342ee2fc1d8125656510",
-  "asset_manifest_sha256": "4f222335e987683f8fb46fc8e1966c1d7b6b85e1d7ebc98ecfe1c29e7617fd3e",
-  "controller_sha256": {
-    "quadruped_controller.py": "e5c0c4ce5952f739352aa95e1bb0a0bc2d26b5bb6e4c349838f18ce165654282",
-    "quadruped_backends.py": "8137a6515d4ad6801a7a547e1a9f0cb7d21ac78f60e23531ce4c0967ae95c5dd",
-    "joint_interface.py": "f5e4ce5ec6875b74418e5dbb524647b2083371374e32a0d490c8025289650a6f"
-  },
-  "versions": {
-    "torch": "2.14.1+cpu",
-    "mujoco": "3.14.0",
-    "numpy": "2.5.3"
-  },
-  "compute_wall_s": 2.357,
-  "csv_sha256": "5d11cb3e526a203cd7cdfff7c93e8c096e8bc849228f814f8484ade756b86cdf",
-  "video": {
-    "width": 960,
-    "height": 540,
-    "fps": 20,
-    "frames": 440,
-    "duration_s": 22,
-    "sha256": "efef698813f897bf12d3ca10cbbfe0ad7f25ba5fbbc06640742541227583afcd",
-    "render_wall_s": 286.869,
-    "from_recorded_states": true
-  },
-  "validation": {
-    "standalone_browser_checks": 20,
-    "telemetry_cross_checks": 20,
-    "browser_checks": 22,
+  "actual_q1_browser_interactions_verified": true,
+  "browser": {
+    "server": "tencent",
+    "private": true,
     "viewports": [
       [
         1366,
@@ -108,10 +64,15 @@
         740
       ]
     ],
+    "passed_checks": 20,
     "console_errors": 0,
-    "http_checks": 11,
-    "package_rejection_checks": 4,
-    "published": false,
-    "preview_binding": "127.0.0.1:18092"
-  }
+    "fixture": false,
+    "record": "Q1_BROWSER_VALIDATION.json",
+    "desktop_mobile_screenshots_reviewed": true
+  },
+  "motion_simulation_verified": false,
+  "published": false,
+  "private_preview_service_stopped": true,
+  "temporary_upload_route_removed": true,
+  "reference_validation": "REFERENCE_VALIDATION.json"
 }

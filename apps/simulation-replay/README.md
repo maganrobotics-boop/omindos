@@ -6,19 +6,28 @@
 
 ## 自有模型预览
 
-CAD 转换使用 CadQuery/OpenCascade，依赖于转换环境，不影响生产服务。原始 STEP 与转换缓存保留在私有目录，不提交机械资产至公开源码仓库。服务器仅发布内嵌转换后几何的模型页面；访客可下载页面中显示的 GLB，不提供原始 STEP。
+CAD 转换使用 CadQuery/OpenCascade，网页网格优化使用 NumPy、VTK 与 fast-simplification，依赖只安装在转换环境。原始 STEP、GLB、转换缓存和内嵌模型的便携 HTML 保留在私有目录，不提交机械资产至公开源码仓库。
 
 ```bash
+python -m pip install -r requirements-model.txt
 python import_q1_model.py --source /private/OriginMind-Q1-V1.2.step --output /private/new-model
-python build_q1_preview.py --model /private/new-model --output /private/preview/index.html
-node verify_q1.mjs file:///private/preview/index.html /private/qa /usr/bin/google-chrome
+python optimize_q1_model.py --source /private/new-model --output /private/web-model
+python build_q1_preview.py --model /private/web-model --output /private/preview/index.html
+python preview_server.py --directory /private/preview --port 18108
+# 在另一终端，使用独立环境中的 Chrome 和 Python：
+python -m pip install -r requirements-browser.txt
+python verify_q1.py --url http://127.0.0.1:18108/quadruped/ --output /private/qa
 ```
 
 便携 HTML 内嵌真实 GLB、原始文件及模型哈希、几何信息和 OriginMind 正式标识；无第三方 JS、CDN 或运行时网络依赖，WebGL 2 负责渲染。原始机械装配只在生成便携预览时读取。JSON 中的 `scope=cad_geometry`、`dynamics.motion_simulation_verified=false` 保留模型展示与运动验收之间的边界。
 
 导入保留零件级名称、颜色、层及装配位置，不创建未使用的逐面名称标签。同一父装配中重复的名称加上确定性的实例后缀，并在元数据记录原名称；几何、颜色、变换和实例数量不受名称消歧影响。
 
-生产入口为 `https://cloud.omindos.cn/quadruped/`，发布仅使用生成的 `index.html`。`reference.html` 与以下 MEVIUS2 回放脚本保留用于独立工程对照，不属于自有模型页，也不得将其结果作为自有机器人验证结果。完整机械资产不写入公开源码仓库。
+这份 CAD 的竖直轴为 Y。网页网格撤回 CadQuery 导出时额外添加的整机 Z→Y 轴旋转，并把毫米换为米；所有子装配的相对变换与材质保留。优化器同时修复导出节点名的 UTF-8 解码。浏览器检查实际网格的竖直及纵向尺寸，并在截图前确认复位视角已经绘制。
+
+2026-10-15 已使用真实 V1.2 网格完成腾讯云私有浏览器验收：1366、768、390、320px 四种宽度的 20 项检查通过，包含视角按钮、自动旋转、键盘、触摸拖动、双指缩放、复位及实际画布像素；无控制台异常。桌面与手机截图已人工核对，临时监听和上传入口已关闭。结果保存在 `VALIDATION.json` 与 `Q1_BROWSER_VALIDATION.json`；此前参考平台的结果保存在 `REFERENCE_VALIDATION.json`。
+
+规划入口为 `https://cloud.omindos.cn/quadruped/`，正式发布仅使用生成的 `index.html`。当前浏览器验收使用腾讯云 root 私有目录和 `127.0.0.1` 监听，不开放公网预览。`reference.html` 与以下 MEVIUS2 回放脚本保留用于独立工程对照，不属于自有模型页，也不得将其结果作为自有机器人验证结果。完整机械资产不写入公开源码仓库。
 
 ## 参考平台的独立仿真记录
 
@@ -28,7 +37,7 @@ node verify_q1.mjs file:///private/preview/index.html /private/qa /usr/bin/googl
 
 参考模板为 `reference.html`，不在生产路由中开放。参考模板中的播放器需用户点击播放。
 
-## 本次实际仿真
+## 参考平台的历史仿真
 
 - 2026-10-15 北京时间在腾讯云运行，22 秒物理时间、4,400 个物理步、900 次策略推理；7 项基准检查全部通过。
 - 0–1 秒待机，1–4 秒起身；4.2–7 秒站立，7–13 秒前进，13–17 秒转向，17–22 秒停车。起身按钮覆盖 0–4.2 秒。
@@ -63,7 +72,7 @@ python make_offline.py --package /path/to/new-preview --output /path/to/preview.
 
 ## 自有模型发布
 
-目标域名为 `cloud.omindos.cn`。用户已于 2026-10-15 明确授权发布自有 V1.2 模型页；生产状态以服务器部署记录及线上验收为准。
+目标域名为 `cloud.omindos.cn`。本轮工作仅同步公开模板源码并完成腾讯云私有浏览器验收，没有切换生产路由；生产状态以服务器部署记录及线上验收为准。后续正式发布时，访问者可从页面下载展示用 GLB，不提供原始 STEP。
 
 候选文件和发布记录保留在 `/opt/omindos-quadruped-simulation/` 的私有目录。`deploy_q1.py stage` 创建全新的公开快照，生成仅监听 `127.0.0.1:18096` 的独立 Nginx 预检配置，不切换生产路由。浏览器测试在独立配额的临时 systemd 作业内运行；`verify_q1.mjs` 覆盖 1366、768、390、320px 四种尺寸、四个视角、键盘旋转、触摸拖动、双指缩放、自动旋转开关、画布实际像素、品牌图像及横向溢出。
 
