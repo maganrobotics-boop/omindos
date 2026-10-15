@@ -61,6 +61,7 @@ def publish(candidate, report, commit):
     assert digest(backup/'index.html')==OLD_SHA
     target=PUBLIC/release
     target.mkdir(mode=0o755)
+    target.chmod(0o755)
     shutil.copyfile(candidate,target/'index.html')
     (target/'index.html').chmod(0o644)
     assert digest(target/'index.html')==digest(candidate)
