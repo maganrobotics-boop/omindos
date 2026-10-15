@@ -2,7 +2,8 @@
   "passed": true,
   "fixture": false,
   "url": "https://cloud.omindos.cn/quadruped/",
-  "html_sha256": "ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311",
+  "local_origin": true,
+  "html_sha256": "e3b98f5ff93db45c16f526d5610f4e1927126c3b420f8f59c5b22817b4fc3f7b",
   "checks": [
     {
       "viewport": [
@@ -42,23 +43,24 @@
         900
       ],
       "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 21,
+      "distinct_pixel_samples": 19,
       "state": {
         "ready": true,
         "theta": 0.94,
         "phi": 1.12,
-        "distance": 1.9,
+        "distance": 2.2,
         "auto": false,
-        "vertices": 1832265,
-        "triangles": 1823406,
+        "vertices": 372,
+        "triangles": 124,
         "model": "originmind-q1",
+        "scope": "approximate_public_shell",
         "geometryOnly": true,
         "boundsM": [
-          0.5076581848144643,
-          0.6318378648437506,
-          1.0995340639337636
+          0.6899999976158142,
+          0.6999999806284904,
+          0.9399999976158142
         ],
-        "frameRevision": 7
+        "frameRevision": 12
       },
       "passed": true
     },
@@ -100,21 +102,22 @@
         1024
       ],
       "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 21,
+      "distinct_pixel_samples": 18,
       "state": {
         "ready": true,
         "theta": 0.94,
         "phi": 1.12,
-        "distance": 1.9,
+        "distance": 2.2,
         "auto": false,
-        "vertices": 1832265,
-        "triangles": 1823406,
+        "vertices": 372,
+        "triangles": 124,
         "model": "originmind-q1",
+        "scope": "approximate_public_shell",
         "geometryOnly": true,
         "boundsM": [
-          0.5076581848144643,
-          0.6318378648437506,
-          1.0995340639337636
+          0.6899999976158142,
+          0.6999999806284904,
+          0.9399999976158142
         ],
         "frameRevision": 8
       },
@@ -158,21 +161,22 @@
         844
       ],
       "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 29,
+      "distinct_pixel_samples": 24,
       "state": {
         "ready": true,
         "theta": 0.94,
         "phi": 1.12,
-        "distance": 1.9,
+        "distance": 2.2,
         "auto": false,
-        "vertices": 1832265,
-        "triangles": 1823406,
+        "vertices": 372,
+        "triangles": 124,
         "model": "originmind-q1",
+        "scope": "approximate_public_shell",
         "geometryOnly": true,
         "boundsM": [
-          0.5076581848144643,
-          0.6318378648437506,
-          1.0995340639337636
+          0.6899999976158142,
+          0.6999999806284904,
+          0.9399999976158142
         ],
         "frameRevision": 7
       },
@@ -216,21 +220,22 @@
         740
       ],
       "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 31,
+      "distinct_pixel_samples": 22,
       "state": {
         "ready": true,
         "theta": 0.94,
         "phi": 1.12,
-        "distance": 1.9,
+        "distance": 2.2,
         "auto": false,
-        "vertices": 1832265,
-        "triangles": 1823406,
+        "vertices": 372,
+        "triangles": 124,
         "model": "originmind-q1",
+        "scope": "approximate_public_shell",
         "geometryOnly": true,
         "boundsM": [
-          0.5076581848144643,
-          0.6318378648437506,
-          1.0995340639337636
+          0.6899999976158142,
+          0.6999999806284904,
+          0.9399999976158142
         ],
         "frameRevision": 7
       },
@@ -244,6 +249,8 @@
         900
       ],
       "biped_navigation": true,
+      "video_ready_state_observed": 0,
+      "video_playback_verified": false,
       "passed": true
     },
     {
@@ -252,10 +259,10 @@
         844
       ],
       "biped_navigation": true,
+      "video_ready_state_observed": 0,
+      "video_playback_verified": false,
       "passed": true
     }
   ],
-  "console_errors": [],
-  "model_sha256": "35a88fbe767a2a07cf6a3e8587705c316b42bf3494d05055d26b3d7a65c67f06",
-  "verified_at": "2026-10-15T02:35:21.566Z"
+  "console_errors": []
 }
