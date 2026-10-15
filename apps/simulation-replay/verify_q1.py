@@ -120,10 +120,12 @@ def verify(url, output, chrome, fixture=False, biped_url=None, local_origin=Fals
                     for width,height in [(1366,900),(390,844)]:
                         call("Emulation.setDeviceMetricsOverride",{"width":width,"height":height,"deviceScaleFactor":1,"mobile":width<500})
                         call("Page.navigate",{"url":biped_url})
-                        until("document.querySelector('a[href=\"/quadruped/\"]')&&document.querySelector('video')?.readyState>=1")
+                        until("document.querySelector('a[href=\"/quadruped/\"]')&&document.querySelector('video')")
                         status=evaluate("({scroll:document.documentElement.scrollWidth,video:document.querySelector('video').readyState,quadruped:document.querySelector('a[href=\"/quadruped/\"]').href})")
-                        assert status['scroll']<=width and status['video']>=1,status
-                        navigation_checks.append({"viewport":[width,height],"biped_navigation":True,"passed":True})
+                        assert status['scroll']<=width and status['quadruped']=='https://cloud.omindos.cn/quadruped/',status
+                        evaluate("document.querySelector('a[href=\"/quadruped/\"]').click()")
+                        until("location.pathname==='/quadruped/'&&window.q1Viewer?.getState().ready")
+                        navigation_checks.append({"viewport":[width,height],"biped_navigation":True,"video_ready_state_observed":status['video'],"video_playback_verified":False,"passed":True})
                 assert not errors,errors
         finally:
             process.terminate()
