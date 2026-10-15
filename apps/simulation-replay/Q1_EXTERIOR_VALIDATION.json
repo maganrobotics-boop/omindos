@@ -1,0 +1,68 @@
+{
+  "html_sha256": "29c44ddd0781bd2038df45221ce40147ba55296376c535d969d4fb9bfa253fbd",
+  "model_sha256": "4ec73857643b3ec575be2ea3357b8f96b436a1e30446e6329aa2e2e980deb8d6",
+  "triangles": 24000,
+  "meshes": 1,
+  "nodes": 1,
+  "glb_bytes": 573436,
+  "no_source_hierarchy_or_internal_meshes": true,
+  "normals_present": true,
+  "silhouette_checks": [
+    {
+      "width": 1366,
+      "view": "front",
+      "silhouette_iou": 0.9249178125773269,
+      "passed": true
+    },
+    {
+      "width": 1366,
+      "view": "side",
+      "silhouette_iou": 0.9339851538664808,
+      "passed": true
+    },
+    {
+      "width": 1366,
+      "view": "rear",
+      "silhouette_iou": 0.9254447401596863,
+      "passed": true
+    },
+    {
+      "width": 1366,
+      "view": "iso",
+      "silhouette_iou": 0.9553715161271553,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "view": "front",
+      "silhouette_iou": 0.9266481884775292,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "view": "side",
+      "silhouette_iou": 0.9360375460945357,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "view": "rear",
+      "silhouette_iou": 0.9236470014627011,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "view": "iso",
+      "silhouette_iou": 0.9569933293562558,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "same_camera_desktop_mobile_screenshots_reviewed": true,
+  "source_buffer_views_reused": 0,
+  "open_boundary_edges": 0,
+  "nonmanifold_contact_edges": 65,
+  "manufacturing_suitable": false,
+  "model_precise_engineering_dimensions": false,
+  "comparison_image_sha256": "5591e98603958e0726f9e73201a396ab28abac07eefb6ea1754415f3a9eaa377"
+}
