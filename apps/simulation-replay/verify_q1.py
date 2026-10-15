@@ -66,9 +66,8 @@ def verify(url, output, chrome, fixture=False, biped_url=None):
                     until("window.q1Viewer?.getState().ready&&q1Viewer.getState().frameRevision>0&&document.querySelector('#model-canvas').width>0")
                     info=evaluate("({state:q1Viewer.getState(),scroll:document.documentElement.scrollWidth,text:document.body.innerText,video:!!document.querySelector('video'),logo:document.querySelector('.brand img').naturalWidth})")
                     assert info["state"]["model"]=="originmind-q1" and info["state"]["geometryOnly"],info
-                    assert info["state"]["vertices"]>=(24 if fixture else 1000),info
-                    if not fixture:
-                        assert .5<info["state"]["boundsM"][1]<.75 and 1.0<info["state"]["boundsM"][2]<1.2,info
+                    assert info["state"]["scope"] == 'approximate_public_shell',info
+                    assert info["state"]["vertices"] == 372 and info["state"]["triangles"] == 124,info
                     assert info["scroll"]<=width and info["logo"]>0 and not info["video"],info
                     assert "MEVIUS" not in info["text"] and "关节与动力学参数待核对" in info["text"],info
                     for view in ["front","side","top","iso"]:
@@ -99,6 +98,11 @@ def verify(url, output, chrome, fixture=False, biped_url=None):
                     call("Input.dispatchTouchEvent",{"type":"touchEnd","touchPoints":[]})
                     assert evaluate("q1Viewer.getState().distance")<before
                     call("Emulation.setTouchEmulationEnabled",{"enabled":False})
+                    before=evaluate("q1Viewer.getState().distance")
+                    call("Input.dispatchMouseEvent",{"type":"mouseWheel",**point,"deltaX":0,"deltaY":100})
+                    until(f"q1Viewer.getState().distance>{before}")
+                    assert '仍可被下载或提取' in info['text']
+                    assert evaluate("document.getElementById('model-download').href.startsWith('blob:')")
                     rendered=evaluate("q1Viewer.getState().frameRevision")
                     evaluate("document.querySelector('button[data-view=iso]').click();scrollTo(0,0)")
                     until(f"q1Viewer.getState().frameRevision>{rendered}")
