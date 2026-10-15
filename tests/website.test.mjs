@@ -212,10 +212,11 @@ test('robot availability distinguishes development platforms from catalogue prot
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
-        .map(match => match[0]).filter(card => /class="[^"]*\b(?:mine-product|sale-image|product-picture)\b[^"]*"/.test(card));
+        .map(match => match[0]).filter(card => /class="[^"]*\b(?:mine-product|product-slide|sale-image|product-picture)\b[^"]*"/.test(card));
       const isFocusedChineseHome = locale === 'cn' && route === '';
       assert.equal(cards.length, isFocusedChineseHome ? 4 : 7);
       if (isFocusedChineseHome) {
+        assert.deepEqual(cards.map(card => card.match(/class="slide-model">([^<]+)<\/span>/)?.[1]).sort(), ['MDA1', 'Q1', 'T1', 'W1']);
         const fieldRecords = page.match(/<section\b[^>]*id="field"[\s\S]*?<\/section>/)?.[0] || '';
         assert.match(fieldRecords, /data-video="\/assets\/videos\/roadway-field-20261012.mp4"/);
         assert.match(fieldRecords, /data-video="\/assets\/videos\/1000087153-web.mp4"/);
@@ -226,20 +227,22 @@ test('robot availability distinguishes development platforms from catalogue prot
       }
       for (const card of cards) {
         const prefix = locale === 'cn' ? '' : '/en';
-        const isMineDevelopment = locale === 'cn' && route === '' && /id="home-platform-(?:tracked|wheeled|quadruped|mobile-dual-arm)"/.test(card);
+        const isMineDevelopment = isFocusedChineseHome;
         if (isMineDevelopment) {
           assert.match(card, />研发中</);
           assert.doesNotMatch(card, />(?:在售|产品样机)</);
         }
-        const isTrackedResearchPlatform = isMineDevelopment && card.includes('id="home-platform-tracked"');
+        const isTrackedResearchPlatform = isMineDevelopment && /class="slide-model">T1<\/span>/.test(card);
         if (isTrackedResearchPlatform) {
           assert.match(card, /外壳设计效果图/);
           assert.match(card, /BUNKER MINI/);
           assert.match(card, />T1<\/span>/);
           assert.match(card, /履带式巡检机器人/);
           assert.doesNotMatch(card, /MDA1|产品样机|研发阶段|在售/);
-          const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
-          assert.deepEqual(actions.map(([, href]) => href), ['#field']);
+          const actions = [...card.matchAll(/<a class="stage-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+          assert.deepEqual(actions.map(([, href]) => href), ['/field-work/mining/']);
+          assert.match(actions[0][2], /前期井下记录/);
+          assert.match(card, /记录来自前期履带验证平台/);
           assert.doesNotMatch(card, /data-video(?:-src)?=/);
           assert.doesNotMatch(card, /<video\b/);
           assert.match(page, /id="scenes"[\s\S]*?longwall.webp/);
@@ -247,8 +250,17 @@ test('robot availability distinguishes development platforms from catalogue prot
           continue;
         }
         if (isMineDevelopment) {
-          const model = card.includes('home-platform-mobile-dual-arm') ? 'mobile-dual-arm' : card.includes('home-platform-wheeled') ? 'wheeled' : 'quadruped';
-          assert.match(card, new RegExp('href="/robots/' + model + '/"'));
+          const modelName = card.match(/class="slide-model">([^<]+)<\/span>/)[1];
+          const model = { Q1: 'quadruped', W1: 'wheeled', MDA1: 'mobile-dual-arm' }[modelName];
+          const actions = [...card.matchAll(/<a class="stage-link" href="([^"]+)"[^>]*>/g)];
+          assert.equal(actions.length, 1);
+          const destination = new URL(actions[0][1], 'https://omindos.cn');
+          assert.equal(destination.origin, 'https://omindos.cn');
+          assert.equal(destination.pathname, '/robots/' + model + '/');
+          assert.equal(destination.hash, model === 'wheeled' ? '#videos' : '#features');
+          const targetPage = await readFile(new URL('cn' + destination.pathname + 'index.html', root), 'utf8');
+          assert.ok(targetPage.includes('id="' + destination.hash.slice(1) + '"'), model + ': product link anchor exists');
+          assert.match(card, model === 'wheeled' ? /演示配置以详情页说明为准/ : /研发方向说明，非现场实测结果/);
           assert.doesNotMatch(card, /data-video(?:-src)?=|咨询报价|在售/);
           continue;
         }
@@ -546,7 +558,7 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
           continue;
         }
         if (isFocusedChineseHome) {
-          assert.ok(html.includes(`href="/robots/${model}/"`));
+          assert.match(html, new RegExp(`href="/robots/${model}/(?:#[^"]+)?"`));
           if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-white-20261013/w1.webp'));
           if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-cad-20261013/q1-original-sensors.webp'));
         } else {
