@@ -4,3 +4,6 @@ outputs/
 *.mp4
 *.csv
 *.jpg
+*.glb
+*.step
+*.STEP

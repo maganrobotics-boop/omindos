@@ -58,7 +58,7 @@ def package(run, output):
     (output / "preview.json").write_text(json.dumps(preview, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
     for name in ["simulation.mp4", "simulation.csv", "poster.jpg"]:
         shutil.copy2(run / name, output / name)
-    shutil.copy2(Path(__file__).with_name("index.html"), output / "index.html")
+    shutil.copy2(Path(__file__).with_name("reference.html"), output / "index.html")
     for path in output.iterdir():
         if path.is_file():
             path.chmod(0o644)

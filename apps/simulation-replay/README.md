@@ -1,4 +1,24 @@
-# OmindOS 四足仿真回放
+# OmindOS 自有四足模型
+
+2026-10-15 按所有者要求，默认预览改为 OriginMind 自有《四足机器狗总装V1.2 (2).STEP》的真实三维装配。`index.html` 仅显示这套模型，支持鼠标与触摸旋转、双指或滚轮缩放、正视/侧视/俯视、键盘操作及用户主动开启的旋转。结构、零件颜色及传感器位置均来自原 CAD；不套用其他平台的视频、关节运动或状态读数。
+
+原始 STEP 包含装配几何，但未提供可验证的关节约束、质量惯量与执行器配置。因此默认页明确标记为 CAD 模型查看，运动仿真尚未验收。后续须基于自有结构建立并核对 URDF/MJCF、关节轴与限位、各连杆质量惯量、碰撞体、执行器参数和控制器，完成真实运行后再展示动作与遥测。不能仅以替换外观推定现有参考策略适用于自有机器人。
+
+## 自有模型预览
+
+CAD 转换使用 CadQuery/OpenCascade，依赖于转换环境，不影响生产服务。原始 STEP 与转换缓存保留在私有目录，不提交机械资产至公开源码仓库。服务器仅发布内嵌转换后几何的模型页面；访客可下载页面中显示的 GLB，不提供原始 STEP。
+
+```bash
+python import_q1_model.py --source /private/OriginMind-Q1-V1.2.step --output /private/new-model
+python build_q1_preview.py --model /private/new-model --output /private/preview/index.html
+node verify_q1.mjs file:///private/preview/index.html /private/qa /usr/bin/google-chrome
+```
+
+便携 HTML 内嵌真实 GLB、原始文件及模型哈希、几何信息和 OriginMind 正式标识；无第三方 JS、CDN 或运行时网络依赖，WebGL 2 负责渲染。原始机械装配只在生成便携预览时读取。JSON 中的 `scope=cad_geometry`、`dynamics.motion_simulation_verified=false` 保留模型展示与运动验收之间的边界。
+
+生产入口为 `https://cloud.omindos.cn/quadruped/`，发布仅使用生成的 `index.html`。`reference.html` 与以下 MEVIUS2 回放脚本保留用于独立工程对照，不属于自有模型页，也不得将其结果作为自有机器人验证结果。完整机械资产不写入公开源码仓库。
+
+## 参考平台的独立仿真记录
 
 采用现有 OmindOS Navigation 四足控制器、MEVIUS2 固定模型和 TorchScript 策略，在服务器独立运行 MuJoCo，再生成与状态记录对应的视频。网页是只读回放，不启动计算任务、不连接真实电机。
 
@@ -41,13 +61,13 @@ python make_offline.py --package /path/to/new-preview --output /path/to/preview.
 
 ## 发布准备
 
-当前是源代码与本地候选预览，尚未发布。目标域名为 `cloud.omindos.cn`；正式发布仅在用户明确授权后执行。
+目标域名为 `cloud.omindos.cn`。用户已于 2026-10-15 明确授权发布自有 V1.2 模型页；生产状态以服务器部署记录及线上验收为准。
 
 候选文件在 `/opt/omindos-quadruped-simulation/`，临时 Python 页面测试服务仅监听服务器 `127.0.0.1:18092`，不构成公开预览。保留私有目录权限，不重载生产服务。测试服务使用 96 MiB 配额并设置 20 分钟生命周期。公开快照仅允许 HTML、MP4、CSV、JSON、JPG 五个文件；Nginx snippet 严格列出这些路径，拒绝其他文件及写请求。
 
 本次 1366、768、390、320px 共 20 组阶段播放检查及 2 个加载失败场景通过，无 JavaScript 异常及横向溢出；20 组读数与真实采样逐项对应；4 种损坏结果打包拒绝检查通过。完整便携 HTML 的另 20 组阶段播放检查通过，包含嵌入视频的直接打开及跳转。临时预览的 11 个 HTTP 检查通过，包含 200、视频 Range 206、隐藏文件/权重路径 404 与 POST 405。Nginx 候选配置仅作语法检查，正式域名路由仍待授权发布时验收。SVG 命名空间与本机回环 HTTP 地址的审计提示均不构成生产混合内容。
 
-授权发布时，把完整快照复制到 `/var/www/omindos-quadruped-replay/<release>/`，原子切换 `current`，将 `nginx-headers.conf` 安装到 `/etc/nginx/snippets/omindos-quadruped-replay-headers.conf`，再在既有 Cloud HTTPS server 中 include 本目录的 `nginx.conf`。运行 `nginx -t` 后 reload，并复查 200、视频 Range 206、404、写请求拒绝及手机页面。不要替换整个 Cloud Nginx 配置。
+发布自有模型时，只把已验收的便携 `index.html` 复制到 `/var/www/omindos-quadruped-replay/<release>/` 并原子切换 `current`，将 `nginx-headers.conf` 安装到 `/etc/nginx/snippets/omindos-quadruped-replay-headers.conf`，在既有 Cloud HTTPS server 中 include 本目录的 `nginx.conf`。新增 include 后执行 `nginx -t` 和 reload，检查页面 200、规范路径跳转 308、其他路径 404、写请求拒绝及手机触摸交互。自有模型页不部署参考回放的视频、CSV、JSON、策略或原始 STEP，也不修改私有源目录权限。
 
 若要在双足页增加四足入口，应从当前在线 HTML 增加一个导航链接，保留其全部视频、数据和样式，核对前后文件哈希；不以旧版源码覆盖其后续品牌更新。
 
