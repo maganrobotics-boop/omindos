@@ -3,7 +3,7 @@
   "fixture": false,
   "url": "https://cloud.omindos.cn/quadruped/",
   "local_origin": true,
-  "html_sha256": "e3b98f5ff93db45c16f526d5610f4e1927126c3b420f8f59c5b22817b4fc3f7b",
+  "html_sha256": "29c44ddd0781bd2038df45221ce40147ba55296376c535d969d4fb9bfa253fbd",
   "checks": [
     {
       "viewport": [
@@ -19,6 +19,14 @@
         900
       ],
       "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "view": "rear",
       "passed": true
     },
     {
@@ -50,133 +58,15 @@
         "phi": 1.12,
         "distance": 2.2,
         "auto": false,
-        "vertices": 372,
-        "triangles": 124,
+        "vertices": 11844,
+        "triangles": 24000,
         "model": "originmind-q1",
-        "scope": "approximate_public_shell",
+        "scope": "public_exterior_wrap",
         "geometryOnly": true,
         "boundsM": [
-          0.6899999976158142,
-          0.6999999806284904,
-          0.9399999976158142
-        ],
-        "frameRevision": 12
-      },
-      "passed": true
-    },
-    {
-      "viewport": [
-        768,
-        1024
-      ],
-      "view": "front",
-      "passed": true
-    },
-    {
-      "viewport": [
-        768,
-        1024
-      ],
-      "view": "side",
-      "passed": true
-    },
-    {
-      "viewport": [
-        768,
-        1024
-      ],
-      "view": "top",
-      "passed": true
-    },
-    {
-      "viewport": [
-        768,
-        1024
-      ],
-      "view": "iso",
-      "passed": true
-    },
-    {
-      "viewport": [
-        768,
-        1024
-      ],
-      "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 18,
-      "state": {
-        "ready": true,
-        "theta": 0.94,
-        "phi": 1.12,
-        "distance": 2.2,
-        "auto": false,
-        "vertices": 372,
-        "triangles": 124,
-        "model": "originmind-q1",
-        "scope": "approximate_public_shell",
-        "geometryOnly": true,
-        "boundsM": [
-          0.6899999976158142,
-          0.6999999806284904,
-          0.9399999976158142
-        ],
-        "frameRevision": 8
-      },
-      "passed": true
-    },
-    {
-      "viewport": [
-        390,
-        844
-      ],
-      "view": "front",
-      "passed": true
-    },
-    {
-      "viewport": [
-        390,
-        844
-      ],
-      "view": "side",
-      "passed": true
-    },
-    {
-      "viewport": [
-        390,
-        844
-      ],
-      "view": "top",
-      "passed": true
-    },
-    {
-      "viewport": [
-        390,
-        844
-      ],
-      "view": "iso",
-      "passed": true
-    },
-    {
-      "viewport": [
-        390,
-        844
-      ],
-      "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 24,
-      "state": {
-        "ready": true,
-        "theta": 0.94,
-        "phi": 1.12,
-        "distance": 2.2,
-        "auto": false,
-        "vertices": 372,
-        "triangles": 124,
-        "model": "originmind-q1",
-        "scope": "approximate_public_shell",
-        "geometryOnly": true,
-        "boundsM": [
-          0.6899999976158142,
-          0.6999999806284904,
-          0.9399999976158142
+          0.5165532529354095,
+          0.637193076312542,
+          1.1016311943531036
         ],
         "frameRevision": 7
       },
@@ -184,6 +74,140 @@
     },
     {
       "viewport": [
+        768,
+        1024
+      ],
+      "view": "front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "rear",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "interaction": "rotation-keyboard-touch-pinch",
+      "distinct_pixel_samples": 21,
+      "state": {
+        "ready": true,
+        "theta": 0.94,
+        "phi": 1.12,
+        "distance": 2.2,
+        "auto": false,
+        "vertices": 11844,
+        "triangles": 24000,
+        "model": "originmind-q1",
+        "scope": "public_exterior_wrap",
+        "geometryOnly": true,
+        "boundsM": [
+          0.5165532529354095,
+          0.637193076312542,
+          1.1016311943531036
+        ],
+        "frameRevision": 11
+      },
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "rear",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "interaction": "rotation-keyboard-touch-pinch",
+      "distinct_pixel_samples": 32,
+      "state": {
+        "ready": true,
+        "theta": 0.94,
+        "phi": 1.12,
+        "distance": 2.2,
+        "auto": false,
+        "vertices": 11844,
+        "triangles": 24000,
+        "model": "originmind-q1",
+        "scope": "public_exterior_wrap",
+        "geometryOnly": true,
+        "boundsM": [
+          0.5165532529354095,
+          0.637193076312542,
+          1.1016311943531036
+        ],
+        "frameRevision": 9
+      },
+      "passed": true
+    },
+    {
+      "viewport": [
         320,
         740
       ],
@@ -196,6 +220,14 @@
         740
       ],
       "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "view": "rear",
       "passed": true
     },
     {
@@ -220,24 +252,24 @@
         740
       ],
       "interaction": "rotation-keyboard-touch-pinch",
-      "distinct_pixel_samples": 22,
+      "distinct_pixel_samples": 34,
       "state": {
         "ready": true,
         "theta": 0.94,
         "phi": 1.12,
         "distance": 2.2,
         "auto": false,
-        "vertices": 372,
-        "triangles": 124,
+        "vertices": 11844,
+        "triangles": 24000,
         "model": "originmind-q1",
-        "scope": "approximate_public_shell",
+        "scope": "public_exterior_wrap",
         "geometryOnly": true,
         "boundsM": [
-          0.6899999976158142,
-          0.6999999806284904,
-          0.9399999976158142
+          0.5165532529354095,
+          0.637193076312542,
+          1.1016311943531036
         ],
-        "frameRevision": 7
+        "frameRevision": 9
       },
       "passed": true
     }

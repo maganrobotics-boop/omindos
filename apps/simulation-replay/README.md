@@ -1,16 +1,21 @@
-# OmindOS Q1 简化外壳展示
+# OmindOS Q1 外壳展示
 
-当前正式展示仅含独立生成的低细节外壳与四条腿部轮廓：5 个网格、124 个三角面，无 CAD 输入，不包含原详细装配、内部结构、传动、电机、关节结构或精确尺寸。保留旋转、缩放、正视/侧视/俯视、键盘与触摸操作。公开模型仍可导出，不能撤回访客此前保存的详细模型副本。运动仿真尚未验收。
+本轮修正上一版失真的方块示意，保留原 Q1 V1.2 的机身比例、腿部轮廓与姿态、顶部云台、相机和雷达位置及原材质颜色。公开模型由私有参考外表面粗化、封闭、重新网格化，移除原零件命名、装配层级、内部空腔、细小孔隙和机械细节；不嵌入原完整网格或 STEP，不用于制造或尺寸测量。公开外壳仍可提取，已下载或第三方缓存的旧副本不能撤回。运动仿真仍未验收。
 
 ```bash
-python build_q1_shell.py --output /private/q1-shell
-python preview_server.py --directory /private/q1-shell --port 18108
-python verify_q1.py --url http://127.0.0.1:18108/quadruped/ --output /private/shell-qa
+python -m pip install -r requirements-exterior.txt
+python build_q1_exterior.py --reference /private/original/index.html --template index.html --output /private/exterior
+# 对照页只监听 127.0.0.1；原始 HTML 不进入公开目录。
+python compare_q1_exterior.py --base http://127.0.0.1:18109 --output /private/comparisons
+python audit_q1_exterior.py --html /private/exterior/index.html --comparisons /private/comparisons --output /private/fidelity.json
+python verify_q1.py --url http://127.0.0.1:18109/exterior.html --output /private/browser-qa
 ```
 
-`build_q1_shell.py` 仅使用标准库和独立定义的近似多边形，不读取 STEP、旧 GLB 或 CAD 元数据。内嵌 GLB 与下载内容一致。`deploy_q1_shell.py` 校验生成器字节、实际候选浏览器报告、当前生产 HTML 哈希，再原子切换 Q1；旧详细 HTML 移出公开根目录并以 700/600 权限保存在私有目录。不改 Nginx、双足文件或其他服务。私有详细备份不得在未获明确授权时重新公开。历史详细模型构建和发布入口已停止使用。
+`build_q1_exterior.py` 以 3 mm 体素粗化并封闭表面，平滑占据场后生成最多 24,000 个三角面的单一外壳网格。只导出新位置、法线、面片与原显示颜色；源名称、原节点变换、精确工程参数不进入模型。源文件、占据过程与详细对照 HTML 留在私有目录，公开源码库不存储这些机械资产。
 
-已于 2026-10-15 发布 `q1-shell-v1-20261015T031421Z`。正式 HTTPS 页面通过四种宽度的 20 项交互检查、2 项双足导航检查和 13 项 HTTP/旧资源检查。双足文件与 Nginx 的 7 项哈希不变。浏览器在腾讯云通过正式 HTTPS 域名直连本机 Nginx，另以正常公网 DNS 核对资源；双足视频分段请求正常，但本轮无头浏览器视频播放未验收。发布中修复了新目录受 umask 影响返回 403 的问题，最终验收通过。发布记录见 `Q1_RELEASE.json`，浏览器证据见 `Q1_BROWSER_VALIDATION.json`。
+私有验收对原模型、上一版方块模型和新外壳使用一致相机，覆盖前、侧、后及斜视、1366/390px 截图；原外观与新外壳还执行轮廓交并比检查。交互验收增加后视，覆盖四种宽度共 24 项检查。发布器要求浏览器及外观报告与待发布 HTML/GLB 哈希一致，并核对当前生产版本再原子切换。只发布 HTML，旧快照保存在私有目录；双足和 Nginx 不改。已发布版本 `q1-exterior-v2-20261015T034637Z`：正式 HTTPS 的 24 项交互、2 项双足导航和 14 项 HTTP/旧资源检查通过；双足文件与 Nginx 的 7 项哈希未变。前、侧、后和斜视的桌面/手机轮廓交并比为 92%–96%；对照图已审阅。GLB 为 573,436 字节，原 bufferViews 复用数为 0。网格无开放边界，有 65 条非流形接触边，不作为工程制造模型。浏览器直连本机正式 HTTPS 域名且保留 TLS 校验，公网 DNS 请求另行通过；双足视频 Range 正常，但本轮不声称视频播放验收。发布及证据见 `Q1_RELEASE.json`、`Q1_BROWSER_VALIDATION.json` 和 `Q1_EXTERIOR_VALIDATION.json`。
+
+上一版 `build_q1_shell.py` 的 5 网格、124 面方块方案属于已否决的历史实现，不再用于当前公开构建。旧详细 CAD 发布入口也保持停用。
 
 ## 历史详细模型发布（已由简化方案取代）
 

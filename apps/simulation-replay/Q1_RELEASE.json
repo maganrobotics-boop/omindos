@@ -1,23 +1,23 @@
 {
   "published": true,
-  "release": "q1-shell-v1-20261015T031421Z",
+  "release": "q1-exterior-v2-20261015T034637Z",
   "url": "https://cloud.omindos.cn/quadruped/",
-  "published_at": "2026-10-15T03:14:21.332411+00:00",
-  "source_commit": "0df60fa82469836d1b946edf742ea828289804f7",
-  "html_sha256": "e3b98f5ff93db45c16f526d5610f4e1927126c3b420f8f59c5b22817b4fc3f7b",
-  "model_sha256": "9b4605601ab3c3ddfef6fd8ec64191a488f8c33cbc678aa687b3fc76f4c93155",
-  "scope": "approximate_public_shell",
-  "previous_html_sha256": "ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311",
-  "private_backup": "/opt/omindos-quadruped-simulation/q1-shell-v1-20261015T031421Z/q1-v12-20261015T022706Z",
+  "published_at": "2026-10-15T03:46:37.597969+00:00",
+  "source_commit": "45c79170d6f9d0f50bd9ef9c150da218c1fe784d",
+  "html_sha256": "29c44ddd0781bd2038df45221ce40147ba55296376c535d969d4fb9bfa253fbd",
+  "model_sha256": "4ec73857643b3ec575be2ea3357b8f96b436a1e30446e6329aa2e2e980deb8d6",
+  "scope": "public_exterior_wrap",
+  "previous_html_sha256": "e3b98f5ff93db45c16f526d5610f4e1927126c3b420f8f59c5b22817b4fc3f7b",
+  "private_backup": "/opt/omindos-quadruped-simulation/q1-exterior-v2-20261015T034637Z/q1-shell-v1-20261015T031421Z",
   "rollback_policy": "Detailed backup is private; do not restore publicly without explicit authorization.",
   "motion_simulation_verified": false,
   "status": "published_and_verified",
-  "verified_at": "2026-10-15T03:16:04.803256+00:00",
-  "live_browser_checks": 20,
+  "verified_at": "2026-10-15T03:48:51.888053+00:00",
+  "live_browser_checks": 24,
   "biped_navigation_checks": 2,
   "http_validation": {
     "passed": true,
-    "verified_at": "2026-10-15T03:16:04.803256+00:00",
+    "verified_at": "2026-10-15T03:46:47.281315+00:00",
     "checks": [
       {
         "path": "/quadruped/",
@@ -55,6 +55,11 @@
         "passed": true
       },
       {
+        "path": "/quadruped/q1-shell-v1-20261015T031421Z/index.html",
+        "status": 404,
+        "passed": true
+      },
+      {
         "path": "/quadruped/preview.html",
         "status": 404,
         "passed": true
@@ -85,33 +90,100 @@
         "passed": true
       }
     ],
-    "html_sha256": "e3b98f5ff93db45c16f526d5610f4e1927126c3b420f8f59c5b22817b4fc3f7b",
-    "public_html_and_glb_match_independent_generator": true,
+    "html_sha256": "29c44ddd0781bd2038df45221ce40147ba55296376c535d969d4fb9bfa253fbd",
+    "model_sha256": "4ec73857643b3ec575be2ea3357b8f96b436a1e30446e6329aa2e2e980deb8d6",
+    "public_html_and_glb_match_private_accepted_exterior": true,
     "normal_public_dns_https": true
+  },
+  "exterior_validation": {
+    "html_sha256": "29c44ddd0781bd2038df45221ce40147ba55296376c535d969d4fb9bfa253fbd",
+    "model_sha256": "4ec73857643b3ec575be2ea3357b8f96b436a1e30446e6329aa2e2e980deb8d6",
+    "triangles": 24000,
+    "meshes": 1,
+    "nodes": 1,
+    "glb_bytes": 573436,
+    "no_source_hierarchy_or_internal_meshes": true,
+    "normals_present": true,
+    "silhouette_checks": [
+      {
+        "width": 1366,
+        "view": "front",
+        "silhouette_iou": 0.9249178125773269,
+        "passed": true
+      },
+      {
+        "width": 1366,
+        "view": "side",
+        "silhouette_iou": 0.9339851538664808,
+        "passed": true
+      },
+      {
+        "width": 1366,
+        "view": "rear",
+        "silhouette_iou": 0.9254447401596863,
+        "passed": true
+      },
+      {
+        "width": 1366,
+        "view": "iso",
+        "silhouette_iou": 0.9553715161271553,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "view": "front",
+        "silhouette_iou": 0.9266481884775292,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "view": "side",
+        "silhouette_iou": 0.9360375460945357,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "view": "rear",
+        "silhouette_iou": 0.9236470014627011,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "view": "iso",
+        "silhouette_iou": 0.9569933293562558,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "same_camera_desktop_mobile_screenshots_reviewed": true,
+    "source_buffer_views_reused": 0,
+    "open_boundary_edges": 0,
+    "nonmanifold_contact_edges": 65,
+    "manufacturing_suitable": false,
+    "model_precise_engineering_dimensions": false,
+    "comparison_image_sha256": "5591e98603958e0726f9e73201a396ab28abac07eefb6ea1754415f3a9eaa377"
   },
   "desktop_mobile_screenshots_reviewed": true,
   "biped_media_unchanged": true,
   "nginx_unchanged": true,
-  "old_detailed_snapshot_removed_from_public_root": true,
+  "detailed_backup_unchanged": true,
   "private_source_permissions_preserved": true,
+  "preflight_listener_stopped": true,
   "exportable": true,
-  "geometry_nodes": 5,
-  "triangles": 124,
-  "model_bytes": 11540,
+  "geometry_nodes": 1,
+  "triangles": 24000,
+  "model_bytes": 573436,
   "video_playback_verified": false,
   "browser_origin": "Production HTTPS hostname resolved to loopback on Tencent; normal public DNS tested separately",
-  "release_incident": "New directory inherited umask 700; corrected only new public shell directory to 755 after initial 403. Old detailed backup stayed private.",
   "remaining_risks": [
+    "Public exterior is extractable and reveals approximate external shape",
     "Previously downloaded or cached detailed copies cannot be recalled",
-    "Simplified public model remains downloadable/extractable",
     "Third-party mirrors or caches are outside this server audit"
   ],
-  "maintenance_commit": "b935f7532cf6b31a7bdb9035df282d466a61bf48",
-  "evidence_sha256": {
-    "q1-320.png": "47170d5b001efac57c8e5da199b8ab9c61387f8a99df17a4269349ef1a160455",
-    "q1-390.png": "1e0efa6fca54658809fff5bcab5436ab19e5c0d3bfef0988e6107303c4ca903a",
-    "q1-1366.png": "5f1c0dd95a1b249cb883d04654cb7a374ed22adc10c8116ca4a3f243f8acb40c",
-    "q1-768.png": "ae0d2c73475a8f8a8f505a03d18d87609dbeb06d15f6cba52a100a9e7c3a0419"
-  },
-  "preflight_listener_stopped": true
+  "screenshots_sha256": {
+    "q1-320.png": "a9e4b621d050ef8eaf11595ba4d76bf57bbb80d903ad78c3ce4f803c4565ba4a",
+    "q1-390.png": "2da6e379063c8817a34db525ae9ed81fce2f24cfa3e4391fe8bb3c9778978c76",
+    "q1-1366.png": "596c851e4d50e4ce0c2c421e29f9e14c4882e2dbb12ba4d22efad5d6986f6f41",
+    "q1-768.png": "f090c5383d5e25c498426bf9eb94fd8f27c8f518c8253a44242adf00e2df0bd7"
+  }
 }
