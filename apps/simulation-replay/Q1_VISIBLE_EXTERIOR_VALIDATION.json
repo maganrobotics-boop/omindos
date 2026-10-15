@@ -1,0 +1,598 @@
+{
+  "release.json": {
+    "release": "q1-visible-exterior-v2-20261015T063607Z",
+    "published_at": "2026-10-15T06:36:08.717265+00:00",
+    "source_commit": "7e9f586299ddd3f882c653a00fc9d4f23d603820",
+    "pr": "https://github.com/maganrobotics-boop/omindos/pull/115",
+    "public_url": "https://cloud.omindos.cn/quadruped/",
+    "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+    "protected_files_unchanged": 7,
+    "private_backup_verified": true,
+    "old_release_removed_from_web_root": true,
+    "payload_audit": {
+      "passed": true,
+      "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+      "glb_sha256": "9a2bc5a7cca5e097c4f12a40061eb9b77268e7611892c3b922765a7eb8e7be6d",
+      "nodes": 13,
+      "removed_segments": 8,
+      "frames": 551,
+      "values_per_frame": 91,
+      "unused_binary_bytes": 0,
+      "removed_buffer_matches": 0,
+      "max_translation_quantization_error_m": 0.0004999900000000057,
+      "original_material_restored": true
+    }
+  },
+  "live-browser/browser-check.json": {
+    "passed": true,
+    "url": "https://cloud.omindos.cn/quadruped/",
+    "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+    "checks": [
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "own-model-layout-provenance",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "view-front",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "view-side",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "view-top",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "view-iso",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "sampled-rise-walk-stop",
+        "samples": [
+          {
+            "time": 0,
+            "phase": "crouch",
+            "height": 0.231,
+            "speed": 0,
+            "advance": 0,
+            "contacts": 4
+          },
+          {
+            "time": 4.5,
+            "phase": "stand",
+            "height": 0.4,
+            "speed": 0,
+            "advance": 0.002,
+            "contacts": 4
+          },
+          {
+            "time": 11,
+            "phase": "walk",
+            "height": 0.395,
+            "speed": 0.2,
+            "advance": 0.432,
+            "contacts": 3
+          },
+          {
+            "time": 21.9,
+            "phase": "stop",
+            "height": 0.401,
+            "speed": 0,
+            "advance": 1.007,
+            "contacts": 4
+          }
+        ],
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "play-pause-rate-reset-chapters",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "keyboard-zoom",
+        "passed": true
+      },
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "drag-and-mobile-pinch",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "own-model-layout-provenance",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "view-front",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "view-side",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "view-top",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "view-iso",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "sampled-rise-walk-stop",
+        "samples": [
+          {
+            "time": 0,
+            "phase": "crouch",
+            "height": 0.231,
+            "speed": 0,
+            "advance": 0,
+            "contacts": 4
+          },
+          {
+            "time": 4.5,
+            "phase": "stand",
+            "height": 0.4,
+            "speed": 0,
+            "advance": 0.002,
+            "contacts": 4
+          },
+          {
+            "time": 11,
+            "phase": "walk",
+            "height": 0.395,
+            "speed": 0.2,
+            "advance": 0.432,
+            "contacts": 3
+          },
+          {
+            "time": 21.9,
+            "phase": "stop",
+            "height": 0.401,
+            "speed": 0,
+            "advance": 1.007,
+            "contacts": 4
+          }
+        ],
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "play-pause-rate-reset-chapters",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "keyboard-zoom",
+        "passed": true
+      },
+      {
+        "viewport": [
+          768,
+          1024
+        ],
+        "check": "drag-and-mobile-pinch",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "own-model-layout-provenance",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "view-front",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "view-side",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "view-top",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "view-iso",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "sampled-rise-walk-stop",
+        "samples": [
+          {
+            "time": 0,
+            "phase": "crouch",
+            "height": 0.231,
+            "speed": 0,
+            "advance": 0,
+            "contacts": 4
+          },
+          {
+            "time": 4.5,
+            "phase": "stand",
+            "height": 0.4,
+            "speed": 0,
+            "advance": 0.002,
+            "contacts": 4
+          },
+          {
+            "time": 11,
+            "phase": "walk",
+            "height": 0.395,
+            "speed": 0.2,
+            "advance": 0.432,
+            "contacts": 3
+          },
+          {
+            "time": 21.9,
+            "phase": "stop",
+            "height": 0.401,
+            "speed": 0,
+            "advance": 1.007,
+            "contacts": 4
+          }
+        ],
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "play-pause-rate-reset-chapters",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "keyboard-zoom",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "drag-and-mobile-pinch",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "own-model-layout-provenance",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "view-front",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "view-side",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "view-top",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "view-iso",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "sampled-rise-walk-stop",
+        "samples": [
+          {
+            "time": 0,
+            "phase": "crouch",
+            "height": 0.231,
+            "speed": 0,
+            "advance": 0,
+            "contacts": 4
+          },
+          {
+            "time": 4.5,
+            "phase": "stand",
+            "height": 0.4,
+            "speed": 0,
+            "advance": 0.002,
+            "contacts": 4
+          },
+          {
+            "time": 11,
+            "phase": "walk",
+            "height": 0.395,
+            "speed": 0.2,
+            "advance": 0.432,
+            "contacts": 3
+          },
+          {
+            "time": 21.9,
+            "phase": "stop",
+            "height": 0.401,
+            "speed": 0,
+            "advance": 1.007,
+            "contacts": 4
+          }
+        ],
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "play-pause-rate-reset-chapters",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "keyboard-zoom",
+        "passed": true
+      },
+      {
+        "viewport": [
+          320,
+          740
+        ],
+        "check": "drag-and-mobile-pinch",
+        "passed": true
+      }
+    ],
+    "console_errors": []
+  },
+  "navigation-final/browser-check.json": {
+    "passed": true,
+    "url": "https://cloud.omindos.cn/quadruped/",
+    "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+    "checks": [
+      {
+        "viewport": [
+          1366,
+          900
+        ],
+        "check": "biped-round-trip-navigation",
+        "passed": true
+      },
+      {
+        "viewport": [
+          390,
+          844
+        ],
+        "check": "biped-round-trip-navigation",
+        "passed": true
+      }
+    ],
+    "console_errors": []
+  },
+  "http-validation.json": {
+    "passed": true,
+    "checks": [
+      {
+        "path": "/quadruped/",
+        "status": 200,
+        "bytes": 1042556,
+        "sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c"
+      },
+      {
+        "path": "/quadruped/index.html",
+        "status": 200,
+        "bytes": 1042556,
+        "sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c"
+      },
+      {
+        "path": "/quadruped/model.glb",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/source.STEP",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/OriginMind-Q1-Exterior-Motion.glb",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/OriginMind-Q1-Exterior-Poses.json",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/replay-poses.json",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/q1-motion-v1-20261015T041220Z/index.html",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/q1-v12-20261015T022706Z/index.html",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/quadruped/preview.html",
+        "status": 404,
+        "bytes": 162,
+        "sha256": "766c1d6bcb81d3e983fb7adbc19c616d7fc01dafb7893738edc242e2adc59c07"
+      },
+      {
+        "path": "/legged-robot/",
+        "status": 200,
+        "bytes": 33707,
+        "sha256": "3e64df5fa363a98941b6461a1f1106144e9ab0e2f079b01071ad290abba4d423"
+      },
+      {
+        "path": "/",
+        "status": 200,
+        "bytes": 20682,
+        "sha256": "7b1688a3a49ee4da86142c025ba42769e08148e31b8224f140a234df14b8a1cc"
+      },
+      {
+        "path": "/legged-robot/simulation.mp4",
+        "status": 206,
+        "bytes": 1024,
+        "sha256": "47cc796d9060158cbb639392d3f53141f8e7073ab43fe44089bbcda0bfd68391"
+      }
+    ]
+  },
+  "live-payload-audit.json": {
+    "passed": true,
+    "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+    "glb_sha256": "9a2bc5a7cca5e097c4f12a40061eb9b77268e7611892c3b922765a7eb8e7be6d",
+    "nodes": 13,
+    "removed_segments": 8,
+    "frames": 551,
+    "values_per_frame": 91,
+    "unused_binary_bytes": 0,
+    "removed_buffer_matches": 0,
+    "max_translation_quantization_error_m": 0.0004999900000000057,
+    "original_material_restored": true
+  },
+  "original-detail-audit.json": {
+    "passed": true,
+    "original_detail_buffer_matches": 0,
+    "original_unique_buffers": 382,
+    "public_unique_buffers": 36,
+    "original_source_private_mode": "0o600"
+  },
+  "screenshots": {
+    "live-browser/motion-390.png": "108af0b9b25c678878232ad481be07479dcdc80233892f6bae93e157be57bd6a",
+    "live-browser/motion-320.png": "de2520be34ac90d96ea5d392e6f520851a2d664ef90bec3e7422225c283cda22",
+    "live-browser/motion-1366.png": "d455cfa69e6f7045a37660004ef33308344eb15259572806a65e5f312f580334",
+    "live-browser/motion-768.png": "bf7a3ff76ec0f81627cac89c2e7272062236229e89a7543f154a75abf9d9fb22"
+  },
+  "method_notes": [
+    "HTTPS HTTP checks use normal DNS and certificate validation.",
+    "Chrome checks route cloud.omindos.cn to origin loopback, retaining HTTPS certificate validation.",
+    "Mobile widths and touch events are emulated Chrome checks, not physical-device tests.",
+    "Initial navigation harness used a relative-href selector and failed; corrected suffix selector passed both round trips.",
+    "Biped video existence/navigation and HTTP range response checked; playback is not claimed."
+  ]
+}

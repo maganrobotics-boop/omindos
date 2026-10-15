@@ -1,0 +1,42 @@
+{
+  "release": "q1-visible-exterior-v2-20261015T063607Z",
+  "published_at": "2026-10-15T06:36:08.717265+00:00",
+  "source_commit": "7e9f586299ddd3f882c653a00fc9d4f23d603820",
+  "pr": "https://github.com/maganrobotics-boop/omindos/pull/115",
+  "public_url": "https://cloud.omindos.cn/quadruped/",
+  "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+  "protected_files_unchanged": 7,
+  "private_backup_verified": true,
+  "old_release_removed_from_web_root": true,
+  "payload_audit": {
+    "passed": true,
+    "html_sha256": "7c57d80311e1b8ece47749a9d059fe8939bf3ad323f6264aac5069efe92c041c",
+    "glb_sha256": "9a2bc5a7cca5e097c4f12a40061eb9b77268e7611892c3b922765a7eb8e7be6d",
+    "nodes": 13,
+    "removed_segments": 8,
+    "frames": 551,
+    "values_per_frame": 91,
+    "unused_binary_bytes": 0,
+    "removed_buffer_matches": 0,
+    "max_translation_quantization_error_m": 0.0004999900000000057,
+    "original_material_restored": true
+  },
+  "verification": {
+    "browser_checks": 36,
+    "navigation_checks": 2,
+    "http_checks": 13,
+    "original_detail": {
+      "passed": true,
+      "original_detail_buffer_matches": 0,
+      "original_unique_buffers": 382,
+      "public_unique_buffers": 36,
+      "original_source_private_mode": "0o600"
+    }
+  },
+  "remaining_risks": [
+    "Visible exterior meshes and reduced exterior poses remain extractable and reveal approximate visible movement.",
+    "Previously downloaded detailed versions cannot be recalled.",
+    "Motion uses estimated simulation parameters; hardware motion and performance are not validated."
+  ],
+  "evidence_file": "Q1_VISIBLE_EXTERIOR_VALIDATION.json"
+}
