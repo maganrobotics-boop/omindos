@@ -47,7 +47,7 @@ def footer(route, lead):
   <div><h3>探索与学习</h3><nav aria-label="探索与学习"><a href="https://omindos.cn/learning" target="_blank" rel="noopener noreferrer">机器人课程</a><a href="https://omindos.cn/chat/" target="_blank" rel="noopener noreferrer">AI 助手</a><a href="https://omindos.cn/arena/">机器人竞技场</a><a href="https://cloud.omindos.cn/" target="_blank" rel="noopener noreferrer">云机器人</a><a href="https://oa.omindos.cn/" target="_blank" rel="noopener noreferrer">OA 工作台</a></nav></div>
   <div><h3>关于 OriginMind</h3><nav aria-label="关于 OriginMind"><a href="/about/">关于团队</a><a href="/join/">加入我们</a><a href="/careers/">加入源灵</a><a href="/lab/join/">加入实验室</a><a href="/contact/">联系我们</a><a href="/privacy/">隐私说明</a><a href="{english_url(route)}" lang="en" hreflang="en">English</a></nav></div>
 </div>
-<div class="cn-footer-bottom"><div><span>© 2026 OriginMind</span><span>OriginMind × ARTS Robotics</span></div><div><a href="https://beian.miit.gov.cn/#/recordQuery" target="_blank" rel="noopener noreferrer">粤ICP备2026150214号</a><a href="/">omindos.cn</a></div></div>
+<div class="cn-footer-bottom"><div><span>© 2026 OriginMind</span><span>OriginMind × ARTS Robotics</span></div><div><a href="https://beian.miit.gov.cn/#/recordQuery" target="_blank" rel="noopener noreferrer">粤ICP备2026150214号</a><a class="cn-security-record" href="https://beian.mps.gov.cn/#/query/webSearch?code=44030002018080" target="_blank" rel="noopener noreferrer"><img src="/assets/public-security-beian.png" width="20" height="20" alt=""><span>粤公网安备44030002018080号</span></a><a href="/">omindos.cn</a></div></div>
 </div></footer>'''
 
 for page in sorted((ROOT / 'cn').rglob('*.html')):
@@ -59,5 +59,6 @@ for page in sorted((ROOT / 'cn').rglob('*.html')):
     assert count == 1, page
     if '/cn/site-shell-20261014.css' not in source:
         source = source.replace('</head>', '<link rel="stylesheet" href="/cn/site-shell-20261014.css"></head>')
+    source = re.sub(r'/cn/site-shell-20261014\.css(?:\?[^"\s<>]*)?', '/cn/site-shell-20261014.css?v=20261015-public-security', source)
     page.write_text(source)
 print('Rendered shared shell for', len(list((ROOT / 'cn').rglob('*.html'))), 'Chinese pages.')
