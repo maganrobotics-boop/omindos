@@ -2,6 +2,7 @@
 """Verify the portable Q1 assembly viewer with an isolated Chrome profile."""
 import argparse
 import base64
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -12,9 +13,11 @@ import urllib.request
 from websockets.sync.client import connect
 
 
-def verify(url, output, chrome, fixture=False):
+def verify(url, output, chrome, fixture=False, biped_url=None):
     output.mkdir(parents=True, exist_ok=True)
-    checks, errors = [], []
+    with urllib.request.urlopen(url, timeout=30) as response:
+        html_sha256 = hashlib.sha256(response.read()).hexdigest()
+    checks, errors, navigation_checks = [], [], []
     with tempfile.TemporaryDirectory(prefix="originmind-q1-", ignore_cleanup_errors=True) as profile:
         process = subprocess.Popen([chrome, "--headless=new", "--no-sandbox", "--disable-dev-shm-usage",
             "--disable-gpu", "--enable-unsafe-swiftshader", "--renderer-process-limit=1", "--remote-debugging-address=127.0.0.1",
@@ -108,6 +111,14 @@ def verify(url, output, chrome, fixture=False):
                     screenshot=call("Page.captureScreenshot",{"format":"png","captureBeyondViewport":True,"clip":{"x":0,"y":0,"width":width,"height":bounds["height"],"scale":1}})
                     (output/f"q1-{width}.png").write_bytes(base64.b64decode(screenshot["data"]))
                     checks.append({"viewport":[width,height],"interaction":"rotation-keyboard-touch-pinch","distinct_pixel_samples":distinct,"state":evaluate("q1Viewer.getState()"),"passed":True})
+                if biped_url:
+                    for width,height in [(1366,900),(390,844)]:
+                        call("Emulation.setDeviceMetricsOverride",{"width":width,"height":height,"deviceScaleFactor":1,"mobile":width<500})
+                        call("Page.navigate",{"url":biped_url})
+                        until("document.querySelector('a[href=\"/quadruped/\"]')&&document.querySelector('video')?.readyState>=1")
+                        status=evaluate("({scroll:document.documentElement.scrollWidth,video:document.querySelector('video').readyState,quadruped:document.querySelector('a[href=\"/quadruped/\"]').href})")
+                        assert status['scroll']<=width and status['video']>=1,status
+                        navigation_checks.append({"viewport":[width,height],"biped_navigation":True,"passed":True})
                 assert not errors,errors
         finally:
             process.terminate()
@@ -116,7 +127,7 @@ def verify(url, output, chrome, fixture=False):
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
-    report={"passed":True,"fixture":fixture,"url":url,"checks":checks,"console_errors":errors}
+    report={"passed":True,"fixture":fixture,"url":url,"html_sha256":html_sha256,"checks":checks,"navigation_checks":navigation_checks,"console_errors":errors}
     (output/"browser-check.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
     return report
 
@@ -127,6 +138,7 @@ if __name__=="__main__":
     parser.add_argument("--output",type=Path,required=True)
     parser.add_argument("--chrome",default="/usr/bin/google-chrome")
     parser.add_argument("--fixture",action="store_true")
+    parser.add_argument("--biped-url")
     args=parser.parse_args()
-    result=verify(args.url,args.output,args.chrome,args.fixture)
+    result=verify(args.url,args.output,args.chrome,args.fixture,args.biped_url)
     print(json.dumps({"passed":result["passed"],"checks":len(result["checks"]),"fixture":args.fixture}))

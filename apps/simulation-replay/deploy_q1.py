@@ -96,6 +96,17 @@ def stage(candidate, output, expected):
     return state
 
 
+def check_browser_report(qa, expected_html):
+    errors = qa.get('console_errors', qa.get('consoleErrors'))
+    checks = qa.get('checks', [])
+    if (qa.get('passed') is not True or qa.get('fixture', False) is not False
+            or len(checks) != 20 or errors != []
+            or any(check.get('passed') is not True for check in checks)):
+        raise ValueError('The candidate Q1 browser checks must pass first')
+    if qa.get('html_sha256') != expected_html:
+        raise ValueError('Browser verification must match the candidate HTML')
+
+
 def publish(output, source_commit):
     if not re.fullmatch('[a-f0-9]{40}', source_commit):
         raise ValueError('An exact approved source commit is required')
@@ -104,8 +115,7 @@ def publish(output, source_commit):
     if state['published'] or digest(public / 'index.html') != state['html_sha256']:
         raise ValueError('Unexpected release state')
     qa = json.loads((output / 'qa-q1/browser-check.json').read_text())
-    if qa.get('passed') is not True or len(qa['checks']) != 20 or qa['consoleErrors']:
-        raise ValueError('The candidate Q1 browser checks must pass first')
+    check_browser_report(qa, state['html_sha256'])
     for name, expected in state['biped_unchanged_media'].items():
         if digest(Path(state['biped_candidate']) / name) != expected:
             raise ValueError('Biped media changed: ' + name)

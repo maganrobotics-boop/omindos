@@ -5,9 +5,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 
 const [url, output, chrome = '/usr/bin/google-chrome'] = process.argv.slice(2);
 if (!url || !output) throw new Error('Usage: node verify_q1.mjs FILE_URL OUTPUT [CHROME]');
+const pageBytes = url.startsWith('file:') ? await fs.readFile(new URL(url)) : Buffer.from(await (await fetch(url)).arrayBuffer());
+const html_sha256 = createHash('sha256').update(pageBytes).digest('hex');
 await fs.mkdir(output, { recursive: true });
 const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'originmind-q1-'));
 const processChrome = spawn(chrome, ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage',
@@ -84,7 +87,7 @@ try {
     checks.push({ viewport: [width, height], interaction: 'rotation-keyboard-touch-pinch', distinctPixelSamples: pixels, state: await evaluate('q1Viewer.getState()'), passed: true });
   }
   assert.deepEqual(errors, []);
-  await fs.writeFile(path.join(output, 'browser-check.json'), JSON.stringify({ passed: true, checks, consoleErrors: errors }, null, 2));
+  await fs.writeFile(path.join(output, 'browser-check.json'), JSON.stringify({ passed: true, url, html_sha256, checks, consoleErrors: errors }, null, 2));
   console.log(JSON.stringify({ passed: true, checks: checks.length, consoleErrors: errors.length }));
 } finally {
   socket?.close(); processChrome.kill('SIGTERM');
