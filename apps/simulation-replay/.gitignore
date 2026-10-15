@@ -7,3 +7,8 @@ outputs/
 *.glb
 *.step
 *.STEP
+# Generated motion candidates and sampled poses belong in private output directories.
+candidate.html
+replay-poses.json
+build-summary.json
+private-audit.json
