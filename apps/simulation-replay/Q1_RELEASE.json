@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "published",
+  "url": "https://cloud.omindos.cn/quadruped/",
+  "release": "q1-v12-20261015T022706Z",
+  "published_at": "2026-10-15T02:29:52.426992+00:00",
+  "verified_at": "2026-10-15T02:35:21.566Z",
+  "source_commit": "f65ba77446f20a54f749c4384f09ccde637060db",
+  "html_sha256": "ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311",
+  "model_sha256": "35a88fbe767a2a07cf6a3e8587705c316b42bf3494d05055d26b3d7a65c67f06",
+  "source_sha256": "56f4b2a0e58398188691663f6a90f27250ab6ad1c91d2066f68a0ce2b6e8a23d",
+  "scope": "cad_geometry",
+  "live_browser_checks": 20,
+  "biped_navigation_checks": 2,
+  "http_validation": {
+    "passed": true,
+    "checked_at": "2026-10-15T02:31:01.531685+00:00",
+    "url": "https://cloud.omindos.cn/quadruped/",
+    "html_sha256": "ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311",
+    "checks": [
+      {
+        "path": "/quadruped/",
+        "method": "GET",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "path": "/quadruped/index.html",
+        "method": "GET",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "path": "/quadruped/",
+        "method": "HEAD",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "path": "/quadruped",
+        "method": "GET",
+        "status": 308,
+        "passed": true
+      },
+      {
+        "path": "/quadruped/model.glb",
+        "method": "GET",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "path": "/quadruped/source.STEP",
+        "method": "GET",
+        "status": 404,
+        "passed": true
+      },
+      {
+        "path": "/quadruped/",
+        "method": "POST",
+        "status": 403,
+        "passed": true
+      },
+      {
+        "path": "/legged-robot/",
+        "method": "GET",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "path": "/",
+        "method": "GET",
+        "status": 200,
+        "passed": true
+      },
+      {
+        "path": "/legged-robot/simulation.mp4",
+        "method": "GET",
+        "status": 206,
+        "passed": true
+      }
+    ]
+  },
+  "desktop_mobile_screenshots_reviewed": true,
+  "biped_media_unchanged": true,
+  "biped_previous_snapshot": "baseline-20261015-a2",
+  "preflight_listener_stopped": true,
+  "private_source_permissions_preserved": true,
+  "motion_simulation_verified": false
+}

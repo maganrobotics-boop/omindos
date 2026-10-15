@@ -1,0 +1,261 @@
+{
+  "passed": true,
+  "fixture": false,
+  "url": "https://cloud.omindos.cn/quadruped/",
+  "html_sha256": "ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311",
+  "checks": [
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "view": "front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "view": "top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "view": "iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "interaction": "rotation-keyboard-touch-pinch",
+      "distinct_pixel_samples": 21,
+      "state": {
+        "ready": true,
+        "theta": 0.94,
+        "phi": 1.12,
+        "distance": 1.9,
+        "auto": false,
+        "vertices": 1832265,
+        "triangles": 1823406,
+        "model": "originmind-q1",
+        "geometryOnly": true,
+        "boundsM": [
+          0.5076581848144643,
+          0.6318378648437506,
+          1.0995340639337636
+        ],
+        "frameRevision": 7
+      },
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "view": "iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "interaction": "rotation-keyboard-touch-pinch",
+      "distinct_pixel_samples": 21,
+      "state": {
+        "ready": true,
+        "theta": 0.94,
+        "phi": 1.12,
+        "distance": 1.9,
+        "auto": false,
+        "vertices": 1832265,
+        "triangles": 1823406,
+        "model": "originmind-q1",
+        "geometryOnly": true,
+        "boundsM": [
+          0.5076581848144643,
+          0.6318378648437506,
+          1.0995340639337636
+        ],
+        "frameRevision": 8
+      },
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "view": "iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "interaction": "rotation-keyboard-touch-pinch",
+      "distinct_pixel_samples": 29,
+      "state": {
+        "ready": true,
+        "theta": 0.94,
+        "phi": 1.12,
+        "distance": 1.9,
+        "auto": false,
+        "vertices": 1832265,
+        "triangles": 1823406,
+        "model": "originmind-q1",
+        "geometryOnly": true,
+        "boundsM": [
+          0.5076581848144643,
+          0.6318378648437506,
+          1.0995340639337636
+        ],
+        "frameRevision": 7
+      },
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "view": "front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "view": "side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "view": "top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "view": "iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "interaction": "rotation-keyboard-touch-pinch",
+      "distinct_pixel_samples": 31,
+      "state": {
+        "ready": true,
+        "theta": 0.94,
+        "phi": 1.12,
+        "distance": 1.9,
+        "auto": false,
+        "vertices": 1832265,
+        "triangles": 1823406,
+        "model": "originmind-q1",
+        "geometryOnly": true,
+        "boundsM": [
+          0.5076581848144643,
+          0.6318378648437506,
+          1.0995340639337636
+        ],
+        "frameRevision": 7
+      },
+      "passed": true
+    }
+  ],
+  "navigation_checks": [
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "biped_navigation": true,
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "biped_navigation": true,
+      "passed": true
+    }
+  ],
+  "console_errors": [],
+  "model_sha256": "35a88fbe767a2a07cf6a3e8587705c316b42bf3494d05055d26b3d7a65c67f06",
+  "verified_at": "2026-10-15T02:35:21.566Z"
+}
