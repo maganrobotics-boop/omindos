@@ -1,0 +1,6 @@
+__pycache__/
+outputs/
+*.npz
+*.mp4
+*.csv
+*.jpg
