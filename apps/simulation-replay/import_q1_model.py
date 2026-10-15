@@ -7,6 +7,60 @@ from pathlib import Path
 import time
 
 import cadquery as cq
+from cadquery.occ_impl.importers import assembly as cad_imports
+
+
+class OriginalAssembly(cq.Assembly):
+    """Accept repeated CAD labels without dropping or moving any component."""
+
+    renamed_components = []
+
+    def add(self, arg, **kwargs):
+        if isinstance(arg, cq.Assembly):
+            original = kwargs.get("name") or arg.name
+            name = original
+            suffix = 2
+            while name in self.objects:
+                name = f"{original}__instance_{suffix}"
+                suffix += 1
+            if name != original:
+                kwargs["name"] = name
+                kwargs["metadata"] = dict(kwargs.get("metadata") or arg.metadata,
+                                           source_component_name=original)
+                self.renamed_components.append({"original": original, "instance": name})
+            # CadQuery immediately looks the just-added component up by its CAD
+            # label to attach face colors. Resolve that lookup to this instance.
+            if not hasattr(self, "_source_labels"):
+                self._source_labels = {}
+            self._source_labels[original] = name
+        return super().add(arg, **kwargs)
+
+    def __getitem__(self, name):
+        return super().__getitem__(getattr(self, "_source_labels", {}).get(name, name))
+
+
+def read_assembly(source):
+    """Keep geometry, colors and part names; skip unused per-face name labels."""
+    reader = cad_imports.STEPCAFControl_Reader()
+    reader.SetColorMode(True)
+    reader.SetNameMode(True)
+    reader.SetLayerMode(True)
+    reader.SetSHUOMode(True)
+    # The stock importer enables a costly name lookup for every subshape.
+    # glTF uses the part hierarchy; these face-name labels are not exported.
+    cad_imports.Interface_Static.SetIVal_s("read.stepcaf.subshapes.name", 0)
+    status = reader.ReadFile(str(source))
+    if status != cad_imports.IFSelect_RetDone:
+        raise ValueError("Could not read the original STEP assembly")
+    print("STEP data parsed; transferring original geometry and colors", flush=True)
+    document = cad_imports.TDocStd_Document(cad_imports.TCollection_ExtendedString("XmXCAF"))
+    if not reader.Transfer(document):
+        raise ValueError("STEP geometry transfer failed")
+    print("Geometry transferred; rebuilding original assembly hierarchy", flush=True)
+    OriginalAssembly.renamed_components = []
+    assembly = OriginalAssembly()
+    cad_imports._importDoc(document, assembly)
+    return assembly
 
 
 def convert(source, output):
@@ -15,7 +69,7 @@ def convert(source, output):
     output.mkdir(parents=True)
     started = time.monotonic()
     print("Reading original STEP assembly", flush=True)
-    assembly = cq.Assembly.importStep(str(source))
+    assembly = read_assembly(source)
     print("STEP assembly loaded; inspecting geometry", flush=True)
     compound = assembly.toCompound()
     bounds = compound.BoundingBox()
@@ -44,6 +98,9 @@ def convert(source, output):
                      "motion_simulation_verified": False},
         "tessellation": {"linear_tolerance_mm": 0.65, "angular_tolerance_rad": 0.25},
         "cadquery_version": cq.__version__,
+        "import_options": {"colors": True, "part_names": True, "layers": True, "shuo": True,
+                           "face_names": False},
+        "duplicate_component_labels": OriginalAssembly.renamed_components,
     }
     (output / "model.json").write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(metadata, ensure_ascii=False), flush=True)
