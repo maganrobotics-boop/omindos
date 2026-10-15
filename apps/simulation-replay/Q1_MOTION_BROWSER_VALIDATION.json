@@ -1,0 +1,272 @@
+{
+  "passed": true,
+  "release": "q1-motion-v1-20261015T041220Z",
+  "url": "https://cloud.omindos.cn/quadruped/",
+  "verified_at": "2026-10-15T04:14:07.693704+00:00",
+  "html_sha256": "c279f5f2b55a87550f7f11866fb252f56d277dbb1cbfc1b0d3595055ca9815ee",
+  "model_sha256": "92f6a019b416c04240493166fec2816fe650f95511f83c12e76322bf5b5af92a",
+  "public_source_commit": "c3f5e6c1b60b203016c56dc544002a36e982a474",
+  "check_count": 32,
+  "checks": [
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "own-model-layout-provenance",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "view-front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "view-side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "view-top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "view-iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "sampled-rise-walk-stop",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "play-pause-rate-reset-chapters",
+      "passed": true
+    },
+    {
+      "viewport": [
+        1366,
+        900
+      ],
+      "check": "keyboard-zoom",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "own-model-layout-provenance",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "view-front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "view-side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "view-top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "view-iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "sampled-rise-walk-stop",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "play-pause-rate-reset-chapters",
+      "passed": true
+    },
+    {
+      "viewport": [
+        768,
+        1024
+      ],
+      "check": "keyboard-zoom",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "own-model-layout-provenance",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "view-front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "view-side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "view-top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "view-iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "sampled-rise-walk-stop",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "play-pause-rate-reset-chapters",
+      "passed": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "check": "keyboard-zoom",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "own-model-layout-provenance",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "view-front",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "view-side",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "view-top",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "view-iso",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "sampled-rise-walk-stop",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "play-pause-rate-reset-chapters",
+      "passed": true
+    },
+    {
+      "viewport": [
+        320,
+        740
+      ],
+      "check": "keyboard-zoom",
+      "passed": true
+    }
+  ],
+  "console_errors": [],
+  "browser_origin": "Production HTTPS hostname resolved to loopback with valid TLS; normal public DNS HTTPS verified independently",
+  "hardware_validated": false,
+  "estimated_parameters": true
+}

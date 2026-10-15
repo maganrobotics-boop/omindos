@@ -1,0 +1,40 @@
+{
+  "published": true,
+  "status": "published_and_verified",
+  "release": "q1-motion-v1-20261015T041220Z",
+  "url": "https://cloud.omindos.cn/quadruped/",
+  "published_at": "2026-10-15T04:12:23.333908+00:00",
+  "verified_at": "2026-10-15T04:14:07.693704+00:00",
+  "public_source_commit": "c3f5e6c1b60b203016c56dc544002a36e982a474",
+  "html_sha256": "c279f5f2b55a87550f7f11866fb252f56d277dbb1cbfc1b0d3595055ca9815ee",
+  "model_sha256": "92f6a019b416c04240493166fec2816fe650f95511f83c12e76322bf5b5af92a",
+  "scope": "public_articulated_exterior",
+  "motion_replay": true,
+  "duration_s": 22,
+  "estimated_parameters": true,
+  "hardware_validated": false,
+  "live_browser_checks": 32,
+  "live_browser_viewports": [
+    1366,
+    768,
+    390,
+    320
+  ],
+  "browser_console_errors": 0,
+  "same_camera_silhouette_comparisons": 16,
+  "minimum_silhouette_iou": 0.9454844006568145,
+  "maximum_silhouette_iou": 0.9777843797451641,
+  "public_http_checks": 21,
+  "protected_file_hash_checks": 7,
+  "baseline_preserved": true,
+  "nginx_changed": false,
+  "biped_changed": false,
+  "normal_public_dns_https_verified": true,
+  "browser_origin": "Production HTTPS hostname resolved to loopback with valid TLS; normal public DNS HTTPS verified independently",
+  "desktop_mobile_visual_reviewed": true,
+  "limits": [
+    "Simulation parameters are estimated and have not been calibrated on hardware.",
+    "The exterior display model is unsuitable for precise engineering measurement or manufacturing."
+  ],
+  "mechanical_source_assets_in_repository": false
+}
