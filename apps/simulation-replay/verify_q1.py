@@ -67,11 +67,11 @@ def verify(url, output, chrome, fixture=False, biped_url=None, local_origin=Fals
                     until("window.q1Viewer?.getState().ready&&q1Viewer.getState().frameRevision>0&&document.querySelector('#model-canvas').width>0")
                     info=evaluate("({state:q1Viewer.getState(),scroll:document.documentElement.scrollWidth,text:document.body.innerText,video:!!document.querySelector('video'),logo:document.querySelector('.brand img').naturalWidth})")
                     assert info["state"]["model"]=="originmind-q1" and info["state"]["geometryOnly"],info
-                    assert info["state"]["scope"] == 'approximate_public_shell',info
-                    assert info["state"]["vertices"] == 372 and info["state"]["triangles"] == 124,info
+                    assert info["state"]["scope"] == 'public_exterior_wrap',info
+                    assert 1000 < info["state"]["triangles"] <= 24000,info
                     assert info["scroll"]<=width and info["logo"]>0 and not info["video"],info
                     assert "MEVIUS" not in info["text"] and "关节与动力学参数待核对" in info["text"],info
-                    for view in ["front","side","top","iso"]:
+                    for view in ["front","side","rear","top","iso"]:
                         point=evaluate(f"(()=>{{const b=document.querySelector('button[data-view={view}]');b.scrollIntoView({{block:'center'}});const r=b.getBoundingClientRect();return {{x:r.x+r.width/2,y:r.y+r.height/2}}}})()")
                         call("Input.dispatchMouseEvent",{"type":"mousePressed","button":"left","clickCount":1,**point})
                         call("Input.dispatchMouseEvent",{"type":"mouseReleased","button":"left","clickCount":1,**point})

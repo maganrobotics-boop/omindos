@@ -11,39 +11,41 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
-from build_q1_shell import generate
+from audit_q1_exterior import inspect
 
 PUBLIC=Path('/var/www/omindos-quadruped-replay')
 PRIVATE=Path('/opt/omindos-quadruped-simulation')
-OLD_SHA='ec3b33d4fbb0c94bac75f17cc8700fe1b670b25d9b1842fe5e28cf1c36064311'
+OLD_SHA='e3b98f5ff93db45c16f526d5610f4e1927126c3b420f8f59c5b22817b4fc3f7b'
 
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def validate(candidate, report):
+def validate(candidate, report, fidelity):
     html=candidate.read_text()
     packed=re.search(r'id="model-data">(.*?)</script>',html,re.S)[1]
     glb=gzip.decompress(base64.b64decode(packed))
-    expected,_=generate()
-    if glb!=expected:
-        raise ValueError('Only independently generated shell bytes may be published')
+    inspected=inspect(candidate)
+    visual=json.loads(fidelity.read_text())
+    assert visual['passed'] is True and visual['html_sha256']==digest(candidate)
+    assert visual['model_sha256']==inspected['model_sha256']
+    assert len(visual['silhouette_checks'])==8 and all(c['passed'] for c in visual['silhouette_checks'])
     info=json.loads(re.search(r'id="model-info">(.*?)</script>',html,re.S)[1])
-    assert info['scope']=='approximate_public_shell' and info['cad_input_used'] is False
+    assert info['scope']=='public_exterior_wrap' and info['source_meshes_embedded'] is False
     assert info['dynamics']['motion_simulation_verified'] is False
     assert info['model_sha256']==hashlib.sha256(glb).hexdigest()
     assert 'source_sha256' not in info and 'bounds_mm' not in info
     qa=json.loads(report.read_text())
     assert qa['passed'] is True and qa['fixture'] is False and qa['console_errors']==[]
     assert qa['html_sha256']==digest(candidate)
-    assert len(qa['checks'])==20 and all(c['passed'] is True for c in qa['checks'])
+    assert len(qa['checks'])==24 and all(c['passed'] is True for c in qa['checks'])
     return info
 
 
-def publish(candidate, report, commit):
+def publish(candidate, report, fidelity, commit):
     assert re.fullmatch('[a-f0-9]{40}',commit)
-    info=validate(candidate,report)
+    info=validate(candidate,report,fidelity)
     current=PUBLIC/'current'
     previous=current.resolve(strict=True)
     assert previous.parent==PUBLIC and digest(previous/'index.html')==OLD_SHA, 'Production changed; inspect before retrying'
@@ -51,10 +53,10 @@ def publish(candidate, report, commit):
     assert PRIVATE.stat().st_mode & 0o077 == 0, 'Backup parent must be private'
     # No nginx, biped, other public meshes, or application service changes.
     subprocess.run(['nginx','-t'],check=True)
-    release='q1-shell-v1-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    release='q1-exterior-v2-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     receipt_dir=PRIVATE/release
     receipt_dir.mkdir(mode=0o700)
-    backup=receipt_dir/'previous-detailed-release'
+    backup=receipt_dir/'previous-public-release'
     shutil.copytree(previous,backup)
     backup.chmod(0o700)
     (backup/'index.html').chmod(0o600)
@@ -90,5 +92,6 @@ if __name__=='__main__':
     parser.add_argument('--candidate',type=Path,required=True)
     parser.add_argument('--report',type=Path,required=True)
     parser.add_argument('--source-commit',required=True)
+    parser.add_argument('--fidelity',type=Path,required=True)
     args=parser.parse_args()
-    print(json.dumps(publish(args.candidate,args.report,args.source_commit),indent=2))
+    print(json.dumps(publish(args.candidate,args.report,args.fidelity,args.source_commit),indent=2))
