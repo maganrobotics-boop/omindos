@@ -211,59 +211,44 @@ test('robot availability distinguishes development platforms from catalogue prot
   for (const [locale, development, sale] of [['cn', '研发阶段', '产品样机'], ['en', 'IN DEVELOPMENT', 'PRODUCT PROTOTYPE']]) {
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
-      const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
-        .map(match => match[0]).filter(card => /class="[^"]*\b(?:mine-product|product-slide|sale-image|product-picture)\b[^"]*"/.test(card));
       const isFocusedChineseHome = locale === 'cn' && route === '';
+      const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
+        .map(match => match[0]).filter(card => isFocusedChineseHome
+          ? /<article\b[^>]*\bdata-product-panel(?:\s|>)/.test(card)
+          : /class="[^"]*\b(?:mine-product|product-slide|sale-image|product-picture)\b[^"]*"/.test(card));
       assert.equal(cards.length, isFocusedChineseHome ? 4 : 7);
       if (isFocusedChineseHome) {
-        assert.deepEqual(cards.map(card => card.match(/class="slide-model">([^<]+)<\/span>/)?.[1]).sort(), ['MDA1', 'Q1', 'T1', 'W1']);
-        const fieldRecords = page.match(/<section\b[^>]*id="field"[\s\S]*?<\/section>/)?.[0] || '';
+        const expected = [['Q1', 'quadruped'], ['T1', 'tracked'], ['W1', 'wheeled'], ['MDA1', 'mobile-dual-arm']];
+        assert.deepEqual(cards.map(card => card.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/)[1]
+          .replace(/<[^>]*>/g, ' ').trim().split(/\s+/)[0]), expected.map(([model]) => model));
+        for (const [index, [model, slug]] of expected.entries()) {
+          const card = cards[index];
+          const links = [...card.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+          assert.deepEqual(links.map(([, href]) => href), [`/robots/${slug}/`], model + ': product detail entry');
+          assert.match(links[0][2], new RegExp(model));
+          assert.match(card, /<img\b[^>]*alt="[^"]*(?:效果图|设计图)[^"]*"/);
+          assert.doesNotMatch(card, /<video\b|data-video(?:-src)?=|咨询报价|>在售</,
+            model + ': concept images do not claim a field demonstration or availability');
+          const detail = await readFile(new URL(`cn/robots/${slug}/index.html`, root), 'utf8');
+          assert.match(detail, /研发(?:中|阶段)|工程样机研发中/);
+          if (model === 'T1') assert.match(card, /BUNKER MINI/);
+        }
+        const selectors = [...page.matchAll(/<button\b[^>]*aria-controls="(home-product-[^"]+)"[^>]*>/g)];
+        assert.deepEqual(selectors.map(([, id]) => id), expected.map(([model]) => `home-product-${model.toLowerCase()}`));
+        assert.equal(selectors.filter(([tag]) => /aria-pressed="true"/.test(tag)).length, 1);
+        for (const [, id] of selectors) assert.ok(page.includes(`id="${id}"`), id + ': selector target exists');
+        const hero = page.match(/<section\b[^>]*id="top"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
+        assert.match(hero, /alt="[^"]*示意[^"]*研发中[^"]*"/, 'hero identifies a development concept');
+        const fieldRecords = page.match(/<section\b[^>]*id="about"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
         assert.match(fieldRecords, /data-video="\/assets\/videos\/roadway-field-20261012.mp4"/);
         assert.match(fieldRecords, /data-video="\/assets\/videos\/1000087153-web.mp4"/);
-        for (const card of cards) assert.doesNotMatch(card, /<video\b/, 'scene and validation media must not imply a product demonstration');
-        for (const model of ['mobile-dual-arm', 'dual-arm', 'wheel-legged', 'open-frame']) {
-          assert.ok(page.includes('href="/robots/' + model + '/"'), model + ' remains reachable from the homepage');
-        }
+        assert.match(fieldRecords, /前期履带验证平台|前期履带平台现场记录/);
+        assert.match(page, /href="\/robots\/"/, 'all education and research platforms remain reachable via the catalogue');
+        assert.match(page, /href="\/lab\/"/, 'laboratory research remains reachable');
+        continue;
       }
       for (const card of cards) {
         const prefix = locale === 'cn' ? '' : '/en';
-        const isMineDevelopment = isFocusedChineseHome;
-        if (isMineDevelopment) {
-          assert.match(card, />研发中</);
-          assert.doesNotMatch(card, />(?:在售|产品样机)</);
-        }
-        const isTrackedResearchPlatform = isMineDevelopment && /class="slide-model">T1<\/span>/.test(card);
-        if (isTrackedResearchPlatform) {
-          assert.match(card, /外壳设计效果图/);
-          assert.match(card, /BUNKER MINI/);
-          assert.match(card, />T1<\/span>/);
-          assert.match(card, /履带式巡检机器人/);
-          assert.doesNotMatch(card, /MDA1|产品样机|研发阶段|在售/);
-          const actions = [...card.matchAll(/<a class="stage-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
-          assert.deepEqual(actions.map(([, href]) => href), ['/field-work/mining/']);
-          assert.match(actions[0][2], /前期井下记录/);
-          assert.match(card, /记录来自前期履带验证平台/);
-          assert.doesNotMatch(card, /data-video(?:-src)?=/);
-          assert.doesNotMatch(card, /<video\b/);
-          assert.match(page, /id="scenes"[\s\S]*?longwall.webp/);
-          assert.ok(page.includes('id="platform-scenes"'));
-          continue;
-        }
-        if (isMineDevelopment) {
-          const modelName = card.match(/class="slide-model">([^<]+)<\/span>/)[1];
-          const model = { Q1: 'quadruped', W1: 'wheeled', MDA1: 'mobile-dual-arm' }[modelName];
-          const actions = [...card.matchAll(/<a class="stage-link" href="([^"]+)"[^>]*>/g)];
-          assert.equal(actions.length, 1);
-          const destination = new URL(actions[0][1], 'https://omindos.cn');
-          assert.equal(destination.origin, 'https://omindos.cn');
-          assert.equal(destination.pathname, '/robots/' + model + '/');
-          assert.equal(destination.hash, model === 'wheeled' ? '#videos' : '#features');
-          const targetPage = await readFile(new URL('cn' + destination.pathname + 'index.html', root), 'utf8');
-          assert.ok(targetPage.includes('id="' + destination.hash.slice(1) + '"'), model + ': product link anchor exists');
-          assert.match(card, model === 'wheeled' ? /演示配置以详情页说明为准/ : /研发方向说明，非现场实测结果/);
-          assert.doesNotMatch(card, /data-video(?:-src)?=|咨询报价|在售/);
-          continue;
-        }
         if (locale === 'en' && card.includes('id="catalogue-platform-tracked"')) {
           assert.match(card, />IN DEVELOPMENT</);
           assert.match(card, /BUNKER MINI/);
@@ -276,15 +261,19 @@ test('robot availability distinguishes development platforms from catalogue prot
         if (locale === 'cn' && card.includes('id="catalogue-platform-tracked"')) {
           assert.match(card, /T1<\/span>/);
           assert.match(card, /BUNKER MINI/);
-          assert.match(card, /href="\/field-work\/mining\/#field-records"/);
-          assert.doesNotMatch(card, /<video\b|产品样机|在售/);
+          assert.match(card, />研发阶段</);
+          const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+          assert.deepEqual(actions.map(([, href]) => href), ['/robots/tracked/', '/contact/']);
+          assert.deepEqual(actions.map(([, , label]) => label.trim()), ['产品详情', '联系我们']);
+          assert.match(card, /aria-label="T1 履带式巡检机器人详情"/);
+          assert.doesNotMatch(card, /\/field-work\/mining\/#field-records|<video\b|产品样机|在售/);
           continue;
         }
         const isWheeled = card.includes('/robots/wheeled/');
         const isDualArm = card.includes(`${prefix}/robots/dual-arm`);
         const isResearchPrototype = locale === 'cn' && /\/robots\/(?:wheel-legged|articulated|open-frame)\//.test(card);
         const isMobileDualArm = card.includes(`${prefix}/robots/mobile-dual-arm/`);
-        const expectedStatus = isMineDevelopment ? '实机研发中' : locale === 'cn' ? ((isQuadruped || isMobileDualArm || isWheeled) ? development : '产品样机') : (isQuadruped || isMobileDualArm || isWheeled) ? development : sale;
+        const expectedStatus = locale === 'cn' ? ((isQuadruped || isMobileDualArm || isWheeled) ? development : '产品样机') : (isQuadruped || isMobileDualArm || isWheeled) ? development : sale;
         assert.match(card, new RegExp(`>(?:并联轮足机器人 · )?${expectedStatus}<`, 'i'));
         if (isDualArm) assert.doesNotMatch(card, />(?:在售|for sale)</i);
         const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
@@ -310,6 +299,83 @@ test('robot availability distinguishes development platforms from catalogue prot
       assert.doesNotMatch(subject, /报价|quotation|demonstration/);
     }
   }
+});
+
+test('Chinese tracked product detail separates current development from historical field records', async () => {
+  const html = await readFile(new URL('cn/robots/tracked/index.html', root), 'utf8');
+  const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/)[0];
+  assert.match(main.replace(/<[^>]*>/g, ' '), /T1\s+履带式巡检机器人/);
+  assert.match(main, /BUNKER MINI/);
+  assert.match(main, /研发中/);
+  assert.match(main, /外壳设计方案/);
+  assert.match(main, /视频展示前期履带验证平台/);
+  assert.match(main, /不构成 T1 整机性能或认证结论/);
+  for (const name of ['roadway-field-20261012', '1000087153-web']) {
+    assert.ok(main.includes(`src="/assets/videos/${name}.mp4"`), name + ': retained historical evidence');
+  }
+  assert.doesNotMatch(main, />(?:在售|产品样机)<|咨询报价/);
+  assert.ok(html.includes('rel="canonical" href="https://omindos.cn/robots/tracked/"'));
+  assert.doesNotMatch(html.split('</head>')[0], /<link\b[^>]*hreflang="en"/);
+  assert.doesNotMatch(html, /href="https:\/\/omindos.ai\/en\/robots\/tracked\//);
+  assert.match(html, /href="https:\/\/omindos.ai\/en\/"[^>]*hreflang="en"/, 'language switch falls back to the real English homepage');
+  for (const anchor of main.matchAll(/href="#([^"]+)"/g)) assert.ok(main.includes(`id="${anchor[1]}"`));
+});
+
+test('Chinese Q1 and MDA1 videos state simulation at the player and retain accessible playback', async () => {
+  for (const [slug, model] of [['quadruped', 'Q1'], ['mobile-dual-arm', 'MDA1']]) {
+    const html = await readFile(new URL(`cn/robots/${slug}/index.html`, root), 'utf8');
+    const section = html.match(/<section\b[^>]*id="simulation"[^>]*>[\s\S]*?<\/section>/)?.[0] || '';
+    assert.match(section, /<figcaption>[^<]*仿真[^<]*<\/figcaption>/, model + ': visible simulation caption');
+    const player = section.match(/<video\b[\s\S]*?<\/video>/)?.[0] || '';
+    for (const attr of [/\bcontrols(?:\s|>)/, /\bplaysinline(?:\s|>)/, /preload="none"/, /aria-label="[^"]*仿真[^"]*"/]) assert.match(player, attr);
+    assert.match(player, /controlslist="nodownload"/);
+    assert.match(player, /<track\b[^>]*kind="captions"[^>]*srclang="zh-CN"/);
+    assert.ok(player.includes(`/cn/assets/demos/20261011/OriginMind-${model}-Demo.mp4`));
+    assert.doesNotMatch(player, /\bautoplay\b/);
+    if (model === 'MDA1') {
+      assert.match(section, /<h2\b[^>]*>[^<]*仿真[^<]*<\/h2>/);
+      assert.match(html, /href="#specifications">研发状态与配置<\/a>/);
+      assert.match(html, /当前提供整机模型与移动双臂任务仿真/);
+    }
+  }
+});
+
+test('Chinese site navigation remains consistent across desktop and mobile pages', async () => {
+  const desktop = ['/', '/robots/', '/omindos/', '/integration/', '/lab/', '/about/', '/join/'];
+  const extras = ['robots/mobile-dual-arm', 'robots/tracked', 'developers', 'join', 'careers', 'lab', 'lab/join', 'lab/alumni'];
+  for (const route of [...portalRoutes, ...extras]) {
+    const html = await readFile(new URL(`cn/${route ? route + '/' : ''}index.html`, root), 'utf8');
+    const mainNav = html.match(/<nav\b[^>]*class="[^"]*\bdesktop-nav\b[^"]*"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
+    const mobileNav = html.match(/<nav\b[^>]*id="mobile-menu"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
+    const hrefs = source => [...source.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(([, href]) => href);
+    assert.deepEqual(hrefs(mainNav), desktop, route + ': desktop navigation');
+    assert.deepEqual(hrefs(mobileNav), [...desktop, '/contact/'], route + ': mobile navigation');
+    const footer = siteFooter(html);
+    assert.ok(footer, route + ': footer exists');
+    for (const href of ['/robots/', '/omindos/', '/integration/', '/lab/', '/join/', '/contact/', '/privacy/']) {
+      assert.ok(hrefs(footer).includes(href), route + ': footer link ' + href);
+    }
+  }
+});
+
+test('Chinese challenge entries preserve the selected scene through account login', async () => {
+  const html = await readFile(new URL('cn/omindos/index.html', root), 'utf8');
+  for (const [label, map] of [['参加挑战赛', 'originmind-mine-go2edu-mirrored-loop-v1'], ['先进入练习场', 'originmind-mine-go2edu-dynamics-v1']]) {
+    const link = [...html.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g)].find(([, , text]) => text === label);
+    assert.ok(link, label + ': entry exists');
+    assert.match(link[1], /return_to=%2Fplay%2Farena%2F%3Fmap%3D/i, label + ': encoded return target');
+    const login = new URL(link[1].replaceAll('&amp;', '&'));
+    assert.equal(login.origin, 'https://cloud.omindos.cn');
+    assert.equal(login.pathname, '/account/login');
+    const target = login.searchParams.get('return_to');
+    assert.ok(target?.startsWith('/play/arena/?'), label + ': relative arena return target');
+    const scene = new URL(target, login.origin);
+    assert.equal(scene.origin, login.origin);
+    assert.equal(scene.pathname, '/play/arena/');
+    assert.equal(scene.searchParams.get('map'), map);
+    assert.equal(scene.hash, '');
+  }
+  assert.match(html, /首次进入请先选择账号身份，随后进入所选场景/);
 });
 
 test('product details are readable inline and keep model-specific specifications separate', async () => {
@@ -448,6 +514,11 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       for (const match of html.matchAll(/(?:src|poster|href|data-video-src|data-src)="(\/[^"#]*)"/g)) {
         const target = new URL(match[1].replaceAll('&amp;', '&'), 'https://omindos.ai').pathname;
         if (target === '/founding-oem') continue;
+        // The domestic Nginx gateway serves /chat/ dynamically; all other local assets still require files.
+        if (locale === 'cn' && target === '/chat/') {
+          assert.match(html, /<a\b[^>]*class="[^"]*\bhome-chat-entry\b[^"]*"[^>]*href="\/chat\/"/);
+          continue;
+        }
         const localized = locale === 'cn' && !/\.[a-z0-9]+$/i.test(target) ? '/cn' + target : target;
         const asset = /\.[a-z0-9]+$/i.test(localized) ? localized : localized.replace(/\/$/, '') + '/index.html';
         await access(new URL('.' + asset, root));
@@ -528,8 +599,10 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
   for (const html of [...current.cn, ...current.en, ...legacy]) {
     assert.doesNotMatch(html, /OriginMind AI OS|OriginMind Robotics Intelligence|华润医药|China Resources|unitree|宇树/i);
   }
-  assert.ok(current.cn.find(html => html.includes('<title>OmindOS | OriginMind</title>'))
-    .includes('OmindOS 是 OriginMind 的机器人智能操作系统（Robot Agent OS）'));
+  const chineseOS = current.cn.find(html => html.includes('<title>OmindOS | OriginMind</title>'));
+  const chineseOSOpening = chineseOS.match(/<main\b[^>]*>\s*(<section\b[\s\S]*?<\/section>)/)?.[1] || '';
+  assert.match(chineseOSOpening, /<h1\b[^>]*>OmindOS<\/h1>/);
+  assert.match(chineseOSOpening.replace(/<[^>]*>/g, ' '), /机器人智能操作系统/);
   assert.ok(current.en.find(html => html.includes('<title>OmindOS | OriginMind</title>'))
     .includes('OmindOS is OriginMind’s Robot Agent OS'));
   for (const locale of ['cn', 'en']) {
@@ -541,11 +614,12 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
   for (const [locale, name] of [['cn', 'DA1-EDU 双臂协同操作平台'], ['en', 'DA1-EDU Dual-arm manipulation platform']]) {
     for (const route of ['', 'robots']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
-      assert.ok(html.replace(/<[^>]*>/g, '').includes(name));
-      const prefix = locale === 'cn' ? '' : '/en';
-      if (locale === 'en') assert.match(html, /href="\/en\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
-      else assert.match(html, /href="\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
       const isFocusedChineseHome = locale === 'cn' && route === '';
+      const prefix = locale === 'cn' ? '' : '/en';
+      if (!isFocusedChineseHome) assert.ok(html.replace(/<[^>]*>/g, '').includes(name));
+      if (locale === 'en') assert.match(html, /href="\/en\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
+      else if (isFocusedChineseHome) assert.match(html, /href="\/robots\/"/, 'education models remain available in the robot catalogue');
+      else assert.match(html, /href="\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
       if (!isFocusedChineseHome) assert.ok(html.includes('/robot-covers.css?v=20260909'));
       for (const [model, cover] of Object.entries(coverNames)) {
         if (model === 'articulated') {
@@ -558,9 +632,12 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
           continue;
         }
         if (isFocusedChineseHome) {
-          assert.match(html, new RegExp(`href="/robots/${model}/(?:#[^"]+)?"`));
-          if (model === 'wheeled') assert.ok(html.includes('/cn/assets/robot-white-20261013/w1.webp'));
-          if (model === 'quadruped') assert.ok(html.includes('/cn/assets/q1-cad-20261013/q1-original-sensors.webp'));
+          if (['quadruped', 'wheeled'].includes(model)) {
+            assert.match(html, new RegExp(`href="/robots/${model}/"`));
+            const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : '/cn/assets/robot-white-20261013/w1.webp';
+            assert.ok(html.includes(expectedCover));
+          }
+          assert.match(html, /href="\/robots\/"/);
         } else {
           const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${cover}`;
           assert.ok(html.includes(expectedCover));
@@ -603,7 +680,14 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
   ]) {
     for (const route of ['', 'robots', 'robots/open-frame']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
-      assert.ok(html.includes(name));
+      if (locale === 'cn' && route === '') {
+        assert.match(html, /href="\/robots\/"/);
+        const catalogue = await readFile(new URL('cn/robots/index.html', root), 'utf8');
+        assert.ok(catalogue.includes(name));
+        assert.ok(!catalogue.includes(retiredName));
+      } else {
+        assert.ok(html.includes(name));
+      }
       assert.ok(!html.includes(retiredName));
     }
   }
@@ -891,4 +975,5 @@ test('email selection fallback works and duplicate script execution keeps one ha
   assert.equal(f.status.textContent, 'copied');
   assert.equal(f.fields.length, 1); assert.equal(f.fields[0].removed, true);
 });
+
 

@@ -10,9 +10,10 @@
 .join-page .eyebrow{color:var(--muted);font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;margin:0 0 20px}
 .join-page .lead{max-width:42em;margin-top:24px;color:var(--muted);font-size:clamp(18px,1.7vw,22px);line-height:1.9}
 .join-page .join-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
-.join-page .join-card{min-width:0;border-top:1px solid var(--line);padding-block:28px}
+.join-page .join-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border-top:1px solid var(--line);padding-block:28px}
 .join-page .join-card p{margin:16px 0 0;max-width:36em;color:var(--muted)}
-.join-page .join-card .text-link{margin-top:24px}
+.join-page .join-card>p:last-of-type{margin-bottom:24px}
+.join-page .join-card .text-link{margin-top:auto;align-self:flex-start}
 .join-page .text-link{color:var(--ink);font-weight:400;gap:12px;min-height:44px}
 .join-page .text-link:hover{color:var(--blue)}
 .join-page .join-section{padding-block:48px;border-top:1px solid var(--line);margin-top:24px}

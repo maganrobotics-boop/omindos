@@ -1,0 +1,50 @@
+/* Four homepage sections; hero styles remain in the existing stylesheet. */
+.product-detail-link { display: inline-flex; align-items: center; gap: 16px; margin-top: 24px; min-height: 44px; }
+.home-section-intro { margin-top: 18px; max-width: 42em; font-size: 17px; line-height: 1.9; color: var(--muted); }
+.night .home-section-intro { color: var(--pale); }
+.home-action-button { display: inline-flex; justify-content: center; align-items: center; gap: 22px; min-height: 48px; padding: 12px 22px; border: 1px solid #fff; background: #fff; color: #292a27; font-size: 15px; }
+.home-action-button:hover { background: #e9e5dc; }
+.system-section .section-actions { align-items: center; flex-wrap: wrap; gap: 20px 32px; }
+.home-about .team-grid { align-items: start; gap: 6%; }
+.home-about .team-photo { margin: 0; }
+.home-about .team-photo img { height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.home-about figcaption { padding-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.home-about-copy { padding-top: 2px; }
+.about-proof + .about-proof { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 28px; }
+.about-proof-label { color: var(--muted); font-size: 12px; letter-spacing: .08em; margin: 0 0 10px; }
+.about-proof h3 { margin: 0 0 12px; }
+.about-proof > p:not(.about-proof-label) { color: var(--muted); font-size: 15px; line-height: 1.9; max-width: 34em; }
+.about-proof > p + p { margin-top: 16px; }
+.about-proof .lab-achievement { padding-top: 16px; border-top: 1px solid var(--line); }
+.lab-areas { display: flex; flex-wrap: wrap; gap: 8px 16px; list-style: none; padding: 0; margin: 18px 0 0; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.lab-areas li { padding: 4px 10px; background: #eeece6; border-radius: 2px; }
+.cn-footer summary { list-style: none; }
+.cn-footer summary::-webkit-details-marker { display: none; }
+.cn-footer summary::marker { content: ''; }
+.about-proof .text-link { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; margin-top: 14px; }
+.home-evidence { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 36px; }
+.home-evidence-link { display: flex; align-items: center; gap: 16px; width: 100%; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--ink); padding: 20px 0; text-align: left; font: inherit; cursor: pointer; }
+.home-evidence-link img { width: 88px; height: 60px; object-fit: cover; border-radius: 2px; }
+.evidence-note { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
+.evidence-play { font-size: 14px; }
+.home-video-fallback { margin-top: 16px; }
+.home-chat-entry { position: fixed; right: max(24px, env(safe-area-inset-right)); bottom: max(24px, env(safe-area-inset-bottom)); z-index: 40; display: flex; align-items: center; gap: 14px; min-height: 66px; padding: 13px 18px; color: #fff; background: #30302d; border: 1px solid #ffffff3d; border-radius: 8px; box-shadow: 0 6px 24px #0002; text-decoration: none; }
+.home-chat-entry small { display: block; font-size: 10px; letter-spacing: .04em; color: #ded9ce; line-height: 1.5; }
+.home-chat-entry strong { display: block; font-size: 14px; font-weight: 500; line-height: 1.6; }
+.home-chat-entry:hover { background: #494940; }
+.home-chat-entry:focus-visible { outline: 3px solid #9e8764; outline-offset: 4px; }
+body:has(.video-dialog[open]) .home-chat-entry { visibility: hidden; }
+@media (max-width: 1100px) {
+  .home-about .team-grid { gap: 32px; }
+}
+@media (max-width: 760px) {
+  .product-detail-link { margin-top: 14px; }
+  .home-section-intro { font-size: 15px; margin-top: 14px; }
+  .home-about .team-grid { grid-template-columns: 1fr; gap: 28px; }
+  .about-proof + .about-proof { margin-top: 24px; padding-top: 24px; }
+  .home-evidence { grid-template-columns: 1fr; gap: 0; margin-top: 24px; }
+  .home-evidence-link { padding: 16px 0; gap: 12px; }
+  .home-chat-entry { right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); min-height: 52px; padding: 9px 12px; gap: 10px; }
+  .home-chat-entry strong { font-size: 13px; }
+  .cn-footer { padding-bottom: 78px; }
+}

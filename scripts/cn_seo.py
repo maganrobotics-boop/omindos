@@ -30,6 +30,20 @@ def routes(root):
                   if p.parent != root / 'cn' else '/'
                   for p in (root / 'cn').rglob('index.html'))
 
+def indexable_routes(root):
+    """Keep all page routes known, but omit explicit noindex pages from search."""
+    result = []
+    for route in routes(root):
+        page = root / 'cn' / route.strip('/') / 'index.html'
+        directives = set()
+        for raw in re.findall(r'<meta\b[^>]*>', page.read_text(), flags=re.I):
+            attrs = attributes(raw)
+            if attrs.get('name', '').lower() == 'robots':
+                directives.update(re.split(r'[\s,]+', attrs.get('content', '').lower()))
+        if not directives.intersection({'noindex', 'none'}):
+            result.append(route)
+    return result
+
 def normalize_path(path):
     path = path.removesuffix('index.html')
     return path.rstrip('/') + '/' if path != '/' else '/'
@@ -112,10 +126,11 @@ def apply(root):
     for page in (root / 'cn').rglob('*.html'):
         route = '/' + page.relative_to(root / 'cn').as_posix().removesuffix('index.html')
         page.write_text(rewrite(page.read_text(), route, known, page.name == '404.html'))
-    sitemap, robots = search_files(known)
+    sitemap, robots = search_files(indexable_routes(root))
     (root / 'cn/sitemap.xml').write_text(sitemap)
     (root / 'cn/robots.txt').write_text(robots)
 
 if __name__ == '__main__':
     import sys
     apply(Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1] / 'apps/website')
+
