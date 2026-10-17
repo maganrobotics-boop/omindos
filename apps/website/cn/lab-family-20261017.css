@@ -37,6 +37,7 @@ html[lang="zh-CN"] .lab-family:is(.lab-join-page, .alumni-page) main :is(h1, h2,
 .lab-family.alumni-page main { padding-bottom: 84px; }
 .lab-family.lab-join-page .join-breadcrumb,
 .lab-family.alumni-page .lab-breadcrumb {
+  align-items: center;
   padding-top: 24px;
   gap: 8px 20px;
   font-size: 13px;
