@@ -47,7 +47,7 @@ test('English stays on .ai/en and language links preserve context across domains
    assert.ok(switcher);
    const links=[...switcher.matchAll(/href="([^"]+)"/g)].map(m=>({href:m[1],getAttribute(){return this.href;}}));
    const location=new URL(address+'?source=partner&lang=zh#features');
-   runInNewContext(client,{URL,location,document:{querySelectorAll:()=>links},AbortSignal:{timeout(){}},fetch:async()=>({body:{cancel(){}}})});
+   runInNewContext(client,{URL,location,document:{querySelectorAll:()=>links,visibilityState:'visible',addEventListener(){},removeEventListener(){}},AbortSignal:{timeout(){}},fetch:async()=>({body:{cancel(){}}})});
    assert.equal(links[0].href,'https://omindos.cn'+path+'?source=partner#features');
    assert.equal(links[1].href,'https://omindos.ai/en'+path+'?source=partner#features');
   }

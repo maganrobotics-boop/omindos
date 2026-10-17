@@ -77,11 +77,33 @@ function visitorCountry(request) {
   return typeof country === "string" && /^[A-Z]{2}$/.test(country) ? country : "ZZ";
 }
 
-function isSameSiteBrowserRequest(request, url) {
+function isSameOriginBrowserRequest(request, url) {
   const origin = request.headers.get("Origin");
-  if (origin) return origin === url.origin;
   const fetchSite = request.headers.get("Sec-Fetch-Site");
-  return fetchSite === "same-origin" || fetchSite === "same-site";
+  // A sibling subdomain is not the English website. Contradictory Fetch
+  // Metadata must not override Origin, or vice versa. These are provenance
+  // checks, not proof that a request came from a human.
+  if (origin && origin !== url.origin) return false;
+  if (fetchSite && fetchSite !== "same-origin") return false;
+  return origin === url.origin || fetchSite === "same-origin";
+}
+
+function visitClassification(request) {
+  const purpose = `${request.headers.get("Sec-Purpose") || ""} ${request.headers.get("Purpose") || ""}`;
+  if (/\b(?:prefetch|prerender)\b/i.test(purpose)) return "excluded_prefetch";
+  const management = request.cf?.botManagement;
+  if (management?.verifiedBot === true) return "excluded_verified_bot";
+  // request.cf is platform-provided. Never trust score-like HTTP headers.
+  // A missing/zero score is unknown. Corporate proxies may share low scores
+  // with automation, so do not exclude them on score alone.
+  const score = management?.score;
+  const scored = Number.isInteger(score) && score >= 1 && score <= 99;
+  if (scored && score < 30 && management?.corporateProxy !== true) return "excluded_low_score";
+  const userAgent = request.headers.get("User-Agent") || "";
+  // Specific crawlers and HTTP/automation tools only; do not match generic
+  // substrings such as "bot", which can occur in legitimate browser names.
+  if (/(?:googlebot|bingbot|baiduspider|yandexbot|duckduckbot|applebot|bytespider|petalbot|sogou[ -](?:web[ -])?spider|gptbot|oai-searchbot|chatgpt-user|claudebot|facebookexternalhit|twitterbot|headlesschrome|phantomjs|playwright|puppeteer|(?:^|[\s;(])(?:curl|wget|python-requests|python-urllib|aiohttp|scrapy|go-http-client|node-fetch|undici|postmanruntime)\/|OMINDOS-Deployment-Check\/)/i.test(userAgent)) return "excluded_automation_ua";
+  return scored ? "accepted_scored" : "accepted_unknown";
 }
 
 async function digestText(value) {
@@ -144,28 +166,38 @@ async function handleOemApplication(request, env, url) {
   }
 }
 
-async function recordVisit(database, countryCode, now) {
+async function recordVisit(database, countryCode, now, classification) {
   const minuteBucket = Math.floor(now / MINUTE_IN_MS);
+  // New collection stays separate from the unfiltered legacy visit_* totals.
+  // All classifications are aggregate event counts, never visitor identities.
   await database.batch([
-    database.prepare(`INSERT INTO visit_totals (id, visits) VALUES (1, 1) ON CONFLICT(id) DO UPDATE SET visits = visits + 1`),
-    database.prepare(`INSERT INTO visit_recent (minute_bucket, country_code, visits) VALUES (?, ?, 1) ON CONFLICT(minute_bucket, country_code) DO UPDATE SET visits = visits + 1`).bind(minuteBucket, countryCode),
-    database.prepare(`INSERT INTO visit_country (country_code, visits) VALUES (?, 1) ON CONFLICT(country_code) DO UPDATE SET visits = visits + 1`).bind(countryCode),
-    database.prepare("DELETE FROM visit_recent WHERE minute_bucket < ?").bind(minuteBucket - RECENT_RETENTION_MINUTES),
+    database.prepare(`INSERT OR IGNORE INTO visit_collection_v2 (id, first_event_at, metric) VALUES (1, ?, 'filtered_page_views')`).bind(now),
+    database.prepare(`INSERT INTO visit_totals_v2 (classification, visits) VALUES (?, 1) ON CONFLICT(classification) DO UPDATE SET visits = visits + 1`).bind(classification),
+    database.prepare(`INSERT INTO visit_recent_v2 (minute_bucket, country_code, classification, visits) VALUES (?, ?, ?, 1) ON CONFLICT(minute_bucket, country_code, classification) DO UPDATE SET visits = visits + 1`).bind(minuteBucket, countryCode, classification),
+    database.prepare(`INSERT INTO visit_country_v2 (country_code, classification, visits) VALUES (?, ?, 1) ON CONFLICT(country_code, classification) DO UPDATE SET visits = visits + 1`).bind(countryCode, classification),
+    database.prepare("DELETE FROM visit_recent_v2 WHERE minute_bucket < ?").bind(minuteBucket - RECENT_RETENTION_MINUTES),
   ]);
+}
+
+function visitAcknowledgement() {
+  return new Response(null, { status: 204, headers: {
+    "Cache-Control": "no-store",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+  } });
 }
 
 async function handleVisits(request, env, url) {
   if (request.method !== "POST") return methodNotAllowed(["POST"]);
+  if (!isSameOriginBrowserRequest(request, url)) return errorResponse("Forbidden", 403, "forbidden");
+  // A Pages preview/alias can share the binding but is not omindos.ai traffic.
+  if (url.hostname !== "omindos.ai") return visitAcknowledgement();
   if (!env.VISITS_DB) return jsonResponse({ enabled: false, error: "Visitor statistics are not configured" }, 503);
   try {
-    const now = Date.now();
-    if (!isSameSiteBrowserRequest(request, url)) return errorResponse("Forbidden", 403, "forbidden");
-    await recordVisit(env.VISITS_DB, visitorCountry(request), now);
-    return new Response(null, { status: 204, headers: {
-      "Cache-Control": "no-store",
-      "Referrer-Policy": "no-referrer",
-      "X-Content-Type-Options": "nosniff",
-    } });
+    await recordVisit(env.VISITS_DB, visitorCountry(request), Date.now(), visitClassification(request));
+    // Exclusion affects analytics only. Crawlers still receive normal website
+    // content, and no score or classification is disclosed by this endpoint.
+    return visitAcknowledgement();
   } catch (error) {
     logError("visitor statistics request failed", error);
     return jsonResponse({ enabled: false, error: "Statistics unavailable" }, 503);

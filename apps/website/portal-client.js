@@ -26,12 +26,25 @@
       return;
     }
   }
-  // The domestic static host has no visit database; skip unsupported POSTs.
-  if (['omindos.cn', 'www.omindos.cn'].includes(location.hostname)) return;
-  // Keep the international anonymous visit counter without a visible counter UI.
-  fetch('/api/visits', {
-    method: 'POST', credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' }, body: '{}',
-    signal: AbortSignal.timeout(5000),
-  }).then(response => response.body?.cancel()).catch(() => {});
+  // Only the canonical English host belongs to this collection. Chinese
+  // analytics are separate; previews and Pages aliases must not mix in.
+  if (location.hostname !== 'omindos.ai') return;
+  if (typeof navigator !== 'undefined' && navigator.webdriver === true) return;
+  // Count at most once per document, after a page is actually made visible.
+  // This reduces hidden preloads; it does not establish a human identity.
+  const collectVisit = () => {
+    if (document.prerendering || document.visibilityState !== 'visible') return;
+    document.removeEventListener('visibilitychange', collectVisit);
+    document.removeEventListener('prerenderingchange', collectVisit);
+    if (document.__originmindVisitRecordedV2) return;
+    document.__originmindVisitRecordedV2 = true;
+    fetch('/api/visits', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }, body: '{}',
+      signal: AbortSignal.timeout(5000),
+    }).then(response => response.body?.cancel()).catch(() => {});
+  };
+  document.addEventListener('visibilitychange', collectVisit);
+  document.addEventListener('prerenderingchange', collectVisit);
+  collectVisit();
 })();
