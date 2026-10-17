@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>OmindOS 仿真回放 · OriginMind</title>
+  <style>
+    :root{--paper:#f7f5f0;--panel:#fdfcf9;--ink:#292b28;--muted:#777a72;--line:#dedfd6;--soft:#eeeee6;--accent:#535c4b;--error:#8c4d3b}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+    a{color:inherit;text-underline-offset:4px}button{font:inherit}button,a,video{outline-offset:5px}
+    button:focus-visible,a:focus-visible,video:focus-visible{outline:2px solid var(--accent)}
+    .shell{width:min(1240px,100% - 64px);margin:0 auto}
+    .top{padding:23px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:9px;min-width:0;font-weight:600;font-size:15px;letter-spacing:.04em}.brand-mark{display:block;width:40px;height:40px;flex:none;object-fit:contain}.brand-copy span{font-weight:400;color:var(--muted);font-size:12px;margin-left:14px;letter-spacing:.02em}
+    .top-note{font-size:12px;color:var(--muted)}.top-note span+span::before{content:" · "}
+    .intro{padding:39px 0 26px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+    .eyebrow{margin:0 0 8px;color:var(--muted);font-size:11px;letter-spacing:.14em}
+    h1{margin:0;font-size:clamp(27px,3.3vw,38px);line-height:1.3;font-weight:500;letter-spacing:-.02em}
+    .subtitle{margin:13px 0 0;color:var(--muted);max-width:700px}
+    .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:8px 12px;border-radius:3px;font-size:12px;white-space:nowrap;background:var(--panel)}
+    .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#b2b5ac}.badge.ready::before{background:var(--accent)}.badge.error::before{background:var(--error)}
+    .workspace{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(0,1fr);gap:22px;align-items:start}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+    .panel-heading{padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+    h2{font-size:14px;font-weight:500;margin:0}.small{font-size:11px;color:var(--muted)}
+    .video-wrap{background:#30322e;position:relative;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+    video{display:block;width:100%;height:100%;position:absolute;inset:0;background:#30322e;object-fit:contain}
+    .video-hint{padding:20px;text-align:center;color:#e2e3dc;font-size:12px;max-width:320px;position:relative;pointer-events:none}
+    .video-hint[hidden]{display:none}.video-wrap.failed video{visibility:hidden}
+    .playback{padding:18px 20px 20px}.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+    .stage{background:transparent;border:1px solid var(--line);border-radius:3px;color:var(--ink);padding:9px 6px;cursor:pointer;line-height:1.4;min-height:59px;transition:background .15s,border-color .15s}
+    .stage span{display:block;font-size:10px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}.stage:hover{background:var(--soft)}.stage.active{background:var(--soft);border-color:#858d7c}.stage:disabled{cursor:default;opacity:.5}
+    .stage-description{display:flex;justify-content:space-between;gap:12px;margin-top:13px;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+    .telemetry{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+    .metric{padding:18px 20px}.metric+.metric{border-left:1px solid var(--line)}.metric-label{color:var(--muted);font-size:11px}.metric-number{font-size:27px;font-weight:400;letter-spacing:-.025em;line-height:1.4;margin-top:3px;white-space:nowrap;font-variant-numeric:tabular-nums}.metric-unit{font-size:11px;color:var(--muted);margin-left:5px;letter-spacing:0}
+    .trajectory{padding:9px 13px 5px;aspect-ratio:1.6;position:relative}.trajectory svg{width:100%;height:100%;display:block;overflow:visible}.trajectory-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);padding:35px;text-align:center}.trajectory-empty[hidden]{display:none}
+    .trajectory-caption{padding:0 20px 15px;display:flex;gap:18px;flex-wrap:wrap;font-size:10px;color:var(--muted)}.key{display:inline-flex;align-items:center;gap:6px}.key-dot{display:inline-block;width:6px;height:6px;border:1px solid var(--accent);border-radius:50%}.key-dot.current{background:var(--ink);border-color:var(--ink)}
+    .record{padding:17px 20px;border-top:1px solid var(--line)}.record dl{margin:0;display:grid;grid-template-columns:76px minmax(0,1fr);gap:9px 12px;font-size:12px}.record dt{color:var(--muted)}.record dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.record-status{margin:0 0 13px;font-size:12px}.record-status.error{color:var(--error)}
+    .download{padding:14px 20px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;font-size:11px}
+    .notice{padding:17px 20px;margin-top:22px;border-left:2px solid #8d9484;background:var(--soft);color:#63685d;font-size:12px;display:flex;gap:12px;align-items:baseline}.notice strong{font-weight:500;white-space:nowrap}
+    .footer{padding:21px 0 28px;display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px}.numeric{font-variant-numeric:tabular-nums}
+    @media(max-width:900px){.shell{width:min(680px,100% - 40px)}.workspace{grid-template-columns:1fr}.intro{padding-top:30px}.trajectory{aspect-ratio:1.9}.record dl{grid-template-columns:90px minmax(0,1fr)}.notice{align-items:flex-start}}
+    @media(max-width:440px){.shell{width:calc(100% - 28px)}.top{padding:18px 0;gap:12px}.brand{gap:8px}.brand-mark{width:36px;height:36px}.brand-copy span{display:block;margin:3px 0 0;font-size:10px;white-space:nowrap}.top-note{font-size:10px;text-align:right;white-space:nowrap;flex:none}.top-note span{display:block}.top-note span+span::before{content:none}.intro{display:block;padding:25px 0 19px}.badge{margin-top:15px;padding:6px 9px}.subtitle{font-size:12px;line-height:1.65;margin-top:10px}.panel-heading{padding:14px 15px}.playback{padding:14px 13px 15px}.stages{gap:6px}.stage{font-size:12px;padding:8px 3px;min-height:56px}.stage span{font-size:9px}.metric{padding:15px 11px}.metric-label{font-size:10px}.metric-number{font-size:22px}.metric-unit{font-size:9px;margin-left:3px}.trajectory{aspect-ratio:1.55;padding:5px 5px 0}.trajectory-caption{padding:0 15px 13px;gap:12px}.record{padding:14px 15px}.record dl{grid-template-columns:64px minmax(0,1fr);font-size:11px}.download{padding:13px 15px;gap:12px}.notice{padding:14px 15px;display:block;font-size:11px;margin-top:16px}.notice strong{display:block;margin-bottom:4px}.footer{display:block;font-size:9px;padding-top:16px}.footer span{display:block;margin-bottom:4px}.stage-description{font-size:10px}.workspace{gap:16px}}
+    @media(prefers-reduced-motion:reduce){.stage{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div class="brand">
+        <!-- Official OriginMind asset: apps/website/assets/brand/originmind-mark-184.webp. -->
+        <img class="brand-mark" src="data:image/webp;base64,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" width="40" height="40" alt="">
+        <div class="brand-copy">OmindOS <span>OriginMind · legged-robot</span></div>
+      </div>
+      <div class="top-note"><span>Roboto Origin</span><span>双足机器人</span></div>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">SIMULATION RECORD</p>
+          <h1 id="page-title">OmindOS 仿真回放</h1>
+          <p class="subtitle">服务器运行 MuJoCo 后保存的视频与状态记录。选择阶段查看动作，轨迹和读数随播放时间更新。</p>
+        </div>
+        <div id="run-badge" class="badge" role="status" aria-live="polite">正在读取运行记录</div>
+      </section>
+      <div class="workspace">
+        <section class="panel" aria-labelledby="video-title">
+          <div class="panel-heading">
+            <h2 id="video-title">运动回放</h2>
+            <span class="small">站立 → 前进 → 转向 → 停车</span>
+          </div>
+          <div id="video-wrap" class="video-wrap">
+            <video id="simulation-video" controls playsinline preload="metadata" aria-label="Roboto Origin 服务器仿真视频">
+              <source src="./simulation.mp4" type="video/mp4">
+              您的浏览器不支持视频播放，可下载原始视频查看。
+            </video>
+            <div id="video-hint" class="video-hint">正在加载仿真视频</div>
+          </div>
+          <div class="playback">
+            <div class="stages" aria-label="跳转到运动阶段">
+              <button class="stage active" data-start="0" type="button" disabled>站立<span>0–3 秒</span></button>
+              <button class="stage" data-start="3" type="button" disabled>前进<span>3–10 秒</span></button>
+              <button class="stage" data-start="10" type="button" disabled>转向<span>10–14 秒</span></button>
+              <button class="stage" data-start="14" type="button" disabled>停车<span>14–20 秒</span></button>
+            </div>
+            <div class="stage-description"><span id="stage-label">等待视频就绪</span><span id="sample-label">读数来自实际采样</span></div>
+          </div>
+          <div class="telemetry" aria-label="当前回放读数">
+            <div class="metric"><div class="metric-label">回放时间</div><div class="metric-number"><span id="time-value">—</span><span class="metric-unit">s</span></div></div>
+            <div class="metric"><div class="metric-label">前向速度</div><div class="metric-number"><span id="speed-value">—</span><span class="metric-unit">m/s</span></div></div>
+            <div class="metric"><div class="metric-label">机身高度</div><div class="metric-number"><span id="height-value">—</span><span class="metric-unit">m</span></div></div>
+          </div>
+        </section>
+        <section class="panel" aria-labelledby="trajectory-title">
+          <div class="panel-heading"><h2 id="trajectory-title">平面轨迹</h2><span class="small">MuJoCo 状态 · X / Y（m）</span></div>
+          <div class="trajectory">
+            <svg id="trajectory" viewBox="0 0 640 400" role="img" aria-label="实际仿真状态记录的平面轨迹"></svg>
+            <div id="trajectory-empty" class="trajectory-empty">运行记录就绪后显示实际轨迹</div>
+          </div>
+          <div class="trajectory-caption"><span class="key"><i class="key-dot"></i>起点</span><span class="key"><i class="key-dot current"></i>当前采样位置</span><span>按实际位置绘制，坐标轴等比例</span></div>
+          <div class="record">
+            <p id="record-status" class="record-status" role="status" aria-live="polite">正在读取 preview.json…</p>
+            <dl>
+              <dt>运行环境</dt><dd id="record-server">—</dd>
+              <dt>模块版本</dt><dd id="record-version">—</dd>
+              <dt>物理时长</dt><dd id="record-duration">—</dd>
+              <dt>控制步数</dt><dd id="record-steps">—</dd>
+              <dt>指令范围</dt><dd id="record-limits">—</dd>
+              <dt>前进段均速</dt><dd id="record-speed">—</dd>
+              <dt>记录时间</dt><dd id="record-created">—</dd>
+            </dl>
+          </div>
+          <div class="download" aria-label="下载实际运行记录">
+            <a href="./simulation.csv" download>原始采样 CSV</a>
+            <a href="./preview.json" download>运行摘要 JSON</a>
+            <a href="./simulation.mp4" download>仿真视频</a>
+          </div>
+        </section>
+      </div>
+      <div class="notice"><strong>仅仿真</strong><span>这是已保存的服务器运行结果，页面播放不会启动新的物理计算。未连接真实电机；短时回放不代表实机或复杂地形已验收。</span></div>
+    </main>
+    <footer class="footer"><span>OriginMind · Roboto Origin / MuJoCo</span><span id="footer-record">视频与轨迹均读取本站运行记录</span></footer>
+  </div>
+  <script>
+    'use strict';
+    const byId = id => document.getElementById(id);
+    const video = byId('simulation-video');
+    const stages = Array.from(document.querySelectorAll('.stage'));
+    const stageNames = ['站立', '前进', '前进并转向', '停车'];
+    const svgNS = 'http://www.w3.org/2000/svg';
+    let result = null;
+    let playhead = null;
+    let project = null;
+    let videoReady = false;
+
+    function text(id, value) { byId(id).textContent = String(value); }
+    function finite(value) { return typeof value === 'number' && Number.isFinite(value); }
+    function svgNode(name, attrs, content) {
+      const node = document.createElementNS(svgNS, name);
+      for (const [key, value] of Object.entries(attrs || {})) node.setAttribute(key, String(value));
+      if (content !== undefined) node.textContent = String(content);
+      return node;
+    }
+    function formatNumber(value, digits) { return Number(value).toFixed(digits); }
+    function checkedRecord(raw) {
+      if (!raw || typeof raw !== 'object' || raw.robot !== 'roboto-origin' || raw.scope !== 'simulation_only') {
+        throw new Error('记录类型不符合本页的仿真格式');
+      }
+      if (!finite(raw.duration_s) || raw.duration_s <= 0 || !Number.isSafeInteger(raw.control_steps) || raw.control_steps < 0) {
+        throw new Error('记录缺少有效的物理时长或控制步数');
+      }
+      for (const key of ['version', 'server', 'status', 'created_at']) {
+        if (typeof raw[key] !== 'string' || raw[key].length > 120) throw new Error('记录字段无效：' + key);
+      }
+      if (!Array.isArray(raw.samples) || raw.samples.length < 1 || raw.samples.length > 500000) throw new Error('记录缺少实际采样点');
+      let previousTime = -1;
+      const keys = ['time_s', 'command_vx', 'command_wz', 'vx_body', 'wz_body', 'base_x', 'base_y', 'base_z'];
+      for (const sample of raw.samples) {
+        if (!sample || !keys.every(key => finite(sample[key])) || sample.time_s < previousTime || sample.time_s < 0 || sample.time_s > raw.duration_s + .001) {
+          throw new Error('采样点数值或时间顺序无效');
+        }
+        previousTime = sample.time_s;
+      }
+      if (!Array.isArray(raw.command_limits) || raw.command_limits.length !== 6 || !raw.command_limits.every(finite) || [0, 2, 4].some(i => raw.command_limits[i] > raw.command_limits[i + 1])) {
+        throw new Error('记录缺少有效的指令范围');
+      }
+      return raw;
+    }
+    function buildTrajectory(samples) {
+      const svg = byId('trajectory');
+      svg.replaceChildren();
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const s of samples) {
+        minX = Math.min(minX, s.base_x); maxX = Math.max(maxX, s.base_x);
+        minY = Math.min(minY, s.base_y); maxY = Math.max(maxY, s.base_y);
+      }
+      const left = 66, top = 25, width = 546, height = 327;
+      const centerX = (minX + maxX) / 2, centerY = (minY + maxY) / 2;
+      const scale = Math.min(width / Math.max(maxX - minX, .1), height / Math.max(maxY - minY, .1)) * .82;
+      if (!finite(scale) || scale <= 0 || !finite(centerX) || !finite(centerY)) throw new Error('轨迹坐标范围无效');
+      project = s => [left + width / 2 + (s.base_x - centerX) * scale, top + height / 2 - (s.base_y - centerY) * scale];
+      const tickStyle = {fill:'#777a72','font-size':12,'font-family':'sans-serif'};
+      for (let i = 0; i <= 4; i++) {
+        const x = left + width * i / 4, y = top + height * i / 4;
+        svg.append(svgNode('line', {x1:x,y1:top,x2:x,y2:top+height,stroke:'#e5e6dd','stroke-width':1}));
+        svg.append(svgNode('line', {x1:left,y1:y,x2:left+width,y2:y,stroke:'#e5e6dd','stroke-width':1}));
+        svg.append(svgNode('text', {x,y:top+height+24,'text-anchor':'middle',...tickStyle}, formatNumber(centerX + (x-left-width/2)/scale, 2)));
+        svg.append(svgNode('text', {x:left-10,y:y+4,'text-anchor':'end',...tickStyle}, formatNumber(centerY - (y-top-height/2)/scale, 2)));
+      }
+      svg.append(svgNode('text', {x:left+width,y:395,'text-anchor':'end',...tickStyle}, 'X（m）'));
+      svg.append(svgNode('text', {x:17,y:17,...tickStyle}, 'Y（m）'));
+      const path = samples.map((sample, index) => {
+        const [x,y] = project(sample);
+        return (index ? 'L' : 'M') + x.toFixed(6) + ' ' + y.toFixed(6);
+      }).join(' ');
+      svg.append(svgNode('path', {d:path,fill:'none',stroke:'#737d66','stroke-width':2.6,'stroke-linejoin':'round','stroke-linecap':'round'}));
+      const [startX,startY] = project(samples[0]);
+      svg.append(svgNode('circle',{cx:startX,cy:startY,r:5,fill:'#fdfcf9',stroke:'#535c4b','stroke-width':1.5}));
+      playhead = svgNode('circle',{cx:startX,cy:startY,r:6,fill:'#292b28',stroke:'#fdfcf9','stroke-width':2});
+      svg.append(playhead);
+      byId('trajectory-empty').hidden = true;
+    }
+    function sampleAt(time) {
+      let low = 0, high = result.samples.length - 1;
+      while (low < high) {
+        const middle = Math.ceil((low + high) / 2);
+        if (result.samples[middle].time_s <= time) low = middle;
+        else high = middle - 1;
+      }
+      return result.samples[low];
+    }
+    function updatePlayback() {
+      const time = finite(video.currentTime) ? video.currentTime : 0;
+      const stage = time < 3 ? 0 : time < 10 ? 1 : time < 14 ? 2 : 3;
+      stages.forEach((button,index) => {
+        button.classList.toggle('active',index === stage);
+        button.setAttribute('aria-pressed',String(index === stage));
+      });
+      text('stage-label', videoReady ? stageNames[stage] + (video.ended ? ' · 回放结束' : '阶段') : '等待视频就绪');
+      text('time-value', videoReady ? formatNumber(time,1) : '—');
+      if (!result || !videoReady) return;
+      const sample = sampleAt(Math.min(time,result.duration_s));
+      text('speed-value',formatNumber(sample.vx_body,3));
+      text('height-value',formatNumber(sample.base_z,3));
+      text('sample-label','采样时刻 ' + formatNumber(sample.time_s,2) + ' s');
+      if (playhead && project) {
+        const [x,y] = project(sample);
+        playhead.setAttribute('cx',String(x)); playhead.setAttribute('cy',String(y));
+      }
+    }
+    function readyVideo() {
+      videoReady = true;
+      byId('video-hint').hidden = true;
+      byId('video-wrap').classList.remove('failed');
+      stages.forEach(button => { button.disabled = finite(video.duration) && Number(button.dataset.start) >= video.duration; });
+      updatePlayback();
+    }
+    function failVideo() {
+      videoReady = false;
+      byId('video-wrap').classList.add('failed');
+      byId('video-hint').hidden = false;
+      text('video-hint','仿真视频不可用。请检查 simulation.mp4 是否已生成，或下载原始视频查看。');
+      stages.forEach(button => { button.disabled = true; });
+      text('stage-label','视频加载失败');
+      text('time-value','—'); text('speed-value','—'); text('height-value','—');
+    }
+    stages.forEach(button => button.addEventListener('click',() => {
+      if (!videoReady) return;
+      video.currentTime = Number(button.dataset.start);
+      updatePlayback();
+      video.play().catch(() => { text('stage-label',stageNames[stages.indexOf(button)] + ' · 点击视频播放'); });
+    }));
+    video.addEventListener('loadedmetadata',readyVideo);
+    video.addEventListener('loadeddata',readyVideo);
+    video.addEventListener('error',failVideo);
+    video.querySelector('source').addEventListener('error',failVideo);
+    ['timeupdate','seeked','ended','pause','play'].forEach(event => video.addEventListener(event,updatePlayback));
+    let animationFrame = null;
+    function animate() {
+      updatePlayback();
+      if (!video.paused && !video.ended) animationFrame = requestAnimationFrame(animate);
+      else animationFrame = null;
+    }
+    video.addEventListener('play',() => { if (animationFrame === null) animate(); });
+
+    async function loadRecord() {
+      try {
+        const response = await fetch('./preview.json',{cache:'no-store',credentials:'same-origin'});
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const checked = checkedRecord(await response.json());
+        buildTrajectory(checked.samples);
+        result = checked;
+        const complete = result.status === 'completed';
+        byId('run-badge').classList.toggle('ready',complete);
+        byId('run-badge').classList.toggle('error',!complete);
+        text('run-badge',complete ? formatNumber(result.duration_s,0) + ' 秒仿真已完成' : '运行状态：' + result.status);
+        text('record-status',complete ? '读取到真实服务器运行记录' : '当前记录未标为完成：' + result.status);
+        byId('record-status').classList.toggle('error',!complete);
+        text('record-server','OmindOS 云端 · MuJoCo');
+        text('record-version',result.version);
+        text('record-duration',formatNumber(result.duration_s,2) + ' 秒');
+        text('record-steps',result.control_steps.toLocaleString('zh-CN'));
+        const limits = result.command_limits;
+        text('record-limits','vx ' + limits[0] + '～' + limits[1] + ' m/s；wz ' + limits[4] + '～' + limits[5] + ' rad/s');
+        const forward = result.samples.filter(sample => sample.time_s >= 3 && sample.time_s < 10);
+        text('record-speed',forward.length ? formatNumber(forward.reduce((sum,sample) => sum + sample.vx_body,0) / forward.length,3) + ' m/s（采样均值）' : '前进段采样不足');
+        const created = new Date(result.created_at);
+        text('record-created',Number.isNaN(created.getTime()) ? result.created_at : created.toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}) + '（北京时间）');
+        text('footer-record',result.samples.length.toLocaleString('zh-CN') + ' 个真实采样点 · 仅仿真');
+        updatePlayback();
+      } catch (error) {
+        result = null;
+        byId('run-badge').classList.add('error');
+        text('run-badge','运行记录不可用');
+        text('record-status','无法读取有效的 preview.json：' + (error.message || '未知错误'));
+        byId('record-status').classList.add('error');
+        text('trajectory-empty','暂无可核验的轨迹数据。视频可单独播放；本页不会补入示例数据。');
+        byId('trajectory-empty').hidden = false;
+      }
+    }
+    loadRecord();
+    if (video.readyState >= 1) readyVideo();
+  </script>
+</body>
+</html>
