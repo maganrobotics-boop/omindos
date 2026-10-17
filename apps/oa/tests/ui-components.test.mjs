@@ -44,6 +44,15 @@ test("keeps registration and sidebar branding text-only", async () => {
   );
 });
 
+test("keeps the laboratory AI assistant directly discoverable from the dashboard", async () => {
+  const pageSource = await readFile(path.join(root, "app/page.tsx"), "utf8");
+
+  assert.match(pageSource, /className="dashboard-ai-entry"/u);
+  assert.match(pageSource, /onClick=\{\(\) => navigate\("knowledge"\)\}/u);
+  assert.match(pageSource, /ARTS Robotics AI Assistant/u);
+  assert.match(pageSource, /进入实验室 AI/u);
+});
+
 test("makes the official Feishu QR the primary login and keeps ChatGPT and GitHub under smaller alternatives", async () => {
   const pageSource = await readFile(path.join(root, "app/page.tsx"), "utf8");
   const choiceStart = pageSource.indexOf(

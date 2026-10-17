@@ -183,6 +183,13 @@
       "when": 1788540890418,
       "tag": "0025_restore_feishu_login",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1789052305895,
+      "tag": "0026_rich_jocasta",
+      "breakpoints": true
     }
   ]
 }

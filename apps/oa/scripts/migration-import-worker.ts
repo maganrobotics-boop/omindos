@@ -18,6 +18,7 @@ import {
 import {
   migrationImportD1QueryCount,
   migrationImportRowBatches,
+  MIGRATION_IMPORT_FIXED_D1_QUERIES,
   MIGRATION_IMPORT_MAX_D1_QUERIES,
   MIGRATION_IMPORT_TABLE_ORDER,
 } from "../lib/migration-import-plan.mjs";
@@ -207,7 +208,7 @@ async function importPayload(request: Request, env: Env) {
   const guardSelect = env.DB.prepare("SELECT bucket_key FROM write_rate_buckets WHERE bucket_key = ? AND actor_subject = ? AND scope = 'migration_import'").bind(guardKey, actorSubject);
   const inserts = buildInsertStatements(env.DB, payload, guardKey, actorSubject);
   const queryCount = migrationImportD1QueryCount(payload);
-  if (queryCount > MIGRATION_IMPORT_MAX_D1_QUERIES || queryCount !== 18 + inserts.statements.length) throw new Error("Migration payload requires too many D1 statements for an atomic free-plan import");
+  if (queryCount > MIGRATION_IMPORT_MAX_D1_QUERIES || queryCount !== MIGRATION_IMPORT_FIXED_D1_QUERIES + inserts.statements.length) throw new Error("Migration payload requires too many D1 statements for an atomic free-plan import");
 
   let results: D1Result[];
   try {

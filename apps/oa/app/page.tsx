@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   BadgeCheck,
   BookOpen,
+  Bot,
   Building2,
   CircleDollarSign,
   BriefcaseBusiness,
@@ -65,6 +66,7 @@ import { OemInbox } from "@/components/oem-inbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Toaster } from "@/components/ui/sonner";
+import { KnowledgeView } from "@/components/knowledge/knowledge-view";
 import {
   NDA_AGREEMENT_VERSION,
   buildNdaAgreementText,
@@ -85,7 +87,7 @@ import { circulationPeople, circulationPendingForEmail } from "@/lib/circulation
 
 type ApprovalType = "技术审核" | "采购审核" | "保密协议" | "劳务报酬" | "流转审批";
 type ApprovalStatus = "草稿" | "待审核" | "审批中" | "已通过" | "已退回" | "已撤回" | "已作废" | "已归档";
-type ViewKey = "dashboard" | "requests" | "people" | "rules" | "members" | "oem" | "notifications" | "profile";
+type ViewKey = "dashboard" | "requests" | "people" | "knowledge" | "rules" | "members" | "oem" | "notifications" | "profile";
 
 type Approval = {
   id: string;
@@ -135,7 +137,7 @@ type ConversationSummary = { peer: { email: string; name?: string; fullName?: st
 type MetricPanel = "approved" | "archive" | null;
 type ApprovalEvent = { id: number; actorName: string; actorEmail: string; action: string; note: string; createdAt: string };
 type AuthProvider = "chatgpt" | "github" | "feishu" | "legacy";
-type SessionInfo = { registered: boolean; status?: "unregistered" | "pending" | "active" | "rejected" | "departed"; accountBindingRequired?: boolean; accountBindingConflict?: boolean; platformIdentityMissing?: boolean; externalIdentityLinkRequired?: boolean; externalIdentityProvider?: "github" | "feishu"; githubIdentityLinkRequired?: boolean; feishuIdentityLinkRequired?: boolean; chatgptLoginEnabled?: boolean; githubLoginEnabled?: boolean; feishuLoginEnabled?: boolean; migrationExportEnabled?: boolean; migrationUnfreezeEnabled?: boolean; user?: { email: string; displayName: string; authProvider?: AuthProvider } | null; role?: string | null; canReviewMembers?: boolean; canGrantMemberPermissions?: boolean; isAdmin?: boolean; isFinanceOwner?: boolean; ndaCompleted?: boolean; needsNda?: boolean; ndaApprovalId?: string; error?: string };
+type SessionInfo = { registered: boolean; status?: "unregistered" | "pending" | "active" | "rejected" | "departed"; accountBindingRequired?: boolean; accountBindingConflict?: boolean; platformIdentityMissing?: boolean; externalIdentityLinkRequired?: boolean; externalIdentityProvider?: "github" | "feishu"; githubIdentityLinkRequired?: boolean; feishuIdentityLinkRequired?: boolean; chatgptLoginEnabled?: boolean; githubLoginEnabled?: boolean; feishuLoginEnabled?: boolean; migrationExportEnabled?: boolean; migrationUnfreezeEnabled?: boolean; user?: { email: string; displayName: string; authProvider?: AuthProvider } | null; role?: string | null; canReviewMembers?: boolean; canGrantMemberPermissions?: boolean; canReviewKnowledge?: boolean; isAdmin?: boolean; isFinanceOwner?: boolean; ndaCompleted?: boolean; needsNda?: boolean; ndaApprovalId?: string; error?: string };
 type FeishuBindingCandidate = { memberId: string; fullName: string; accountHint: string; department: string };
 
 async function loadApprovalDetail(id: string, signal: AbortSignal) {
@@ -317,6 +319,7 @@ function Sidebar({ activeView, setActiveView, onNew, onProfile, userName = "马�
     { key: "dashboard", label: "审批工作台", icon: LayoutDashboard },
     { key: "requests", label: "全部申请", icon: FolderKanban },
     { key: "people", label: "协作成员", icon: UsersRound },
+    { key: "knowledge", label: "实验室 AI 助手", icon: Bot },
     { key: "rules", label: "流程与规则", icon: FileCheck2 },
     ...(isAdmin ? [{ key: "members" as ViewKey, label: "成员审核", icon: UsersRound }, { key: "oem" as ViewKey, label: "官网 OEM 申请", icon: BriefcaseBusiness }, { key: "notifications" as ViewKey, label: "飞书提醒", icon: MessageCircle }] : []),
   ];
@@ -2395,14 +2398,14 @@ export default function Home() {
           <div className="breadcrumbs">
             <button type="button" className="breadcrumb-home" onClick={() => navigate("dashboard")} aria-label={`返回${officialName}`} title="返回首页"><span className="breadcrumb-brand">{officialBrand}</span><span className="breadcrumb-subtitle">联合研发 OA</span></button>
             <ChevronRight className="size-3.5" />
-            <strong>{activeView === "dashboard" ? "审批工作台" : activeView === "requests" ? showMineOnly ? "待我处理" : "全部申请" : activeView === "people" ? "协作成员" : activeView === "members" ? "成员审核" : activeView === "oem" ? "官网 OEM 申请" : activeView === "notifications" ? "飞书提醒" : activeView === "profile" ? "个人设置" : "流程与规则"}</strong>
+            <strong>{activeView === "dashboard" ? "审批工作台" : activeView === "requests" ? showMineOnly ? "待我处理" : "全部申请" : activeView === "people" ? "协作成员" : activeView === "knowledge" ? "ARTS Robotics AI Assistant" : activeView === "members" ? "成员审核" : activeView === "oem" ? "官网 OEM 申请" : activeView === "notifications" ? "飞书提醒" : activeView === "profile" ? "个人设置" : "流程与规则"}</strong>
           </div>
           <div className="topbar-actions">
             <div className="topbar-date">{todayLabel}</div>
             <ChatHub currentUser={session.user} />
           </div>
         </header>
-        {activeView === "notifications" ? <NotificationStatus /> : activeView === "oem" ? <OemInbox /> : activeView === "members" ? <MembersView currentEmail={session.user?.email} /> : activeView === "people" ? <PeopleView currentUser={session.user} /> : activeView === "profile" ? <ProfileSettingsView currentUser={session.user} migrationExportEnabled={session.migrationExportEnabled} migrationUnfreezeEnabled={session.migrationUnfreezeEnabled} onIdentityChanged={(fullName, avatarDataUrl) => { setMyAvatarDataUrl(avatarDataUrl); setSession((current) => current?.user ? { ...current, user: { ...current.user, displayName: fullName } } : current); }} /> : activeView === "rules" ? <RulesView /> : activeView === "requests" ? <RequestsView approvals={approvals} filteredApprovals={filteredApprovals} myPendingApprovals={myPendingApprovals} dataReady={dataReady} activeFilter={activeFilter} setActiveFilter={setActiveFilter} showMineOnly={showMineOnly} onClearMine={() => setShowMineOnly(false)} onOpen={openApproval} /> : <>
+        {activeView === "notifications" ? <NotificationStatus /> : activeView === "oem" ? <OemInbox /> : activeView === "members" ? <MembersView currentEmail={session.user?.email} /> : activeView === "people" ? <PeopleView currentUser={session.user} /> : activeView === "knowledge" ? <KnowledgeView canReviewKnowledge={Boolean(session.canReviewKnowledge)} /> : activeView === "profile" ? <ProfileSettingsView currentUser={session.user} migrationExportEnabled={session.migrationExportEnabled} migrationUnfreezeEnabled={session.migrationUnfreezeEnabled} onIdentityChanged={(fullName, avatarDataUrl) => { setMyAvatarDataUrl(avatarDataUrl); setSession((current) => current?.user ? { ...current, user: { ...current.user, displayName: fullName } } : current); }} /> : activeView === "rules" ? <RulesView /> : activeView === "requests" ? <RequestsView approvals={approvals} filteredApprovals={filteredApprovals} myPendingApprovals={myPendingApprovals} dataReady={dataReady} activeFilter={activeFilter} setActiveFilter={setActiveFilter} showMineOnly={showMineOnly} onClearMine={() => setShowMineOnly(false)} onOpen={openApproval} /> : <>
           <section className="page-heading dashboard-heading">
             <div>
               <div className="eyebrow"><span className="eyebrow-line" />{officialName}</div>
@@ -2412,6 +2415,15 @@ export default function Home() {
             <div className="heading-actions"><button className="secondary-action" onClick={() => setActiveView("rules")}><SlidersHorizontal className="size-4" />查看规则</button><Button className="primary-button new-button" onClick={openNewRequest}><Plus className="size-4" />新建审核</Button></div>
           </section>
           <div className="oa-guide-banner"><div><strong>让你的工作有记录，申请有进度，成果可查阅。</strong><p>完成阶段成果、需要采购或申请月度劳务时，从“新建审核”开始。</p></div><a href="/guide">项目章程与使用指南 <ArrowUpRight className="size-4" /></a></div>
+          <button type="button" className="dashboard-ai-entry" onClick={() => navigate("knowledge")} aria-label="进入 ARTS Robotics AI Assistant">
+            <span className="dashboard-ai-entry-icon"><Bot className="size-5" /></span>
+            <span className="dashboard-ai-entry-copy">
+              <span className="dashboard-ai-entry-kicker">实验室知识问答</span>
+              <strong>ARTS Robotics AI Assistant</strong>
+              <span>向实验室知识库提问、提交知识，并跟踪管理员审核状态。</span>
+            </span>
+            <span className="dashboard-ai-entry-action">进入实验室 AI <ArrowUpRight className="size-4" /></span>
+          </button>
           <section className="stats-grid">
             <button type="button" className="stat-card stat-card-action stat-card-approved" onClick={() => setMetricPanel("approved")} aria-label="查看本月已通过的文档"><div className="stat-label">本月已通过</div><div className="stat-value">{monthlyApproved.length}<span>条</span></div><div className="stat-foot positive"><span className="stat-icon"><Check className="size-4" /></span><span>点击查看已完成审批文档</span><ArrowUpRight className="stat-action-arrow size-4" /></div></button>
             <button type="button" className="stat-card stat-card-action stat-card-archive" onClick={() => setMetricPanel("archive")} aria-label="查看归档完整率详情"><div className="stat-label">归档完整率</div><div className="stat-value">{archiveRatio}<span>%</span></div><div className="stat-foot positive"><span className="stat-icon"><Archive className="size-4" /></span><span>点击查看归档统计</span><ArrowUpRight className="stat-action-arrow size-4" /></div></button>

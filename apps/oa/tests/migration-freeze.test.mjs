@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isMigrationUnfreezeEnabled, migrationWriteFreezeId, shouldBlockForMigrationFreeze } from "../lib/migration-freeze.ts";
+import { isMigrationUnfreezeEnabled, migrationControlPlaneUnfreezeState, migrationWriteFreezeId, shouldBlockForMigrationFreeze, shouldServeMigrationRecoveryPage } from "../lib/migration-freeze.ts";
 
 const frozen = { OA_MIGRATION_WRITE_FROZEN: "true" };
 
@@ -49,4 +49,12 @@ test("migration recovery stays hidden unless the exact frozen generation is expl
   assert.equal(isMigrationUnfreezeEnabled(enabled, Date.parse(expiredAt) + 5 * 60 * 1000), false);
   assert.equal(isMigrationUnfreezeEnabled(enabled, afterExpirySkew), true);
   assert.equal(isMigrationUnfreezeEnabled({ ...enabled, OA_MIGRATION_EXPORT_NOT_AFTER: "invalid" }, afterExpirySkew), false);
+  assert.equal(shouldServeMigrationRecoveryPage(request("/"), enabled, afterExpirySkew), true);
+  assert.equal(shouldServeMigrationRecoveryPage(request("/guide"), enabled, afterExpirySkew), true);
+  assert.equal(shouldServeMigrationRecoveryPage(request("/approvals"), enabled, afterExpirySkew), false);
+  assert.equal(shouldServeMigrationRecoveryPage(request("/", "POST"), enabled, afterExpirySkew), false);
+  assert.deepEqual(migrationControlPlaneUnfreezeState(enabled, afterExpirySkew), { armed: false, freezeId: null });
+  assert.deepEqual(migrationControlPlaneUnfreezeState({ ...enabled, OA_MIGRATION_CONTROL_UNFREEZE_ID: "wrong" }, afterExpirySkew), { armed: true, freezeId: null });
+  assert.deepEqual(migrationControlPlaneUnfreezeState({ ...enabled, OA_MIGRATION_CONTROL_UNFREEZE_ID: enabled.OA_MIGRATION_FREEZE_ID }, afterExpirySkew), { armed: true, freezeId: enabled.OA_MIGRATION_FREEZE_ID });
+  assert.deepEqual(migrationControlPlaneUnfreezeState({ ...enabled, OA_MIGRATION_CONTROL_UNFREEZE_ID: enabled.OA_MIGRATION_FREEZE_ID }, Date.parse(expiredAt) + 5 * 60 * 1000), { armed: true, freezeId: null });
 });

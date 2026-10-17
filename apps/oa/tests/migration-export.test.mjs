@@ -138,7 +138,10 @@ const vite = await createServer({
                 bind() { return this; },
                 async all() {
                   if (!sql.includes("FROM sqlite_master")) throw new Error("Unexpected standalone metadata query");
-                  return { success: true, results: [{ name: "d1_migrations" }] };
+                  return {
+                    success: true,
+                    results: [{ name: "d1_migrations", sql: "CREATE TABLE d1_migrations (...)" }],
+                  };
                 },
               };
             },
@@ -256,7 +259,10 @@ test("admin receives an authenticated encrypted snapshot with exact long values"
   assert.equal(response.headers.get("content-type"), "application/vnd.originmind.oa-migration+json");
   assert.deepEqual(state.preparedSql, [
     "SELECT name, sql FROM sqlite_master WHERE type = 'table' AND name LIKE '%migration%' ORDER BY name",
-    migrationLedgerSelectSql(), migrationSchemaSelectSql(), migrationFreezeMarkerSelectSql(), migrationArchiveActivitySelectSql(),
+    migrationLedgerSelectSql(),
+    migrationSchemaSelectSql(),
+    migrationFreezeMarkerSelectSql(),
+    migrationArchiveActivitySelectSql(),
     ...MIGRATION_EXPORT_TABLES.map(migrationExportSelectSql),
   ]);
   assert.equal(state.batchCalls, 1);
@@ -394,7 +400,7 @@ test("export pins the administrator account subject and validates provider subje
   assert.ok(memberAccountIndex >= 0);
 });
 
-test("a source database still on migration 0023 is rejected", async () => {
+test("a source database still on migration 0025 is rejected", async () => {
   const batchResults = successfulBatchResults();
   batchResults[0] = { success: true, results: ledgerResult.results.slice(0, -1) };
   const state = reset({ batchResults });

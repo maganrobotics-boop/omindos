@@ -11,5 +11,21 @@ declare namespace Cloudflare {
     FEISHU_LOGIN_APP_SECRET?: string;
     FEISHU_LOGIN_TENANT_KEY?: string;
     OA_PUBLIC_ORIGIN?: string;
+    OA_MIGRATION_WRITE_FROZEN?: string;
+    OA_MIGRATION_UNFREEZE_ENABLED?: string;
+    OA_MIGRATION_CONTROL_UNFREEZE_ID?: string;
+    OA_MIGRATION_FREEZE_ID?: string;
+    OA_MIGRATION_EXPORT_ENABLED?: string;
+    OA_MIGRATION_EXPORT_NOT_BEFORE?: string;
+    OA_MIGRATION_EXPORT_NOT_AFTER?: string;
+    OA_MIGRATION_EXPORT_EXPECTED_SCHEMA_SHA?: string;
+    OA_MIGRATION_EXPORT_PUBLIC_KEY_JWK?: string;
+    OA_MIGRATION_EXPORT_AUTH_KEY?: string;
+    OA_LAB_AI_ENABLED?: string;
+    OA_LAB_AI_ENDPOINT?: string;
+    OA_LAB_AI_API_KEY?: string;
+    OA_LAB_AI_MODEL?: string;
+    OA_LAB_AI_FORMAT?: string;
+    OA_LAB_AI_TIMEOUT_MS?: string;
   }
 }

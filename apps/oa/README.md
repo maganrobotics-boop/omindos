@@ -91,7 +91,7 @@ Runtime configuration:
 - `FEISHU_LOGIN_ENABLED=false|true`
 - `FEISHU_PDF_ARCHIVE_ENABLED=false|true`
 
-Register exact GitHub and Feishu callbacks for each origin; wildcard callback matching is not supported. Keep both flags `false` until the complete `0000`–`0025` chain and compatible application version are deployed. Disabling either flag rejects that provider's existing OAuth sessions. Feishu login validates the configured app, tenant key, OAuth state, browser nonce, PKCE transaction and explicit member binding; it does not request email and never merges members by name or email.
+Register exact GitHub and Feishu callbacks for each origin; wildcard callback matching is not supported. Keep both flags `false` until the complete `0000`–`0026` chain and compatible application version are deployed. Disabling either flag rejects that provider's existing OAuth sessions. Feishu login validates the configured app, tenant key, OAuth state, browser nonce, PKCE transaction and explicit member binding; it does not request email and never merges members by name or email.
 
 Public address plan:
 
@@ -203,6 +203,23 @@ Role assignments are read only on the server. Configure comma-separated values i
 
 Each privileged-role tuple is strict: email and reviewed real name must be present one-to-one, with no duplicate email. A partially configured tuple fails closed. The canonical account subject is derived on the server from the configured email. Cross-role reuse is allowed only when the email and real name are identical. Administrator configuration is mandatory and has no source-code fallback; unset project-owner and finance-owner groups are empty, while administrators inherently retain those capabilities. Configured project and finance roles still require an active, administrator-approved member record whose account subject matches the configured email. Technical-adviser and project-owner permissions for ordinary members are granted in the member-management screen by the administrator.
 
+### Laboratory AI and reviewed knowledge
+
+The **实验室 AI** workspace is an internal, text-only V1. Active OA members who have completed the applicable NDA may submit a title, category, summary, source label/link, and up to 20,000 characters of knowledge text. An administrator or `project_owner` must review it, and the submitter cannot review or revoke their own entry. Returned material is resubmitted as a new immutable revision. Only the current `active` revision is split into searchable chunks; returned, rejected, superseded, or revoked material is excluded from question answering. Every answer returns the exact knowledge citations used, and the version and audit history remain preserved.
+
+An external model endpoint is optional and is called only from the server. Configure it in the Sites runtime with:
+
+- `OA_LAB_AI_ENABLED=true` (the model call is fail-closed and runs only when this value is explicitly `true`; an absent, `false`, or malformed value keeps retrieval-only fallback)
+- `OA_LAB_AI_ENDPOINT=<HTTPS chat endpoint>`
+- `OA_LAB_AI_API_KEY=<server-side secret>`
+- `OA_LAB_AI_MODEL=<model name>` (defaults to `qwen3:1.7b`)
+- `OA_LAB_AI_FORMAT=openai|simple` (defaults to OpenAI-compatible chat JSON)
+- `OA_LAB_AI_TIMEOUT_MS=1000..20000` (defaults to 8000 ms)
+
+The browser never receives the key. The request marks retrieved knowledge as untrusted reference data, sets `store: false`, limits context and response size, and rejects redirects. When the endpoint is absent, disabled, slow, malformed, or unavailable, the OA falls back to an extractive answer with the same reviewed citations rather than generating unsupported claims. PDF, Word, image/OCR, R2, and vector indexing are outside V1.
+
+The guarded standalone staging release still accepts exactly the two documented OAuth secrets. Do not add `OA_LAB_AI_API_KEY` to that release path until its standalone secret contract and validation gates are extended deliberately.
+
 The complete database migration chain under `drizzle/` must be applied in order before a release that uses the matching application code. Migrations `0007`–`0024` add:
 
 - current-version NDA admission, bounded/revocable sessions, labor-period and labor-source uniqueness, direct-message indexes, active-member-only identity-number claims, and structured external-archive leases;
@@ -210,14 +227,15 @@ The complete database migration chain under `drizzle/` must be applied in order 
 - authenticated member account subjects with partial uniqueness, staged legacy rebind events, NDA cache clearing for unbound legacy accounts, and separate proposed rebind identity fields so a rejected rebind cannot overwrite or lock the historical identity;
 - actor-and-time indexes plus an independent atomic minute-bucket ledger used by bounded approval, draft-deletion, creation, and direct-message write-rate controls. Deleting a draft or message cannot erase this quota evidence.
 - controlled department assignments plus provider-pinned one-time PKCE transactions, GitHub and Feishu identities, hashed and revocable OA sessions, and provider-subject uniqueness. OAuth tokens are not stored.
-- a permanent, generation-scoped migration-control table and database triggers that reject inserts, updates, and deletes on all ten persistent business tables while a controlled snapshot is active.
+- a permanent, generation-scoped migration-control table and database triggers that reject inserts, updates, and deletes on all fourteen persistent business tables while a controlled snapshot is active.
 - a retirement fence for the former Feishu directory and Markdown Drive archive connector. Migration `0024` ends that integration state and refuses to run while any old remote upload is pending; `0025` restores Feishu OAuth login. The new `feishu_drive_pdf` destination is independent, idempotent, revision-bound, and never rewrites the retired archive records.
+- migration `0026` adds immutable knowledge items/revisions, canonical searchable chunks, append-only lifecycle evidence, and freeze triggers for all four knowledge tables. The encrypted export/import path validates content hashes, canonical chunk reconstruction, revision pointers, self-review exclusion, and matching submit/review/revoke events before any target write.
 
 Legacy email-keyed NDAs remain historical evidence only. Current admission is keyed by the signer’s authenticated account subject and the current agreement version; an account rebind clears cached NDA admission and requires a new subject-bound signature. Migration `0019` binds existing members to the documented Sites email subject so the production rollout does not force unnecessary re-registration. A legacy active/departed member rebind is pending until an administrator verifies identity continuity. The proposed name/identity number do not replace the historical record before approval, and rejection clears the proposed subject so the original account can retry.
 
 Technical and procurement flows enforce distinct real-name accounts for the applicant, technical adviser, and project owner. Procurement additionally requires a fourth distinct account for the final purchaser. Signer summaries are stored by immutable account/member identity, so different people with the same name are not collapsed; exact actions, emails, member IDs, and timestamps remain in the approval evidence chain.
 
-Recommended rollout order: database backup → private authenticated-email canary → bind known historical accounts or confirm exact-name candidates → drain former Feishu Drive uploads and verify their pending count is zero → apply `0000`–`0025` to an empty staging D1 → freeze and download one encrypted business-data package → local staging import and integrity verification → Feishu-login, GitHub fallback, PDF and Drive archive canaries → explicit production authorization → repeat against a fresh production D1 and cut the domain. Migration `0024` aborts if an old upload is pending or a full-database freeze is active. Never clear or rewrite pending evidence merely to pass the gate.
+Recommended rollout order: database backup → private authenticated-email canary → bind known historical accounts or confirm exact-name candidates → drain former Feishu Drive uploads and verify their pending count is zero → apply `0000`–`0026` to an empty staging D1 → freeze and download one encrypted business-data package → local staging import and integrity verification → Feishu-login, GitHub fallback, PDF and Drive archive canaries → explicit production authorization → repeat against a fresh production D1 and cut the domain. Migration `0024` aborts if an old upload is pending or a full-database freeze is active. Never clear or rewrite pending evidence merely to pass the gate.
 
 ### Internal archive output
 

@@ -9,10 +9,14 @@ export const MIGRATION_IMPORT_TABLE_ORDER = Object.freeze([
   "labor_source_claims",
   "external_archives",
   "direct_messages",
+  "knowledge_items",
+  "knowledge_revisions",
+  "knowledge_chunks",
+  "knowledge_events",
 ]);
 
 export const MIGRATION_IMPORT_MAX_D1_QUERIES = 50;
-const MIGRATION_IMPORT_FIXED_D1_QUERIES = 18;
+export const MIGRATION_IMPORT_FIXED_D1_QUERIES = 22;
 
 export function* migrationImportRowBatches(table) {
   if (!table || !Array.isArray(table.columns) || !table.columns.length || table.columns.length > 98 || !Array.isArray(table.rows)) throw new Error("Migration table is missing or malformed");

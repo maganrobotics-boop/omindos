@@ -8,6 +8,22 @@ const STAGING = Object.freeze({
   databaseName: "originmind-internal-oa-staging",
 });
 
+const PRODUCTION = Object.freeze({
+  accountId: "41e8b3404be24e1dd288556d77ffc951",
+  workerName: "originmind-internal-oa-staging",
+  databaseName: "originmind-internal-oa-production",
+  databaseId: "34af7e92-7da5-47cd-b7c0-1270e157c0e6",
+  websiteDatabaseName: "omindos-website-visits",
+  websiteDatabaseId: "3651ff92-d9fb-45aa-9d1d-623d25bf3459",
+  publicOrigin: "https://oa.omindos.ai",
+  cron: "* * * * *",
+});
+
+const REQUIRED_OAUTH_SECRETS = Object.freeze([
+  "GITHUB_OAUTH_CLIENT_SECRET",
+  "FEISHU_LOGIN_APP_SECRET",
+]);
+
 function requiredStagingOrigin(environment) {
   const value = requiredText(environment, "OA_STAGING_PUBLIC_ORIGIN", 2_048);
   try {
@@ -45,7 +61,51 @@ function optionalRolePair(environment, emailKey, nameKey) {
 }
 
 export function buildStandaloneConfig(target, environment = process.env) {
-  if (target !== "staging") throw new Error("Only the isolated staging target may be generated");
+  if (target === "production") {
+    return {
+      $schema: "../../node_modules/wrangler/config-schema.json",
+      account_id: PRODUCTION.accountId,
+      name: PRODUCTION.workerName,
+      main: "../../worker/standalone.ts",
+      compatibility_date: "2026-05-15",
+      compatibility_flags: ["nodejs_compat"],
+      workers_dev: false,
+      preview_urls: false,
+      keep_vars: true,
+      // The production custom domain is intentionally managed by Cloudflare.
+      // Do not add route/routes here: doing so would make Wrangler authoritative
+      // for oa.omindos.ai and could detach the existing dashboard-owned binding.
+      assets: {
+        binding: "ASSETS",
+        not_found_handling: "none",
+        run_worker_first: ["/api/*", "/_vinext/*", "/__vinext/*"],
+      },
+      images: { binding: "IMAGES" },
+      d1_databases: [
+        {
+          binding: "DB",
+          database_name: PRODUCTION.databaseName,
+          database_id: PRODUCTION.databaseId,
+          migrations_dir: "../../drizzle",
+        },
+        {
+          binding: "WEBSITE_DB",
+          database_name: PRODUCTION.websiteDatabaseName,
+          database_id: PRODUCTION.websiteDatabaseId,
+        },
+      ],
+      // This canonical origin is public release metadata, not a credential.
+      // All other dashboard-managed runtime variables remain untouched.
+      vars: { OA_PUBLIC_ORIGIN: PRODUCTION.publicOrigin },
+      // Keep the already verified minute-level Feishu notification retry.
+      triggers: { crons: [PRODUCTION.cron] },
+      // Declaring required names verifies that the existing values are present.
+      // Wrangler deployments preserve their encrypted values.
+      secrets: { required: [...REQUIRED_OAUTH_SECRETS] },
+      observability: { enabled: true },
+    };
+  }
+  if (target !== "staging") throw new Error("Only staging or production standalone targets may be generated");
 
   const databaseId = requiredText(environment, "OA_STAGING_D1_DATABASE_ID", 64).toLowerCase();
   if (!UUID_PATTERN.test(databaseId) || databaseId === ZERO_UUID) {
@@ -112,9 +172,10 @@ export function buildStandaloneConfig(target, environment = process.env) {
       OA_MIGRATION_UNFREEZE_ENABLED: "false",
       ...privilegedRoleVars,
     },
-    secrets: { required: ["GITHUB_OAUTH_CLIENT_SECRET", "FEISHU_LOGIN_APP_SECRET"] },
+    secrets: { required: [...REQUIRED_OAUTH_SECRETS] },
     observability: { enabled: true },
   };
 }
 
-export const standaloneTargets = Object.freeze({ staging: STAGING });
+export const standaloneTargets = Object.freeze({ staging: STAGING, production: PRODUCTION });
+export const requiredStandaloneSecrets = REQUIRED_OAUTH_SECRETS;

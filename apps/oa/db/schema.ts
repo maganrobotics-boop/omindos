@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { check, index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const approvals = sqliteTable(
   "approvals",
@@ -256,5 +256,118 @@ export const directMessages = sqliteTable(
     index("direct_messages_sender_recipient_created_idx").on(table.senderEmail, table.recipientEmail, table.createdAt),
     index("direct_messages_recipient_sender_created_idx").on(table.recipientEmail, table.senderEmail, table.createdAt),
     index("direct_messages_sender_created_idx").on(table.senderEmail, table.createdAt),
+  ],
+);
+
+export const knowledgeItems = sqliteTable(
+  "knowledge_items",
+  {
+    id: text("id").primaryKey(),
+    project: text("project").notNull(),
+    title: text("title").notNull(),
+    category: text("category").notNull().default(""),
+    submitterMemberId: text("submitter_member_id").notNull(),
+    submitterName: text("submitter_name").notNull(),
+    submitterEmail: text("submitter_email").notNull(),
+    status: text("status").notNull().default("pending"),
+    currentRevisionNo: integer("current_revision_no").notNull().default(0),
+    currentRevisionId: text("current_revision_id"),
+    activeRevisionId: text("active_revision_id"),
+    mutationRevision: text("mutation_revision").notNull(),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    revokedAt: text("revoked_at"),
+  },
+  (table) => [
+    check("knowledge_items_status_check", sql`${table.status} IN ('pending', 'returned', 'rejected', 'active', 'revoked')`),
+    check("knowledge_items_mutation_revision_check", sql`length(${table.mutationRevision}) > 0`),
+    check("knowledge_items_revision_pointer_check", sql`(${table.currentRevisionNo} = 0 AND ${table.currentRevisionId} IS NULL) OR (${table.currentRevisionNo} > 0 AND ${table.currentRevisionId} IS NOT NULL)`),
+    check("knowledge_items_active_pointer_check", sql`(${table.status} = 'active' AND ${table.activeRevisionId} IS NOT NULL) OR (${table.status} <> 'active' AND ${table.activeRevisionId} IS NULL)`),
+    index("knowledge_items_status_updated_idx").on(table.status, table.updatedAt),
+    index("knowledge_items_submitter_created_idx").on(table.submitterMemberId, table.createdAt),
+    uniqueIndex("knowledge_items_current_revision_unique")
+      .on(table.currentRevisionId)
+      .where(sql`${table.currentRevisionId} IS NOT NULL`),
+    uniqueIndex("knowledge_items_active_revision_unique")
+      .on(table.activeRevisionId)
+      .where(sql`${table.activeRevisionId} IS NOT NULL`),
+  ],
+);
+
+export const knowledgeRevisions = sqliteTable(
+  "knowledge_revisions",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id").notNull(),
+    revisionNo: integer("revision_no").notNull(),
+    previousRevisionId: text("previous_revision_id"),
+    title: text("title").notNull(),
+    category: text("category").notNull().default(""),
+    content: text("content").notNull(),
+    summary: text("summary").notNull().default(""),
+    sourceLabel: text("source_label").notNull().default(""),
+    sourceUrl: text("source_url").notNull().default(""),
+    contentHash: text("content_hash").notNull(),
+    status: text("status").notNull().default("pending"),
+    createdByMemberId: text("created_by_member_id").notNull(),
+    createdByName: text("created_by_name").notNull(),
+    createdByEmail: text("created_by_email").notNull(),
+    reviewedByMemberId: text("reviewed_by_member_id"),
+    reviewedByName: text("reviewed_by_name"),
+    reviewedByEmail: text("reviewed_by_email"),
+    reviewNote: text("review_note").notNull().default(""),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    reviewedAt: text("reviewed_at"),
+    activatedAt: text("activated_at"),
+    retiredAt: text("retired_at"),
+  },
+  (table) => [
+    check("knowledge_revisions_number_check", sql`${table.revisionNo} > 0`),
+    check("knowledge_revisions_status_check", sql`${table.status} IN ('pending', 'returned', 'rejected', 'active', 'superseded', 'revoked')`),
+    check("knowledge_revisions_content_hash_check", sql`length(${table.contentHash}) = 64 AND ${table.contentHash} NOT GLOB '*[^0-9a-f]*'`),
+    uniqueIndex("knowledge_revisions_item_no_unique").on(table.itemId, table.revisionNo),
+    uniqueIndex("knowledge_revisions_item_hash_unique").on(table.itemId, table.contentHash),
+    index("knowledge_revisions_item_status_created_idx").on(table.itemId, table.status, table.createdAt),
+  ],
+);
+
+export const knowledgeChunks = sqliteTable(
+  "knowledge_chunks",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id").notNull(),
+    revisionId: text("revision_id").notNull(),
+    chunkNo: integer("chunk_no").notNull(),
+    sectionTitle: text("section_title").notNull().default(""),
+    paragraphRef: text("paragraph_ref").notNull().default(""),
+    content: text("content").notNull(),
+    searchText: text("search_text").notNull(),
+    isActive: integer("is_active").notNull().default(0),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    check("knowledge_chunks_number_check", sql`${table.chunkNo} > 0`),
+    check("knowledge_chunks_active_check", sql`${table.isActive} IN (0, 1)`),
+    uniqueIndex("knowledge_chunks_revision_no_unique").on(table.revisionId, table.chunkNo),
+    index("knowledge_chunks_active_item_chunk_idx").on(table.isActive, table.itemId, table.chunkNo),
+  ],
+);
+
+export const knowledgeEvents = sqliteTable(
+  "knowledge_events",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id").notNull(),
+    revisionId: text("revision_id"),
+    actorMemberId: text("actor_member_id").notNull(),
+    actorName: text("actor_name").notNull(),
+    actorEmail: text("actor_email").notNull(),
+    action: text("action").notNull(),
+    note: text("note").notNull().default(""),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("knowledge_events_item_created_idx").on(table.itemId, table.createdAt),
+    index("knowledge_events_actor_created_idx").on(table.actorMemberId, table.createdAt),
   ],
 );

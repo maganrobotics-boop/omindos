@@ -17,6 +17,8 @@ function sessionJson(body: object, init: ResponseInit = {}) {
 }
 
 export async function GET() {
+  const { env } = await import("cloudflare:workers");
+  const environment = env as unknown as NodeJS.ProcessEnv;
   const chatgptLoginEnabled = isChatGPTLoginEnabled();
   const githubLoginEnabled = isGitHubLoginEnabled();
   const feishuLoginEnabled = isFeishuLoginEnabled();
@@ -28,31 +30,32 @@ export async function GET() {
     user: authorized.user,
     role: authorized.role,
     canReviewMembers: authorized.canReviewMembers,
+    canReviewKnowledge: authorized.canReviewKnowledge,
     canGrantMemberPermissions: authorized.canGrantMemberPermissions,
     isAdmin: authorized.isAdmin,
     isFinanceOwner: authorized.isFinanceOwner,
     ndaCompleted: authorized.ndaCompleted,
     needsNda: !authorized.ndaCompleted,
     ndaApprovalId: authorized.ndaApprovalId,
-    migrationExportEnabled: authorized.isAdmin && isMigrationExportWindowOpen(),
-    migrationUnfreezeEnabled: authorized.isAdmin && isMigrationUnfreezeEnabled(process.env),
+    migrationExportEnabled: authorized.isAdmin && isMigrationExportWindowOpen(environment),
+    migrationUnfreezeEnabled: authorized.isAdmin && isMigrationUnfreezeEnabled(environment),
     ...loginCapabilities,
   });
   const user = await getCurrentUser();
   const identity = user;
-  if (!identity) return sessionJson({ registered: false, status: "unregistered", user: null, role: null, canReviewMembers: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: false, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
+  if (!identity) return sessionJson({ registered: false, status: "unregistered", user: null, role: null, canReviewMembers: false, canReviewKnowledge: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: false, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
   const publicIdentity = { email: identity.email, displayName: identity.displayName, authProvider: identity.authProvider };
   const [member] = await (await getDb()).select({ fullName: members.fullName, chatgptAccount: members.chatgptAccount, accountUserId: members.accountUserId, accountBindingPreviousStatus: members.accountBindingPreviousStatus, status: members.status, role: members.role }).from(members).where(eq(members.chatgptAccount, identity.email.toLowerCase())).limit(1);
-  if (!member) return sessionJson({ registered: false, status: "unregistered", user: publicIdentity, role: null, canReviewMembers: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: false, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
+  if (!member) return sessionJson({ registered: false, status: "unregistered", user: publicIdentity, role: null, canReviewMembers: false, canReviewKnowledge: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: false, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
   const isOAuthIdentity = identity.authProvider === "github" || identity.authProvider === "feishu";
   const identityMatches = Boolean(identity.accountUserId && member.accountUserId === identity.accountUserId && (!isOAuthIdentity || identity.memberId));
   const externalIdentityLinkRequired = isOAuthIdentity && !identity.memberId;
   const githubIdentityLinkRequired = identity.authProvider === "github" && externalIdentityLinkRequired;
   const feishuIdentityLinkRequired = identity.authProvider === "feishu" && externalIdentityLinkRequired;
   const conflictingBoundIdentity = Boolean(member.accountUserId && identity.accountUserId && !identityMatches);
-  if (externalIdentityLinkRequired || conflictingBoundIdentity || (member.status === "active" && !identityMatches)) return sessionJson({ registered: false, status: "unregistered", accountBindingRequired: true, accountBindingConflict: conflictingBoundIdentity, platformIdentityMissing: identity.authProvider === "legacy", externalIdentityLinkRequired, externalIdentityProvider: isOAuthIdentity ? identity.authProvider : undefined, githubIdentityLinkRequired, feishuIdentityLinkRequired, user: publicIdentity, role: null, canReviewMembers: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: false, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
+  if (externalIdentityLinkRequired || conflictingBoundIdentity || (member.status === "active" && !identityMatches)) return sessionJson({ registered: false, status: "unregistered", accountBindingRequired: true, accountBindingConflict: conflictingBoundIdentity, platformIdentityMissing: identity.authProvider === "legacy", externalIdentityLinkRequired, externalIdentityProvider: isOAuthIdentity ? identity.authProvider : undefined, githubIdentityLinkRequired, feishuIdentityLinkRequired, user: publicIdentity, role: null, canReviewMembers: false, canReviewKnowledge: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: false, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
   const verifiedIdentity = identityMatches && !member.accountBindingPreviousStatus ? { email: member.chatgptAccount, displayName: member.fullName, authProvider: identity.authProvider } : publicIdentity;
-  return sessionJson({ registered: member.status === "active" && identityMatches, status: member.status, user: verifiedIdentity, role: identityMatches ? member.role : null, canReviewMembers: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: member.status === "active" && identityMatches, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
+  return sessionJson({ registered: member.status === "active" && identityMatches, status: member.status, user: verifiedIdentity, role: identityMatches ? member.role : null, canReviewMembers: false, canReviewKnowledge: false, canGrantMemberPermissions: false, isAdmin: false, isFinanceOwner: false, ndaCompleted: false, needsNda: member.status === "active" && identityMatches, migrationExportEnabled: false, migrationUnfreezeEnabled: false, ...loginCapabilities });
 }
 
 export async function DELETE() {

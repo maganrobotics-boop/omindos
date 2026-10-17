@@ -10,10 +10,10 @@ export const MIGRATION_EXPORT_MAX_PLAINTEXT_BYTES = 6 * 1024 * 1024;
 export const MIGRATION_EXPORT_MINIMUM_FREEZE_MS = 15 * 60 * 1000;
 export const MIGRATION_SCHEMA_COLUMNS = Object.freeze(["type", "name", "tbl_name", "sql"]);
 export const MIGRATION_SCHEMA_EXPECTED_OBJECT_COUNTS = Object.freeze({
-  table: 15,
-  index: 25,
-  trigger: 37,
-  total: 77,
+  table: 19,
+  index: 36,
+  trigger: 49,
+  total: 104,
 });
 export const MIGRATION_EXPORT_EXPECTED_MIGRATIONS = Object.freeze([
   "0000_fuzzy_warbound.sql",
@@ -42,6 +42,7 @@ export const MIGRATION_EXPORT_EXPECTED_MIGRATIONS = Object.freeze([
   "0023_brainy_exodus.sql",
   "0024_retire_feishu.sql",
   "0025_restore_feishu_login.sql",
+  "0026_rich_jocasta.sql",
 ]);
 
 export const MIGRATION_EXPORT_TABLES = Object.freeze([
@@ -94,6 +95,26 @@ export const MIGRATION_EXPORT_TABLES = Object.freeze([
     name: "direct_messages",
     columns: ["id", "sender_email", "sender_name", "recipient_email", "recipient_name", "body", "created_at"],
     orderBy: ["id"],
+  },
+  {
+    name: "knowledge_items",
+    columns: ["id", "project", "title", "category", "submitter_member_id", "submitter_name", "submitter_email", "status", "current_revision_no", "current_revision_id", "active_revision_id", "mutation_revision", "created_at", "updated_at", "revoked_at"],
+    orderBy: ["id"],
+  },
+  {
+    name: "knowledge_revisions",
+    columns: ["id", "item_id", "revision_no", "previous_revision_id", "title", "category", "content", "summary", "source_label", "source_url", "content_hash", "status", "created_by_member_id", "created_by_name", "created_by_email", "reviewed_by_member_id", "reviewed_by_name", "reviewed_by_email", "review_note", "created_at", "reviewed_at", "activated_at", "retired_at"],
+    orderBy: ["item_id", "revision_no", "id"],
+  },
+  {
+    name: "knowledge_chunks",
+    columns: ["id", "item_id", "revision_id", "chunk_no", "section_title", "paragraph_ref", "content", "search_text", "is_active", "created_at"],
+    orderBy: ["revision_id", "chunk_no", "id"],
+  },
+  {
+    name: "knowledge_events",
+    columns: ["id", "item_id", "revision_id", "actor_member_id", "actor_name", "actor_email", "action", "note", "created_at"],
+    orderBy: ["item_id", "created_at", "id"],
   },
 ].map((table) => Object.freeze({ ...table, columns: Object.freeze(table.columns), orderBy: Object.freeze(table.orderBy) })));
 
