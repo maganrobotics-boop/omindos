@@ -10,7 +10,15 @@ test('three Chinese prototypes retain their names, visible status, demonstration
     assert.match(main, model === 'articulated' ? />研发样机</ : />产品样机</);
     assert.match(main, /咨询研发合作/);
     assert.doesNotMatch(decodeURIComponent(main), /在售|咨询报价|采购数量|交付范围|报价单/);
-    assert.match(main, /<video controls playsinline preload="none"/);
+    const players = [...main.matchAll(/<video\b[^>]*>/g)].map(([tag]) => tag);
+    assert.ok(players.length > 0, model + ': research demonstrations remain available');
+    for (const player of players) {
+      assert.match(player, /\bcontrols(?:\s|>)/);
+      assert.match(player, /\bplaysinline(?:\s|>)/);
+      assert.match(player, /\bpreload="none"/);
+      assert.match(player, /\baria-label="[^"]+"/);
+      assert.doesNotMatch(player, /\bautoplay\b/);
+    }
     assert.ok(html.includes('/cn/research-prototypes.css?v=20261008'));
   }
   const art = await readFile(new URL('cn/robots/articulated/index.html',root),'utf8');
@@ -27,4 +35,5 @@ test('research styling is never loaded by unaffected Chinese or English pages', 
     }
   }
 });
+
 

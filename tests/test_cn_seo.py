@@ -1,5 +1,6 @@
 import sys
 import unittest
+from tempfile import TemporaryDirectory
 from pathlib import Path
 from html.parser import HTMLParser
 import xml.etree.ElementTree as ET
@@ -17,8 +18,16 @@ class Tags(HTMLParser):
 class ChineseSEO(unittest.TestCase):
     def test_all_pages_use_verified_primary_urls_and_language_targets(self):
         known = cn_seo.routes(ROOT)
-        self.assertEqual(len(known), 23)
-        chinese_only = {'/join/', '/careers/', '/lab/', '/lab/join/'}
+        self.assertEqual(set(known), {
+            '/', '/about/', '/careers/', '/contact/', '/developers/', '/field-work/',
+            '/field-work/mining/', '/field-work/warehouse/', '/integration/', '/join/',
+            '/lab/', '/lab/alumni/', '/lab/join/', '/mobility/', '/omindos/', '/privacy/',
+            '/robots/', '/robots/articulated/', '/robots/dual-arm/', '/robots/mobile-dual-arm/',
+            '/robots/open-frame/', '/robots/quadruped/', '/robots/tracked/',
+            '/robots/wheel-legged/', '/robots/wheeled/',
+        })
+        self.assertEqual(len(known), len(set(known)))
+        chinese_only = {'/join/', '/careers/', '/lab/', '/lab/join/', '/lab/alumni/', '/robots/tracked/'}
         for route in known:
             with self.subTest(route=route):
                 page = ROOT / 'cn' / route.strip('/') / 'index.html'
@@ -48,9 +57,37 @@ class ChineseSEO(unittest.TestCase):
     def test_sitemap_has_exactly_the_indexable_canonical_routes(self):
         xml=ET.fromstring((ROOT/'cn/sitemap.xml').read_text())
         urls=[e.text for e in xml.findall('.//{*}loc')]
-        self.assertEqual(urls,[cn_seo.CN_ORIGIN+r for r in cn_seo.routes(ROOT)])
+        self.assertEqual(urls,[cn_seo.CN_ORIGIN+r for r in cn_seo.indexable_routes(ROOT)])
         self.assertEqual(len(urls),len(set(urls)))
         self.assertIn('Sitemap: https://omindos.cn/sitemap.xml',(ROOT/'cn/robots.txt').read_text())
+
+    def test_noindex_profile_remains_known_but_is_not_in_search_files(self):
+        known = set(cn_seo.routes(ROOT))
+        indexable = set(cn_seo.indexable_routes(ROOT))
+        self.assertEqual(known - indexable, {'/lab/alumni/'})
+        self.assertEqual(len(indexable), 24)
+        profile = (ROOT/'cn/lab/alumni/index.html').read_text()
+        robots = [a.get('content', '').lower() for t,a in Tags(profile).tags
+                  if t == 'meta' and a.get('name', '').lower() == 'robots']
+        self.assertTrue(any('noindex' in value.split(',') for value in robots))
+        self.assertIn('https://omindos.cn/lab/alumni/', profile)
+        self.assertNotIn('https://omindos.cn/lab/alumni/', (ROOT/'cn/sitemap.xml').read_text())
+
+    def test_indexable_route_detection_obeys_search_directives(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixtures = {
+                'private': '<meta name="robots" content="NOINDEX, FOLLOW">',
+                'none': '<meta name="robots" content="none">',
+                'public': '<meta name="robots" content="index,follow">',
+                'unrelated': '<meta name="description" content="noindex">',
+            }
+            for route, head in fixtures.items():
+                page = root/'cn'/route/'index.html'
+                page.parent.mkdir(parents=True)
+                page.write_text('<html><head>' + head + '</head><body></body></html>')
+            self.assertEqual(cn_seo.routes(root), ['/none/', '/private/', '/public/', '/unrelated/'])
+            self.assertEqual(cn_seo.indexable_routes(root), ['/public/', '/unrelated/'])
 
     def test_error_page_is_not_advertised_as_indexable_content(self):
         source=(ROOT/'cn/404.html').read_text()
@@ -69,4 +106,5 @@ class ChineseSEO(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 

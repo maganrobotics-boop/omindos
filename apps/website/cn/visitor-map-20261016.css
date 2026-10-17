@@ -1,0 +1,38 @@
+/* Homepage footer only. No dependency on the original hidden visitor component. */
+.cn-footer .om-visits{margin-top:40px;padding:34px 0 0;border-top:1px solid #ffffff26;color:#ccc7bc;min-width:0;scroll-margin-top:108px;}
+.cn-footer .om-visits *{box-sizing:border-box;}
+.cn-footer .om-visits-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px 48px;}
+.cn-footer .om-visits-intro{min-width:0;}
+.cn-footer .om-visits-kicker{margin:0 0 10px;font-size:11px;line-height:1.6;letter-spacing:.12em;color:#b8b3a8;}
+.cn-footer .om-visits h2{margin:0;color:#f5f3ef;font-size:clamp(21px,2.2vw,28px);font-weight:400;line-height:1.5;letter-spacing:0;}
+.cn-footer .om-visits-definition{margin:10px 0 0;font-size:12px;line-height:1.8;color:#b8b3a8;}
+.cn-footer .om-visits-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 40px;margin:0;flex-shrink:0;}
+.cn-footer .om-visits-stats dt{font-size:12px;line-height:1.8;}
+.cn-footer .om-visits-stats dd{margin:8px 0 0;font-size:clamp(28px,3.4vw,40px);font-weight:400;line-height:1.2;letter-spacing:-.035em;color:#f5f3ef;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.cn-footer .om-visits-distribution{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(210px,.8fr);align-items:start;gap:24px 48px;margin-top:30px;}
+.cn-footer .om-visits-map-column,.cn-footer .om-visits-country-column{min-width:0;}
+.cn-footer .om-visits h3,.cn-footer .om-visits-list-label{margin:0 0 12px;font-size:12px;font-weight:400;line-height:1.8;color:#ccc7bc;}
+.cn-footer .om-visits-map{margin:0;}
+.cn-footer .om-visits-map-stage{position:relative;isolation:isolate;aspect-ratio:2/1;width:100%;overflow:hidden;}
+.cn-footer .om-visits-map-stage img{display:block;width:100%;height:100%;max-width:none;object-fit:contain;filter:grayscale(1);opacity:.95;}
+.cn-footer .om-visits-markers{position:absolute;inset:0;}
+.cn-footer .om-visits-marker{position:absolute;left:var(--marker-x);top:var(--marker-y);width:var(--marker-size,8px);height:var(--marker-size,8px);border-radius:50%;background:#e6d9bd;border:1px solid #f1e8d6;box-shadow:0 0 0 3px #e6d9bd16;transform:translate(-50%,-50%);}
+.cn-footer .om-visits-map figcaption{margin-top:10px;font-size:11px;line-height:1.8;color:#b8b3a8;}
+.cn-footer .om-visits-countries{list-style:none;padding:0;margin:0;}
+.cn-footer .om-visits-countries li{display:grid;grid-template-columns:23px minmax(0,1fr) auto;align-items:baseline;gap:8px;min-height:36px;padding:8px 0;border-bottom:1px solid #ffffff12;font-size:12px;line-height:1.6;}
+.cn-footer .om-visits-rank{color:#a8a397;font-size:10px;font-variant-numeric:tabular-nums;}
+.cn-footer .om-visits-country-name{overflow-wrap:anywhere;}
+.cn-footer .om-visits-country-visits{font-weight:400;color:#e9e5dc;font-variant-numeric:tabular-nums;white-space:nowrap;}
+.cn-footer .om-visits-countries .om-visits-placeholder{display:block;color:#b8b3a8;}
+.cn-footer .om-visits-more{margin-top:8px;}
+.cn-footer .om-visits-more summary{width:fit-content;cursor:pointer;font-size:12px;line-height:1.8;min-height:44px;padding:11px 0;color:#ccc7bc;}
+.cn-footer .om-visits-foot{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 20px;margin-top:24px;}
+.cn-footer .om-visits-source{flex-basis:100%;margin:0;font-size:11px;line-height:1.9;color:#b8b3a8;}
+.cn-footer .om-visits-status{margin:0;font-size:11px;line-height:1.9;color:#b8b3a8;}
+.cn-footer .om-visits-retry{appearance:none;border:0;border-radius:0;border-bottom:1px solid #a8a397;background:none;color:#e9e5dc;padding:8px 0;min-height:44px;font:inherit;font-size:12px;line-height:1.8;cursor:pointer;}
+.cn-footer .om-visits-noscript{font-size:12px;line-height:1.8;color:#b8b3a8;}
+.cn-footer .om-visits [hidden]{display:none!important;}
+.cn-footer .om-visits button:focus-visible,.cn-footer .om-visits summary:focus-visible{outline:2px solid #d8c9a9;outline-offset:4px;}
+@media(max-width:900px){.cn-footer .om-visits-head{flex-wrap:wrap;}.cn-footer .om-visits-distribution{gap:24px;grid-template-columns:minmax(0,1.4fr) minmax(190px,.8fr);}.cn-footer .om-visits-stats{gap:20px 32px;}}
+@media(max-width:600px){.cn-footer .om-visits{margin-top:30px;padding-top:26px;}.cn-footer .om-visits-stats{width:100%;flex-shrink:1;gap:18px;}.cn-footer .om-visits-stats dt{font-size:11px;}.cn-footer .om-visits-stats dd{font-size:32px;}.cn-footer .om-visits-distribution{grid-template-columns:minmax(0,1fr);margin-top:26px;gap:24px;}.cn-footer .om-visits-country-column{width:100%;}.cn-footer .om-visits-countries li{min-height:38px;}.cn-footer .om-visits-foot{margin-top:20px;}}
+@media(prefers-reduced-motion:reduce){.cn-footer .om-visits *{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}

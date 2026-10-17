@@ -1,0 +1,353 @@
+/* Homepage chapters use native document scrolling; content may grow beyond a screen. */
+html.home-chapters {
+  --home-header-height: 89px;
+  scroll-padding-top: var(--home-header-height);
+  scroll-snap-type: y proximity;
+}
+
+html.home-chapters main > :is(.hero, .home-chapter) {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+/* Full-width still image, matching the English homepage's first-screen framing. */
+html.home-chapters .hero {
+  height: calc(100svh - var(--home-header-height));
+  min-height: 0;
+  max-height: none;
+  padding: 0;
+}
+
+html.home-chapters .hero-image {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 58%;
+  filter: brightness(.9) saturate(.9);
+  animation: none;
+  transform: none;
+  translate: none;
+  transition: none;
+}
+
+html.home-chapters .hero::before { display: none; }
+
+html.home-chapters .hero::after {
+  background: linear-gradient(180deg, #151a1bcc 0%, #151a1b80 22%, transparent 56%, #151a1b33);
+}
+
+html.home-chapters .hero-copy {
+  position: absolute;
+  top: 12%;
+  left: 6%;
+  right: 6%;
+  max-width: none;
+  margin: 0;
+  transform: none;
+}
+
+html.home-chapters .hero .hero-sub { margin-top: 18px; }
+
+html.home-chapters .home-chapter {
+  display: grid;
+  align-content: center;
+  min-height: calc(100svh - var(--home-header-height));
+  padding-block: clamp(40px, 5svh, 64px);
+}
+
+html.home-chapters .home-chapter .section-heading {
+  margin-bottom: 28px;
+}
+
+html.home-chapters .home-chapter .kicker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: .06em;
+}
+
+html.home-chapters .chapter-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: inherit;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .08em;
+}
+
+html.home-chapters .chapter-number::after {
+  content: "";
+  width: 38px;
+  height: 1px;
+  background: currentColor;
+  opacity: .45;
+}
+
+html.home-chapters .home-chapter .home-section-intro {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+html.home-chapters #platforms.home-products {
+  display: grid;
+  align-content: center;
+  min-height: calc(100svh - var(--home-header-height));
+  padding-block: clamp(40px, 5svh, 64px);
+  background: #fff;
+}
+
+html.home-chapters #platforms.home-products .section-heading {
+  margin-bottom: 24px;
+}
+
+html.home-chapters #platforms .home-product-panel {
+  padding-block: 0;
+}
+
+html.home-chapters #platforms .home-product-panel .product-image-window {
+  height: clamp(240px, 44svh, 520px);
+  aspect-ratio: auto;
+}
+
+html.home-chapters #platforms .home-product-selector {
+  margin-top: 22px;
+}
+
+html.home-chapters #omindos.home-chapter {
+  background: #292a27;
+  color: #fff;
+}
+
+html.home-chapters #omindos .system-scene {
+  width: 100%;
+  max-width: none;
+  height: clamp(340px, 48svh, 620px);
+  aspect-ratio: auto;
+  background: #292a27;
+}
+
+html.home-chapters #omindos .system-scene-image {
+  object-position: center 60%;
+}
+
+html.home-chapters #omindos .system-core {
+  top: 16px;
+  left: 29%;
+  width: 42%;
+  padding: 8px 14px 14px;
+}
+
+html.home-chapters #omindos .system-kicker {
+  margin-bottom: 7px;
+  font-size: 11px;
+}
+
+html.home-chapters #omindos .system-name {
+  margin-bottom: 10px;
+  font-size: clamp(38px, 3.7vw, 52px);
+}
+
+html.home-chapters #omindos .functions {
+  margin-top: 18px;
+}
+
+html.home-chapters #omindos .function {
+  min-height: 68px;
+  padding-top: 13px;
+  padding-bottom: 11px;
+}
+
+html.home-chapters #omindos .function strong {
+  font-size: clamp(14px, 1.3vw, 18px);
+}
+
+html.home-chapters #omindos .function small {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+html.home-chapters #omindos .exchange {
+  bottom: 24px;
+  left: 32%;
+  width: 36%;
+  font-size: 12px;
+}
+
+html.home-chapters #omindos .robot-label {
+  bottom: 24px;
+}
+
+html.home-chapters #omindos .robot-label.left { left: 6%; }
+html.home-chapters #omindos .robot-label.right { right: 5%; }
+html.home-chapters #omindos .robot-label strong { font-size: 15px; }
+
+html.home-chapters #omindos .section-foot {
+  margin-top: 12px;
+  padding-top: 8px;
+}
+
+html.home-chapters #about.home-chapter {
+  background: #f5f3ef;
+}
+
+html.home-chapters #about .team-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 5%;
+}
+
+html.home-chapters #about .team-photo img {
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: cover;
+}
+
+html.home-chapters #about .about-proof > p:not(.about-proof-label) {
+  max-width: none;
+}
+
+html.home-chapters #about .home-evidence {
+  gap: 24px;
+  margin-top: 26px;
+}
+
+html.home-chapters #about .home-evidence-link {
+  padding: 16px 20px;
+  border: 1px solid #dcd8d0;
+  background: #ffffff70;
+}
+
+html.home-chapters #about .home-evidence-link:hover {
+  background: #fff;
+}
+
+@media (max-width: 1099px) {
+  html.home-chapters { --home-header-height: 77px; }
+}
+
+@media (max-width: 760px) {
+  html.home-chapters .hero-image {
+    inset: 0;
+    height: 100%;
+    object-fit: cover;
+    object-position: 55% center;
+  }
+
+  html.home-chapters .hero::after {
+    background: linear-gradient(180deg, #151a1bcc 0%, #151a1b80 27%, transparent 58%, #151a1b33);
+  }
+
+  html.home-chapters .hero-copy { top: 10%; }
+
+  html.home-chapters .home-chapter,
+  html.home-chapters #platforms.home-products {
+    padding-block: 36px 40px;
+  }
+
+  html.home-chapters .home-chapter .section-heading,
+  html.home-chapters #platforms.home-products .section-heading {
+    margin-bottom: 24px;
+  }
+
+  html.home-chapters .home-chapter .kicker {
+    gap: 12px;
+    margin-bottom: 13px;
+    font-size: 12px;
+  }
+
+  html.home-chapters .chapter-number { gap: 12px; font-size: 11px; }
+  html.home-chapters .chapter-number::after { width: 26px; }
+
+  html.home-chapters .home-chapter .home-section-intro {
+    font-size: 14px;
+  }
+
+  html.home-chapters #platforms .home-product-panel .product-image-window {
+    height: clamp(190px, 29svh, 280px);
+  }
+
+  html.home-chapters #platforms .home-product-selector {
+    margin-top: 20px;
+  }
+
+  html.home-chapters #omindos .system-scene {
+    width: 88%;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    padding: 8px 0 240px;
+    overflow: hidden;
+  }
+
+  html.home-chapters #omindos .system-core {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+    padding: 0 0 26px;
+  }
+
+  html.home-chapters #omindos .system-name { font-size: 42px; }
+  html.home-chapters #omindos .system-kicker { font-size: 11px; }
+  html.home-chapters #omindos .functions { margin-top: 20px; }
+  html.home-chapters #omindos .function { min-height: 76px; padding-block: 15px; }
+  html.home-chapters #omindos .function strong { font-size: 16px; }
+  html.home-chapters #omindos .function small { font-size: 12px; }
+
+  html.home-chapters #omindos .system-scene-image {
+    inset: auto 0 0;
+    width: 100%;
+    height: 240px;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+
+  html.home-chapters #omindos .system-shade {
+    background: linear-gradient(180deg, #292a27 0%, #292a27 40%, #292a2700 66%, #292a2740 100%);
+  }
+
+  html.home-chapters #omindos .exchange {
+    bottom: 205px;
+    left: 5%;
+    width: 90%;
+    font-size: 11px;
+  }
+
+  html.home-chapters #omindos .exchange::after { display: none; }
+  html.home-chapters #omindos .robot-label { bottom: 18px; padding-left: 7px; }
+  html.home-chapters #omindos .robot-label.left { left: 4%; }
+  html.home-chapters #omindos .robot-label.right { right: 4%; }
+  html.home-chapters #omindos .robot-label strong { font-size: 12px; }
+  html.home-chapters #omindos .section-actions { gap: 12px 24px; }
+
+  html.home-chapters #about .team-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  html.home-chapters #about .team-photo img { max-height: none; }
+  html.home-chapters #about .home-evidence { gap: 12px; margin-top: 24px; }
+  html.home-chapters #about .home-evidence-link { padding: 14px 12px; gap: 10px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  html.home-chapters .hero-copy { top: 8%; }
+  html.home-chapters .hero .hero-sub { margin-top: 8px; font-size: 14px; }
+}
+
+html.home-chapters:has(.home-chat-panel.is-fullscreen:not([hidden])),
+html.home-chapters:has(.video-dialog[open]),
+html.home-chapters:has(body.menu-open) {
+  scroll-snap-type: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.home-chapters { scroll-snap-type: none; scroll-behavior: auto; }
+}
