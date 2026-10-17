@@ -1,0 +1,132 @@
+/* ARTS Robotics pages share the company shell and one research typography system. */
+body.lab-family {
+  font-family: Arial, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+.lab-family .cn-header .wordmark { gap: 0; white-space: nowrap; }
+.lab-family .cn-footer-wordmark { white-space: nowrap; }
+.lab-family .cn-footer-brand p { max-width: 22em; }
+.lab-family.lab-join-page,
+.lab-family.alumni-page {
+  --ink: #30332d;
+  --muted: #62665d;
+  --line: #d9dbd1;
+  --paper: #f5f3ef;
+  --mist: #ecece5;
+  --lab-ink: #30332d;
+  --lab-muted: #62665d;
+  --lab-line: #d9dbd1;
+  --lab-paper: #f5f3ef;
+  --lab-mist: #ecece5;
+  color: var(--ink);
+  background: var(--paper);
+}
+.lab-family.lab-join-page .wrap,
+.lab-family.alumni-page .lab-wrap {
+  width: min(1200px, calc(100% - 96px));
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+html[lang="zh-CN"] .lab-family:is(.lab-join-page, .alumni-page) main :is(h1, h2, h3) {
+  text-wrap: wrap;
+  overflow-wrap: break-word;
+  font-weight: 500;
+  letter-spacing: -.025em;
+}
+.lab-family.lab-join-page main,
+.lab-family.alumni-page main { padding-bottom: 84px; }
+.lab-family.lab-join-page .join-breadcrumb,
+.lab-family.alumni-page .lab-breadcrumb {
+  padding-top: 24px;
+  gap: 8px 20px;
+  font-size: 13px;
+}
+.lab-family.lab-join-page .recruitment-content { padding-top: 42px; }
+.lab-family.lab-join-page .hero {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  padding-bottom: 56px;
+}
+.lab-family.lab-join-page .eyebrow { font-size: 12px; letter-spacing: .06em; }
+html[lang="zh-CN"] .lab-family.lab-join-page main h1 {
+  max-width: none;
+  font-size: clamp(32px, 3.5vw, 48px);
+  line-height: 1.5;
+}
+.lab-family.lab-join-page .lead {
+  max-width: 58em;
+  margin-top: 24px;
+  font-size: 17px;
+  line-height: 1.9;
+}
+.lab-family.lab-join-page .info {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 8px 40px;
+  padding: 24px 0 0;
+  background: transparent;
+}
+.lab-family.lab-join-page .info strong { grid-column: 1; grid-row: 1 / span 3; margin: 0; font-size: 16px; }
+.lab-family.lab-join-page .info p { grid-column: 2; margin: 0; font-size: 15px; }
+.lab-family.lab-join-page .recruitment-content section {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 20px 40px;
+  padding-block: 40px 44px;
+}
+.lab-family.lab-join-page .recruitment-content section > h2 { grid-column: 1; grid-row: 1; }
+.lab-family.lab-join-page .recruitment-content section > :not(h2) { grid-column: 2; margin-top: 0; }
+html[lang="zh-CN"] .lab-family.lab-join-page main h2 { font-size: 25px; line-height: 1.6; }
+.lab-family.lab-join-page .recruitment-content section > p,
+.lab-family.lab-join-page .recruitment-content li { font-size: 16px; line-height: 1.9; }
+.lab-family.lab-join-page .grid { gap: 28px 32px; }
+.lab-family.lab-join-page .card { padding-top: 20px; border-radius: 0; box-shadow: none; }
+.lab-family.lab-join-page .card h3 { font-size: 21px; line-height: 1.6; }
+.lab-family.lab-join-page .card p { font-size: 15px; line-height: 1.9; }
+.lab-family.lab-join-page .cta { padding: 24px 28px; font-size: 15px; }
+.lab-family.lab-join-page .cta strong { font-size: 18px; }
+.lab-family.alumni-page .alumni-content { padding-top: 42px; }
+html[lang="zh-CN"] .lab-family.alumni-page main h1 { max-width: none; font-size: clamp(34px, 4.2vw, 56px); line-height: 1.5; }
+.lab-family.alumni-page .alumni-heading { max-width: 900px; padding-bottom: 40px; }
+.lab-family.alumni-page .alumni-bio { font-size: 17px; line-height: 1.9; }
+.lab-family.alumni-page .alumni-profile-section { grid-template-columns: 180px minmax(0, 1fr); gap: 40px; padding-block: 36px 40px; }
+html[lang="zh-CN"] .lab-family.alumni-page main h2 { font-size: 25px; line-height: 1.6; }
+.lab-family.alumni-page .alumni-entry h3 { font-size: 21px; line-height: 1.6; }
+.lab-family.alumni-page .alumni-entry-description { font-size: 16px; line-height: 1.9; }
+.lab-family.alumni-page .lab-member-tools { background: transparent; border-top: 1px solid var(--lab-line); padding: 24px 0 0; margin-top: 40px; }
+@media (max-width: 850px) {
+  .lab-family.lab-join-page .info,
+  .lab-family.lab-join-page .recruitment-content section,
+  .lab-family.alumni-page .alumni-profile-section { grid-template-columns: 140px minmax(0, 1fr); gap: 20px 28px; }
+  .lab-family.lab-join-page .grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .lab-family.lab-join-page .wrap,
+  .lab-family.alumni-page .lab-wrap { width: calc(100% - 40px); }
+  .lab-family.lab-join-page main,
+  .lab-family.alumni-page main { padding-bottom: 56px; }
+  .lab-family.lab-join-page .join-breadcrumb,
+  .lab-family.alumni-page .lab-breadcrumb { padding-top: 14px; font-size: 12px; gap: 8px 16px; }
+  .lab-family.lab-join-page .recruitment-content,
+  .lab-family.alumni-page .alumni-content { padding-top: 28px; }
+  html[lang="zh-CN"] .lab-family.lab-join-page main h1 { font-size: 30px; line-height: 1.5; }
+  .lab-family.lab-join-page .hero { gap: 28px; padding-bottom: 36px; }
+  .lab-family.lab-join-page .lead { font-size: 15px; margin-top: 20px; }
+  .lab-family.lab-join-page .info { display: block; padding-top: 20px; }
+  .lab-family.lab-join-page .info strong { margin-bottom: 12px; }
+  .lab-family.lab-join-page .info p + p { margin-top: 8px; }
+  .lab-family.lab-join-page .recruitment-content section,
+  .lab-family.alumni-page .alumni-profile-section { display: block; padding-block: 28px 32px; }
+  .lab-family.lab-join-page .recruitment-content section > :not(h2) { margin-top: 18px; }
+  html[lang="zh-CN"] .lab-family:is(.lab-join-page, .alumni-page) main h2 { font-size: 23px; }
+  .lab-family.lab-join-page .recruitment-content section > p,
+  .lab-family.lab-join-page .recruitment-content li,
+  .lab-family.alumni-page .alumni-entry-description { font-size: 15px; }
+  .lab-family.lab-join-page .grid { gap: 24px; }
+  .lab-family.lab-join-page .cta { padding: 20px; }
+  .lab-family.alumni-page .alumni-heading { padding-bottom: 30px; }
+  html[lang="zh-CN"] .lab-family.alumni-page main h1 { font-size: 36px; }
+  .lab-family.alumni-page .alumni-bio { font-size: 16px; }
+  .lab-family.alumni-page .alumni-profile-section h2 { margin-bottom: 20px; }
+  .lab-family.alumni-page .alumni-entry h3 { font-size: 19px; }
+}
