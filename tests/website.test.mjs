@@ -105,7 +105,7 @@ test('visitor statistics accept only same-origin writes and expose no public rea
   const read=await worker.fetch(new Request('https://omindos.ai/api/visits'),env);
   assert.equal(read.status,405);assert.equal(read.headers.get('Allow'),'POST');
   assert.doesNotMatch(await read.text(),/total|countries|last24Hours/);
-  const unavailable=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST'}),env);
+  const unavailable=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'POST',headers:{Origin:'https://omindos.ai'}}),env);
   assert.equal(unavailable.status,503);assert.equal((await unavailable.json()).enabled,false);
   const method=await worker.fetch(new Request('https://omindos.ai/api/visits',{method:'DELETE'}),env);assert.equal(method.status,405);
   const database={prepare(){return{bind(){return this;}}},async batch(){return[];}};
@@ -677,7 +677,7 @@ test('language links preserve the current page, query and section', async () => 
       const location = new URL(`${originPath}?source=partner&lang=zh#features`);
       runInNewContext(portalClient, {
         URL, location,
-        document: { querySelectorAll: () => links },
+        document: { querySelectorAll: () => links, visibilityState: 'visible', addEventListener() {}, removeEventListener() {} },
         AbortSignal: { timeout: () => undefined },
         fetch: async () => ({ body: { cancel() {} } }),
       });
@@ -767,7 +767,7 @@ test('domestic static pages skip unavailable visit writes while international st
   for (const hostname of ['omindos.cn', 'www.omindos.cn', 'omindos.ai']) {
     const calls = [];
     runInNewContext(script, {
-      document: { querySelectorAll: () => [] },
+      document: { querySelectorAll: () => [], visibilityState: 'visible', addEventListener() {}, removeEventListener() {} },
       location: { hostname, pathname: '/robots/', origin: `https://${hostname}` },
       AbortSignal,
       fetch: (...args) => { calls.push(args); return Promise.resolve({ body: { cancel() {} } }); },

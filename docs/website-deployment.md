@@ -55,3 +55,13 @@ Cloudflare 发布令牌保存在 GitHub Actions 的 CLOUDFLARE_API_TOKEN Secret�
 历史默认中文副本策略及自动先发国际站的描述已由以上约定取代。
 
 
+
+## 英文官网访问统计 v2（2026-10-17）
+
+`/api/visits` 只接受严格同源 POST；只采集精确域名 `omindos.ai`，Pages 别名、预览地址及其他域名即使绑定生产 D1 也不写入统计。客户端也跳过这些域名以及浏览器标明 `navigator.webdriver` 的自动化会话；不创建指纹。不提供公开统计读取。统计的是可见文档触发的页面访问事件，刷新或新页面可再次计数，不是去重访客、实名用户或实时在线人数。中文腾讯站的采集与存储独立，不能混用。
+
+本次发布在既有 main 手动发布工作流中，先通过已有项目、账号与 D1 绑定校验，再执行 `scripts/website-visit-stats.mjs --prepare`。脚本仅读取旧 `visit_*` 汇总作为基线，并应用 `migrations/website/0003_filtered_visit_stats.sql` 的幂等增表操作。不得改写旧汇总或 OEM 表；D1 权限不足时必须在发布前失败。发布后 `--report` 只读 v2 分类汇总与首条事件时间，不发送模拟页面访问。GitHub Actions 日志及任务摘要只含汇总，不含凭据、访问 IP 或 OEM 内容。
+
+v2 将 `accepted_unknown`、`accepted_scored` 页面事件与四类排除事件分别汇总。Cloudflare verifiedBot、1–29 分数（corporateProxy 除外）、明确爬虫或自动化工具 User-Agent，以及预取请求只从统计中排除，网页仍正常提供。只信任平台 `request.cf.botManagement`，不信任同名 HTTP 请求头。缺少评分或分数为 0 时按未知处理，accepted 并不证明真人。当前 Cloudflare 套餐是否提供评分仍须控制台核验；User-Agent 可伪造，过滤结果也不能作真实用户数。浏览器可见性与文档内防重复只减少预取和同页重复采集，不进行跨页去重。
+
+旧 `visit_totals`、`visit_country` 和 `visit_recent` 留作“历史未过滤页面加载次数”，不得与 v2 相加展示为同一口径，也不能将 Cloudflare 全站自动化请求百分比乘入旧计数来修正。旧数据只有汇总，没有足够信息回算真人数。v2 的 `visit_collection_v2.first_event_at` 是该版本首条事件时间，迁移执行时间不等于新口径采集开始时间。分钟聚合保留约两天，累计分类及国家汇总长期保留。回滚只恢复旧部署，不删除 v2 表；旧版本恢复期间的数据仍属于旧口径。

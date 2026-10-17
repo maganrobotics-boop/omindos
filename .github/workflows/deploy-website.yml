@@ -9,6 +9,9 @@ on:
       - 'media/product-demos/**'
       - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
+      - 'tests/website-visits.test.mjs'
+      - 'migrations/website/0003_filtered_visit_stats.sql'
+      - 'scripts/website-visit-stats.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
@@ -26,6 +29,9 @@ on:
       - 'media/product-demos/**'
       - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
+      - 'tests/website-visits.test.mjs'
+      - 'migrations/website/0003_filtered_visit_stats.sql'
+      - 'scripts/website-visit-stats.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
@@ -62,7 +68,7 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs ops/chat-entry/gateway.test.mjs
+        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
@@ -90,6 +96,10 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/check-website-project.mjs
+      - name: Preserve legacy baseline and prepare isolated filtered statistics
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/website-visit-stats.mjs --prepare
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Prepare English site and domestic redirects
@@ -116,5 +126,9 @@ jobs:
         run: node scripts/check-website-project.mjs --deployed
       - name: Check the public website after deployment
         run: node scripts/verify-website-live.mjs
+      - name: Report filtered statistics without recording a synthetic page view
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/website-visit-stats.mjs --report
 
 
