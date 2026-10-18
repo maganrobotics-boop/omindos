@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
-import { baselineFile, preserveWorker, preserveClient } from '../scripts/preserve-website-statistics.mjs';
+import { baselineFile, preserveWorker, preserveClient, preserveClientVersion } from '../scripts/preserve-website-statistics.mjs';
 
 const current = await readFile(new URL('../apps/website/_worker.js', import.meta.url), 'utf8');
 const currentClient = await readFile(new URL('../apps/website/portal-client.js', import.meta.url), 'utf8');
@@ -29,6 +29,7 @@ test('page-only artifact retains production analytics without a v2 schema depend
     .replace(/async function recordVisit\([\s\S]*?(?=function languageForHostname\()/, '');
   assert.equal(strip(preserved), strip(current));
   assert.equal(preservedClient, baselineClient);
+  assert.equal(preserveClientVersion('<script src="/portal-client.js?v=20261017-filtered-visits" defer></script>'), '<script src="/portal-client.js?v=20261018-preserve-9a76b841" defer></script>');
   assert.throws(() => preserveWorker(current.replace('async function recordVisit(', 'async function changedVisit('), baseline));
   assert.throws(() => preserveClient(currentClient.replace('const home =', 'let home ='), baselineClient));
 });
@@ -79,6 +80,7 @@ test('final artifact contains exactly the tested collector and current English a
   assert.equal(await readFile(resolve(artifact, '_worker.js'), 'utf8'), preserved);
   assert.equal(await readFile(resolve(artifact, 'portal-client.js'), 'utf8'), preservedClient);
   for (const path of ['en/index.html', 'en/home-20261018.css', 'en/site-20261018.js']) {
-    assert.equal(await readFile(resolve(artifact, path), 'utf8'), await readFile(new URL('../apps/website/' + path, import.meta.url), 'utf8'));
+    const source = await readFile(new URL('../apps/website/' + path, import.meta.url), 'utf8');
+    assert.equal(await readFile(resolve(artifact, path), 'utf8'), path.endsWith('.html') ? preserveClientVersion(source) : source);
   }
 });

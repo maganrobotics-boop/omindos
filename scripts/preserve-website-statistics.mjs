@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 // The last verified production before the English homepage release.
 export const BASELINE_COMMIT = '9a76b841d330f43fab07566875949714afee3995';
+export function preserveClientVersion(html) {
+  // A later filtered-v2 release must never reuse the cached legacy collector.
+  return html.replaceAll('/portal-client.js?v=20261017-filtered-visits', '/portal-client.js?v=20261018-preserve-9a76b841');
+}
 
 export function baselineFile(path) {
   return execFileSync('git', ['show', `${BASELINE_COMMIT}:${path}`], { encoding: 'utf8' });
@@ -51,6 +55,17 @@ export async function prepare(artifact) {
   const client = preserveClient(await readFile(clientPath, 'utf8'), baselineFile('apps/website/portal-client.js'));
   await writeFile(workerPath, worker);
   await writeFile(clientPath, client);
+  async function versionHtml(directory) {
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      const path = resolve(directory, entry.name);
+      if (entry.isDirectory()) await versionHtml(path);
+      else if (entry.name.endsWith('.html')) {
+        const html = await readFile(path, 'utf8'), updated = preserveClientVersion(html);
+        if (updated !== html) await writeFile(path, updated);
+      }
+    }
+  }
+  await versionHtml(resolve(artifact));
   console.log(`Preserved production visit collector and storage from ${BASELINE_COMMIT}; v2 migration/report are deferred`);
 }
 
