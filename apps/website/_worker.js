@@ -223,7 +223,7 @@ export async function handleEnglishChatRequest(request, { fetch: upstreamFetch =
       if (token) headers.set("Cookie", `${DOMESTIC_ACCOUNT_COOKIE}=${token}`);
       let sessionResponse;
       try {
-        sessionResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "account/session", { method: "GET", headers, redirect: "error", signal: controller.signal });
+        sessionResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "account/session", { method: "GET", headers, redirect: "manual", signal: controller.signal });
       } catch (error) {
         throw new EnglishChatError(502, /illegal invocation/i.test(error?.message || '') ? 'upstream_runtime' : 'upstream_connection');
       }
@@ -238,7 +238,7 @@ export async function handleEnglishChatRequest(request, { fetch: upstreamFetch =
       if (sessionOnly) return { account: { id: data.account.id, kind: "guest" } };
       if (expected !== data.account.id) throw new EnglishChatError(409, "guest_changed");
       const chatHeaders = new Headers({ Accept: "application/json", "Content-Type": "application/json", Origin: "https://omindos.cn", Cookie: `${DOMESTIC_ACCOUNT_COOKIE}=${guestToken}`, "X-OmindOS-Expected-Account": data.account.id });
-      const chatResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "chat", { method: "POST", headers: chatHeaders, body: JSON.stringify(payload), redirect: "error", signal: controller.signal });
+      const chatResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "chat", { method: "POST", headers: chatHeaders, body: JSON.stringify(payload), redirect: "manual", signal: controller.signal });
       if (!chatResponse.ok) throw englishChatUpstreamError(chatResponse);
       return englishChatPublicAnswer(await readEnglishChatJson(chatResponse, 262144, 502, controller.signal));
     };
