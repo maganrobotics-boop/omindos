@@ -1,5 +1,9 @@
 /* English public-site controls; no application, identity or account changes. */
 (() => {
+  const chatScript = document.createElement('script');
+  chatScript.src = '/en/assets/english-chat/widget.js?v=1';
+  chatScript.defer = true;
+  document.body.append(chatScript);
   const button = document.querySelector('.en-menu-toggle');
   const menu = document.querySelector('.en-menu-panel');
   const setMenu = (open, returnFocus = false) => {

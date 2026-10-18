@@ -1,0 +1,44 @@
+/* Native link opens chat in its first-party browsing context. */
+.en-site .en-chat-launcher {
+  position: fixed;
+  z-index: 9990;
+  right: 20px;
+  bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-sizing: border-box;
+  min-width: 52px;
+  min-height: 52px;
+  padding: 12px 17px;
+  border: 1px solid #55574f;
+  border-radius: 28px;
+  background: #292a26;
+  color: #fff;
+  box-shadow: 0 3px 16px #0002;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+}
+.en-chat-launcher svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.en-site .en-chat-launcher:hover { background: #40423b; color: #fff; }
+.en-chat-launcher:focus-visible { outline: 3px solid #747c5c; outline-offset: 3px; }
+@media (max-width: 440px) {
+  .en-chat-launcher { right: 12px; bottom: 12px; padding: 12px; }
+  .en-chat-launcher-text { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .en-chat-launcher { animation: none !important; transition: none !important; }
+}
