@@ -200,7 +200,7 @@ function englishChatPublicAnswer(data) {
 
 // fetch and a short deadline may be injected by unit tests only. Production
 // always calls this handler with the fixed upstream and the default deadline.
-export async function handleEnglishChatRequest(request, { fetch: upstreamFetch = globalThis.fetch, timeoutMs = 55000 } = {}) {
+export async function handleEnglishChatRequest(request, { fetch: upstreamFetch = (...args) => globalThis.fetch(...args), timeoutMs = 55000 } = {}) {
   const url = new URL(request.url);
   if (![ENGLISH_CHAT_PATH, ENGLISH_CHAT_SESSION_PATH].includes(url.pathname)) return errorResponse("Not found", 404, "not_found");
   if (!englishChatHostAllowed(url) || url.search || request.headers.get("Sec-Fetch-Site") !== "same-origin" || (request.headers.has("Origin") && request.headers.get("Origin") !== url.origin)) return errorResponse("Forbidden", 403, "forbidden");
@@ -221,7 +221,12 @@ export async function handleEnglishChatRequest(request, { fetch: upstreamFetch =
       const payload = sessionOnly ? null : englishChatPayload(await readEnglishChatJson(request, 65536, 400, controller.signal));
       const headers = new Headers({ Accept: "application/json" });
       if (token) headers.set("Cookie", `${DOMESTIC_ACCOUNT_COOKIE}=${token}`);
-      const sessionResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "account/session", { method: "GET", headers, redirect: "error", signal: controller.signal });
+      let sessionResponse;
+      try {
+        sessionResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "account/session", { method: "GET", headers, redirect: "error", signal: controller.signal });
+      } catch (error) {
+        throw new EnglishChatError(502, /illegal invocation/i.test(error?.message || '') ? 'upstream_runtime' : 'upstream_connection');
+      }
       if (!sessionResponse.ok) throw englishChatUpstreamError(sessionResponse);
       const data = await readEnglishChatJson(sessionResponse, 16384, 502, controller.signal);
       if (data.account?.kind !== "guest") throw new EnglishChatError(403, "guest_required", true);
