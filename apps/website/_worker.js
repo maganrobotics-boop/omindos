@@ -8,7 +8,7 @@ const VERSIONED_PUBLIC_ASSET = /\.(?:css|js|png|jpe?g|svg|webp|ico)$/u;
 const STABLE_PUBLIC_ASSET = /\.(?:woff2?|png|jpe?g|svg|webp|ico|mp4)$/u;
 
 const LANGUAGE_SITES = {
-  en: { home: "/index.en", oem: "/oem/en/", why: "/why/en/", robots: "/robots/en/", notFound: "/404", contentLanguage: "en" },
+  en: { home: "/index.en", oem: "/oem/en/", why: "/why/en/", robots: "/robots/en/", notFound: "/en/404", contentLanguage: "en" },
   zh: { home: "/index.zh", oem: "/oem/zh/", why: "/why/zh/", robots: "/robots/zh/", notFound: "/404.zh", contentLanguage: "zh-CN" },
 };
 
@@ -338,6 +338,8 @@ function withPublicAssetCache(response, url) {
 }
 
 async function renderNotFound(request, env, url, language) {
+  // Fetch the clean URL for en/404.html: Pages otherwise redirects the .html
+  // asset request before this handler can return its body with a 404 status.
   const response = await env.ASSETS.fetch(assetRequest(request, url, LANGUAGE_SITES[language].notFound));
   const headers = new Headers(response.headers);
   headers.delete("Location");
