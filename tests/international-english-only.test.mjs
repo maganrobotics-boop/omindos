@@ -114,6 +114,30 @@ test('English product captions reach their exact same-origin media bytes',async(
   assert.equal(post.status,405);assert.equal(post.headers.get('Location'),null);
  }
 });
+test('English missing pages use the current English layout through the clean asset URL',async()=>{
+ const assetRequests=[];
+ const cleanAssetEnv={ASSETS:{async fetch(request){
+  const pathname=new URL(request.url).pathname;
+  assetRequests.push(pathname);
+  // Cloudflare Pages redirects explicit .html asset requests to clean URLs.
+  if(pathname==='/en/404.html')return new Response(null,{status:308,headers:{Location:'https://omindos.ai/en/404'}});
+  return env.ASSETS.fetch(request);
+ }}};
+ for(const pathname of ['/en/not-a-page/','/not-a-page/','/en/404.html']){
+  const response=await worker.fetch(new Request('https://omindos.ai'+pathname),cleanAssetEnv);
+  assert.equal(response.status,404);assert.equal(response.headers.get('Content-Language'),'en');
+  assert.equal(response.headers.get('Location'),null);assert.match(response.headers.get('Cache-Control'),/no-store/);
+  assert.match(response.headers.get('Content-Type'),/text\/html/);assert.match(response.headers.get('X-Robots-Tag'),/noindex/);
+  const html=await response.text();
+  assert.ok(html.includes('class="header en-header"'));assert.ok(html.includes('/en/site-20261018.css?v=1'));
+  assert.ok(html.includes('<h1>Page not found</h1>'));assert.ok(html.includes('href="/en/">OriginMind homepage</a>'));
+  assert.doesNotMatch(html,/founding-oem|OEM partnership|Become an OEM partner/i);
+ }
+ assert.ok(assetRequests.includes('/en/404'));assert.ok(!assetRequests.includes('/en/404.html'));
+ const chinese=await worker.fetch(new Request('https://omindos.ai/404.zh.html'),cleanAssetEnv);
+ assert.equal(chinese.status,404);assert.equal(chinese.headers.get('Content-Language'),'zh-CN');
+ assert.ok(assetRequests.includes('/404.zh'));
+});
 test('international sitemap lists only English canonical pages',async()=>{
  const xml=await readFile(join(root,'sitemap.xml'),'utf8');
  const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
