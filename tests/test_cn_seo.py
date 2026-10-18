@@ -27,7 +27,7 @@ class ChineseSEO(unittest.TestCase):
             '/robots/wheel-legged/', '/robots/wheeled/',
         })
         self.assertEqual(len(known), len(set(known)))
-        chinese_only = {'/join/', '/careers/', '/lab/', '/lab/join/', '/lab/alumni/', '/robots/tracked/'}
+        chinese_only = {'/lab/alumni/'}
         for route in known:
             with self.subTest(route=route):
                 page = ROOT / 'cn' / route.strip('/') / 'index.html'

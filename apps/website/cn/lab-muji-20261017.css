@@ -1,0 +1,125 @@
+/* Four quiet, alternating content chapters; the video opening and black footer stay independent. */
+html[lang="zh-CN"] .lab-page #main-content > :is(#research, #results, #exchange, #alumni) {
+  --lab-paper: #faf9f6;
+  --lab-card: #faf9f6;
+  --lab-stage: #f0ede7;
+  --lab-ink: #30302d;
+  --lab-muted: #68665f;
+  --lab-line: #dcd8d0;
+  --lab-olive: #635640;
+  --lab-dark: #292a26;
+  --lab-focus: #8d7653;
+  margin: 0;
+  padding-block: 72px;
+  border: 0;
+  border-radius: 0;
+  background: var(--lab-paper);
+  color: var(--lab-ink);
+}
+html[lang="zh-CN"] .lab-page #main-content > #exchange {
+  --lab-paper: #f5f3ef;
+  --lab-card: #f5f3ef;
+}
+html[lang="zh-CN"] .lab-page #main-content > :is(#results, #alumni) {
+  --lab-paper: #292a26;
+  --lab-card: #292a26;
+  --lab-stage: #232420;
+  --lab-ink: #f5f3ef;
+  --lab-muted: #ccc7bc;
+  --lab-line: #ffffff2b;
+  --lab-olive: #ccc7bc;
+  --lab-focus: #c3ad85;
+  color-scheme: dark;
+}
+
+.lab-page #main-content > :is(#research, #results, #exchange, #alumni) .lab-section-heading {
+  margin-bottom: 36px;
+}
+.lab-page #main-content > :is(#research, #results, #exchange, #alumni) :is(.lab-platform-card, .lab-paper, .lab-practice-grid article, .lab-exchange-grid article, .lab-alumni-link, .lab-alumni-invitation, .lab-status) {
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.lab-page #main-content > :is(#research, #results, #exchange, #alumni) :is(.lab-section-heading > p, .lab-direction > p:not(.lab-direction-en), .lab-paper > p:not([class]), .lab-platforms-heading > p, .lab-platform-copy > p:not(.lab-platform-model), .lab-project-copy > p:not([class]), .lab-result-feature > p:not([class]), .lab-practice-grid p, .lab-exchange-grid article > p:not([class]), .lab-updates p, .lab-alumni-invitation p) {
+  font-size: 16px;
+  line-height: 1.9;
+}
+.lab-page #main-content > :is(#research, #results, #exchange, #alumni) :is(figcaption, .lab-section-index, .lab-direction-en, .lab-direction-meta > span, .lab-direction ul, .lab-research-note, .lab-platform-model, .lab-platform-note, .lab-paper-author, .lab-paper-note, .lab-paper-venue, .lab-result-kind, .lab-result-subtitle, .lab-subsection-heading p, .lab-award-year, .lab-awards p, .lab-event-date, .lab-updates time, .lab-year-heading span, .lab-alumni-summary, .lab-account-settings) {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.lab-page #main-content > :is(#research, #exchange) a:hover { color: #635640; }
+.lab-page #main-content > :is(#research, #results, #exchange, #alumni) :is(.lab-result-link, .lab-event-link, .lab-secondary-link) {
+  border-bottom-color: #aaa59b;
+}
+.lab-page #main-content > :is(#research, #results, #exchange, #alumni) :is(a, button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+
+/* Integrate the project into the dark results chapter instead of drawing another colored panel. */
+.lab-page #main-content > #results .lab-result-grid {
+  margin-top: 40px;
+  padding: 32px 0 0;
+  border-top: 1px solid var(--lab-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--lab-ink);
+}
+.lab-page #main-content > #results :is(.lab-result-kind, .lab-result-subtitle, .lab-project-copy > p:not([class]), .lab-result-feature > p:not([class]), .lab-field-video figcaption) {
+  color: var(--lab-muted);
+}
+.lab-page #main-content > #results .lab-award-callout { color: var(--lab-ink); }
+.lab-page #main-content > #results .lab-result-feature { border-top-color: var(--lab-line); }
+.lab-page #main-content > #results .lab-result-grid .lab-result-link {
+  color: var(--lab-ink);
+  border-bottom-color: #aaa59b;
+}
+.lab-page #main-content > #results .lab-field-video video { background: #1b1c19; }
+.lab-page #main-content > :is(#results, #alumni) a:hover { color: #fff; }
+
+/* Public alumni data, loading and retry states share the same dark background and contrast. */
+.lab-page #main-content > #alumni :is(.lab-status, .lab-alumni-status) {
+  color: var(--lab-muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.lab-page #main-content > #alumni .lab-alumni-name { color: var(--lab-ink); }
+.lab-page #main-content > #alumni :is(.lab-primary-link, .lab-retry) {
+  min-height: 44px;
+  border: 1px solid #aaa59b;
+  border-radius: 0;
+  background: transparent;
+  color: var(--lab-ink);
+}
+.lab-page #main-content > #alumni :is(.lab-primary-link, .lab-retry):hover {
+  border-color: #f5f3ef;
+  background: #ffffff0f;
+  color: #fff;
+}
+.lab-page #main-content > #alumni :is(input, textarea, select) {
+  border-color: #aaa59b;
+  border-radius: 0;
+  background: #232420;
+  color: var(--lab-ink);
+}
+.lab-page #main-content > #alumni :is(input, textarea)::placeholder {
+  color: var(--lab-muted);
+  opacity: 1;
+}
+
+@media (max-width: 760px) {
+  html[lang="zh-CN"] .lab-page #main-content > :is(#research, #results, #exchange, #alumni) {
+    padding-block: 48px;
+  }
+  .lab-page #main-content > :is(#research, #results, #exchange, #alumni) .lab-section-heading {
+    margin-bottom: 28px;
+  }
+  .lab-page #main-content > :is(#research, #results, #exchange, #alumni) :is(.lab-section-heading > p, .lab-direction > p:not(.lab-direction-en), .lab-paper > p:not([class]), .lab-platforms-heading > p, .lab-platform-copy > p:not(.lab-platform-model), .lab-project-copy > p:not([class]), .lab-result-feature > p:not([class]), .lab-practice-grid p, .lab-exchange-grid article > p:not([class]), .lab-updates p, .lab-alumni-invitation p) {
+    font-size: 15px;
+  }
+  .lab-page #main-content > #results .lab-result-grid {
+    margin-top: 28px;
+    padding-top: 28px;
+  }
+}

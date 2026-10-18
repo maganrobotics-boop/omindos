@@ -1,4 +1,4 @@
-// Domestic Chinese redirects and the retained overseas English website.
+// English international entry with preserved domestic Chinese deep links.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile, mkdtemp, rm} from 'node:fs/promises';
@@ -14,7 +14,7 @@ execFileSync('python3',[fileURLToPath(new URL('../scripts/prepare-international-
 process.on('exit',()=>{execFileSync('rm',['-rf',directory]);});
 const source=await readFile(join(root,'_worker.js'),'utf8');
 const {default:worker}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
-const routes=['','about','contact','developers','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
+const routes=['','about','careers','contact','developers','field-work','field-work/mining','field-work/warehouse','integration','join','lab','lab/join','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/tracked','robots/wheel-legged','robots/wheeled'];
 const env={ASSETS:{async fetch(request){
  const path=new URL(request.url).pathname;
  for(const name of [path,path.endsWith('/')?path+'index.html':path+'.html']){
@@ -22,8 +22,23 @@ const env={ASSETS:{async fetch(request){
  }
  return new Response('not found',{status:404});
 }}};
-test('.ai Chinese root and deep links redirect directly to .cn independently of old preferences',async()=>{
- for(const host of ['omindos.ai','www.omindos.ai'])for(const route of routes){
+test('.ai homepage opens in English independently of browser and old cookie preferences',async()=>{
+ for(const host of ['omindos.ai','www.omindos.ai'])for(const path of ['/','/index.html']){
+  for(const headers of [{'Accept-Language':'zh-CN',Cookie:'originmind_language=zh'},{'Accept-Language':'en-US',Cookie:'originmind_language=en'}]){
+   for(const lang of ['','&lang=en']){
+    const r=await worker.fetch(new Request('https://'+host+path+'?source=partner'+lang+'#features',{headers}),env);
+    assert.equal(r.status,302);assert.equal(r.headers.get('Location'),'https://omindos.ai/en/?source=partner#features');
+    assert.match(r.headers.get('Cache-Control'),/no-store/);assert.equal(await r.text(),'');
+   }
+  }
+  for(const lang of ['zh','cn','ZH','CN']){
+   const r=await worker.fetch(new Request('https://'+host+path+'?lang='+lang+'&source=partner#features'),env);
+   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/?source=partner#features');
+  }
+ }
+});
+test('.ai established unprefixed deep links redirect directly to .cn independently of old preferences',async()=>{
+ for(const host of ['omindos.ai','www.omindos.ai'])for(const route of routes.filter(Boolean)){
   const path='/'+(route?route+'/':'');
   const r=await worker.fetch(new Request('https://'+host+path+'?source=partner#features',{headers:{'Accept-Language':'en-US',Cookie:'originmind_language=en'}}),env);
   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn'+path+'?source=partner#features');
@@ -63,17 +78,19 @@ test('Chinese aliases go to .cn while explicit English selection stays on .ai',a
   const en=await worker.fetch(new Request('https://omindos.ai'+path+'?lang=en&source=old'),env);
   assert.equal(en.status,302);assert.equal(en.headers.get('Location'),'https://omindos.ai/en'+path+'?source=old');
  }
- for(const [alias,target] of [['/index.html','/'],['/index.zh.html','/'],['/oem/zh/','/integration/'],['/why/zh/','/about/'],['/robots/zh/','/robots/']]){
+ for(const [alias,target] of [['/index.zh.html','/'],['/oem/zh/','/integration/'],['/why/zh/','/about/'],['/robots/zh/','/robots/']]){
   const r=await worker.fetch(new Request('https://omindos.ai'+alias),env);
   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn'+target);
  }
 });
 test('Chinese media namespaces are served as assets and pages enforce safe methods',async()=>{
- const css=await worker.fetch(new Request('https://omindos.ai/cn/product-showcase.css?v=1'),env);
- assert.equal(css.status,200);assert.equal(css.headers.get('Location'),null);assert.doesNotMatch(await css.text(),/<html/);
+ for(const path of ['/cn/product-showcase.css?v=1','/en/site-20261018.css?v=1','/en/assets/layout-20261018/mining-environment-20261012.css']){
+  const css=await worker.fetch(new Request('https://omindos.ai'+path),env);
+  assert.equal(css.status,200);assert.equal(css.headers.get('Location'),null);assert.doesNotMatch(await css.text(),/<html/);
+ }
  const head=await worker.fetch(new Request('https://omindos.ai/',{method:'HEAD'}),env);
- assert.equal(head.status,308);assert.equal(head.headers.get('Location'),'https://omindos.cn/');assert.equal(await head.text(),'');
- for(const path of ['/','/robots/','/cn/about/','/index.zh.html']){
+ assert.equal(head.status,302);assert.equal(head.headers.get('Location'),'https://omindos.ai/en/');assert.equal(await head.text(),'');
+ for(const path of ['/','/index.html','/robots/','/cn/about/','/index.zh.html','/en/lab/','/en/robots/tracked/']){
   const post=await worker.fetch(new Request('https://omindos.ai'+path,{method:'POST',body:'private'}),env);
   assert.equal(post.status,405);assert.equal(post.headers.get('Location'),null);
  }

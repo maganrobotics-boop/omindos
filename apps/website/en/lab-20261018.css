@@ -1,0 +1,183 @@
+/* English lab pages retain the accepted light/charcoal research sequence. */
+html[lang="en"] .lab-page {
+  font-family: Arial, Helvetica, sans-serif;
+  --lab-paper: #faf9f6;
+  --lab-card: #faf9f6;
+  --lab-stage: #f0ede7;
+  --lab-ink: #30302d;
+  --lab-muted: #68665f;
+  --lab-line: #dcd8d0;
+  --lab-olive: #635640;
+  --lab-dark: #292a26;
+  --lab-focus: #8d7653;
+}
+.lab-page #main-content { margin-bottom: 0; padding-bottom: 0; }
+.lab-page #main-content :is(.lab-band-dark, .lab-alumni-section) {
+  --lab-paper: #292a26;
+  --lab-card: #292a26;
+  --lab-stage: #232420;
+  --lab-ink: #f5f3ef;
+  --lab-muted: #ccc7bc;
+  --lab-line: #ffffff2b;
+  --lab-olive: #ccc7bc;
+  --lab-focus: #c3ad85;
+  color-scheme: dark;
+  color: var(--lab-ink);
+  background: var(--lab-paper);
+}
+.lab-page #main-content :is(.lab-band-light, .lab-research, .lab-exchange, .lab-results-intro) {
+  color-scheme: light;
+  color: var(--lab-ink);
+  background: var(--lab-paper);
+}
+.lab-page #main-content :is(h1, h2, h3, h4) { letter-spacing: -.025em; word-break: normal; }
+.lab-page #main-content h1 { font-size: clamp(36px, 4.8vw, 66px); line-height: 1.12; }
+.lab-page #main-content h2 { max-width: 25ch; font-size: clamp(30px, 3.2vw, 44px); line-height: 1.18; }
+.lab-page #main-content h3 { line-height: 1.3; }
+.lab-page #main-content p { line-height: 1.65; }
+.lab-page #main-content :is(a, summary, button):focus-visible { outline: 3px solid var(--lab-focus); outline-offset: 4px; }
+.lab-page #main-content .lab-band-dark a:hover,
+.lab-page #main-content .lab-alumni-section a:hover { color: #fff; }
+.lab-page .lab-wrap { max-width: 1200px; }
+.lab-page .lab-section { padding-block: 80px; }
+.lab-page .lab-section-heading > p { max-width: 66ch; font-size: 17px; }
+.lab-page .lab-section-index { margin-bottom: 18px; font-size: 13px; letter-spacing: .07em; }
+.lab-page .lab-direction { grid-template-columns: 32px minmax(220px, .9fr) minmax(0, 1.4fr); }
+.lab-page .lab-direction h3 { font-size: 25px; }
+.lab-page .lab-direction-meta > span:last-child { grid-row: 2; font-size: 13px; }
+.lab-page .lab-direction > p:not(.lab-direction-en) { font-size: 16px; }
+.lab-page .lab-direction ul { font-size: 13px; }
+.lab-page .lab-research-note { font-size: 14px; line-height: 1.7; }
+.lab-page :is(.lab-event-link, .lab-result-link) { font-size: 14px; }
+.lab-page #main-content > #results { padding: 0; }
+.lab-page #results .lab-results-intro { padding-block: 72px 0; }
+.lab-page #results .lab-results-nav { margin-bottom: 0; padding-bottom: 20px; }
+.lab-page #main-content .lab-band { margin: 0; padding-block: 72px; border: 0; border-radius: 0; scroll-margin-top: 100px; }
+.lab-page #main-content #lab-publications { padding-top: 40px; }
+.lab-page #results .lab-result-group-heading { align-items: flex-start; margin-bottom: 28px; }
+.lab-page #results .lab-result-group-heading h3 { font-size: 28px; line-height: 1.3; }
+.lab-page #results .lab-result-group-heading p { max-width: 62ch; font-size: 15px; }
+.lab-page #results .lab-band > .lab-wrap > .lab-chronology > li:first-child { padding-top: 0; border-top: 0; }
+.lab-page #results .lab-chronology-entry { grid-template-columns: 130px minmax(0, 1fr); }
+.lab-page #results .lab-record-body h4 { max-width: 64ch; font-size: 20px; line-height: 1.4; overflow-wrap: break-word; hyphens: auto; }
+.lab-page #results .lab-record-body :is(.lab-record-meta, .lab-record-authors, .lab-record-description) { max-width: 85ch; font-size: 15px; line-height: 1.65; }
+.lab-page #results .lab-patent-stats dt { font-size: 16px; line-height: 1.5; }
+.lab-page #results .lab-patent-note { max-width: 88ch; font-size: 15px; }
+.lab-page #results .lab-patent-authorization { max-width: 82ch; font-size: 16px; line-height: 1.65; }
+.lab-page #research-platforms .lab-platforms-heading { margin-bottom: 32px; }
+.lab-page #research-platforms .lab-platforms-heading > p { max-width: 68ch; margin-top: 20px; color: var(--lab-muted); font-size: 17px; }
+.lab-page #research-platforms .lab-platform-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.lab-page #research-platforms .lab-platform-card { display: flex; flex-direction: column; min-width: 0; border-bottom: 1px solid var(--lab-line); }
+.lab-page #research-platforms .lab-platform-card figure { margin: 0; }
+.lab-page #research-platforms .lab-platform-card img { display: block; width: 100%; height: auto; aspect-ratio: 1.5; object-fit: contain; background: #f5f3ef; }
+.lab-page #research-platforms :is(figcaption, .lab-platform-model, .lab-platform-note) { color: var(--lab-muted); font-size: 14px; line-height: 1.6; }
+.lab-page #research-platforms figcaption { padding-top: 10px; }
+.lab-page #research-platforms .lab-platform-copy { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding-block: 24px; }
+.lab-page #research-platforms .lab-platform-model { margin-bottom: 10px; }
+.lab-page #research-platforms .lab-platform-copy h3 { font-size: 24px; }
+.lab-page #research-platforms .lab-platform-copy > p:not(.lab-platform-model) { margin-block: 16px 20px; color: var(--lab-muted); font-size: 16px; }
+.lab-page #research-platforms .lab-result-link { margin-top: auto; color: var(--lab-ink); }
+.lab-page #research-platforms .lab-platform-note { max-width: 90ch; margin-top: 28px; }
+.lab-page #results .lab-results-demos .lab-result-grid { margin: 0; padding: 0; border: 0; background: transparent; }
+.lab-page .lab-result-kind { font-size: 13px; }
+.lab-page .lab-result-subtitle { font-size: 15px; }
+.lab-page .lab-project-copy > p:not([class]),
+.lab-page .lab-result-feature > p:not([class]) { font-size: 16px; }
+.lab-page .lab-result-spotlight h3 { font-size: clamp(30px, 3vw, 42px); }
+.lab-page .lab-result-feature .lab-result-subtitle { font-size: 14px; }
+.lab-page .lab-field-video { margin: 0; }
+.lab-page .lab-field-video figcaption { font-size: 13px; }
+.lab-page .lab-practice-grid h4 { font-size: 23px; line-height: 1.3; }
+.lab-page .lab-practice-grid p,
+.lab-page .lab-exchange-grid article > p:not([class]),
+.lab-page .lab-cooperation-copy > p:not([class]) { font-size: 16px; }
+.lab-page .lab-subsection-heading h3 { font-size: 25px; }
+.lab-page .lab-subsection-heading p { font-size: 14px; }
+.lab-page .lab-event-date { font-size: 14px; line-height: 1.6; }
+.lab-page .lab-exchange-grid h3 { font-size: 24px; }
+.lab-page .lab-team-photo figcaption,
+.lab-page .lab-activity-gallery figcaption,
+.lab-page .lab-cooperation-photo figcaption { font-size: 14px; line-height: 1.6; }
+.lab-page .lab-updates { grid-template-columns: 160px minmax(0, 1fr); }
+.lab-page .lab-updates li { grid-template-columns: 110px minmax(0, 1fr); }
+.lab-page .lab-updates time { font-size: 14px; }
+.lab-page .lab-updates p { max-width: 65ch; font-size: 15px; }
+.lab-page .lab-alumni-directory-link { margin-top: 24px; }
+.lab-page .lab-alumni-invitation p { max-width: 65ch; font-size: 16px; }
+.lab-page .lab-primary-link { white-space: normal; text-align: center; line-height: 1.5; }
+.lab-page .lab-account-settings { font-size: 14px; }
+
+/* One sentence over the outdoor robot footage, with an accessible pause button. */
+.lab-page #main-content > .lab-hero.lab-hero-screen {
+  position: relative; isolation: isolate; width: 100%; height: calc(100svh - 89px);
+  min-height: 420px; margin: 0; padding: 0; overflow: hidden; background: #30332d; color: #fff;
+}
+.lab-page .lab-hero-media { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.lab-page .lab-hero-media > :is(video, img) { width: 100%; height: 100%; max-width: none; margin: 0; object-fit: cover; object-position: center 62%; }
+.lab-page .lab-hero-poster { display: none; }
+.lab-page .lab-hero-screen::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, #0c100cbb, #0c100c40 52%, #0c100c18); pointer-events: none; }
+.lab-page .lab-hero-heading { position: absolute; z-index: 2; top: 12%; left: 6%; right: 6%; width: auto; margin: 0; }
+.lab-page .lab-hero-copy { max-width: 100%; }
+.lab-page #main-content .lab-hero-screen #lab-title { max-width: 21ch; margin: 0; color: #fff; font-size: clamp(34px, 4.5vw, 66px); line-height: 1.15; text-shadow: 0 2px 18px #0003; }
+.lab-page .lab-hero-motion-toggle { position: absolute; z-index: 3; right: 6%; bottom: 24px; display: grid; place-items: center; width: 44px; height: 44px; padding: 12px; border: 1px solid #ffffff70; border-radius: 50%; color: #fff; background: #1115; cursor: pointer; }
+.lab-page .lab-hero-motion-toggle[hidden] { display: none; }
+.lab-page .lab-hero-motion-toggle svg { width: 18px; height: 18px; fill: currentColor; }
+.lab-page .lab-hero-motion-toggle [data-play],
+.lab-page .lab-hero-motion-toggle[data-paused="true"] [data-pause] { display: none; }
+.lab-page .lab-hero-motion-toggle[data-paused="true"] [data-play] { display: block; }
+.lab-page .lab-hero-screen[data-motion="unavailable"] .lab-hero-video { display: none; }
+.lab-page .lab-hero-screen[data-motion="unavailable"] .lab-hero-poster { display: block; }
+.lab-family .brand-arts .brand-logo-image { display: block; width: 164px; height: auto; max-width: 100%; }
+.lab-family .site-footer .brand-arts .brand-logo-image { filter: grayscale(1) invert(1) contrast(4); mix-blend-mode: screen; }
+.lab-family .site-footer { background: #111; color: #fff; }
+.lab-family .site-footer a { color: #fff; }
+.lab-family .site-footer .footer-grid > div > p { max-width: 32ch; }
+.lab-recruitment .en-reading { max-width: 820px; }
+.lab-recruitment .en-reading h2 { max-width: none; }
+.lab-recruitment .en-reading p + p { margin-top: 18px; }
+.lab-recruitment .en-reading ul { padding-left: 22px; line-height: 1.75; }
+.lab-recruitment .en-reading li + li { margin-top: 10px; }
+.lab-recruitment .en-reading .en-contact-link { display: inline-flex; min-height: 44px; align-items: center; text-decoration: underline; text-underline-offset: 5px; }
+.lab-recruitment .research-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 48px; margin-top: 44px; }
+.lab-recruitment .research-grid article { min-width: 0; padding-top: 24px; border-top: 1px solid #ffffff2b; }
+.lab-recruitment .research-grid h3 { margin-bottom: 18px; }
+.lab-recruitment .research-grid p { font-size: 16px; color: inherit; }
+@media (max-width: 1099px) {
+  .lab-page #main-content > .lab-hero.lab-hero-screen { height: calc(100svh - 77px); }
+  .lab-page .lab-direction { grid-template-columns: 28px minmax(180px, .85fr) minmax(0, 1.3fr); }
+}
+@media (max-width: 850px) {
+  .lab-page #research-platforms .lab-platform-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .lab-page #research-platforms .lab-platform-card img { max-height: 340px; }
+  .lab-page .lab-alumni-invitation { flex-direction: column; align-items: flex-start; }
+  .lab-recruitment .research-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+}
+@media (max-width: 760px) {
+  .lab-page #main-content .lab-band, .lab-page .lab-section { padding-block: 48px; }
+  .lab-page #results .lab-results-intro { padding-top: 48px; }
+  .lab-page #main-content #lab-publications { padding-top: 28px; }
+  .lab-page #main-content > .lab-hero.lab-hero-screen { min-height: 360px; }
+  .lab-page #main-content .lab-hero-screen #lab-title { max-width: 17ch; font-size: clamp(32px, 7.5vw, 46px); }
+  .lab-page .lab-hero-heading { top: 10%; }
+  .lab-page .lab-updates { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+}
+@media (max-width: 600px) {
+  .lab-page .lab-direction { grid-template-columns: 24px minmax(0, 1fr); }
+  .lab-page .lab-direction-meta > span:last-child { grid-row: 2; }
+  .lab-page .lab-direction > p:not(.lab-direction-en) { grid-row: 3; font-size: 16px; }
+  .lab-page .lab-direction ul { grid-row: 4; }
+  .lab-page #results .lab-chronology-entry { grid-template-columns: minmax(0, 1fr); }
+  .lab-page #results .lab-record-body h4 { font-size: 19px; }
+  .lab-page #results .lab-record-body :is(.lab-record-meta, .lab-record-authors, .lab-record-description) { font-size: 15px; }
+  .lab-page .lab-updates li { grid-template-columns: minmax(0, 1fr); }
+  .lab-page .lab-updates p { font-size: 15px; }
+  .lab-page .lab-result-feature > p:not([class]), .lab-page .lab-practice-grid p, .lab-page .lab-exchange-grid article > p:not([class]) { font-size: 16px; }
+  .lab-family .brand-arts .brand-logo-image { width: 136px; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .lab-page #main-content > .lab-hero.lab-hero-screen { min-height: 260px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-page .lab-hero-video { display: none; }
+  .lab-page .lab-hero-poster { display: block; }
+}

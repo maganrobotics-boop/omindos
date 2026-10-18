@@ -1,6 +1,7 @@
-"""Build the overseas English site with Chinese entry redirects to .cn.
+"""Build the international English site with explicit Chinese redirects to .cn.
 
 Keep the source's cross-domain language links: Chinese on .cn, English on .ai/en/.
+The Worker sends the international root and /index.html to /en/ by default.
 Retain assets and API handlers for existing English pages and cached clients.
 """
 from pathlib import Path
@@ -11,7 +12,10 @@ def prepare(source, target):
     if target.exists():
         raise RuntimeError('Use a new artifact directory')
     def ignore(directory, names):
-        return [name for name in names if name in {'design-study', 'node_modules', '.wrangler', '__pycache__'}]
+        # Keep public verification files, but exclude local tooling and partial
+        # transport files from the deployed tree.
+        return [name for name in names if name in {'design-study', 'node_modules', '__pycache__'}
+                or (name.startswith('.') and name != '.well-known')]
     shutil.copytree(source, target, ignore=ignore)
     urls = []
     for page in sorted((target / 'en').rglob('index.html')):
@@ -25,7 +29,7 @@ def prepare(source, target):
     assert (target / 'cn/index.html').exists()
     assert (target / 'en/index.html').exists()
     assert (target / '_worker.js').exists()
-    print('Prepared .ai artifact: Chinese redirects to .cn; English remains at /en/')
+    print('Prepared .ai artifact: English homepage at /en/; Chinese aliases redirect to .cn')
 
 if __name__ == '__main__':
     prepare(Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve())

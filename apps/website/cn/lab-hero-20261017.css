@@ -1,0 +1,199 @@
+/* ARTS: one full-screen opening followed by the four existing research sections. */
+html[lang="zh-CN"] body.lab-page:not(.alumni-page) #main-content {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+html[lang="zh-CN"] .lab-page #main-content > .lab-hero.lab-hero-screen {
+  --lab-header-height: 89px;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: calc(100svh - var(--lab-header-height));
+  min-height: 420px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #eceee9;
+  color: #fff;
+}
+
+.lab-page .lab-hero-screen .lab-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.lab-page .lab-hero-screen .lab-hero-media > :is(video, img) {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+  object-fit: cover;
+  object-position: center 62%;
+  mix-blend-mode: normal;
+}
+.lab-page .lab-hero-screen .lab-hero-poster { display: none; }
+.lab-page .lab-hero-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, #0c100cc7 0%, #0c100c73 32%, #0c100c14 62%, #0c100c1f 100%);
+  pointer-events: none;
+}
+
+.lab-page .lab-hero-screen .lab-hero-heading {
+  position: absolute;
+  z-index: 2;
+  top: 12%;
+  left: 6%;
+  right: 6%;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  container-type: normal;
+}
+.lab-page .lab-hero-screen .lab-hero-copy {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+html[lang="zh-CN"] .lab-page #main-content > .lab-hero-screen #lab-title {
+  max-width: none;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(32px, 3.9vw, 60px);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -.025em;
+  white-space: normal;
+  text-wrap: wrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-shadow: 0 2px 18px #0003;
+}
+
+/* Shared across the lab homepage, enrollment page and graduate profiles. */
+html[lang="zh-CN"] body.lab-family .cn-footer {
+  min-height: 0;
+  margin: 0;
+  padding: 40px 0 20px;
+  background: #111;
+  color: #fff;
+}
+.lab-family .cn-footer .cn-footer-grid {
+  grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+.lab-family .cn-footer :is(h3, p, a, .cn-footer-bottom) { color: #fff; }
+.lab-family .cn-footer .cn-footer-brand p {
+  max-width: 24em;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.lab-family .cn-footer .cn-footer-wordmark.brand-arts {
+  display: inline-block;
+  max-width: 180px;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.lab-family .cn-footer .cn-footer-wordmark.brand-arts .brand-logo-image {
+  display: block;
+  width: 180px;
+  height: auto;
+  max-width: 100%;
+  filter: grayscale(1) invert(1) contrast(4);
+  mix-blend-mode: screen;
+}
+.lab-family .cn-footer nav a,
+.lab-family .cn-footer .cn-footer-brand > a:not(.cn-footer-wordmark) {
+  min-height: 44px;
+  padding-block: 8px;
+}
+.lab-family .cn-footer .cn-footer-bottom {
+  margin-top: 24px;
+  padding-top: 12px;
+  border-top-color: #ffffff33;
+  gap: 8px 24px;
+  line-height: 1.7;
+}
+
+@media (max-width: 1099px) {
+  html[lang="zh-CN"] .lab-page #main-content > .lab-hero.lab-hero-screen {
+    --lab-header-height: 77px;
+  }
+}
+@media (max-width: 760px) {
+  html[lang="zh-CN"] .lab-page #main-content > .lab-hero.lab-hero-screen {
+    min-height: 360px;
+  }
+  .lab-page .lab-hero-screen .lab-hero-heading { top: 10%; }
+  html[lang="zh-CN"] .lab-page #main-content > .lab-hero-screen #lab-title {
+    font-size: clamp(28px, 6.6vw, 40px);
+    line-height: 1.5;
+  }
+  .lab-page .lab-hero-screen .lab-hero-media > :is(video, img) {
+    object-fit: cover;
+    object-position: center 62%;
+  }
+  html[lang="zh-CN"] body.lab-family .cn-footer { padding-top: 32px; }
+  .lab-family .cn-footer .cn-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .lab-family .cn-footer .cn-footer-brand { grid-column: 1 / -1; }
+  .lab-family .cn-footer .cn-footer-wordmark.brand-arts { max-width: 160px; }
+  .lab-family .cn-footer .cn-footer-wordmark.brand-arts .brand-logo-image { width: 160px; }
+  .lab-family .cn-footer .cn-footer-bottom { margin-top: 20px; }
+}
+/* A compact motion control keeps the opening to one sentence. */
+.lab-page .lab-hero-screen .lab-hero-motion-toggle {
+  position: absolute;
+  z-index: 3;
+  right: 6%;
+  bottom: 24px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 12px;
+  border: 1px solid #ffffff70;
+  border-radius: 50%;
+  color: #fff;
+  background: #1115;
+}
+.lab-page .lab-hero-screen .lab-hero-motion-toggle[hidden] { display: none; }
+.lab-hero-motion-toggle svg { width: 18px; height: 18px; fill: currentColor; }
+.lab-hero-motion-toggle [data-play], .lab-hero-motion-toggle[data-paused="true"] [data-pause] { display: none; }
+.lab-hero-motion-toggle[data-paused="true"] [data-play] { display: block; }
+.lab-page .lab-hero-screen[data-motion="unavailable"] .lab-hero-video { display: none; }
+.lab-page .lab-hero-screen[data-motion="unavailable"] .lab-hero-poster { display: block; }
+.lab-family .cn-footer .cn-footer-bottom { padding-inline-end: 64px; }
+.lab-family .cn-footer .cn-security-record { white-space: normal; }
+.lab-family .cn-footer .cn-security-record span { overflow-wrap: anywhere; }
+html.lab-footer-visible .lab-family .home-chat-launcher .home-chat-entry {
+  min-width: 48px;
+  min-height: 48px;
+  justify-content: center;
+  padding: 11px;
+}
+html.lab-footer-visible .lab-family .home-chat-launcher .home-chat-entry > span,
+html.lab-footer-visible .lab-family .home-chat-launcher .home-chat-hide-button { display: none; }
+@media (max-height: 500px) and (orientation: landscape) {
+  html[lang="zh-CN"] .lab-page #main-content > .lab-hero.lab-hero-screen {
+    min-height: 260px;
+  }
+  .lab-page .lab-hero-screen .lab-hero-heading { top: 10%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lab-page .lab-hero-screen .lab-hero-video { display: none; }
+  .lab-page .lab-hero-screen .lab-hero-poster { display: block; }
+}

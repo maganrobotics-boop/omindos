@@ -1,0 +1,145 @@
+/* Full-width MUJI bands follow the content categories. */
+html[lang="zh-CN"] .lab-page #main-content > #results,
+html[lang="zh-CN"] .lab-page #main-content .lab-band-light {
+  --lab-paper: #faf9f6;
+  --lab-card: #faf9f6;
+  --lab-stage: #f0ede7;
+  --lab-ink: #30302d;
+  --lab-muted: #68665f;
+  --lab-line: #dcd8d0;
+  --lab-olive: #635640;
+  --lab-dark: #292a26;
+  --lab-focus: #8d7653;
+  color-scheme: light;
+}
+html[lang="zh-CN"] .lab-page #main-content .lab-band-dark {
+  --lab-paper: #292a26;
+  --lab-card: #292a26;
+  --lab-stage: #232420;
+  --lab-ink: #f5f3ef;
+  --lab-muted: #ccc7bc;
+  --lab-line: #ffffff2b;
+  --lab-olive: #ccc7bc;
+  --lab-dark: #292a26;
+  --lab-focus: #c3ad85;
+  color-scheme: dark;
+}
+html[lang="zh-CN"] .lab-page #main-content > #results {
+  padding: 0;
+  background: var(--lab-paper);
+  color: var(--lab-ink);
+}
+html[lang="zh-CN"] .lab-page #main-content .lab-band {
+  margin: 0;
+  padding-block: 72px;
+  border: 0;
+  border-radius: 0;
+  background: var(--lab-paper);
+  color: var(--lab-ink);
+  scroll-margin-top: 88px;
+}
+.lab-page #results .lab-results-intro { padding-top: 72px; }
+.lab-page #results .lab-results-intro .lab-results-nav {
+  margin-bottom: 0;
+  padding-bottom: 20px;
+}
+html[lang="zh-CN"] .lab-page #main-content #lab-publications { padding-top: 40px; }
+.lab-page #results .lab-result-group-heading { margin-bottom: 28px; }
+.lab-page #results .lab-band > .lab-wrap > .lab-chronology > li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.lab-page #main-content .lab-band :is(a, summary, button):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+.lab-page #main-content .lab-band-dark a:hover { color: #fff; }
+.lab-page #main-content > #results .lab-band-light a:hover,
+.lab-page #main-content > #results .lab-results-intro a:hover { color: #635640; }
+
+/* Platform images keep their own light canvas on the charcoal band. */
+.lab-page #main-content > #research-platforms .lab-platforms-heading { margin-bottom: 32px; }
+.lab-page #main-content > #research-platforms .lab-platforms-heading h2 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.5;
+  font-weight: 400;
+}
+.lab-page #main-content > #research-platforms .lab-platforms-heading > p {
+  max-width: 48em;
+  margin-top: 16px;
+  color: var(--lab-muted);
+  font-size: 16px;
+  line-height: 1.9;
+}
+.lab-page #research-platforms .lab-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+.lab-page #research-platforms .lab-platform-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-bottom: 1px solid var(--lab-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.lab-page #research-platforms .lab-platform-card figure { margin: 0; }
+.lab-page #research-platforms .lab-platform-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.5;
+  object-fit: contain;
+  background: #f5f3ef;
+  mix-blend-mode: normal;
+}
+.lab-page #research-platforms .lab-platform-card figcaption,
+.lab-page #research-platforms .lab-platform-model,
+.lab-page #research-platforms .lab-platform-note {
+  color: var(--lab-muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.lab-page #research-platforms .lab-platform-card figcaption { padding-top: 10px; }
+.lab-page #research-platforms .lab-platform-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-block: 24px;
+}
+.lab-page #research-platforms .lab-platform-copy .lab-platform-model { margin-bottom: 6px; }
+.lab-page #research-platforms .lab-platform-copy h3 { font-size: 22px; line-height: 1.6; }
+.lab-page #research-platforms .lab-platform-copy > p:not(.lab-platform-model) {
+  margin-block: 14px 18px;
+  color: var(--lab-muted);
+  font-size: 16px;
+  line-height: 1.9;
+}
+.lab-page #research-platforms .lab-platform-copy .lab-result-link {
+  margin-top: auto;
+  color: var(--lab-ink);
+  border-bottom-color: #aaa59b;
+}
+.lab-page #research-platforms .lab-platform-copy .lab-result-link:hover { color: #fff; }
+.lab-page #research-platforms .lab-platform-note { margin-top: 24px; }
+.lab-page #main-content > #results .lab-results-demos .lab-result-grid {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+@media (max-width: 850px) {
+  .lab-page #research-platforms .lab-platform-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .lab-page #research-platforms .lab-platform-card img { max-height: 320px; }
+}
+@media (max-width: 760px) {
+  html[lang="zh-CN"] .lab-page #main-content .lab-band { padding-block: 48px; scroll-margin-top: 80px; }
+  .lab-page #results .lab-results-intro { padding-top: 48px; }
+  html[lang="zh-CN"] .lab-page #main-content #lab-publications { padding-top: 28px; }
+  .lab-page #main-content > #research-platforms .lab-platforms-heading > p,
+  .lab-page #research-platforms .lab-platform-copy > p:not(.lab-platform-model) { font-size: 15px; }
+}
