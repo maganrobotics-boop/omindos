@@ -61,6 +61,20 @@ test('default upstream fetch retains the native Workers global receiver', async 
   } finally { globalThis.fetch = original; }
 });
 
+test('edge-compatible manual redirects never forward a guest cookie to another host', async () => {
+  const calls = [];
+  const response = await handle(request(), { fetch: async (url, init) => {
+    assert.ok(['manual', 'follow'].includes(init.redirect), 'workerd rejects redirect:error before I/O');
+    assert.equal(init.redirect, 'manual');
+    calls.push(url);
+    return new Response(null, { status: 302, headers: { Location: 'https://other.example/private' } });
+  } });
+  assert.equal(response.status, 502);
+  assert.deepEqual(calls, ['https://omindos.cn/learning/api/account/session']);
+  assert.equal(response.headers.get('Location'), null);
+  assert.equal(response.headers.get('Set-Cookie'), null);
+});
+
 test('upstream fetch failures expose only fixed runtime or connection codes', async () => {
   for (const [message, code] of [['Illegal invocation: private details', 'upstream_runtime'], ['private network details', 'upstream_connection']]) {
     const response = await handle(request(), { fetch: async () => { throw new TypeError(message); } });
@@ -80,7 +94,7 @@ test('new anonymous session maps only the upstream guest cookie and exposes no p
   assert.equal(response.headers.get('Set-Cookie'), `${cookieName}=${nextToken}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=31536000`);
   assert.equal(u.calls[0].url, 'https://omindos.cn/learning/api/account/session');
   assert.deepEqual([...u.calls[0].headers], [['accept', 'application/json']]);
-  assert.equal(u.calls[0].redirect, 'error');
+  assert.equal(u.calls[0].redirect, 'manual');
 });
 
 test('POST revalidates a guest, constructs fixed upstream credentials and filters response fields', async () => {
@@ -104,7 +118,7 @@ test('POST revalidates a guest, constructs fixed upstream credentials and filter
     ['accept', 'application/json'], ['content-type', 'application/json'], ['cookie', `${domesticCookie}=${token}`], ['origin', 'https://omindos.cn'], ['x-omindos-expected-account', guest.id],
   ]);
   assert.deepEqual(JSON.parse(u.calls[1].body), { ...question, conversationToken: 'previous-token' });
-  assert.equal(u.calls[1].redirect, 'error');
+  assert.equal(u.calls[1].redirect, 'manual');
 });
 
 test('both endpoints reject cross-site, sibling-site, missing provenance and untrusted hosts before fetching', async () => {
