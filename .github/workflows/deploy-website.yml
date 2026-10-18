@@ -125,7 +125,7 @@ jobs:
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && 'ec6e1a1179ed42205bc2f93a1d991a00a1848a5c' || '' }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && 'f9afb961996b2374dafb897ef2eec77dedc96ed6' || '' }}
         run: node scripts/check-website-project.mjs
       - name: Preserve legacy baseline and prepare isolated filtered statistics
         if: inputs.statistics_mode != 'preserve-current'
