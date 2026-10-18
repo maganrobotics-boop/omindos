@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#faf9f6">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>Ask about OriginMind</title>
+  <link rel="stylesheet" href="./chat.css?v=20261018-panel">
+  <script src="./chat.js?v=20261018-panel" defer></script>
+</head>
+<body>
+  <div class="chat-app">
+    <header class="chat-header">
+      <div class="chat-brand"><span class="brand-dot" aria-hidden="true"></span><span>OriginMind</span><span class="chat-label">Assistant</span></div>
+      <div class="chat-actions" id="chat-actions"><button class="new-chat" id="new-chat" type="button">New chat</button></div>
+    </header>
+    <main class="chat-main" id="chat-main">
+      <div class="chat-welcome" id="welcome">
+        <p class="eyebrow">Start a conversation</p>
+        <h1>Ask about OriginMind.</h1>
+        <p>Explore our robots, OmindOS software and research at ARTS Robotics.</p>
+        <p class="session-note">No sign-in is needed. Your conversation stays here while you switch between the small window and fullscreen.</p>
+      </div>
+      <noscript><p>Please enable JavaScript to use this chat.</p></noscript>
+      <div class="messages" id="messages" role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text"></div>
+    </main>
+    <div class="composer-area">
+      <p class="chat-status" id="chat-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <form class="composer" id="chat-form" novalidate>
+        <label for="question">Your question</label>
+        <div class="composer-controls">
+          <textarea id="question" name="question" rows="2" maxlength="4000" autocomplete="off" spellcheck="true" placeholder="What would you like to know?" aria-describedby="input-help character-count" required></textarea>
+          <button class="send-button" id="send" type="submit" disabled>Send</button>
+        </div>
+        <div class="input-meta"><span id="input-help">Enter to send · Shift + Enter for a new line</span><span id="character-count" aria-live="off">0 / 4,000</span></div>
+      </form>
+      <p class="answer-note">Ask about our robots, software and research.</p>
+    </div>
+  </div>
+</body>
+</html>
+

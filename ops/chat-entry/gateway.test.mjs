@@ -26,6 +26,26 @@ test('same-origin protection remains enforced and untrusted identity headers are
  const h=upstreamHeaders(new Headers({origin:'https://omindos.cn','cf-connecting-ip':'spoof','oai-authenticated-user-email':'spoof','x-omindos-client-ip':'spoof'}),'1.2.3.4');
  assert.equal(h.get('origin'),'https://chat.omindos.cn');assert.equal(h.get('cf-connecting-ip'),null);assert.equal(h.get('oai-authenticated-user-email'),null);assert.equal(h.get('x-omindos-client-ip'),'1.2.3.4');
 });
+test('only a well-formed expected-account comparison guard reaches the upstream',async()=>{
+ for(const expected of ['guest_account_1234567890','A'.repeat(16),'b'.repeat(160)]){
+  const headers=upstreamHeaders(new Headers({'x-omindos-expected-account':expected,authorization:'Bearer spoof','x-omindos-account':'spoof','x-omindos-account-id':'spoof','x-omindos-user-id':'spoof','oai-authenticated-user-email':'spoof','x-omindos-chat-entry':'spoof'}));
+  assert.equal(headers.get('x-omindos-expected-account'),expected);
+  for(const name of ['authorization','x-omindos-account','x-omindos-account-id','x-omindos-user-id','oai-authenticated-user-email'])assert.equal(headers.get(name),null);
+  assert.equal(headers.get('x-omindos-chat-entry'),'1');
+ }
+ for(const expected of ['', 'short','a'.repeat(161),'account/1234567890','account.1234567890','first_account_1234, second_account_1234']){
+  assert.equal(upstreamHeaders(new Headers({'x-omindos-expected-account':expected})).get('x-omindos-expected-account'),null);
+ }
+ assert.equal(upstreamHeaders(new Headers()).get('x-omindos-expected-account'),null);
+ const expected='guest_account_1234567890';
+ const response=await handle(new Request('https://omindos.cn/learning/api/chat',{method:'POST',headers:{origin:'https://omindos.cn','x-omindos-expected-account':expected},body:'{}'}),async(url,init)=>{
+  assert.equal(String(url),'https://chat.omindos.cn/learning/api/chat');
+  assert.equal(init.headers.get('x-omindos-expected-account'),expected);
+  assert.equal(init.headers.get('origin'),'https://chat.omindos.cn');
+  return Response.json({accepted:true});
+ });
+ assert.equal(response.status,200);
+});
 test('upstream target is fixed; redirects, multiple cookies and dynamic payloads survive',async()=>{
  let seen;
  const upstream=async(url,init)=>{seen={url:String(url),init};return new Response('{"answer":"/api/private https://chat.omindos.cn"}',{headers:{'Content-Type':'application/json','Set-Cookie':'session=x; Path=/; Secure; HttpOnly'}});};

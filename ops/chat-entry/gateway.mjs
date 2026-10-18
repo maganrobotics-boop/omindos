@@ -47,6 +47,10 @@ export function upstreamHeaders(input, clientIp = '') {
     const value = input.get(name);
     if (value !== null) headers.set(name, value);
   }
+  // A comparison guard, not an identity assertion: the backend still resolves
+  // the account from its own session and rejects a different expected account.
+  const expectedAccount = input.get('x-omindos-expected-account');
+  if (/^[A-Za-z0-9_-]{16,160}$/.test(expectedAccount || '')) headers.set('x-omindos-expected-account', expectedAccount);
   const origin = input.get('origin');
   if (origin) headers.set('origin', origin === PUBLIC_ORIGIN ? UPSTREAM_ORIGIN : origin);
   const referer = input.get('referer');

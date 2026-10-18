@@ -22,6 +22,8 @@ on:
       - 'scripts/prepare-website-review.py'
       - 'tests/international-english-only.test.mjs'
       - 'tests/english-chat-ui.test.mjs'
+      - 'tests/english-chat-proxy.test.mjs'
+      - 'tests/english-chat-widget.test.mjs'
       - 'tests/test_international_artifact.py'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
@@ -47,6 +49,8 @@ on:
       - 'scripts/prepare-website-review.py'
       - 'tests/international-english-only.test.mjs'
       - 'tests/english-chat-ui.test.mjs'
+      - 'tests/english-chat-proxy.test.mjs'
+      - 'tests/english-chat-widget.test.mjs'
       - 'tests/test_international_artifact.py'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
@@ -96,7 +100,7 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
+        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/english-chat-proxy.test.mjs tests/english-chat-widget.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
@@ -125,7 +129,7 @@ jobs:
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && '09ba1f0abd6619d2944b4b92b1b2b05d232ee289' || '' }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || '' }}
         run: node scripts/check-website-project.mjs
       - name: Preserve legacy baseline and prepare isolated filtered statistics
         if: inputs.statistics_mode != 'preserve-current'
