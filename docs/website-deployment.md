@@ -48,7 +48,7 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 ### 英文页面独立发布（2026-10-18）
 
-当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：本轮预检核对线上为已验证的 `437ca28bdc51333b19d76726e782f35c9ac6a545`，production deployment 为 `a40adee8-9fd1-4afc-bec8-bf62aab1e062`，依据成功的生产工作流 `39113038784`。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
+当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：`release_source=current-main` 的本轮预检核对线上为已验证的 `54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0`，production deployment 为 `61e4af76-95a1-4b22-9343-3b3799dcbd20`，依据已成功的两项校赛获奖删除发布（[工作流 #401](https://github.com/maganrobotics-boop/omindos/actions/runs/39114883926)）。`awards-only-20261018` 保留原 `437ca28bdc51333b19d76726e782f35c9ac6a545` 前置条件，因此不会在该快照已上线后再次发布。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
 
 保留模式使用独立的 portal-client 缓存版本参数，避免以后启用 v2 时复用旧采集脚本。除该资源版本外，英文页面保持源码内容。适配器及最终产物测试核验旧表写入、公开读取限制、英文与中文跳转和资源一致性；项目/域名/数据库绑定、部署 ID、提交和线上检查继续执行。若线上提交改变，发布前失败，必须先核对新生产版本。默认 `filtered-v2` 模式继续保留原有 D1 基线、迁移与报告检查；不得仅跳过迁移并发布依赖 v2 表的 Worker。回滚仍为发布前记录的生产 deployment。
 
@@ -74,4 +74,5 @@ Cloudflare 发布令牌保存在 GitHub Actions 的 CLOUDFLARE_API_TOKEN Secret�
 v2 将 `accepted_unknown`、`accepted_scored` 页面事件与四类排除事件分别汇总。Cloudflare verifiedBot、1–29 分数（corporateProxy 除外）、明确爬虫或自动化工具 User-Agent，以及预取请求只从统计中排除，网页仍正常提供。只信任平台 `request.cf.botManagement`，不信任同名 HTTP 请求头。缺少评分或分数为 0 时按未知处理，accepted 并不证明真人。当前 Cloudflare 套餐是否提供评分仍须控制台核验；User-Agent 可伪造，过滤结果也不能作真实用户数。浏览器可见性与文档内防重复只减少预取和同页重复采集，不进行跨页去重。
 
 旧 `visit_totals`、`visit_country` 和 `visit_recent` 留作“历史未过滤页面加载次数”，不得与 v2 相加展示为同一口径，也不能将 Cloudflare 全站自动化请求百分比乘入旧计数来修正。旧数据只有汇总，没有足够信息回算真人数。v2 的 `visit_collection_v2.first_event_at` 是该版本首条事件时间，迁移执行时间不等于新口径采集开始时间。分钟聚合保留约两天，累计分类及国家汇总长期保留。回滚只恢复旧部署，不删除 v2 表；旧版本恢复期间的数据仍属于旧口径。
+
 
