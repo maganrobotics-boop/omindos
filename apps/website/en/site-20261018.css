@@ -114,6 +114,15 @@ html[lang="en"] body.en-site {
 @media (prefers-reduced-motion:reduce) { html[lang="en"] { scroll-behavior: auto; } }
 
 /* English headings remain complete on one line across all page layouts. */
+/* Grid/flex items must be allowed to shrink before headings are measured.
+   Zero specificity preserves intentional minimum widths, including scrollable
+   tables and fixed-size cards, while resetting automatic text-content minima. */
+:where(.en-site main, .en-site .en-footer) :where(
+  section, article, div, header, footer, aside, figure, figcaption,
+  ul, ol, li, dl, dt, dd, details, summary, form, fieldset, label, a
+) {
+  min-width: 0;
+}
 .en-site :is(h1,h2,h3,h4,h5,h6) {
   min-width: 0;
   max-width: 100% !important;
