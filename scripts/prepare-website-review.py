@@ -19,8 +19,23 @@ label{display:grid;gap:6px}select{min-height:42px;font:inherit;padding:7px;max-w
 .canvas{overflow:auto;max-width:100%;padding:0 0 20px}.note{font-size:13px;color:#62625b;margin:8px 0 18px}
 </style></head><body><h1>English responsive layout review</h1><p class="note">Public preview. This page is generated only for layout review and is excluded from production.</p>
 <div class="controls"><label>Page<select id="page">__OPTIONS__</select></label><label>Viewport width<select id="width"><option>320</option><option selected>390</option><option>768</option><option>1280</option></select></label></div>
+<output id="review-ready" aria-live="polite">Loading layout</output>
 <div class="canvas"><iframe title="Responsive website preview" src="/en/"></iframe></div>
-<script>const page=document.getElementById('page'),width=document.getElementById('width'),frame=document.querySelector('iframe');page.addEventListener('change',()=>{frame.src=page.value});width.addEventListener('change',()=>{frame.style.width=width.value+'px'});</script></body></html>'''
+<script>
+const page=document.getElementById('page'),width=document.getElementById('width'),frame=document.querySelector('iframe'),ready=document.getElementById('review-ready');
+let revision=0;
+const measure=async()=>{
+  const current=++revision;
+  ready.removeAttribute('data-path');ready.textContent='Loading layout';
+  await frame.contentDocument.fonts.ready;
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  if(current!==revision)return;
+  ready.dataset.path=page.value;ready.dataset.width=width.value;ready.textContent='Layout ready';
+};
+frame.addEventListener('load',measure);
+page.addEventListener('change',()=>{++revision;ready.removeAttribute('data-path');frame.src=page.value});
+width.addEventListener('change',()=>{frame.style.width=width.value+'px';measure()});
+</script></body></html>'''
 target = root / 'en/assets/layout-review.html'
 target.parent.mkdir(parents=True, exist_ok=True)
 target.write_text(page.replace('__OPTIONS__', options))
