@@ -42,6 +42,15 @@ on:
       - 'scripts/verify-website-live.mjs'
       - '.github/workflows/deploy-website.yml'
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Preview first, then publish production after visual acceptance'
+        type: choice
+        required: true
+        default: preview
+        options:
+          - preview
+          - production
 
 permissions:
   contents: read
@@ -79,7 +88,7 @@ jobs:
 
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && needs.test.outputs.deploy_international == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.target == 'production' && needs.test.outputs.deploy_international == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
@@ -130,5 +139,48 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/website-visit-stats.mjs --report
+
+  preview:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.target == 'preview'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_ACCOUNT_ID: '41e8b3404be24e1dd288556d77ffc951'
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Record current production and verify the existing project
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/check-website-preview.mjs --before
+      - name: Restore approved product demo media
+        run: python3 scripts/prepare-product-demo-media.py
+      - name: Prepare English preview
+        run: python3 scripts/prepare-international-artifact.py apps/website /tmp/omindos-english-preview
+      - name: Publish public preview on an isolated branch
+        id: publish
+        uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ env.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.129.0'
+          command: >-
+            pages deploy /tmp/omindos-english-preview
+            --project-name omindos-website
+            --branch english-review
+            --commit-hash ${{ github.sha }}
+            --commit-message "English website visual review"
+            --commit-dirty=false
+      - name: Verify preview commit and unchanged production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          EXPECTED_DEPLOYMENT_ID: ${{ steps.publish.outputs.pages-deployment-id }}
+        run: node scripts/check-website-preview.mjs --after
 
 

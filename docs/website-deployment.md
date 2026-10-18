@@ -34,7 +34,7 @@ omindos.cn 由腾讯服务器 Nginx 提供，根目录为 /var/www/omindos.cn/cu
 工作流：.github/workflows/deploy-website.yml。
 目标：现有 Cloudflare Pages 项目 omindos-website，正式域名 https://omindos.ai。
 
-Push 和 Pull Request 只执行验证，deploy job 跳过。中文站验收完成后，在 GitHub Actions 的 Deploy website 中选择 Run workflow，分支必须为 main；这会对当前 main 重新测试并发布国际站。
+Push 和 Pull Request 只执行验证，发布 job 跳过。英文视觉验收使用同一工作流的 `target=preview`，分支必须为 main，仅发布 `english-review` 预览分支；该预览公开可访问，不是私有预览，前后核对 production deployment 未变。预览域名不采集正式站访问统计，也不执行生产 D1 迁移。视觉验收完成后，选择 `target=production`，对当前 main 重新测试并发布国际站；原有生产 D1 权限和迁移检查保持不变。
 
 script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可以发布。测试、项目/域名/D1绑定检查、部署commit核对和线上检查继续执行。
 
