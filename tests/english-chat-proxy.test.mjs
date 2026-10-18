@@ -322,13 +322,28 @@ test('malformed, HTML and oversized successful chat responses are rejected', asy
 });
 
 test('only the local panel HTML receives same-origin framing permission and no-store', async () => {
-  const env = { ASSETS: { fetch: async () => new Response('<html>panel</html>', { headers: { 'Content-Type': 'text/html', 'Content-Security-Policy': "frame-ancestors 'none'", 'X-Frame-Options': 'DENY' } }) } };
-  const panel = await worker.fetch(new Request(base + '/en/assets/english-chat/panel.html'), env);
-  assert.equal(panel.headers.get('Content-Security-Policy'), "frame-ancestors 'self'");
-  assert.equal(panel.headers.get('X-Frame-Options'), 'SAMEORIGIN');
-  assert.equal(panel.headers.get('Cache-Control'), 'no-store');
-  assert.equal(panel.headers.get('X-Content-Type-Options'), 'nosniff');
-  const other = await worker.fetch(new Request(base + '/en/assets/other.html'), env);
-  assert.equal(other.headers.get('Content-Security-Policy'), "frame-ancestors 'none'");
-  assert.equal(other.headers.get('X-Frame-Options'), 'DENY');
+  const inherited = { 'Content-Type': 'text/html', 'Content-Security-Policy': "frame-ancestors 'none'", 'X-Frame-Options': 'DENY', 'Cache-Control': 'public, max-age=3600' };
+  const location = '/en/assets/english-chat/panel?v=test';
+  const env = { ASSETS: { fetch: async request => {
+    if (new URL(request.url).pathname.endsWith('/panel.html')) return new Response(null, { status: 308, headers: { ...inherited, Location: location } });
+    return new Response(request.method === 'HEAD' ? null : '<html>panel</html>', { headers: inherited });
+  } } };
+  for (const method of ['GET', 'HEAD']) {
+    for (const path of ['/en/assets/english-chat/panel.html', '/en/assets/english-chat/panel']) {
+      const panel = await worker.fetch(new Request(base + path + '?v=test', { method }), env);
+      assert.equal(panel.status, path.endsWith('.html') ? 308 : 200);
+      assert.equal(panel.headers.get('Content-Security-Policy'), "frame-ancestors 'self'");
+      assert.equal(panel.headers.get('X-Frame-Options'), 'SAMEORIGIN');
+      assert.equal(panel.headers.get('Cache-Control'), 'no-store');
+      assert.equal(panel.headers.get('X-Content-Type-Options'), 'nosniff');
+      if (path.endsWith('.html')) assert.equal(panel.headers.get('Location'), location);
+      if (method === 'HEAD') assert.equal(await panel.text(), '');
+    }
+  }
+  for (const path of ['/en/assets/other.html', '/en/assets/english-chat/panel.js']) {
+    const other = await worker.fetch(new Request(base + path), env);
+    assert.equal(other.headers.get('Content-Security-Policy'), "frame-ancestors 'none'");
+    assert.equal(other.headers.get('X-Frame-Options'), 'DENY');
+  }
 });
+

@@ -761,7 +761,7 @@ export default {
     // Locale media must bypass page routing, including same-origin English captions.
     if (/^\/(?:cn|en)\/(?:assets\/|[^/]+\.(?:css|js)$)/.test(url.pathname)) {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
-      if (url.pathname === '/en/assets/english-chat/panel.html') {
+      if (/^\/en\/assets\/english-chat\/panel(?:\.html)?$/.test(url.pathname)) {
         const response = await env.ASSETS.fetch(request);
         const headers = new Headers(response.headers);
         headers.set('Content-Security-Policy', "frame-ancestors 'self'");
@@ -809,4 +809,5 @@ export default {
     return legacyWorker.fetch(new Request(request, { headers }), env);
   },
 };
+
 

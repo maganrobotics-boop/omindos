@@ -48,7 +48,7 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 ### 英文页面独立发布（2026-10-18）
 
-当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：`release_source=current-main` 的本轮预检核对线上为已验证的 `54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0`，production deployment 为 `61e4af76-95a1-4b22-9343-3b3799dcbd20`，依据已成功的两项校赛获奖删除发布（[工作流 #401](https://github.com/maganrobotics-boop/omindos/actions/runs/39114883926)）。`awards-only-20261018` 保留原 `437ca28bdc51333b19d76726e782f35c9ac6a545` 前置条件，因此不会在该快照已上线后再次发布。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
+当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：`release_source=current-main` 的本轮预检核对线上为已验证的 `d2ac037f90175bb3a251118e4cadcf23ce4ba3cd`，production deployment 为 `2ce20ddc-bf19-4654-b856-54e83829cc18`，依据已成功的英文聊天小窗发布（[工作流 #404](https://github.com/maganrobotics-boop/omindos/actions/runs/39115477379)）。`awards-only-20261018` 保留原 `437ca28bdc51333b19d76726e782f35c9ac6a545` 前置条件，因此不会在该快照已上线后再次发布。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
 
 保留模式使用独立的 portal-client 缓存版本参数，避免以后启用 v2 时复用旧采集脚本。除该资源版本外，英文页面保持源码内容。适配器及最终产物测试核验旧表写入、公开读取限制、英文与中文跳转和资源一致性；项目/域名/数据库绑定、部署 ID、提交和线上检查继续执行。若线上提交改变，发布前失败，必须先核对新生产版本。默认 `filtered-v2` 模式继续保留原有 D1 基线、迁移与报告检查；不得仅跳过迁移并发布依赖 v2 表的 Worker。回滚仍为发布前记录的生产 deployment。
 
