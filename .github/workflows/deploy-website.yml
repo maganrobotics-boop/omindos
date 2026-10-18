@@ -12,6 +12,8 @@ on:
       - 'tests/website-visits.test.mjs'
       - 'migrations/website/0003_filtered_visit_stats.sql'
       - 'scripts/website-visit-stats.mjs'
+      - 'scripts/preserve-website-statistics.mjs'
+      - 'tests/preserve-website-statistics.test.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
@@ -33,6 +35,8 @@ on:
       - 'tests/website-visits.test.mjs'
       - 'migrations/website/0003_filtered_visit_stats.sql'
       - 'scripts/website-visit-stats.mjs'
+      - 'scripts/preserve-website-statistics.mjs'
+      - 'tests/preserve-website-statistics.test.mjs'
       - 'tests/website-release-scope.test.mjs'
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
@@ -53,6 +57,14 @@ on:
         options:
           - preview
           - production
+      statistics_mode:
+        description: 'Preserve the pinned live collector for a page-only release, or prepare filtered v2 with D1 permissions'
+        type: choice
+        required: true
+        default: filtered-v2
+        options:
+          - filtered-v2
+          - preserve-current
 
 permissions:
   contents: read
@@ -79,7 +91,7 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs ops/chat-entry/gateway.test.mjs
+        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
@@ -100,14 +112,17 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && '9a76b841d330f43fab07566875949714afee3995' || '' }}
         run: node scripts/check-website-project.mjs
       - name: Preserve legacy baseline and prepare isolated filtered statistics
+        if: inputs.statistics_mode != 'preserve-current'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/website-visit-stats.mjs --prepare
@@ -115,6 +130,11 @@ jobs:
         run: python3 scripts/prepare-product-demo-media.py
       - name: Prepare English site and domestic redirects
         run: python3 scripts/prepare-international-artifact.py apps/website /tmp/omindos-international
+      - name: Retain the existing production statistics for this page-only release
+        if: inputs.statistics_mode == 'preserve-current'
+        run: |
+          node scripts/preserve-website-statistics.mjs /tmp/omindos-international
+          WEBSITE_ARTIFACT=/tmp/omindos-international node --test tests/preserve-website-statistics.test.mjs
       - name: Publish existing Cloudflare Pages project
         id: publish
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
@@ -138,6 +158,7 @@ jobs:
       - name: Check the public website after deployment
         run: node scripts/verify-website-live.mjs
       - name: Report filtered statistics without recording a synthetic page view
+        if: inputs.statistics_mode != 'preserve-current'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/website-visit-stats.mjs --report
@@ -186,5 +207,6 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           EXPECTED_DEPLOYMENT_ID: ${{ steps.publish.outputs.pages-deployment-id }}
         run: node scripts/check-website-preview.mjs --after
+
 
 
