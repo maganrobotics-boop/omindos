@@ -1,6 +1,9 @@
 # English website chat
 
-The English website opens this first-party chat page in a separate window:
+The English website opens a retained same-origin chat panel by default, with
+explicit Fullscreen, Small window and Collapse controls. Its local assets are
+under `apps/website/en/assets/english-chat/`. The existing first-party standalone
+page remains available as the recovery link or a modified click:
 `https://omindos.cn/chat/assets/english-chat/index.html?v=20261018-2`.
 
 The existing Chat service reads these four files from
@@ -11,7 +14,7 @@ service restart. Stage the complete directory, check its hashes, and rename it
 into place only when the destination is absent. A later update must retain a
 copy of the previous directory before replacement.
 
-The existing static route uses a one-year immutable cache. Each release must
+The existing domestic static route uses a one-year immutable cache. Each release must
 bump the entry URL version in the English website launcher and the matching
 query versions on `chat.css`, `chat.js` and `account-link.js` inside `index.html`.
 Keep the service cache policy unchanged.
@@ -27,7 +30,27 @@ Requests use the existing `/learning/api/chat` schema. The visible question is
 preserved; the submitted question adds an instruction to answer in English.
 The service already supports an explicit language request. No new `language`
 field, permission, CORS rule, credential, iframe exception or backend change is
-needed. The first-party window preserves the existing SameSite cookie rules.
+needed for the standalone page. That first-party window preserves the existing
+SameSite cookie rules.
+
+The international panel uses the same tested question/response UI with only its
+API and scope-import paths changed. Its `/api/english-chat/session` and
+`/api/english-chat` endpoints map a dedicated HttpOnly, Secure, SameSite=Lax
+guest cookie to the existing domestic account broker. The proxy checks guest
+kind on every request, verifies the expected account before sending a question,
+and never forwards domestic login cookies or Authorization headers. Private
+accounts, arbitrary upstream URLs, cross-origin calls and additional API routes
+are rejected. Domestic framing, CORS, cookie policies and the 25/h upstream
+chat limit remain in force. The gateway forwards only a well-formed expected
+account comparison header; the backend still owns authentication. Deploy this
+small gateway fix from the current live gateway, preserving subsequent live
+subtitle work, before verifying international chat.
+
+The embedded `panel.html` is noindex and permits only same-origin framing. The
+panel retains one iframe across size changes and collapse/reopen. Navigation
+restoration reconnects the document after BFCache; it does not persist messages
+in browser storage. Each English HTML page loads a fresh version of the site
+bootstrap so existing immutable caches receive the panel controls.
 
 The local `account-link.js` moves the original shared account anchor into the
 header beside New chat and labels it “My account”. It preserves the link target

@@ -22,6 +22,8 @@ on:
       - 'scripts/prepare-website-review.py'
       - 'tests/international-english-only.test.mjs'
       - 'tests/english-chat-ui.test.mjs'
+      - 'tests/english-chat-proxy.test.mjs'
+      - 'tests/english-chat-widget.test.mjs'
       - 'tests/test_international_artifact.py'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
@@ -47,6 +49,8 @@ on:
       - 'scripts/prepare-website-review.py'
       - 'tests/international-english-only.test.mjs'
       - 'tests/english-chat-ui.test.mjs'
+      - 'tests/english-chat-proxy.test.mjs'
+      - 'tests/english-chat-widget.test.mjs'
       - 'tests/test_international_artifact.py'
       - 'scripts/check-website-project.mjs'
       - 'scripts/verify-website-live.mjs'
@@ -96,7 +100,7 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
+        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/english-chat-proxy.test.mjs tests/english-chat-widget.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py

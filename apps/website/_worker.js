@@ -77,6 +77,182 @@ function visitorCountry(request) {
   return typeof country === "string" && /^[A-Z]{2}$/.test(country) ? country : "ZZ";
 }
 
+// The English panel has its own anonymous identity. Never borrow a domestic,
+// OA, registered-account, or browser-supplied Authorization credential.
+const ENGLISH_CHAT_PATH = "/api/english-chat";
+const ENGLISH_CHAT_SESSION_PATH = "/api/english-chat/session";
+const ENGLISH_GUEST_COOKIE = "__Host-omindos-english-guest";
+const DOMESTIC_ACCOUNT_COOKIE = "__Host-omindos-account";
+const ENGLISH_CHAT_UPSTREAM = "https://omindos.cn/learning/api/";
+const ENGLISH_GUEST_TOKEN = /^[a-f0-9]{64}$/;
+const ENGLISH_GUEST_ID = /^[A-Za-z0-9_-]{16,128}$/;
+
+class EnglishChatError extends Error {
+  constructor(status, code, clearCookie = false, retryAfter = null) {
+    super(code);
+    this.status = status;
+    this.code = code;
+    this.clearCookie = clearCookie;
+    this.retryAfter = retryAfter;
+  }
+}
+
+function englishChatHostAllowed(url) {
+  const host = url.hostname.toLowerCase();
+  return url.protocol === "https:" && (["omindos.ai", "www.omindos.ai", "localhost", "127.0.0.1"].includes(host) || host.endsWith(".pages.dev"));
+}
+
+function englishGuestCookie(value, clear = false) {
+  return `${ENGLISH_GUEST_COOKIE}=${clear ? "" : value}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${clear ? 0 : 31536000}`;
+}
+
+function readEnglishGuestCookie(request) {
+  const values = (request.headers.get("Cookie") || "").split(";").map(part => part.trim()).filter(part => part.startsWith(ENGLISH_GUEST_COOKIE + "=")).map(part => part.slice(ENGLISH_GUEST_COOKIE.length + 1));
+  if (values.length > 1 || (values.length === 1 && !ENGLISH_GUEST_TOKEN.test(values[0]))) throw new EnglishChatError(403, "invalid_guest", true);
+  return values[0] || null;
+}
+
+function issuedDomesticGuestCookie(headers) {
+  // getSetCookie is available in current runtimes; the fallback also handles a
+  // combined Set-Cookie field without treating an Expires comma as a cookie.
+  const fields = typeof headers.getSetCookie === "function" ? headers.getSetCookie() : [headers.get("Set-Cookie") || ""];
+  const values = fields.flatMap(field => [...field.matchAll(/(?:^|,\s*)__Host-omindos-account=([^;,]*)/g)].map(match => match[1]));
+  if (values.length > 1 || (values.length === 1 && !ENGLISH_GUEST_TOKEN.test(values[0]))) throw new EnglishChatError(502, "invalid_upstream");
+  return values[0] || null;
+}
+
+async function readEnglishChatJson(message, maximum, invalidStatus, signal) {
+  const declaredLength = message.headers.get("Content-Length");
+  if (declaredLength && (!/^\d+$/.test(declaredLength) || Number(declaredLength) > maximum)) throw new EnglishChatError(invalidStatus === 400 ? 413 : invalidStatus, "body_too_large");
+  if ((message.headers.get("Content-Type") || "").split(";")[0].trim().toLowerCase() !== "application/json") throw new EnglishChatError(invalidStatus === 400 ? 415 : invalidStatus, "invalid_format");
+  const reader = message.body?.getReader();
+  if (!reader) throw new EnglishChatError(invalidStatus, "invalid_json");
+  const chunks = [];
+  let length = 0;
+  const cancel = () => { reader.cancel().catch(() => {}); };
+  signal.addEventListener("abort", cancel, { once: true });
+  try {
+    while (true) {
+      if (signal.aborted) throw new EnglishChatError(504, "upstream_timeout");
+      const { value, done } = await reader.read();
+      if (done) break;
+      length += value.byteLength;
+      if (length > maximum) {
+        await reader.cancel();
+        throw new EnglishChatError(invalidStatus === 400 ? 413 : invalidStatus, "body_too_large");
+      }
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(length);
+    let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+    let data;
+    try { data = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)); }
+    catch { throw new EnglishChatError(invalidStatus, "invalid_json"); }
+    if (!data || typeof data !== "object" || Array.isArray(data)) throw new EnglishChatError(invalidStatus, "invalid_json");
+    return data;
+  } finally {
+    signal.removeEventListener("abort", cancel);
+    reader.releaseLock();
+  }
+}
+
+function englishChatUpstreamError(response) {
+  const status = [400, 401, 403, 409, 413, 429].includes(response.status) ? response.status : 502;
+  const retry = response.headers.get("Retry-After") || "";
+  return new EnglishChatError(status, status === 429 ? "rate_limited" : "upstream_unavailable", status === 401 || status === 403, /^\d{1,5}$/.test(retry) ? retry : null);
+}
+
+function englishChatPayload(data) {
+  if (Object.keys(data).some(key => !["topic", "messages", "conversationToken"].includes(key)) || data.topic !== "research" || !Array.isArray(data.messages) || data.messages.length !== 1) throw new EnglishChatError(400, "invalid_question");
+  const message = data.messages[0];
+  // The local UI prepends a short English-language instruction to a question
+  // of at most 4,000 characters. Never accept caller-provided system messages.
+  if (!message || typeof message !== "object" || Array.isArray(message) || Object.keys(message).some(key => !["role", "content"].includes(key)) || message.role !== "user" || typeof message.content !== "string" || !message.content.trim() || message.content.length > 4400 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/u.test(message.content)) throw new EnglishChatError(400, "invalid_question");
+  const payload = { topic: "research", messages: [{ role: "user", content: message.content }] };
+  if (data.conversationToken !== undefined) {
+    if (typeof data.conversationToken !== "string" || !data.conversationToken || data.conversationToken.length > 40000 || /[\u0000-\u0020\u007f]/u.test(data.conversationToken)) throw new EnglishChatError(400, "invalid_conversation");
+    payload.conversationToken = data.conversationToken;
+  }
+  return payload;
+}
+
+function englishChatPublicAnswer(data) {
+  if (typeof data.answer !== "string" || !data.answer.trim() || data.answer.length > 64000) throw new EnglishChatError(502, "invalid_upstream");
+  const answer = { answer: data.answer };
+  if (data.conversationToken !== undefined) {
+    if (typeof data.conversationToken !== "string" || data.conversationToken.length > 40000 || /[\u0000-\u0020\u007f]/u.test(data.conversationToken)) throw new EnglishChatError(502, "invalid_upstream");
+    answer.conversationToken = data.conversationToken;
+  }
+  if (Array.isArray(data.sources)) {
+    const seen = new Set();
+    answer.sources = data.sources.slice(0, 20).flatMap(source => {
+      if (!source || typeof source !== "object" || typeof source.url !== "string" || source.url.length > 2048 || typeof source.title !== "string" || source.title.length > 300) return [];
+      let url;
+      try { url = new URL(source.url); } catch { return []; }
+      if (url.protocol !== "https:" || url.username || url.password || seen.has(url.href)) return [];
+      seen.add(url.href);
+      return [{ url: url.href, title: source.title }];
+    });
+  }
+  return answer;
+}
+
+// fetch and a short deadline may be injected by unit tests only. Production
+// always calls this handler with the fixed upstream and the default deadline.
+export async function handleEnglishChatRequest(request, { fetch: upstreamFetch = globalThis.fetch, timeoutMs = 55000 } = {}) {
+  const url = new URL(request.url);
+  if (![ENGLISH_CHAT_PATH, ENGLISH_CHAT_SESSION_PATH].includes(url.pathname)) return errorResponse("Not found", 404, "not_found");
+  if (!englishChatHostAllowed(url) || url.search || request.headers.get("Sec-Fetch-Site") !== "same-origin" || (request.headers.has("Origin") && request.headers.get("Origin") !== url.origin)) return errorResponse("Forbidden", 403, "forbidden");
+  const sessionOnly = url.pathname === ENGLISH_CHAT_SESSION_PATH;
+  if (request.method !== (sessionOnly ? "GET" : "POST")) return methodNotAllowed([sessionOnly ? "GET" : "POST"]);
+  if (!sessionOnly && request.headers.get("Origin") !== url.origin) return errorResponse("Forbidden", 403, "forbidden");
+  const controller = new AbortController();
+  let timeout;
+  let responseCookie = null;
+  const disconnect = () => controller.abort();
+  request.signal.addEventListener("abort", disconnect, { once: true });
+  try {
+    const operation = async () => {
+      if (request.signal.aborted) throw new EnglishChatError(504, "upstream_timeout");
+      const token = readEnglishGuestCookie(request);
+      const expected = sessionOnly ? null : request.headers.get("X-OmindOS-Expected-Account");
+      if (!sessionOnly && !ENGLISH_GUEST_ID.test(expected || "")) throw new EnglishChatError(409, "guest_changed");
+      const payload = sessionOnly ? null : englishChatPayload(await readEnglishChatJson(request, 65536, 400, controller.signal));
+      const headers = new Headers({ Accept: "application/json" });
+      if (token) headers.set("Cookie", `${DOMESTIC_ACCOUNT_COOKIE}=${token}`);
+      const sessionResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "account/session", { method: "GET", headers, redirect: "error", signal: controller.signal });
+      if (!sessionResponse.ok) throw englishChatUpstreamError(sessionResponse);
+      const data = await readEnglishChatJson(sessionResponse, 16384, 502, controller.signal);
+      if (data.account?.kind !== "guest") throw new EnglishChatError(403, "guest_required", true);
+      if (typeof data.account.id !== "string" || !ENGLISH_GUEST_ID.test(data.account.id)) throw new EnglishChatError(502, "invalid_upstream");
+      const issued = issuedDomesticGuestCookie(sessionResponse.headers);
+      const guestToken = issued || token;
+      if (!guestToken) throw new EnglishChatError(502, "invalid_upstream");
+      if (issued) responseCookie = englishGuestCookie(issued);
+      if (sessionOnly) return { account: { id: data.account.id, kind: "guest" } };
+      if (expected !== data.account.id) throw new EnglishChatError(409, "guest_changed");
+      const chatHeaders = new Headers({ Accept: "application/json", "Content-Type": "application/json", Origin: "https://omindos.cn", Cookie: `${DOMESTIC_ACCOUNT_COOKIE}=${guestToken}`, "X-OmindOS-Expected-Account": data.account.id });
+      const chatResponse = await upstreamFetch(ENGLISH_CHAT_UPSTREAM + "chat", { method: "POST", headers: chatHeaders, body: JSON.stringify(payload), redirect: "error", signal: controller.signal });
+      if (!chatResponse.ok) throw englishChatUpstreamError(chatResponse);
+      return englishChatPublicAnswer(await readEnglishChatJson(chatResponse, 262144, 502, controller.signal));
+    };
+    const deadline = new Promise((_, reject) => { timeout = setTimeout(() => { controller.abort(); reject(new EnglishChatError(504, "upstream_timeout")); }, timeoutMs); });
+    const result = await Promise.race([operation(), deadline]);
+    return jsonResponse(result, 200, responseCookie ? { "Set-Cookie": responseCookie } : {});
+  } catch (error) {
+    const failure = error instanceof EnglishChatError ? error : new EnglishChatError(502, "upstream_unavailable");
+    const headers = {};
+    if (failure.clearCookie) headers["Set-Cookie"] = englishGuestCookie("", true);
+    else if (responseCookie) headers["Set-Cookie"] = responseCookie;
+    if (failure.status === 429 && failure.retryAfter) headers["Retry-After"] = failure.retryAfter;
+    return jsonResponse({ error: failure.status === 429 ? "Too many requests. Please try again later." : "Chat temporarily unavailable. Please try again.", code: failure.code }, failure.status, headers);
+  } finally {
+    clearTimeout(timeout);
+    request.signal.removeEventListener("abort", disconnect);
+  }
+}
+
 function isSameOriginBrowserRequest(request, url) {
   const origin = request.headers.get("Origin");
   const fetchSite = request.headers.get("Sec-Fetch-Site");
@@ -572,6 +748,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const host = url.hostname.toLowerCase();
+    if (url.pathname === ENGLISH_CHAT_PATH || url.pathname.startsWith(ENGLISH_CHAT_PATH + "/")) return handleEnglishChatRequest(request);
     if (!['omindos.ai', 'www.omindos.ai', 'localhost', '127.0.0.1'].includes(host) && !host.endsWith('.pages.dev')) {
       return legacyWorker.fetch(request, env);
     }
@@ -579,6 +756,15 @@ export default {
     // Locale media must bypass page routing, including same-origin English captions.
     if (/^\/(?:cn|en)\/(?:assets\/|[^/]+\.(?:css|js)$)/.test(url.pathname)) {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
+      if (url.pathname === '/en/assets/english-chat/panel.html') {
+        const response = await env.ASSETS.fetch(request);
+        const headers = new Headers(response.headers);
+        headers.set('Content-Security-Policy', "frame-ancestors 'self'");
+        headers.set('X-Frame-Options', 'SAMEORIGIN');
+        headers.set('Cache-Control', 'no-store');
+        headers.set('X-Content-Type-Options', 'nosniff');
+        return new Response(request.method === 'HEAD' ? null : response.body, { status: response.status, headers });
+      }
       return withPublicAssetCache(await env.ASSETS.fetch(request), url);
     }
     const chinese = url.pathname.match(/^\/cn(\/.*)?$/);

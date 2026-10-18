@@ -5,7 +5,7 @@
 
   const stylesheet = document.createElement('link');
   stylesheet.rel = 'stylesheet';
-  stylesheet.href = '/en/assets/english-chat/widget.css?v=2';
+  stylesheet.href = '/en/assets/english-chat/widget.css?v=4-panel';
   document.head.append(stylesheet);
 
   const launcher = document.createElement('a');
@@ -17,7 +17,11 @@
   launcher.referrerPolicy = 'no-referrer';
   launcher.draggable = false;
   launcher.title = 'Chat in English';
-  launcher.setAttribute('aria-label', 'OriginMind Chat: Chat in English (opens in a new window)');
+  launcher.setAttribute('role', 'button');
+  launcher.setAttribute('aria-label', 'OriginMind Chat: Open English chat');
+  launcher.setAttribute('aria-haspopup', 'dialog');
+  launcher.setAttribute('aria-expanded', 'false');
+  launcher.setAttribute('aria-controls', 'en-chat-panel');
 
   const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   icon.setAttribute('viewBox', '0 0 24 24');
@@ -74,6 +78,170 @@
     setDocked(false);
     launcher.focus({ preventScroll: true });
   });
+
+  const make = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  };
+  const panel = make('section', 'en-chat-panel');
+  panel.id = 'en-chat-panel';
+  panel.hidden = true;
+  panel.tabIndex = -1;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-labelledby', 'en-chat-title');
+  const toolbar = make('div', 'en-chat-toolbar');
+  const title = make('h2', '', 'OriginMind Chat');
+  title.id = 'en-chat-title';
+  const actions = make('div', 'en-chat-actions');
+  const expand = make('button', 'en-chat-control', 'Fullscreen');
+  expand.type = 'button';
+  expand.setAttribute('aria-label', 'Show chat fullscreen');
+  const collapse = make('button', 'en-chat-control', 'Collapse');
+  collapse.type = 'button';
+  collapse.setAttribute('aria-label', 'Collapse chat and keep this conversation');
+  actions.append(expand, collapse);
+  toolbar.append(title, actions);
+  const content = make('div', 'en-chat-content');
+  const frame = make('iframe', 'en-chat-frame');
+  frame.title = 'OriginMind English chat';
+  frame.referrerPolicy = 'same-origin';
+  frame.hidden = true;
+  const feedback = make('div', 'en-chat-feedback');
+  const message = make('p', '', 'Opening chat…');
+  message.setAttribute('role', 'status');
+  message.setAttribute('aria-live', 'polite');
+  const recovery = make('div', 'en-chat-recovery');
+  recovery.hidden = true;
+  const retry = make('button', 'en-chat-control', 'Retry');
+  retry.type = 'button';
+  const direct = make('a', 'en-chat-direct', 'Open standalone chat');
+  direct.href = launcher.href;
+  direct.target = '_blank';
+  direct.rel = 'noopener noreferrer';
+  recovery.append(retry, direct);
+  feedback.append(message, recovery);
+  content.append(frame, feedback);
+  panel.append(toolbar, content);
+  document.body.append(panel);
+
+  let fullscreen = false;
+  let started = false;
+  let loadTimer;
+  let frameDocument;
+  let overflowBefore = '';
+  const inertBefore = new Map();
+  const setFullscreen = (value) => {
+    if (fullscreen === value) return;
+    fullscreen = value;
+    panel.classList.toggle('is-fullscreen', value);
+    expand.textContent = value ? 'Small window' : 'Fullscreen';
+    expand.setAttribute('aria-label', value ? 'Restore small chat window' : 'Show chat fullscreen');
+    if (value) {
+      panel.setAttribute('aria-modal', 'true');
+      overflowBefore = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      for (const node of document.body.children) {
+        if (node === panel || ['SCRIPT', 'STYLE', 'LINK'].includes(node.tagName)) continue;
+        inertBefore.set(node, node.inert);
+        node.inert = true;
+      }
+    } else {
+      panel.removeAttribute('aria-modal');
+      inertBefore.forEach((value, node) => { node.inert = value; });
+      inertBefore.clear();
+      document.documentElement.style.overflow = overflowBefore;
+    }
+  };
+  const close = () => {
+    if (panel.hidden) return;
+    setFullscreen(false);
+    panel.hidden = true;
+    wrapper.hidden = false;
+    launcher.setAttribute('aria-expanded', 'false');
+    launcher.focus({ preventScroll: true });
+  };
+  const focusable = (root) => [...root.querySelectorAll('a[href],button,input,textarea,select,iframe,[tabindex]')]
+    .filter(node => node.tabIndex >= 0 && !node.disabled && !node.closest('[inert]') && node.getClientRects().length);
+  const onKey = (event) => {
+    if (panel.hidden) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      if (fullscreen) { setFullscreen(false); expand.focus({ preventScroll: true }); }
+      else close();
+    } else if (fullscreen && event.key === 'Tab') {
+      const stops = focusable(panel);
+      const childStops = frameDocument ? focusable(frameDocument) : [];
+      if (event.currentTarget === frameDocument) {
+        const active = frameDocument.activeElement;
+        if (event.shiftKey && active === childStops[0]) { event.preventDefault(); collapse.focus(); }
+        else if (!event.shiftKey && active === childStops.at(-1)) { event.preventDefault(); expand.focus(); }
+      } else if (event.shiftKey && document.activeElement === stops[0]) {
+        event.preventDefault(); (childStops.at(-1) || stops.at(-1))?.focus();
+      } else if (!event.shiftKey && document.activeElement === stops.at(-1)) {
+        event.preventDefault(); stops[0]?.focus();
+      }
+    }
+  };
+  const failed = () => {
+    clearTimeout(loadTimer);
+    frame.hidden = true;
+    feedback.hidden = false;
+    message.textContent = 'Chat could not load. Please try again.';
+    recovery.hidden = false;
+  };
+  const load = () => {
+    if (frameDocument) frameDocument.removeEventListener('keydown', onKey, true);
+    frameDocument = null;
+    feedback.hidden = false;
+    recovery.hidden = true;
+    frame.hidden = true;
+    message.textContent = 'Opening chat…';
+    clearTimeout(loadTimer);
+    loadTimer = setTimeout(failed, 20000);
+    frame.src = '/en/assets/english-chat/panel.html?v=20261018-panel';
+  };
+  frame.addEventListener('load', () => {
+    try {
+      const doc = frame.contentDocument;
+      if (!doc?.getElementById('chat-form')) { failed(); return; }
+      clearTimeout(loadTimer);
+      frameDocument = doc;
+      doc.addEventListener('keydown', onKey, true);
+      frame.hidden = false;
+      feedback.hidden = true;
+    } catch { failed(); }
+  });
+  frame.addEventListener('error', failed);
+  const openChat = () => {
+    panel.hidden = false;
+    wrapper.hidden = true;
+    dock.hidden = true;
+    launcher.setAttribute('aria-expanded', 'true');
+    if (!started) { started = true; load(); }
+    expand.focus({ preventScroll: true });
+  };
+  launcher.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    openChat();
+  });
+  launcher.addEventListener('keydown', (event) => {
+    if (event.key === ' ') { event.preventDefault(); openChat(); }
+  });
+  expand.addEventListener('click', () => setFullscreen(!fullscreen));
+  collapse.addEventListener('click', close);
+  retry.addEventListener('click', load);
+  document.addEventListener('keydown', onKey, true);
+  document.addEventListener('focusin', (event) => {
+    if (fullscreen && !panel.hidden && !panel.contains(event.target)) expand.focus({ preventScroll: true });
+  });
+  window.addEventListener('pagehide', () => { clearTimeout(loadTimer); setFullscreen(false); });
+  // The embedded application closes its session on navigation. Reconnect when
+  // the browser restores this document from its back/forward cache.
+  window.addEventListener('pageshow', (event) => { if (event.persisted && started) load(); });
 
   let drag;
   let suppressClickUntil = 0;

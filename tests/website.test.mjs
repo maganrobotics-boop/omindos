@@ -520,13 +520,13 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
           assert.ok(html.includes('/en/home-20261018.css'));
           assert.ok(html.includes('/en/home-20261018.js'));
           assert.ok(html.includes('/en/site-20261018.css?v=2-single-line'));
-          assert.ok(html.includes('/en/site-20261018.js?v=3-chat-entry'));
+          assert.ok(html.includes('/en/site-20261018.js?v=4-chat-panel'));
           assert.ok(html.includes('/cn/assets/robot-shells-20261013/system-scene.webp'));
         }
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
-        assert.ok(html.includes(locale === 'cn' ? '/site.js?v=20260910-polish' : '/en/site-20261018.js?v=3-chat-entry'));
+        assert.ok(html.includes(locale === 'cn' ? '/site.js?v=20260910-polish' : '/en/site-20261018.js?v=4-chat-panel'));
         if (route === 'robots') assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         if (route.startsWith('robots/')) {
           const version = '20260910-structure-video';
