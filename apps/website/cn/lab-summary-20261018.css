@@ -55,6 +55,11 @@ html[lang^="zh"] .lab-page.lab-summary-enabled #alumni .lab-graduation-frame img
 }
 
 @media (max-width: 700px) {
+  html[lang^="zh"] .lab-page.lab-summary-enabled #research-platforms .lab-platform-card img {
+    max-height: 140px;
+    object-fit: contain;
+  }
+
   html[lang^="zh"] .lab-page.lab-summary-enabled #main-content :is(#research, #research-platforms, #lab-projects, #lab-publications, #lab-patents, #lab-awards, #exchange, #alumni, .lab-results-demos).lab-summary-section {
     padding-top: 28px;
     padding-bottom: 28px;
