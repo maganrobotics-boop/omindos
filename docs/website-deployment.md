@@ -44,6 +44,12 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 ## 凭据与回滚
 
+### 英文页面独立发布（2026-10-18）
+
+当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：发布前核对线上仍为已验证的 `9a76b841d330f43fab07566875949714afee3995`，从该固定 Git 提交提取现网 Worker 统计函数与浏览器采集逻辑，应用到本次国际发布包。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
+
+适配器及最终产物测试核验旧表写入、公开读取限制、英文与中文跳转和资源一致性；项目/域名/数据库绑定、部署 ID、提交和线上检查继续执行。若线上提交改变，发布前失败，必须先核对新生产版本。默认 `filtered-v2` 模式继续保留原有 D1 基线、迁移与报告检查；不得仅跳过迁移并发布依赖 v2 表的 Worker。回滚仍为发布前记录的生产 deployment。
+
 Cloudflare 发布令牌保存在 GitHub Actions 的 CLOUDFLARE_API_TOKEN Secret；账号 41e8b3404be24e1dd288556d77ffc951。不得把凭据写入源码、日志或发布目录。
 
 国际发布前，既有检查脚本记录当前 production deployment 及 commit。回滚时恢复该部署，并修复源码；代码回退后仍需单独触发国际发布，不会因push自行上线。
@@ -66,3 +72,4 @@ Cloudflare 发布令牌保存在 GitHub Actions 的 CLOUDFLARE_API_TOKEN Secret�
 v2 将 `accepted_unknown`、`accepted_scored` 页面事件与四类排除事件分别汇总。Cloudflare verifiedBot、1–29 分数（corporateProxy 除外）、明确爬虫或自动化工具 User-Agent，以及预取请求只从统计中排除，网页仍正常提供。只信任平台 `request.cf.botManagement`，不信任同名 HTTP 请求头。缺少评分或分数为 0 时按未知处理，accepted 并不证明真人。当前 Cloudflare 套餐是否提供评分仍须控制台核验；User-Agent 可伪造，过滤结果也不能作真实用户数。浏览器可见性与文档内防重复只减少预取和同页重复采集，不进行跨页去重。
 
 旧 `visit_totals`、`visit_country` 和 `visit_recent` 留作“历史未过滤页面加载次数”，不得与 v2 相加展示为同一口径，也不能将 Cloudflare 全站自动化请求百分比乘入旧计数来修正。旧数据只有汇总，没有足够信息回算真人数。v2 的 `visit_collection_v2.first_event_at` 是该版本首条事件时间，迁移执行时间不等于新口径采集开始时间。分钟聚合保留约两天，累计分类及国家汇总长期保留。回滚只恢复旧部署，不删除 v2 表；旧版本恢复期间的数据仍属于旧口径。
+
