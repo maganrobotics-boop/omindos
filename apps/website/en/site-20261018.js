@@ -51,7 +51,7 @@
     new Set(headings.map(heading => heading.parentElement)).forEach(parent => observer.observe(parent));
   }
   const chatScript = document.createElement('script');
-  chatScript.src = '/en/assets/english-chat/widget.js?v=2';
+  chatScript.src = '/en/assets/english-chat/widget.js?v=3';
   chatScript.defer = true;
   document.body.append(chatScript);
   const button = document.querySelector('.en-menu-toggle');
