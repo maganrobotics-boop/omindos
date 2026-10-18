@@ -162,7 +162,9 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Prepare English preview
-        run: python3 scripts/prepare-international-artifact.py apps/website /tmp/omindos-english-preview
+        run: |
+          python3 scripts/prepare-international-artifact.py apps/website /tmp/omindos-english-preview
+          python3 scripts/prepare-website-review.py /tmp/omindos-english-preview
       - name: Publish public preview on an isolated branch
         id: publish
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
