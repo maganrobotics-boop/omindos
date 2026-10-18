@@ -57,6 +57,7 @@ on:
         options:
           - preview
           - production
+          - verify-production
       statistics_mode:
         description: 'Preserve the pinned live collector for a page-only release, or prepare filtered v2 with D1 permissions'
         type: choice
@@ -162,6 +163,27 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: node scripts/website-visit-stats.mjs --report
+
+  verify-production:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && inputs.target == 'verify-production'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_ACCOUNT_ID: '41e8b3404be24e1dd288556d77ffc951'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Check the production project and preserved database binding without deploying
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/check-website-project.mjs
+      - name: Verify the public website without recording page views
+        run: node scripts/verify-website-live.mjs
 
   preview:
     needs: test
