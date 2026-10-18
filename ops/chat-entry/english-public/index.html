@@ -8,14 +8,15 @@
   <meta name="theme-color" content="#faf9f6">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <title>Ask about OriginMind</title>
-  <link rel="stylesheet" href="./chat.css">
-  <script src="./chat.js" defer></script>
+  <link rel="stylesheet" href="./chat.css?v=20261018-2">
+  <script src="./chat.js?v=20261018-2" defer></script>
+  <script src="./account-link.js?v=20261018-2" defer></script>
 </head>
 <body>
   <div class="chat-app">
     <header class="chat-header">
       <div class="chat-brand"><span class="brand-dot" aria-hidden="true"></span><span>OriginMind</span><span class="chat-label">Assistant</span></div>
-      <button class="new-chat" id="new-chat" type="button">New chat</button>
+      <div class="chat-actions" id="chat-actions"><button class="new-chat" id="new-chat" type="button">New chat</button></div>
     </header>
     <main class="chat-main" id="chat-main">
       <div class="chat-welcome" id="welcome">
