@@ -11,6 +11,8 @@ import re
 
 CN_ORIGIN = 'https://omindos.cn'
 EN_ORIGIN = 'https://omindos.ai'
+# Chinese-only profiles switch to the lab overview, not an equivalent translation.
+ENGLISH_ROUTE_FALLBACKS = {'/lab/alumni/': '/lab/'}
 
 class Attributes(HTMLParser):
     def handle_starttag(self, tag, attrs):
@@ -50,7 +52,7 @@ def normalize_path(path):
 
 def rewrite(source, route, known_routes, error=False):
     canonical = CN_ORIGIN + route
-    english_route = route if route in known_routes and route != '/lab/alumni/' and not error else '/'
+    english_route = ENGLISH_ROUTE_FALLBACKS.get(route, route) if route in known_routes and not error else '/'
     def tag(match):
         raw = match[0]
         attrs = attributes(raw)

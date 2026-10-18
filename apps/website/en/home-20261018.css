@@ -43,6 +43,7 @@
 .en-home .en-about-grid .en-award-note { font-size: 14px; border-top: 1px solid #dcd8d0; padding-top: 20px; }
 .en-home-contact { background: #eeece5; padding: 52px 0; }
 .en-home-contact .wrap { display: flex; justify-content: space-between; align-items: center; gap: 30px; }
+.en-home-contact .wrap > div { max-width: 100%; }
 .en-home .en-home-contact h2 { font-size: 30px; margin: 0 0 10px; }
 .en-home .en-home-contact p { color: #68665f; margin: 0; }
 .en-home .en-home-contact a { flex-shrink: 0; }

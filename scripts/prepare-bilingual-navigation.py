@@ -6,12 +6,12 @@ import sys
 
 ROBOTS = [
     ('quadruped', 'Q1 四足巡检机器人', 'Q1 Quadruped'),
-    ('tracked', 'T1 履带巡检机器人', 'T1 Tracked'),
+    ('tracked', 'T1 履带式巡检机器人', 'T1 Tracked'),
     ('wheeled', 'W1 轮式巡检机器人', 'W1 Wheeled'),
     ('mobile-dual-arm', 'MDA1 移动双臂机器人', 'MDA1 Mobile dual-arm'),
     ('wheel-legged', 'WL1-EDU 轮足机器人', 'WL1-EDU Wheel-legged'),
     ('open-frame', 'PW1-EDU 并联轮足机器人', 'PW1-EDU Parallel-linkage wheel-legged'),
-    ('dual-arm', 'DA1-EDU 双臂操作平台', 'DA1-EDU Dual-arm'),
+    ('dual-arm', 'DA1-EDU 双臂协同操作平台', 'DA1-EDU Dual-arm'),
 ]
 
 def navigation(language, route, mobile=False):
