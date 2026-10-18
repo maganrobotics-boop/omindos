@@ -38,6 +38,8 @@ Push 和 Pull Request 只执行验证，发布 job 跳过。英文视觉验收�
 
 script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可以发布。测试、项目/域名/D1绑定检查、部署commit核对和线上检查继续执行。
 
+2026-10-18 的两项校赛获奖删除提供固定发布来源 `release_source=awards-only-20261018`，仅在手动生产发布中生效，并且必须选择 `statistics_mode=preserve-current`。来源固定为已审核的 `54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0`；发布前核对其相对现网 `437ca28bdc51333b19d76726e782f35c9ac6a545` 的文件白名单与两项删除的完整差异，再独立运行该来源的检查。部署元数据与上线核验均使用此来源提交，保留现网聊天实现；当前 main 中尚在验收的聊天浮窗继续留在源码中。默认 `release_source=current-main` 的原有发布、预览及验证流程保持不变，不接受任意提交或分支输入。
+
 国际发布包保留已有样式、媒体和 API，便于英文页面及缓存客户端继续使用。默认首页由 Worker 跳转到 `/en/`；明确中文入口及既有无前缀深层路径跳转到 .cn，不在 .ai 展示中文页面。语言链接与 hreflang 保持源码中的跨域关系，.ai sitemap 只列英文正式页面，包括新增的 `/en/robots/tracked/`、`/en/lab/`、`/en/lab/join/`、`/en/careers/` 和 `/en/join/`；根地址为跳转入口，不列为 canonical。Cloud、OA 保持原址；课程链接使用国内 /learning 入口。页面 POST 不跨域重定向。
 
 此方案只修改官网应用路由，不修改 DNS、邮件或服务子域名。默认英文访问留在 .ai；选择中文后转到 .cn，并使用国内页面及资源。
