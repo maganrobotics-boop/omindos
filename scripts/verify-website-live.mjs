@@ -20,8 +20,8 @@ for(const route of routes){
   assert.ok(html.includes('property="og:url" content="'+base+'/en/'+suffix+'"'));
   assert.ok(html.includes('hreflang="zh-CN" href="https://omindos.cn/'+suffix+'"'));
   assert.match(html,/<html lang="en"/);assert.match(html,/<main\b/);
-  // /cn/assets/ is a shared media namespace, not a Chinese page route.
-  assert.doesNotMatch(html,/href="(?:https:\/\/omindos\.ai)?\/cn\/(?!assets\/)/);
+  // Check navigable page links, not shared icons/styles declared with <link>.
+  assert.doesNotMatch(html,/<a\b[^>]*\bhref="(?:https:\/\/omindos\.ai)?\/cn\/(?!assets\/)/i);
  });
  if(route)await check('Established deep link redirects to domestic /'+suffix,async()=>{
   const r=await request(base+'/'+suffix,{'Accept-Language':'en-US',Cookie:'originmind_language=en'});
@@ -75,6 +75,7 @@ await check('API remains inaccessible to public reads',async()=>{
 for(const host of ['originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
  const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();
 });
+
 
 
 
