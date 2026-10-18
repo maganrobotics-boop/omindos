@@ -5,8 +5,12 @@ export async function createAccountScope() {
       credentials: 'same-origin', cache: 'no-store', redirect: 'error',
       headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10000),
     });
-    if (!response.ok) throw new Error('session_unavailable');
-    const { account } = await response.json();
+    const result = await response.json();
+    if (!response.ok) {
+      const code = typeof result.code === 'string' && /^[a-z_]+$/.test(result.code) ? result.code : 'unavailable';
+      throw new Error(`session_${response.status}_${code}`);
+    }
+    const { account } = result;
     if (account?.kind !== 'guest' || !/^[A-Za-z0-9_-]{16,160}$/.test(account.id)) throw new Error('invalid_session');
     return account;
   };

@@ -83,7 +83,7 @@
   async function initializeAccountScope() {
     setStatus('Connecting to the assistant…', false);
     try {
-      var module = await import('./scope.js?v=20261018-panel');
+      var module = await import('./scope.js?v=20261018-panel2');
       if (pageClosed) return;
       var scope = await module.createAccountScope({ doc: null });
       if (pageClosed) { scope.close(); return; }
@@ -96,6 +96,7 @@
       setStatus('', false);
     } catch (error) {
       if (pageClosed) return;
+      status.dataset.connectionCode = /^session_[0-9]{3}_[a-z_]+$/.test(error && error.message) ? error.message : 'session_initialization_failed';
       scopeReady = false;
       setPending(false);
       setStatus('We could not start the assistant. Refresh this page to try again.', true);
