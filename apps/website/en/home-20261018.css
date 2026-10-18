@@ -9,6 +9,7 @@
 .en-home .en-section-heading { margin: 0 0 46px; }
 .en-home .en-kicker { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; display: flex; gap: 24px; margin: 0 0 20px; color: #77766f; }
 .en-home .en-section-heading h2 { margin: 0; max-width: 23ch; }
+.en-home #platforms-title { max-width: none; text-wrap: wrap; }
 .en-home .en-section-heading > p:not(.en-kicker) { max-width: 48em; margin: 20px 0 0; color: #68665f; }
 .en-home-product { display: grid; grid-template-columns: 1fr 1.3fr; align-items: center; gap: 6%; }
 .en-home-product > div { max-width: 440px; }
@@ -16,7 +17,7 @@
 .en-home .en-product-model { display: block; font-size: clamp(48px,5vw,72px); line-height: 1; letter-spacing: -.04em; }
 .en-home .en-home-product p { color: #68665f; margin: 0 0 22px; }
 .en-home-product figure { margin: 0; min-width: 0; width: min(100%,480px); justify-self: center; }
-.en-home-product img { display: block; width: 100%; aspect-ratio: 3/2; object-fit: contain; background: #fff; }
+.en-home-product img { display: block; width: 100%; height: auto; aspect-ratio: 3/2; object-fit: contain; background: #fff; }
 .en-home .en-home-product figcaption { margin-top: 12px; color: #68665f; font-size: 12px; }
 .en-product-tabs { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-top: 42px; }
 .en-product-tabs button { text-align: left; padding: 16px 0; background: none; border: 0; border-top: 1px solid #c8c5bd; color: #68665f; cursor: pointer; }
@@ -26,7 +27,7 @@
 .en-home-system { background: #292a26; color: #faf9f6; }
 .en-home .en-home-system .en-kicker, .en-home .en-home-system .en-section-heading > p:not(.en-kicker) { color: #c2c2b8; }
 .en-system-image { margin: 0 auto; max-width: 960px; }
-.en-system-image img { display: block; width: 100%; aspect-ratio: 16/8; object-fit: cover; }
+.en-system-image img { display: block; width: 100%; height: auto; }
 .en-home .en-system-image figcaption { color: #b9bbb3; font-size: 12px; margin-top: 12px; }
 .en-system-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; margin-block: 40px; }
 .en-system-grid > div { padding-top: 20px; border-top: 1px solid #62645b; }
@@ -35,7 +36,7 @@
 .en-home-actions { display: flex; flex-wrap: wrap; gap: 18px 36px; }
 .en-about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6%; align-items: start; }
 .en-about-grid figure { margin: 0; }
-.en-about-grid img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; }
+.en-about-grid img { width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover; }
 .en-home .en-about-grid figcaption { margin-top: 14px; font-size: 12px; color: #68665f; }
 .en-home .en-about-grid h3 { margin: 0 0 20px; font-size: 26px; }
 .en-home .en-about-grid p { color: #68665f; margin: 0 0 20px; }
