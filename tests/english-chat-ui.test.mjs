@@ -72,7 +72,7 @@ test('verifies before POST and render, sends expected identity and an English in
   assert.equal(c.options.redirect, 'error');
   assert.equal(c.options.headers.Accept, 'application/json');
   assert.equal(c.options.headers['X-OmindOS-Expected-Account'], 'mock_identity_123456789');
-  assert.deepEqual(JSON.parse(c.options.body), { topic: 'research', messages: [{ role: 'user', content: 'Please answer in English.\n\nWhat is OmindOS?' }] });
+  assert.deepEqual(JSON.parse(c.options.body), { topic: 'research', messages: [{ role: 'user', content: 'Please answer in natural English. Use plain text without Markdown formatting, and keep replies concise unless the user asks for more detail.\n\nWhat is OmindOS?' }] });
   assert.equal(e.ids.messages.children[0].children[1].textContent, 'What is OmindOS?');
   assert.equal(e.ids.question.readOnly, true);
   e.ids.question.dispatch('keydown', { key: 'Enter' });
@@ -194,3 +194,71 @@ test('409 clears the conversation token so retry does not repeat an invalid toke
 });
 
 
+
+// Local account-link presentation checks use a separate DOM mock.
+const accountLinkSource = fs.readFileSync(new URL('../ops/chat-entry/english-public/account-link.js', import.meta.url), 'utf8');
+class AccountLinkElement {
+  constructor(id = '') { this.id = id; this.children = []; this.parentNode = null; this.attributes = {}; this._text = ''; this.writes = 0; this.events = {}; }
+  get textContent() { return this._text; }
+  set textContent(value) { this._text = value; this.writes++; }
+  get nextSibling() { if (!this.parentNode) return null; return this.parentNode.children[this.parentNode.children.indexOf(this) + 1] || null; }
+  appendChild(child) { child.remove(); child.parentNode = this; this.children.push(child); return child; }
+  insertBefore(child, reference) { child.remove(); child.parentNode = this; this.children.splice(this.children.indexOf(reference), 0, child); }
+  remove() { if (!this.parentNode) return; this.parentNode.children.splice(this.parentNode.children.indexOf(this), 1); this.parentNode = null; }
+  getAttribute(name) { return this.attributes[name] ?? null; }
+  setAttribute(name, value) { this.attributes[name] = value; this.writes++; }
+  addEventListener(name, callback) { (this.events[name] ||= []).push(callback); }
+  dispatch(name) { for (const callback of this.events[name] || []) callback({}); }
+}
+function createAccountLinkEnvironment(existing = true) {
+  const body = new AccountLinkElement('body'); const header = body.appendChild(new AccountLinkElement('header'));
+  const actions = header.appendChild(new AccountLinkElement('chat-actions')); const newChat = actions.appendChild(new AccountLinkElement('new-chat'));
+  const window = new AccountLinkElement();
+  function find(node, id) { return node.id === id ? node : node.children.map(child => find(child, id)).find(Boolean) || null; }
+  const document = { body, getElementById(id) { return find(body, id); } };
+  const observers = [];
+  class MutationObserver {
+    constructor(callback) { this.callback = callback; this.active = false; observers.push(this); }
+    observe(target, options) { this.target = target; this.options = options; this.active = true; }
+    disconnect() { this.active = false; }
+    flush() { if (this.active) this.callback([]); }
+  }
+  function makeLink(href = '/learning/account') { const link = new AccountLinkElement('omindos-account-link'); link.textContent = 'magan · 我的主页'; link.setAttribute('href', href); return link; }
+  const link = existing ? body.appendChild(makeLink()) : null;
+  vm.runInNewContext(accountLinkSource, { document, window, MutationObserver });
+  return { body, actions, newChat, window, link, observers, makeLink };
+}
+
+test('moves the existing account anchor beside New chat without replacing it or its target', () => {
+  const e = createAccountLinkEnvironment(); assert.equal(e.actions.children[0], e.link); assert.equal(e.actions.children[1], e.newChat);
+  assert.equal(e.link.textContent, 'My account'); assert.equal(e.link.getAttribute('href'), '/learning/account');
+  assert.equal(e.link.getAttribute('aria-label'), 'My account'); assert.equal(e.link.getAttribute('title'), 'My account'); assert.equal(e.link.getAttribute('lang'), 'en');
+});
+
+test('handles delayed injection and preserves original click handlers', () => {
+  const e = createAccountLinkEnvironment(false); const link = e.makeLink(); let clicked = 0;
+  link.addEventListener('click', () => clicked++); e.body.appendChild(link); e.observers[0].flush(); link.dispatch('click');
+  assert.equal(clicked, 1); assert.equal(e.actions.children[0], link); assert.equal(link.textContent, 'My account');
+});
+
+test('normalizes later account label and accessibility rewrites without changing the destination', () => {
+  const e = createAccountLinkEnvironment(); e.link.textContent = '另一个账户 · 我的主页'; e.link.setAttribute('aria-label', '我的主页'); e.link.setAttribute('title', '我的主页');
+  e.observers[0].flush(); assert.equal(e.link.textContent, 'My account'); assert.equal(e.link.getAttribute('aria-label'), 'My account');
+  assert.equal(e.link.getAttribute('href'), '/learning/account'); assert.equal(e.link.getAttribute('title'), 'My account');
+});
+
+test('adopts a replacement anchor while preserving its new service-provided destination', () => {
+  const e = createAccountLinkEnvironment(); e.link.remove(); const replacement = e.body.appendChild(e.makeLink('/learning/account?view=profile'));
+  e.observers[0].flush(); assert.equal(e.actions.children[0], replacement); assert.equal(replacement.getAttribute('href'), '/learning/account?view=profile');
+  assert.equal(replacement.textContent, 'My account');
+});
+
+test('is idempotent during unrelated chat updates and observes delayed text/element changes', () => {
+  const e = createAccountLinkEnvironment(); const writes = e.link.writes; e.observers[0].flush(); e.observers[0].flush();
+  assert.equal(e.link.writes, writes); assert.equal(e.observers[0].options.childList, true); assert.equal(e.observers[0].options.subtree, true); assert.equal(e.observers[0].options.characterData, true);
+});
+
+test('disconnects on pagehide and resumes presentation handling on pageshow', () => {
+  const e = createAccountLinkEnvironment(); e.window.dispatch('pagehide'); assert.equal(e.observers[0].active, false);
+  e.link.textContent = '我的主页'; e.window.dispatch('pageshow'); assert.equal(e.observers[0].active, true); assert.equal(e.link.textContent, 'My account');
+});

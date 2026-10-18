@@ -11,7 +11,7 @@
   const launcher = document.createElement('a');
   launcher.id = 'en-chat-launcher';
   launcher.className = 'en-chat-launcher';
-  launcher.href = 'https://omindos.cn/chat/assets/english-chat/index.html';
+  launcher.href = 'https://omindos.cn/chat/assets/english-chat/index.html?v=20261018-2';
   launcher.target = '_blank';
   launcher.rel = 'noopener noreferrer';
   launcher.referrerPolicy = 'no-referrer';

@@ -7,7 +7,7 @@
   var REQUEST_TIMEOUT_MS = 60000;
   var MAX_QUESTION_LENGTH = 4000;
   var MAX_SOURCES = 20;
-  var ENGLISH_INSTRUCTION = 'Please answer in English.\n\n';
+  var ENGLISH_INSTRUCTION = 'Please answer in natural English. Use plain text without Markdown formatting, and keep replies concise unless the user asks for more detail.\n\n';
 
   var form = document.getElementById('chat-form');
   var input = document.getElementById('question');

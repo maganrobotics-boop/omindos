@@ -22,12 +22,29 @@ button:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px sol
 button:disabled { cursor: default; }
 .send-button:disabled { opacity: .55; }
 .chat-app { display: flex; flex-direction: column; width: 100%; height: 100%; height: 100dvh; min-height: 0; }
-.chat-header { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 16px; min-height: 72px; padding: 12px 28px; border-bottom: 1px solid var(--line); }
+.chat-header { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; min-height: 72px; padding: 12px 28px; border-bottom: 1px solid var(--line); }
+.chat-actions { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; margin-left: auto; }
 .chat-brand { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; min-width: 0; font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
 .brand-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #77735f; }
 .chat-label { padding-left: 4px; color: var(--muted); font-size: 13px; font-weight: 400; letter-spacing: 0; }
 .new-chat { flex: 0 0 auto; min-height: 44px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 3px; color: var(--ink); background: transparent; font-size: 14px; line-height: 1.4; }
 .new-chat:hover { background: #efede7; border-color: #b2ac9e; }
+.chat-actions .new-chat { white-space: nowrap; }
+/* The shared account service owns this node, its target and click behavior. */
+.chat-header #omindos-account-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  position: static !important; inset: auto !important; z-index: auto !important;
+  transform: none !important; float: none !important; flex: 0 0 auto;
+  width: auto !important; height: auto !important; max-width: none !important;
+  min-height: 44px !important; margin: 0 !important; padding: 9px 12px !important;
+  border: 1px solid var(--line) !important; border-radius: 3px !important;
+  color: var(--ink) !important; background: transparent !important;
+  box-shadow: none !important; font-family: inherit !important;
+  font-size: 14px !important; font-weight: 400 !important; line-height: 1.4 !important;
+  letter-spacing: 0 !important; text-decoration: none !important; white-space: nowrap !important;
+}
+.chat-header #omindos-account-link:hover { background: #efede7 !important; border-color: #b2ac9e !important; }
+.chat-header #omindos-account-link:focus-visible { outline: 3px solid var(--focus) !important; outline-offset: 3px !important; }
 .chat-main { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 28px 28px; scrollbar-gutter: stable; }
 .chat-welcome { max-width: 650px; margin: clamp(36px, 10vh, 100px) auto 40px; }
 .chat-welcome[hidden] { display: none; }
@@ -82,6 +99,13 @@ button:disabled { cursor: default; }
   .composer-controls { gap: 9px; }
   .send-button { min-width: 66px; padding-inline: 12px; }
   .input-meta { font-size: 10px; }
+}
+@media (max-width: 360px) {
+  .chat-header { padding-inline: 12px; column-gap: 8px; }
+  .chat-brand { font-size: 15px; gap: 6px; }
+  .chat-actions { gap: 6px; }
+  .chat-actions .new-chat { padding-inline: 8px; font-size: 13px; }
+  .chat-header #omindos-account-link { padding-inline: 8px !important; font-size: 13px !important; }
 }
 @media (max-height: 480px) {
   .chat-header { min-height: 56px; padding-block: 6px; }
