@@ -1,0 +1,109 @@
+/* Shared editorial layout for the Chinese and English product details. */
+.product-section h2{font-size:clamp(28px,3.3vw,48px);line-height:1.15;letter-spacing:-.035em}
+.product-section-intro{max-width:850px;margin-top:26px;color:var(--muted);font-size:20px;line-height:1.7}
+.product-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:38px 32px;margin-top:42px}
+.product-feature-grid article{min-width:0;border-top:2px solid var(--line);padding-top:22px}
+.product-feature-grid h3{font-size:25px;line-height:1.25;letter-spacing:-.025em;text-wrap:pretty}
+.product-feature-grid p{margin-top:16px;color:var(--muted);line-height:1.75}
+.product-research-note{margin-top:44px;padding-top:28px;border-top:1px solid var(--line);max-width:960px}
+.product-research-note h3{font-size:26px;line-height:1.25}
+.product-research-note p{margin-top:18px;line-height:1.75;color:var(--muted)}
+.product-console{margin-top:34px}
+.product-console img{height:auto;object-fit:contain;border:1px solid var(--line)}
+.product-console+.text-link{margin-top:24px}
+.product-section .detail-content{max-width:none}
+.product-section table{max-width:1080px}
+.product-section th{width:29%;overflow-wrap:break-word}
+.product-section td{overflow-wrap:anywhere}
+.product-section .video-grid .video-figure{min-width:0}
+@media(max-width:1000px){.product-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+ .product-feature-grid{grid-template-columns:minmax(0,1fr);gap:28px;margin-top:32px}
+ .product-section-intro{font-size:18px;margin-top:22px}
+ .product-feature-grid h3{font-size:24px}
+ .product-feature-grid p{margin-top:12px}
+ .product-section th{width:34%}
+ .product-section .note{line-height:1.65}
+}
+.product-structure-videos{margin-top:40px}
+.product-structure-videos .video-figure>video{aspect-ratio:1;background:#fff}
+.product-structure-note{margin-top:24px;max-width:1000px}
+@media(max-width:760px){.product-structure-videos{grid-template-columns:minmax(0,1fr)}}
+.dual-arm-primary-media>img{aspect-ratio:3/2;object-fit:contain;background:#fff}
+.dual-arm-demo-grid{margin-top:34px}
+.dual-arm-demo-grid .video-figure>video{background:#050e17}
+.dual-arm-reference-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;max-width:1080px;margin:34px auto 0}
+.dual-arm-reference-grid .product-console{margin-top:0}
+.dual-arm-reference-media{min-width:0}
+.dual-arm-reference-media>img{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff}
+@media(max-width:760px){.dual-arm-reference-grid{grid-template-columns:minmax(0,1fr);gap:28px}}
+
+/* Keep the model readable as a unit on narrow product pages. */
+.product-model{display:inline-block;white-space:nowrap}
+/* PWL research prototype: calm surfaces and a clear mobile hierarchy. */
+/* Compact wheel-legged prototype overview. */
+.wheel-product{--blue:#2457c5;--mist:#f3f5f7;--muted:#485b6b}
+.wheel-product .section{padding:44px 0}
+.wheel-product .page-opening{padding-bottom:18px}
+.wheel-product .product-heading-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}
+.wheel-product .product-heading-meta .eyebrow{margin:0}
+.wheel-product .prototype-label{padding:6px 10px;border-radius:4px;background:#eaf0fc;color:#2457c5;font-size:14px;line-height:1.5}
+.wheel-product .page-intro>.lead{max-width:32em;line-height:1.75}
+.wheel-product .product-section-intro{margin-top:16px;max-width:36em;line-height:1.75}
+.wheel-product .detail-content,.wheel-product .product-structure-videos{margin-top:22px}
+.wheel-product .selection-guide{margin-top:22px;padding:20px}
+.wheel-product .product-detail-image{margin:0}
+.wheel-product .research-feature-title{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:18px;font-size:20px;line-height:1.5}
+@media(max-width:760px){
+ .wheel-product .section{padding:26px 0}
+ .wheel-product .page-opening{padding-bottom:12px}
+ .wheel-product .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:22px}
+ .wheel-product .product-detail-image>img{aspect-ratio:3/2;object-fit:contain}
+ .wheel-product .page-intro>.lead{font-size:18px}
+ .wheel-product .product-section-intro{font-size:17px}
+ .wheel-product .video-grid{gap:20px}
+ .wheel-product .button{max-width:100%;white-space:normal}
+ .wheel-product .table-scroll{overflow:visible}
+ .wheel-product table,.wheel-product tbody{display:block;width:100%}
+ .wheel-product caption{display:block;text-align:left}
+ .wheel-product tr{display:block;padding:10px 0;border-bottom:1px solid var(--line)}
+ .wheel-product th,.wheel-product td{display:block;width:100%;padding:0;border:0;font-size:16px;line-height:1.65;white-space:normal;word-break:normal;overflow-wrap:break-word;text-align:left}
+ .wheel-product th{margin-bottom:3px;color:var(--muted);font-weight:500}
+ .wheel-product td{color:var(--ink)}
+}
+.pwl-product{--blue:#2457c5;--mist:#f3f5f7;--muted:#485b6b}
+.pwl-product .product-heading-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:20px}
+.pwl-product .product-heading-meta .eyebrow{margin:0}
+.pwl-product .prototype-label{padding:6px 10px;border-radius:4px;background:#eaf0fc;color:#2457c5;font-size:14px;line-height:1.5}
+.pwl-product .page-intro>.lead{max-width:32em;line-height:1.75}
+.pwl-product .product-detail-layout{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:48px;align-items:start}
+.pwl-product .product-detail-image{margin:0}
+.pwl-product .product-detail-image>img{aspect-ratio:3/2;object-fit:contain;background:#f3f5f7}
+.pwl-product .product-feature-grid article{border-top:1px solid var(--line);padding-top:20px}
+.pwl-product .product-feature-grid p{max-width:30em;line-height:1.8}
+.pwl-product .section-links a{display:inline-flex;align-items:center;min-height:44px}
+.pwl-product .product-section-intro{max-width:34em}
+@media(max-width:760px){
+ .pwl-product .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:28px}
+ .pwl-product .page-intro h1{font-size:clamp(32px,8vw,44px);line-height:1.2}
+ .pwl-product .page-intro>.lead{font-size:18px}
+ .pwl-product .product-feature-grid{grid-template-columns:minmax(0,1fr);gap:28px}
+ .pwl-product .product-section-intro{font-size:17px;line-height:1.75}
+ .pwl-product .product-feature-grid p{font-size:16px}
+ .pwl-product .section-links{display:flex;flex-wrap:wrap;gap:8px 18px}
+ .pwl-product table{min-width:0;width:100%}
+ .pwl-product th,.pwl-product td{padding:12px 8px;white-space:normal}
+ .pwl-product .button{max-width:100%;white-space:normal}
+}
+/* Stack label and value on phones so CJK labels do not become vertical. */
+@media(max-width:600px){
+ .pwl-product .table-scroll{overflow:visible}
+ .pwl-product table,.pwl-product tbody{display:block;width:100%}
+ .pwl-product caption{display:block;text-align:left}
+ .pwl-product tr{display:block;padding:14px 0;border-bottom:1px solid var(--line)}
+ .pwl-product th,.pwl-product td{display:block;width:100%;max-width:none;padding:0;border:0;font-size:16px;line-height:1.7;white-space:normal;word-break:normal;overflow-wrap:break-word;text-align:left}
+ .pwl-product th{margin-bottom:4px;color:var(--muted);font-weight:500}
+ .pwl-product td{color:var(--ink)}
+}
+@media(max-width:600px){.page-intro .product-model{display:block}.page-intro>.lead{line-height:1.7;max-width:28em}.section-links{display:flex;flex-wrap:wrap;gap:12px 18px}}
+

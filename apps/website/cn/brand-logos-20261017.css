@@ -1,0 +1,31 @@
+/* Supplied company and laboratory logos, sized for the shared site shell. */
+.cn-header .wordmark[class*="brand-"] { gap: 0; line-height: 1; }
+.cn-header .wordmark .brand-logo-image,
+.cn-footer .cn-footer-wordmark .brand-logo-image { display: block; max-width: 100%; object-fit: contain; }
+.cn-header .wordmark.brand-originmind,
+.cn-footer .cn-footer-wordmark.brand-originmind { display: inline-flex; align-items: center; gap: 10px; }
+.cn-header .wordmark.brand-originmind { padding: 0; background: transparent; }
+.cn-header .wordmark.brand-originmind .brand-logo-symbol,
+.cn-footer .cn-footer-wordmark.brand-originmind .brand-logo-symbol { display: block; flex: 0 0 auto; width: 64px; height: 64px; object-fit: contain; }
+.brand-originmind .brand-name { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; white-space: nowrap; }
+.brand-originmind .brand-name-cn { font-size: 24px; font-weight: 600; line-height: 1.1; letter-spacing: .08em; }
+.brand-originmind .brand-name-en { font-size: 11px; font-weight: 400; line-height: 1.2; letter-spacing: .03em; }
+.brand-arts .brand-logo-image { mix-blend-mode: multiply; }
+.cn-header .wordmark.brand-arts .brand-logo-image { width: 162px; height: 60px; }
+.cn-footer .cn-footer-wordmark.brand-arts { padding: 10px 14px; border-radius: 4px; background: #fcfbf8; }
+.cn-footer .cn-footer-wordmark.brand-arts .brand-logo-image { width: 220px; height: auto; }
+@media (max-width: 1099px) {
+  .cn-header .wordmark.brand-originmind { gap: 8px; }
+  .cn-header .wordmark.brand-originmind .brand-logo-symbol { width: 48px; height: 48px; }
+  .cn-header .brand-originmind .brand-name-cn { font-size: 20px; }
+  .cn-header .brand-originmind .brand-name-en { font-size: 10px; }
+  .cn-header .wordmark.brand-arts .brand-logo-image { width: 140px; height: 52px; }
+}
+@media (max-width: 360px) {
+  .cn-header .wordmark.brand-originmind { gap: 6px; }
+  .cn-header .wordmark.brand-originmind .brand-logo-symbol { width: 44px; height: 44px; }
+  .cn-header .brand-originmind .brand-name-cn { font-size: 18px; }
+  .cn-header .brand-originmind .brand-name-en { font-size: 9px; }
+  .cn-header .wordmark.brand-arts .brand-logo-image { width: 124px; height: 46px; }
+}
+

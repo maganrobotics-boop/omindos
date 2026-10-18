@@ -7,6 +7,8 @@ root = Path(sys.argv[1]).resolve()
 assert (root / 'en/index.html').is_file()
 routes = sorted('/' + page.relative_to(root).as_posix().removesuffix('index.html')
                 for page in (root / 'en').rglob('index.html'))
+routes += sorted('/_review/' + page.relative_to(root).as_posix().removesuffix('index.html')
+                 for page in (root / 'cn').rglob('index.html'))
 options = ''.join(f'<option value="{escape(route, quote=True)}">{escape(route)}</option>' for route in routes)
 page = '''<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
@@ -22,4 +24,17 @@ label{display:grid;gap:6px}select{min-height:42px;font:inherit;padding:7px;max-w
 target = root / 'en/assets/layout-review.html'
 target.parent.mkdir(parents=True, exist_ok=True)
 target.write_text(page.replace('__OPTIONS__', options))
+worker = root / '_worker.js'
+source = worker.read_text()
+marker = '    const url = new URL(request.url);\n    try {'
+assert source.count(marker) == 1
+review_handler = '''
+      // Public review-only Chinese layout surface; never included in production.
+      if (url.pathname.startsWith('/_review/cn/')) {
+        const asset = new URL(request.url);
+        asset.pathname = url.pathname.replace('/_review', '');
+        return env.ASSETS.fetch(new Request(asset, request));
+      }
+'''
+worker.write_text(source.replace(marker, marker + review_handler))
 print('Prepared public responsive review surface: /en/assets/layout-review.html')

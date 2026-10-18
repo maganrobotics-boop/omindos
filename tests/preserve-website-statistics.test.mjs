@@ -79,8 +79,10 @@ test('final artifact contains exactly the tested collector and current English a
   const artifact = process.env.WEBSITE_ARTIFACT;
   assert.equal(await readFile(resolve(artifact, '_worker.js'), 'utf8'), preserved);
   assert.equal(await readFile(resolve(artifact, 'portal-client.js'), 'utf8'), preservedClient);
-  for (const path of ['en/index.html', 'en/home-20261018.css', 'en/site-20261018.js']) {
+  for (const path of ['en/index.html', 'en/lab/index.html', 'en/home-20261018.css', 'en/site-20261018.js']) {
     const source = await readFile(new URL('../apps/website/' + path, import.meta.url), 'utf8');
-    assert.equal(await readFile(resolve(artifact, path), 'utf8'), path.endsWith('.html') ? preserveClientVersion(source) : source);
+    const deployed = await readFile(resolve(artifact, path), 'utf8');
+    assert.equal(deployed, path.endsWith('.html') ? preserveClientVersion(source) : source);
+    if (path.endsWith('.html')) assert.doesNotMatch(deployed, /portal-client\.js\?v=20261017-(?:filtered-visits|analytics-v2)/);
   }
 });

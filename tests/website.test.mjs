@@ -361,7 +361,10 @@ test('Chinese Q1 and MDA1 videos state simulation at the player and retain acces
 });
 
 test('Chinese site navigation remains consistent across desktop and mobile pages', async () => {
-  const desktop = ['/', '/robots/', '/omindos/', '/integration/', '/lab/', '/about/', '/join/'];
+  const desktop = ['/', '/robots/', '/robots/quadruped/', '/robots/tracked/', '/robots/wheeled/',
+    '/robots/mobile-dual-arm/', '/robots/wheel-legged/', '/robots/open-frame/', '/robots/dual-arm/',
+    '/omindos/', 'https://cloud.omindos.cn/?entry=website', '/integration/', '/developers/',
+    '/field-work/', '/mobility/', 'https://omindos.cn/learning', '/about/', '/join/'];
   const extras = ['robots/mobile-dual-arm', 'robots/tracked', 'developers', 'join', 'careers', 'lab', 'lab/join', 'lab/alumni'];
   for (const route of [...portalRoutes, ...extras]) {
     const html = await readFile(new URL(`cn/${route ? route + '/' : ''}index.html`, root), 'utf8');
@@ -369,7 +372,8 @@ test('Chinese site navigation remains consistent across desktop and mobile pages
     const mobileNav = html.match(/<nav\b[^>]*id="mobile-menu"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
     const hrefs = source => [...source.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(([, href]) => href);
     assert.deepEqual(hrefs(mainNav), desktop, route + ': desktop navigation');
-    assert.deepEqual(hrefs(mobileNav), [...desktop, '/contact/'], route + ': mobile navigation');
+    assert.deepEqual(hrefs(mobileNav), [...desktop, '/lab/', '/contact/'], route + ': mobile navigation');
+    assert.match(html, /class="header-lab" href="\/lab\/"/);
     const footer = siteFooter(html);
     assert.ok(footer, route + ': footer exists');
     for (const href of ['/robots/', '/omindos/', '/integration/', '/lab/', '/join/', '/contact/', '/privacy/']) {
@@ -515,14 +519,14 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
         } else {
           assert.ok(html.includes('/en/home-20261018.css'));
           assert.ok(html.includes('/en/home-20261018.js'));
-          assert.ok(html.includes('/en/site-20261018.css?v=1'));
-          assert.ok(html.includes('/en/site-20261018.js?v=1'));
+          assert.ok(html.includes('/en/site-20261018.css?v=2-single-line'));
+          assert.ok(html.includes('/en/site-20261018.js?v=2-single-line'));
           assert.ok(html.includes('/cn/assets/robot-shells-20261013/system-scene.webp'));
         }
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
-        assert.ok(html.includes(locale === 'cn' ? '/site.js?v=20260910-polish' : '/en/site-20261018.js?v=1'));
+        assert.ok(html.includes(locale === 'cn' ? '/site.js?v=20260910-polish' : '/en/site-20261018.js?v=2-single-line'));
         if (route === 'robots') assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         if (route.startsWith('robots/')) {
           const version = '20260910-structure-video';

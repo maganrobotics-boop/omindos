@@ -2,11 +2,12 @@
 html.home-chapters {
   --home-header-height: 89px;
   scroll-padding-top: var(--home-header-height);
-  scroll-snap-type: y proximity;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
 }
 
 html.home-chapters main > :is(.hero, .home-chapter) {
-  scroll-snap-align: start;
+  scroll-snap-align: none;
   scroll-snap-stop: normal;
 }
 
@@ -351,3 +352,4 @@ html.home-chapters:has(body.menu-open) {
 @media (prefers-reduced-motion: reduce) {
   html.home-chapters { scroll-snap-type: none; scroll-behavior: auto; }
 }
+

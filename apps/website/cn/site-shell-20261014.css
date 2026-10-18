@@ -36,7 +36,7 @@
 }
 .cn-header .wordmark img { width: 29px; height: 29px; object-fit: contain; }
 .cn-header .desktop-nav { display: flex; gap: 24px; align-items: center; margin-left: auto; }
-.cn-header .desktop-nav a, .cn-header .header-contact {
+.cn-header .desktop-nav a, .cn-header .header-contact, .cn-header .header-lab {
   display: inline-flex;
   position: relative;
   align-items: center;
@@ -49,7 +49,7 @@
   white-space: nowrap;
   color: #30302d;
 }
-.cn-header .desktop-nav a::after {
+.cn-header .desktop-nav a::after, .cn-header .header-lab::after {
   content: "";
   position: absolute;
   height: 1px;
@@ -61,7 +61,9 @@
   transform-origin: left;
 }
 .cn-header .desktop-nav a:hover::after,
-.cn-header .desktop-nav a[aria-current="page"]::after { transform: scaleX(1); }
+.cn-header .desktop-nav a[aria-current="page"]::after,
+.cn-header .header-lab:hover::after,
+.cn-header .header-lab[aria-current="page"]::after { transform: scaleX(1); }
 .cn-header .header-contact {
   background: transparent;
   border: 0;
@@ -110,7 +112,7 @@
 @media (max-width: 1099px) {
   body.menu-open { overflow: hidden; }
   .cn-header .header-row { height: 76px; min-height: 76px; gap: 16px; }
-  .cn-header .desktop-nav, .cn-header .header-contact { display: none; }
+  .cn-header .desktop-nav, .cn-header .header-contact, .cn-header .header-lab { display: none; }
   .cn-header .menu-button { display: block; }
   .cn-header .locale-switch { margin-left: auto; }
 }
@@ -184,3 +186,4 @@ html[lang="zh-CN"] main :is(.cn-step, .cn-development-status .eyebrow, .os-hero 
 html[lang="zh-CN"] main :is(.cn-section-intro, .cn-technical-grid p, .cn-research-proof p) { color: var(--muted); }
 html[lang="zh-CN"] main :is(.cn-contact-tools, .prototype-label) { background: var(--mist); }
 html[lang="zh-CN"] main :is(a, button, input, textarea, select, summary):focus-visible { outline: 3px solid #9e8764; outline-offset: 4px; }
+

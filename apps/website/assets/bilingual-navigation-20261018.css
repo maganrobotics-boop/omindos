@@ -1,0 +1,45 @@
+/* Shared disclosure navigation for the Chinese and English websites. */
+.bilingual-dropdown { position: relative; margin: 0; min-width: 0; }
+.bilingual-dropdown > summary {
+  display: flex; align-items: center; gap: 7px; min-height: 44px;
+  padding: 0; list-style: none; cursor: pointer; white-space: nowrap;
+  color: inherit; font: inherit; font-size: 14px; border: 0; background: none;
+}
+.bilingual-dropdown > summary::-webkit-details-marker { display: none; }
+.bilingual-dropdown > summary::after {
+  content: ''; width: 5px; height: 5px; border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor; transform: rotate(45deg); margin-top: -3px;
+}
+.bilingual-dropdown[open] > summary::after { transform: rotate(225deg); margin-top: 3px; }
+.bilingual-dropdown.nav-current > summary { font-weight: 600; }
+.bilingual-dropdown > summary:focus-visible { outline: 2px solid #3770a0; outline-offset: 5px; }
+.bilingual-submenu {
+  position: absolute; z-index: 120; top: 100%; left: -16px;
+  width: max-content; min-width: 260px; max-width: min(380px,90vw);
+  max-height: min(600px,75vh); overflow: auto; padding: 10px;
+  border: 1px solid #d9d6cf; border-radius: 4px; background: #fcfbf8;
+  color: #30302c; box-shadow: 0 12px 28px #171b1c18;
+}
+.bilingual-submenu a {
+  display: block !important; min-height: 0 !important; margin: 0 !important;
+  padding: 9px 12px !important; border: 0 !important; border-radius: 2px;
+  font-size: 14px !important; line-height: 1.45 !important; text-decoration: none;
+  white-space: normal !important; color: inherit !important;
+}
+.bilingual-submenu a:hover, .bilingual-submenu a:focus-visible,
+.bilingual-submenu a[aria-current="page"] { background: #eae7e0; }
+.bilingual-submenu .nav-group-label {
+  display: block; margin: 8px 12px 3px; color: #77756e;
+  font-size: 11px; line-height: 1.5; letter-spacing: .05em;
+}
+:is(.mobile-menu,.en-menu-panel) .bilingual-dropdown { width: 100%; }
+:is(.mobile-menu,.en-menu-panel) .bilingual-dropdown > summary { min-height: 48px; justify-content: space-between; font-size: 16px; }
+:is(.mobile-menu,.en-menu-panel) .bilingual-submenu {
+  position: static; width: 100%; min-width: 0; max-width: none; max-height: none;
+  padding: 0 0 8px 10px; margin: 0 0 8px; border: 0; border-left: 1px solid #d9d6cf;
+  border-radius: 0; background: transparent; color: inherit; box-shadow: none;
+}
+:is(.mobile-menu,.en-menu-panel) .bilingual-submenu a { padding-block: 10px !important; }
+@media (max-height:700px) {
+  :is(.mobile-menu,.en-menu-panel) { max-height: calc(100dvh - 86px); overflow-y: auto; overscroll-behavior: contain; }
+}

@@ -1,5 +1,55 @@
 /* English public-site controls; no application, identity or account changes. */
 (() => {
+  // Fit page/section headings to their actual container; retain readable
+  // scrolling for unusually long publication and award titles on phones.
+  const headingSelector = '.en-site :is(h1,h2,h3,h4,h5,h6)';
+  let headings = [...document.querySelectorAll(headingSelector)];
+  let headingFrame = 0;
+  const fitHeadings = () => {
+    headingFrame = 0;
+    headings = [...document.querySelectorAll(headingSelector)];
+    for (const heading of headings) {
+      if (!heading.getClientRects().length || !heading.clientWidth) continue;
+      heading.style.removeProperty('font-size');
+      heading.classList.remove('en-heading-overflow');
+      const available = heading.clientWidth;
+      let size = parseFloat(getComputedStyle(heading).fontSize);
+      for (let pass = 0; pass < 4 && heading.scrollWidth > available + 1 && size > 12; pass++) {
+        size = Math.max(12, Math.floor(size * available / heading.scrollWidth * 100) / 100);
+        heading.style.setProperty('font-size', `${size}px`, 'important');
+      }
+      const overflow = heading.scrollWidth > available + 1;
+      heading.classList.toggle('en-heading-overflow', overflow);
+      if (overflow && !heading.hasAttribute('tabindex')) {
+        heading.tabIndex = 0;
+        heading.dataset.headingFocus = 'added';
+      } else if (!overflow && heading.dataset.headingFocus === 'added') {
+        heading.removeAttribute('tabindex');
+        delete heading.dataset.headingFocus;
+      }
+    }
+  };
+  const queueHeadingFit = () => { if (!headingFrame) headingFrame = requestAnimationFrame(fitHeadings); };
+  queueHeadingFit();
+  document.fonts?.ready.then(queueHeadingFit);
+  window.addEventListener('resize', queueHeadingFit, { passive: true });
+  document.addEventListener('toggle', queueHeadingFit, true);
+  document.addEventListener('click', queueHeadingFit);
+  new MutationObserver(queueHeadingFit).observe(document.body, {
+    subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['hidden'],
+  });
+  if (typeof ResizeObserver !== 'undefined') {
+    const widths = new WeakMap();
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (widths.get(entry.target) !== entry.contentRect.width) {
+          widths.set(entry.target, entry.contentRect.width);
+          queueHeadingFit();
+        }
+      }
+    });
+    new Set(headings.map(heading => heading.parentElement)).forEach(parent => observer.observe(parent));
+  }
   const chatScript = document.createElement('script');
   chatScript.src = '/en/assets/english-chat/widget.js?v=2';
   chatScript.defer = true;
@@ -69,3 +119,4 @@
     video.addEventListener('play', sync); video.addEventListener('pause', sync); sync();
   }
 })();
+
