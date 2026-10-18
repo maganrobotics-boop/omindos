@@ -45,6 +45,32 @@ function assertPrivate(response) {
   assert.equal(response.headers.get('Access-Control-Allow-Credentials'), null);
 }
 
+test('default upstream fetch retains the native Workers global receiver', async () => {
+  const original = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async function (url) {
+    assert.equal(this, globalThis);
+    assert.equal(url, 'https://omindos.cn/learning/api/account/session');
+    calls++;
+    return guestResponse(true);
+  };
+  try {
+    const response = await handle(request(undefined, { cookie: null }));
+    assert.equal(response.status, 200);
+    assert.equal(calls, 1);
+  } finally { globalThis.fetch = original; }
+});
+
+test('upstream fetch failures expose only fixed runtime or connection codes', async () => {
+  for (const [message, code] of [['Illegal invocation: private details', 'upstream_runtime'], ['private network details', 'upstream_connection']]) {
+    const response = await handle(request(), { fetch: async () => { throw new TypeError(message); } });
+    assert.equal(response.status, 502);
+    const data = await response.json();
+    assert.equal(data.code, code);
+    assert.doesNotMatch(JSON.stringify(data), /private/);
+  }
+});
+
 test('new anonymous session maps only the upstream guest cookie and exposes no profile', async () => {
   const u = upstream(guestResponse(true));
   const response = await handle(request(undefined, { cookie: null }), u);
