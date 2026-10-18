@@ -45,7 +45,7 @@ class ChineseSEO(unittest.TestCase):
                 if route not in chinese_only:
                     self.assertTrue((ROOT/'en'/route.strip('/')/'index.html').exists())
                 else:
-                    self.assertIn('href="https://omindos.ai/en/"', source)
+                    self.assertIn('href="https://omindos.ai/en/lab/"', source)
                     self.assertNotIn('href="https://omindos.ai/en'+route+'"', source)
                 for t,a in tags:
                     if t=='a':
