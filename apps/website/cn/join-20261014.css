@@ -10,6 +10,7 @@
 .join-page .eyebrow{color:var(--muted);font-size:14px;font-weight:400;letter-spacing:0;text-transform:none;margin:0 0 20px}
 .join-page .lead{max-width:42em;margin-top:24px;color:var(--muted);font-size:clamp(18px,1.7vw,22px);line-height:1.9}
 .join-page .join-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px}
+.join-page .join-grid-single{grid-template-columns:minmax(0,1fr)}
 .join-page .join-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border-top:1px solid var(--line);padding-block:28px}
 .join-page .join-card p{margin:16px 0 0;max-width:36em;color:var(--muted)}
 .join-page .join-card>p:last-of-type{margin-bottom:24px}
@@ -43,3 +44,4 @@
 .join-page a:focus-visible{outline:3px solid #9e8764;outline-offset:4px}
 @media(max-width:850px){.join-page .hero{grid-template-columns:minmax(0,1fr);gap:28px}.join-page .info{max-width:none}}
 @media(max-width:650px){.join-page .join-grid,.join-page .grid{grid-template-columns:minmax(0,1fr);gap:8px}.join-page .join-intro{padding-bottom:32px}.join-page .join-section{padding-block:32px}.join-page .cta{padding:20px}.join-page .join-actions{align-items:flex-start;flex-direction:column;gap:12px}.join-page .recruitment-content{padding-top:24px}}
+

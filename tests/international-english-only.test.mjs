@@ -84,7 +84,7 @@ test('Chinese aliases go to .cn while explicit English selection stays on .ai',a
  }
 });
 test('Chinese media namespaces are served as assets and pages enforce safe methods',async()=>{
- for(const path of ['/cn/product-showcase.css?v=1','/en/site-20261018.css?v=1','/en/assets/layout-20261018/mining-environment-20261012.css']){
+ for(const path of ['/cn/product-showcase.css?v=1','/en/site-20261018.css?v=2-single-line','/en/assets/layout-20261018/mining-environment-20261012.css']){
   const css=await worker.fetch(new Request('https://omindos.ai'+path),env);
   assert.equal(css.status,200);assert.equal(css.headers.get('Location'),null);assert.doesNotMatch(await css.text(),/<html/);
  }
@@ -129,7 +129,7 @@ test('English missing pages use the current English layout through the clean ass
   assert.equal(response.headers.get('Location'),null);assert.match(response.headers.get('Cache-Control'),/no-store/);
   assert.match(response.headers.get('Content-Type'),/text\/html/);assert.match(response.headers.get('X-Robots-Tag'),/noindex/);
   const html=await response.text();
-  assert.ok(html.includes('class="header en-header"'));assert.ok(html.includes('/en/site-20261018.css?v=1'));
+  assert.ok(html.includes('class="header en-header"'));assert.ok(html.includes('/en/site-20261018.css?v=2-single-line'));
   assert.ok(html.includes('<h1>Page not found</h1>'));assert.ok(html.includes('href="/en/">OriginMind homepage</a>'));
   assert.doesNotMatch(html,/founding-oem|OEM partnership|Become an OEM partner/i);
  }

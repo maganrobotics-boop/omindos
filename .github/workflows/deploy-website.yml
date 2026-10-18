@@ -18,6 +18,8 @@ on:
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
       - 'scripts/prepare-international-artifact.py'
+      - 'scripts/prepare-bilingual-navigation.py'
+      - 'scripts/prepare-website-review.py'
       - 'tests/international-english-only.test.mjs'
       - 'tests/english-chat-ui.test.mjs'
       - 'tests/test_international_artifact.py'
@@ -41,6 +43,8 @@ on:
       - 'tests/cn-research-prototypes.test.mjs'
       - 'scripts/website-release-scope.mjs'
       - 'scripts/prepare-international-artifact.py'
+      - 'scripts/prepare-bilingual-navigation.py'
+      - 'scripts/prepare-website-review.py'
       - 'tests/international-english-only.test.mjs'
       - 'tests/english-chat-ui.test.mjs'
       - 'tests/test_international_artifact.py'
@@ -97,6 +101,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
           python3 -m unittest discover -s tests -p test_international_artifact.py
+          python3 -m py_compile scripts/prepare-bilingual-navigation.py scripts/prepare-website-review.py
       - name: Determine international release scope
         id: scope
         run: node scripts/website-release-scope.mjs
@@ -120,7 +125,7 @@ jobs:
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && '9a76b841d330f43fab07566875949714afee3995' || '' }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && 'c557663ff40a8dff324b243272827cc4d471814e' || '' }}
         run: node scripts/check-website-project.mjs
       - name: Preserve legacy baseline and prepare isolated filtered statistics
         if: inputs.statistics_mode != 'preserve-current'

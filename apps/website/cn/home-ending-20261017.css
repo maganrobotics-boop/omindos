@@ -1,0 +1,36 @@
+/* Let the last chapter end with its content, without a spare screen or chat spacer. */
+html.home-chapters #about.home-chapter {
+  min-height: 0;
+  align-content: start;
+  padding-bottom: 32px;
+}
+html.home-chapters .cn-footer {
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+html.home-chapters .cn-footer .cn-footer-bottom {
+  padding-inline-end: 64px;
+}
+html.home-chapters .cn-footer .cn-security-record {
+  white-space: normal;
+}
+html.home-chapters .cn-footer .cn-security-record span {
+  overflow-wrap: anywhere;
+}
+/* Keep Chat available beside the final lines without covering the legal links. */
+html.home-footer-visible .home-chat-launcher .home-chat-entry {
+  min-width: 48px;
+  min-height: 48px;
+  justify-content: center;
+  padding: 11px;
+  border-radius: 8px;
+}
+html.home-footer-visible .home-chat-launcher .home-chat-entry > span,
+html.home-footer-visible .home-chat-launcher .home-chat-hide-button {
+  display: none;
+}
+@media (max-width: 760px) {
+  html.home-chapters #about.home-chapter { padding-bottom: 24px; }
+  html.home-chapters .cn-footer { padding-top: 32px; }
+  html.home-chapters .cn-footer .cn-footer-bottom { margin-top: 24px; }
+}
+

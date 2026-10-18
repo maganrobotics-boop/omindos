@@ -50,6 +50,7 @@ def normalize_path(path):
 
 def rewrite(source, route, known_routes, error=False):
     canonical = CN_ORIGIN + route
+    english_route = route if route in known_routes and route != '/lab/alumni/' and not error else '/'
     def tag(match):
         raw = match[0]
         attrs = attributes(raw)
@@ -62,12 +63,14 @@ def rewrite(source, route, known_routes, error=False):
                 if attrs['hreflang'] == 'zh-CN':
                     return attribute(raw, 'href', canonical)
                 if attrs['hreflang'] == 'en':
-                    return attribute(raw, 'href', EN_ORIGIN + '/en' + route)
+                    return '' if english_route != route else attribute(raw, 'href', EN_ORIGIN + '/en' + route)
         if attrs.get('property') == 'og:url':
             return '' if error else attribute(raw, 'content', canonical)
         if not raw.lower().startswith('<a') or 'href' not in attrs:
             return raw
         href = attrs['href']
+        if attrs.get('hreflang') == 'en':
+            return attribute(raw, 'href', EN_ORIGIN + '/en' + english_route)
         if href.startswith(('#', 'mailto:', 'tel:')):
             return raw
         # Mirror downloads use relative links. Resolve them against the cn file
@@ -95,7 +98,10 @@ def rewrite(source, route, known_routes, error=False):
             return raw
         # HTML escape query separators without changing their meaning.
         return attribute(raw, 'href', new.replace('&', '&amp;'))
-    return re.sub(r'<(?:link|meta|a)\b[^>]*>', tag, source, flags=re.I)
+    result = re.sub(r'<(?:link|meta|a)\b[^>]*>', tag, source, flags=re.I)
+    if english_route == route and not re.search(r'<link\b[^>]*hreflang=["\']en["\']', result):
+        result = result.replace('</head>', f'<link rel="alternate" hreflang="en" href="{EN_ORIGIN}/en{route}"></head>', 1)
+    return result
 
 def search_files(known_routes):
     # Chinese sitemap is deployed at /sitemap.xml; the international one stays

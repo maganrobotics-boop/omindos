@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 export const BASELINE_COMMIT = '9a76b841d330f43fab07566875949714afee3995';
 export function preserveClientVersion(html) {
   // A later filtered-v2 release must never reuse the cached legacy collector.
-  return html.replaceAll('/portal-client.js?v=20261017-filtered-visits', '/portal-client.js?v=20261018-preserve-9a76b841');
+  return html.replace(/\/portal-client\.js\?v=20261017-(?:filtered-visits|analytics-v2)/g, '/portal-client.js?v=20261018-preserve-9a76b841');
 }
 
 export function baselineFile(path) {

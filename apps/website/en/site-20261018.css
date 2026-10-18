@@ -112,3 +112,29 @@ html[lang="en"] body.en-site {
   .en-site .en-header .locale-switch { gap: 5px; }
 }
 @media (prefers-reduced-motion:reduce) { html[lang="en"] { scroll-behavior: auto; } }
+
+/* English headings remain complete on one line across all page layouts. */
+.en-site :is(h1,h2,h3,h4,h5,h6) {
+  min-width: 0;
+  max-width: 100% !important;
+  white-space: nowrap !important;
+  text-wrap: nowrap !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  hyphens: none;
+}
+.en-site :is(h1,h2,h3,h4,h5,h6) * {
+  white-space: inherit !important;
+  text-wrap: inherit !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+.en-site :is(h1,h2,h3,h4,h5,h6) > span { display: inline !important; }
+.en-site .os-hero h1 > span { font-size: inherit !important; margin: 0 !important; }
+.en-site .en-heading-overflow {
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-overflow: clip;
+  scrollbar-width: thin;
+}
+
