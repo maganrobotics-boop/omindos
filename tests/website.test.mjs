@@ -204,19 +204,36 @@ test('localized page titles prefer natural wrapping', async () => {
   const Chinese = await readFile(new URL('cn/field-work/mining/index.html', root), 'utf8');
   const English = await readFile(new URL('en/field-work/mining/index.html', root), 'utf8');
   assert.ok(Chinese.includes('<h1>矿山巡检与机器人研发</h1>'));
-  assert.ok(English.includes('<h1>Robotics for underground environments</h1>'));
+  assert.ok(English.includes('<h1>Mining inspection and robotics research</h1>'));
 });
 
 test('robot availability distinguishes development platforms from catalogue prototypes in both languages', async () => {
-  for (const [locale, development, sale] of [['cn', '研发阶段', '产品样机'], ['en', 'IN DEVELOPMENT', 'PRODUCT PROTOTYPE']]) {
+  for (const [locale, development, sale] of [['cn', '研发阶段', '产品样机'], ['en', 'In development', 'Prototype']]) {
     for (const route of ['', 'robots']) {
       const page = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const isFocusedChineseHome = locale === 'cn' && route === '';
+      const isFocusedEnglishHome = locale === 'en' && route === '';
       const cards = [...page.matchAll(/<article\b[^>]*>[\s\S]*?<\/article>/g)]
         .map(match => match[0]).filter(card => isFocusedChineseHome
           ? /<article\b[^>]*\bdata-product-panel(?:\s|>)/.test(card)
-          : /class="[^"]*\b(?:mine-product|product-slide|sale-image|product-picture)\b[^"]*"/.test(card));
-      assert.equal(cards.length, isFocusedChineseHome ? 4 : 7);
+          : /class="[^"]*\b(?:mine-product|product-slide|sale-image|product-picture|en-home-product)\b[^"]*"/.test(card));
+      assert.equal(cards.length, isFocusedChineseHome || isFocusedEnglishHome ? 4 : 7);
+      if (isFocusedEnglishHome) {
+        const expected = [['Q1', 'quadruped'], ['T1', 'tracked'], ['W1', 'wheeled'], ['MDA1', 'mobile-dual-arm']];
+        for (const [index, [model, slug]] of expected.entries()) {
+          const card = cards[index];
+          assert.match(card, new RegExp(`<strong class="en-product-model">${model}</strong>`));
+          assert.match(card, /<figcaption>[^<]*In development<\/figcaption>/);
+          const links = [...card.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+          assert.deepEqual(links.map(([, href]) => href), [`/en/robots/${slug}/`]);
+          assert.equal(links[0][2], `Explore ${model}`);
+          assert.match(card, /<img\b[^>]*alt="[^"]*(?:concept|engineering model)[^"]*"/i);
+          assert.doesNotMatch(card, /<video\b|>for sale<|Request a quote/i);
+        }
+        assert.match(page, /href="\/en\/robots\/"/, 'education and research platforms remain reachable through the catalogue');
+        assert.match(page, /href="\/en\/lab\/"/, 'laboratory research remains reachable');
+        continue;
+      }
       if (isFocusedChineseHome) {
         const expected = [['Q1', 'quadruped'], ['T1', 'tracked'], ['W1', 'wheeled'], ['MDA1', 'mobile-dual-arm']];
         assert.deepEqual(cards.map(card => card.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/)[1]
@@ -231,7 +248,7 @@ test('robot availability distinguishes development platforms from catalogue prot
             model + ': concept images do not claim a field demonstration or availability');
           const detail = await readFile(new URL(`cn/robots/${slug}/index.html`, root), 'utf8');
           assert.match(detail, /研发(?:中|阶段)|工程样机研发中/);
-          if (model === 'T1') assert.match(card, /BUNKER MINI/);
+          if (model === 'T1') assert.match(card, /通用履带底盘/);
         }
         const selectors = [...page.matchAll(/<button\b[^>]*aria-controls="(home-product-[^"]+)"[^>]*>/g)];
         assert.deepEqual(selectors.map(([, id]) => id), expected.map(([model]) => `home-product-${model.toLowerCase()}`));
@@ -250,17 +267,20 @@ test('robot availability distinguishes development platforms from catalogue prot
       for (const card of cards) {
         const prefix = locale === 'cn' ? '' : '/en';
         if (locale === 'en' && card.includes('id="catalogue-platform-tracked"')) {
-          assert.match(card, />IN DEVELOPMENT</);
-          assert.match(card, /BUNKER MINI/);
+          assert.match(card, />In development</);
+          assert.match(card, /Enclosure concept · Tracked chassis/);
           assert.match(card, /T1<\/span>/);
-          assert.match(card, /href="\/en\/field-work\/mining\/#field-records"/);
-          assert.doesNotMatch(card, /<video\b|PRODUCT PROTOTYPE|Request a quote/);
+          const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
+          assert.deepEqual(actions.map(([, href]) => href), ['/en/robots/tracked/', '/en/contact/']);
+          assert.deepEqual(actions.map(([, , label]) => label.trim()), ['View details', 'Contact us']);
+          assert.match(card, /aria-label="T1 tracked inspection robot details"/);
+          assert.doesNotMatch(card, /BUNKER MINI|SCOUT|\/field-work\/mining\/#field-records|<video\b|>Prototype<|Request a quote/i);
           continue;
         }
         const isQuadruped = card.includes(`${prefix}/robots/quadruped`);
         if (locale === 'cn' && card.includes('id="catalogue-platform-tracked"')) {
           assert.match(card, /T1<\/span>/);
-          assert.match(card, /BUNKER MINI/);
+          assert.match(card, /通用履带底盘/);
           assert.match(card, />研发阶段</);
           const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
           assert.deepEqual(actions.map(([, href]) => href), ['/robots/tracked/', '/contact/']);
@@ -279,14 +299,14 @@ test('robot availability distinguishes development platforms from catalogue prot
         const destination = card.match(/href="((?:\/en)?\/robots\/[^"#]+)"/)[1];
         const actions = [...card.matchAll(/<a class="text-link" href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/g)];
         assert.deepEqual(actions.map(([, href]) => href), [destination, `${prefix}/contact/`]);
-        assert.deepEqual(actions.map(([, , label]) => label.replace(/<span\b[^>]*>[\s\S]*?<\/span>/g, '').trim()), locale === 'cn' ? ['产品详情', isFocusedChineseHome ? '合作咨询' : '联系我们'] : ['Details', 'Contact us']);
+        assert.deepEqual(actions.map(([, , label]) => label.replace(/<span\b[^>]*>[\s\S]*?<\/span>/g, '').trim()), locale === 'cn' ? ['产品详情', isFocusedChineseHome ? '合作咨询' : '联系我们'] : ['View details', 'Contact us']);
         if (isQuadruped) {
           assert.doesNotMatch(card, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
         }
       }
     }
     const page = await readFile(new URL(`${locale}/robots/quadruped/index.html`, root), 'utf8');
-    assert.match(page, new RegExp(`>${locale === 'cn' ? '工程样机研发中' : development}<`, 'i'));
+    assert.match(page, new RegExp(`>${locale === 'cn' ? '工程样机研发中' : 'Engineering prototype in development'}<`, 'i'));
     if (locale === 'cn') assert.equal((page.match(/研发中/g) || []).length, 1, 'Q1 development status appears once');
     assert.doesNotMatch(page, />(?:在售|for sale)<|咨询报价|Request a quote|咨询产品演示|Request a demonstration/i);
     assert.match(page, /id="specifications"/);
@@ -295,7 +315,8 @@ test('robot availability distinguishes development platforms from catalogue prot
     assert.equal(enquiryLinks.length, 3);
     for (const [, href] of enquiryLinks) {
       const subject = new URL(href.replaceAll('&amp;', '&')).searchParams.get('subject');
-      assert.match(subject, /研发进展|应用需求|development|application/);
+      if (locale === 'cn') assert.match(subject, /研发进展|应用需求/);
+      else assert.equal(subject, 'Q1 quadruped inspection robot — project inquiry');
       assert.doesNotMatch(subject, /报价|quotation|demonstration/);
     }
   }
@@ -305,7 +326,7 @@ test('Chinese tracked product detail separates current development from historic
   const html = await readFile(new URL('cn/robots/tracked/index.html', root), 'utf8');
   const main = html.match(/<main\b[^>]*>[\s\S]*?<\/main>/)[0];
   assert.match(main.replace(/<[^>]*>/g, ' '), /T1\s+履带式巡检机器人/);
-  assert.match(main, /BUNKER MINI/);
+  assert.match(main, /通用履带底盘/);
   assert.match(main, /研发中/);
   assert.match(main, /外壳设计方案/);
   assert.match(main, /视频展示前期履带验证平台/);
@@ -315,9 +336,8 @@ test('Chinese tracked product detail separates current development from historic
   }
   assert.doesNotMatch(main, />(?:在售|产品样机)<|咨询报价/);
   assert.ok(html.includes('rel="canonical" href="https://omindos.cn/robots/tracked/"'));
-  assert.doesNotMatch(html.split('</head>')[0], /<link\b[^>]*hreflang="en"/);
-  assert.doesNotMatch(html, /href="https:\/\/omindos.ai\/en\/robots\/tracked\//);
-  assert.match(html, /href="https:\/\/omindos.ai\/en\/"[^>]*hreflang="en"/, 'language switch falls back to the real English homepage');
+  assert.match(html.split('</head>')[0], /<link\b[^>]*hreflang="en"[^>]*href="https:\/\/omindos.ai\/en\/robots\/tracked\/"/);
+  assert.match(html, /href="https:\/\/omindos.ai\/en\/robots\/tracked\/"[^>]*hreflang="en"/, 'language switch opens the matching English T1 detail');
   for (const anchor of main.matchAll(/href="#([^"]+)"/g)) assert.ok(main.includes(`id="${anchor[1]}"`));
 });
 
@@ -391,7 +411,7 @@ test('product details are readable inline and keep model-specific specifications
       assert.equal(ids.length, new Set(ids).size);
       if (model === 'quadruped') {
         assert.doesNotMatch(main, /Go2|15\s*kg|700\s*[×x]\s*310|760\s*[×x]\s*310|10\s*km|7\.5万元/i);
-        assert.match(main, locale === 'cn' ? /样机集成与现场测试/ : /full-system integration and application validation/);
+        assert.match(main, locale === 'cn' ? /样机集成与现场测试/ : /Prototype integration and field testing/);
       }
       if (model === 'wheeled') {
         assert.match(main, /730 × 460 × 860 mm/);
@@ -493,15 +513,16 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
           assert.equal((html.match(/class="function"/g) || []).length, 4);
           assert.doesNotMatch(html, /首页预览|data:image\//);
         } else {
-          assert.ok(html.includes('/home/base.css?v=20260910-polish'));
-          assert.ok(html.includes('/home/controls.js?v=20260909-remediation'));
-          assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
-          assert.ok(html.includes('/assets/omindos-system-overview-20260910-balanced.webp'));
+          assert.ok(html.includes('/en/home-20261018.css'));
+          assert.ok(html.includes('/en/home-20261018.js'));
+          assert.ok(html.includes('/en/site-20261018.css?v=1'));
+          assert.ok(html.includes('/en/site-20261018.js?v=1'));
+          assert.ok(html.includes('/cn/assets/robot-shells-20261013/system-scene.webp'));
         }
         assert.ok(!html.includes('/assets/originmind-factory-robot.png'));
       } else {
         assert.ok(html.includes('/site.css?v=20260910-polish'));
-        assert.ok(html.includes('/site.js?v=20260910-polish'));
+        assert.ok(html.includes(locale === 'cn' ? '/site.js?v=20260910-polish' : '/en/site-20261018.js?v=1'));
         if (route === 'robots') assert.match(html, /href="\/product-cards\.css\?v=[^"]+"/);
         if (route.startsWith('robots/')) {
           const version = '20260910-structure-video';
@@ -525,7 +546,8 @@ test('all explicit bilingual pages ignore browser, cookie and query language pre
       }
     }
     const integration = await readFile(new URL(`${locale}/integration/index.html`, root), 'utf8');
-    assert.ok(integration.includes(locale === 'cn' ? '/contact/#project-brief' : '/founding-oem?lang=en'));
+    assert.ok(integration.includes(locale === 'cn' ? '/contact/#project-brief' : '/en/contact/'));
+    if (locale === 'en') assert.doesNotMatch(integration, /\/founding-oem\?lang=en/);
     const head = await worker.fetch(new Request(`https://omindos.ai/${locale}/`, { method: 'HEAD' }), env);
     assert.equal(head.status, 200); assert.equal(await head.text(), '');
     const short = await worker.fetch(new Request(`https://omindos.ai/${locale}`), env);
@@ -603,10 +625,10 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
   const chineseOSOpening = chineseOS.match(/<main\b[^>]*>\s*(<section\b[\s\S]*?<\/section>)/)?.[1] || '';
   assert.match(chineseOSOpening, /<h1\b[^>]*>OmindOS<\/h1>/);
   assert.match(chineseOSOpening.replace(/<[^>]*>/g, ' '), /机器人智能操作系统/);
-  assert.ok(current.en.find(html => html.includes('<title>OmindOS | OriginMind</title>'))
+  assert.ok(current.en.find(html => html.includes('<title>OmindOS | Robot software and integration | OriginMind</title>'))
     .includes('OmindOS is OriginMind’s Robot Agent OS'));
   for (const locale of ['cn', 'en']) {
-    const privacy = current[locale].find(html => html.includes(locale === 'cn' ? '<title>隐私说明 | OriginMind</title>' : '<title>Privacy Notice | OriginMind</title>'));
+    const privacy = current[locale].find(html => html.includes(locale === 'cn' ? '<title>隐私说明 | OriginMind</title>' : '<title>Privacy notice | OriginMind</title>'));
     assert.ok(privacy.includes('<code>originmind.language</code>'));
     assert.ok(privacy.includes('<code>originmind_language</code>'));
   }
@@ -615,29 +637,31 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
     for (const route of ['', 'robots']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
       const isFocusedChineseHome = locale === 'cn' && route === '';
+      const isFocusedHome = route === '';
       const prefix = locale === 'cn' ? '' : '/en';
-      if (!isFocusedChineseHome) assert.ok(html.replace(/<[^>]*>/g, '').includes(name));
-      if (locale === 'en') assert.match(html, /href="\/en\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
+      if (!isFocusedHome) assert.ok(html.replace(/<[^>]*>/g, '').includes(name));
+      if (locale === 'en' && isFocusedHome) assert.match(html, /href="\/en\/robots\/"/, 'education models remain available in the robot catalogue');
+      else if (locale === 'en') assert.match(html, /href="\/en\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
       else if (isFocusedChineseHome) assert.match(html, /href="\/robots\/"/, 'education models remain available in the robot catalogue');
       else assert.match(html, /href="\/robots\/dual-arm\/">[\s\S]*?DA1-EDU/);
-      if (!isFocusedChineseHome) assert.ok(html.includes('/robot-covers.css?v=20260909'));
+      if (!isFocusedHome) assert.ok(html.includes('/robot-covers.css?v=20260909'));
       for (const [model, cover] of Object.entries(coverNames)) {
         if (model === 'articulated') {
           const researchEntry = html.match(/<aside class="cn-research-entry">[\s\S]*?<\/aside>/)?.[0] || '';
           assert.doesNotMatch(html.replace(researchEntry, ''), /href="(?:\/en)?\/robots\/articulated\/"/);
-          if (locale === 'cn' && route === 'robots') {
-            assert.match(researchEntry, /研究原型/);
-            assert.match(researchEntry, /href="\/robots\/articulated\/"/);
+          if (route === 'robots') {
+            assert.match(researchEntry, locale === 'cn' ? /研究原型/ : /Research prototype/);
+            assert.match(researchEntry, new RegExp(`href="${prefix}/robots/articulated/"`));
           }
           continue;
         }
-        if (isFocusedChineseHome) {
+        if (isFocusedHome) {
           if (['quadruped', 'wheeled'].includes(model)) {
-            assert.match(html, new RegExp(`href="/robots/${model}/"`));
+            assert.match(html, new RegExp(`href="${prefix}/robots/${model}/"`));
             const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : '/cn/assets/robot-white-20261013/w1.webp';
             assert.ok(html.includes(expectedCover));
           }
-          assert.match(html, /href="\/robots\/"/);
+          assert.match(html, new RegExp(`href="${prefix}/robots/"`));
         } else {
           const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : `/assets/covers/${cover}`;
           assert.ok(html.includes(expectedCover));
@@ -646,9 +670,9 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
       }
     }
     const detail = await readFile(new URL(`${locale}/robots/dual-arm/index.html`, root), 'utf8');
-    if (locale === 'en') assert.ok(detail.includes(`<h1 class="dual-arm-title">${name}</h1>`));
-    else assert.ok(detail.match(/<h1\b[^>]*>(.*?)<\/h1>/s)[1].replace(/<[^>]*>/g, '').includes(name));
-    assert.ok(detail.includes(`<meta property="og:title" content="${name} | OriginMind">`));
+    assert.ok(detail.match(/<h1\b[^>]*>(.*?)<\/h1>/s)[1].replace(/<[^>]*>/g, '').includes(name));
+    const metadataName = locale === 'cn' ? name : 'DA1-EDU dual-arm manipulation platform';
+    assert.ok(detail.includes(`<meta property="og:title" content="${metadataName} | OriginMind">`));
     assert.ok(detail.includes('/assets/dual-arm-platform-photo-20260910.jpg'));
     assert.ok(detail.includes('/assets/dual-arm-platform-cad-20260910.jpg'));
     assert.ok(detail.includes('class="dual-arm-reference-grid"'));
@@ -662,10 +686,10 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
       const product = await readFile(new URL(`${locale}/robots/${model}/index.html`, root), 'utf8');
       assert.ok(product.includes('/product-details.css?v=20260910-structure-video'));
       assert.ok(product.includes('/robot-covers.css?v=20260909'));
-      if (locale === 'cn' && model === 'articulated') {
+      if (model === 'articulated') {
         assert.ok(product.includes('/assets/articulated-research-model-20261006.png'));
         assert.match(product, /class="ar-hero-figure"/);
-        assert.match(product, /研究原型数据，非交付性能承诺/);
+        assert.match(product, locale === 'cn' ? /研究原型数据，非交付性能承诺/ : /published research results, not delivery specifications/);
       } else {
         const expectedCover = model === 'quadruped' ? '/cn/assets/q1-cad-20261013/q1-original-sensors.webp' : model === 'wheeled' ? '/cn/assets/robot-white-20261013/w1.webp' : model === 'articulated' ? '/assets/articulated-research-model-20261006.png' : `/assets/covers/${coverNames[model]}`;
         assert.ok(product.includes(expectedCover));
@@ -680,9 +704,9 @@ test('approved bilingual naming, privacy links and legacy catalogue scope stay c
   ]) {
     for (const route of ['', 'robots', 'robots/open-frame']) {
       const html = await readFile(new URL(`${locale}/${route ? route + '/' : ''}index.html`, root), 'utf8');
-      if (locale === 'cn' && route === '') {
-        assert.match(html, /href="\/robots\/"/);
-        const catalogue = await readFile(new URL('cn/robots/index.html', root), 'utf8');
+      if (route === '') {
+        assert.match(html, new RegExp(`href="${locale === 'cn' ? '' : '/en'}/robots/"`));
+        const catalogue = await readFile(new URL(`${locale}/robots/index.html`, root), 'utf8');
         assert.ok(catalogue.includes(name));
         assert.ok(!catalogue.includes(retiredName));
       } else {

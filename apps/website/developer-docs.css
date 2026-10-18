@@ -51,7 +51,7 @@
 .api-table-scroll th:nth-child(2):nth-last-child(2){width:24%}
 .api-search-label{display:block;font-size:13px;color:#516981;margin-bottom:9px}
 .api-search-row{display:flex;gap:10px;align-items:center}
-.api-search-row input{min-width:0;flex:1;width:100%;min-height:46px;padding:11px 15px;font:15px/1.5 inherit;border:1px solid #b8cada;border-radius:7px;color:#23425f;background:#fff;box-shadow:0 1px 3px #182f4710}
+.api-search-row input{min-width:0;flex:1;width:100%;min-height:46px;padding:11px 15px;font:inherit;font-size:16px;line-height:1.5;border:1px solid #b8cada;border-radius:7px;color:#23425f;background:#fff;box-shadow:0 1px 3px #182f4710}
 .api-search-row input::placeholder{color:#7790a6}
 .api-search-row button{min-height:44px;padding:8px 13px;border:1px solid #d5e1ec;border-radius:6px;background:#f5f8fb;color:#345b7d;font-size:13px;cursor:pointer}
 .api-section .api-search-status{font-size:12px;color:#688195;line-height:1.6;margin:9px 0 0}

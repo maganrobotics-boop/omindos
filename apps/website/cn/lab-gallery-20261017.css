@@ -1,0 +1,227 @@
+/* Certificate scans and team photographs follow the existing four chapters. */
+.lab-page .lab-patents {
+  margin-bottom: 44px;
+  padding-block: 28px 32px;
+  border-block: 1px solid var(--lab-line);
+}
+.lab-page .lab-patent-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  margin: 0;
+}
+.lab-page .lab-patent-stats > div { min-width: 0; }
+.lab-page .lab-patent-stats dt {
+  color: var(--lab-muted);
+  font-size: 15px;
+}
+.lab-page .lab-patent-stats dd {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 8px 0 0;
+}
+.lab-page .lab-patent-stats strong {
+  color: var(--lab-ink);
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.15;
+  font-weight: 500;
+}
+.lab-page .lab-patent-stats dd span,
+.lab-page .lab-patent-note {
+  color: var(--lab-muted);
+  font-size: 14px;
+  line-height: 1.9;
+}
+.lab-page .lab-patent-note { margin-top: 24px; }
+.lab-page .lab-patent-authorization { margin-top: 24px; color: var(--lab-ink); font-size: 16px; line-height: 1.9; }
+.lab-page .lab-patent-records {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lab-page .lab-patent-records li {
+  min-width: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--lab-line);
+}
+.lab-page .lab-patent-records h4 { font-size: 17px; line-height: 1.7; }
+.lab-page .lab-patent-collection .lab-certificate-image img { max-height: 340px; }
+.lab-page .lab-application-record { margin-block: 24px; }
+.lab-page .lab-application-record h4 { font-size: 17px; line-height: 1.7; }
+.lab-page .lab-application-record p { margin-top: 12px; color: var(--lab-muted); font-size: 14px; line-height: 1.8; }
+.lab-page .lab-patent-records p {
+  margin-block: 12px;
+  color: var(--lab-muted);
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.lab-page .lab-cooperation-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--lab-line);
+}
+.lab-page .lab-cooperation-copy { min-width: 0; }
+.lab-page .lab-cooperation-copy h3 { font-size: 26px; line-height: 1.5; }
+.lab-page .lab-cooperation-copy > p:not([class]) {
+  margin-block: 18px 24px;
+  color: var(--lab-muted);
+  font-size: 16px;
+  line-height: 1.9;
+}
+.lab-page .lab-cooperation-photo { width: 100%; margin: 0; }
+.lab-page .lab-cooperation-photo img { display: block; width: 100%; height: auto; }
+.lab-page .lab-cooperation-photo figcaption { margin-top: 8px; color: var(--lab-muted); }
+.lab-page .lab-cooperation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 32px; }
+.lab-page .lab-events-heading { margin-top: 40px; }
+.lab-page .lab-activity-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+  margin-bottom: 40px;
+}
+.lab-page .lab-activity-gallery figure { min-width: 0; margin: 0; }
+.lab-page .lab-activity-gallery img { display: block; width: 100%; height: auto; }
+.lab-page .lab-activity-gallery figcaption { margin-top: 10px; color: var(--lab-muted); }
+.lab-page #results .lab-milestones {
+  display: block;
+}
+.lab-page #results .lab-milestones > h3 {
+  margin-bottom: 28px;
+}
+.lab-page .lab-honors-content { min-width: 0; }
+.lab-page .lab-certificate-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 32px;
+}
+.lab-page .lab-certificate { min-width: 0; grid-column: span 2; }
+.lab-page .lab-certificate:nth-child(n+4) { grid-column: span 3; }
+.lab-page .lab-certificate-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  background: #f5f3ef;
+}
+.lab-page .lab-certificate-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.lab-page .lab-certificate h4 {
+  margin: 6px 0 12px;
+  color: var(--lab-ink);
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.lab-page .lab-certificate > p,
+.lab-page .lab-certificate-hint {
+  color: var(--lab-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.lab-page .lab-certificate > .lab-certificate-year {
+  margin-top: 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.lab-page .lab-certificate-project { margin-top: 12px; }
+.lab-page .lab-certificate-hint { margin: 24px 0 32px; }
+.lab-page .lab-certificate-disclosure { margin-top: 18px; }
+.lab-page .lab-certificate-disclosure summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  border-block: 1px solid var(--lab-line);
+  padding-block: 8px;
+  color: var(--lab-ink);
+  font-size: 14px;
+  line-height: 1.6;
+  list-style: none;
+  cursor: pointer;
+}
+.lab-page .lab-certificate-disclosure summary::-webkit-details-marker { display: none; }
+.lab-page .lab-certificate-disclosure summary::after { content: "+"; font-size: 22px; font-weight: 400; }
+.lab-page .lab-certificate-disclosure[open] summary::after { content: "−"; }
+.lab-page .lab-certificate-disclosure .lab-certificate-image {
+  aspect-ratio: auto;
+  margin-top: 16px;
+  padding: 8px;
+}
+.lab-page .lab-certificate-disclosure .lab-certificate-image img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 520px;
+}
+.lab-page .lab-honors-content .lab-awards {
+  border-top: 1px solid var(--lab-line);
+  padding-top: 28px;
+}
+.lab-page .lab-team-photo {
+  margin: 0 0 40px;
+}
+.lab-page .lab-team-photo > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.lab-page .lab-team-photo figcaption {
+  margin-top: 12px;
+  color: var(--lab-muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+/* The supplied collage is preserved; show its lower, graduation photograph. */
+.lab-page .lab-graduation-frame {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+.lab-page .lab-graduation-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+@media (max-width: 900px) {
+  .lab-page .lab-cooperation-feature { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .lab-page .lab-patent-records { grid-template-columns: minmax(0, 1fr); }
+  .lab-page .lab-certificate-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 36px;
+  }
+  .lab-page .lab-certificate,
+  .lab-page .lab-certificate:nth-child(n+4) { grid-column: auto; }
+  .lab-page .lab-certificate-image {
+    aspect-ratio: auto;
+    height: auto;
+    max-height: none;
+  }
+  .lab-page .lab-certificate-image img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 440px;
+    object-fit: contain;
+  }
+  .lab-page .lab-team-photo { margin-bottom: 32px; }
+}
+@media (max-width: 760px) {
+  .lab-page .lab-activity-gallery { grid-template-columns: minmax(0, 1fr); }
+  .lab-page .lab-cooperation-grid { grid-template-columns: minmax(0, 1fr); }
+  .lab-page .lab-cooperation-copy > p:not([class]) { font-size: 15px; }
+}

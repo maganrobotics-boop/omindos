@@ -1,0 +1,27 @@
+/* English adaptation of /cn/mining-environment-20261012.css; component layout retained. */
+/* Industrial task, environment and validation hierarchy. Titles wrap naturally. */
+html[lang="en"] .cn-section-followup{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 28px;margin:30px 0 0;color:#52657a;font-size:15px}
+html[lang="en"] .cn-section-followup .text-link{margin:0;white-space:normal}
+html[lang="en"] .cn-condition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;margin:34px 0 0}
+.cn-condition-grid>div{min-width:0;border-top:1px solid #bdcddd;padding-top:20px}
+.cn-condition-grid dt{font-size:22px;font-weight:600;line-height:1.5;color:#0b2034}
+.cn-condition-grid dd{margin:10px 0 0;color:#52657a;font-size:17px;line-height:1.8}
+html[lang="en"] .cn-scope-note{margin-top:36px;padding:24px 28px;border-left:3px solid #2458df;background:#fff}
+.cn-scope-note h3{margin:0 0 10px;font-size:22px;font-weight:600}
+.cn-scope-note p{max-width:58em;margin:0;color:#52657a;font-size:16px}
+html[lang="en"] .cn-validation-grid{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;padding:0;margin:36px 0}
+.cn-validation-grid li{min-width:0;padding-top:22px;border-top:2px solid #bdcddd}
+.cn-validation-grid .cn-step{display:block;color:#2458df;font-size:13px;font-weight:600;letter-spacing:.08em}
+.cn-validation-grid h3{font-size:22px;font-weight:600;margin:10px 0 12px}
+.cn-validation-grid p{margin:0;color:#52657a;font-size:17px}
+html[lang="en"] .cn-field-team{max-width:880px;margin:36px auto 0}
+.cn-field-team img{display:block;width:100%;height:auto;border-radius:10px}
+.cn-field-team figcaption{padding-top:12px}
+html[lang="en"] #conditions,html[lang="en"] #tasks,html[lang="en"] #research,html[lang="en"] #field-records,html[lang="en"] #validation,html[lang="en"] #project-brief{scroll-margin-top:100px}
+html[lang="en"] .cn-home-research .cn-technical-grid h3{font-size:24px}
+html[lang="en"] .origin-theme .intro{text-align:left}
+html[lang="en"] .origin-theme .intro p{margin-left:0;margin-right:0}
+@media(max-width:1100px){html[lang="en"] .cn-validation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){html[lang="en"] .cn-condition-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px}.cn-condition-grid dt,.cn-validation-grid h3{font-size:21px}}
+@media(max-width:600px){html[lang="en"] .cn-condition-grid,html[lang="en"] .cn-validation-grid{grid-template-columns:1fr;gap:22px;margin-top:28px}.cn-condition-grid dd,.cn-validation-grid p{font-size:16px}html[lang="en"] .cn-scope-note{padding:22px 20px}.cn-scope-note h3{font-size:20px}html[lang="en"] .cn-home-research .cn-technical-grid h3{font-size:22px}.cn-section-followup{line-height:1.8}}
+@media(prefers-reduced-motion:reduce){html[lang="en"]{scroll-behavior:auto}}

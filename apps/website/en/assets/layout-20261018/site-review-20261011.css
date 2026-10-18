@@ -1,0 +1,114 @@
+/* English adaptation of /cn/site-review-20261011.css; component layout retained. */
+/* Chinese editorial refinements, loaded after existing page styles. */
+html[lang="en"] .page-intro h1{line-height:1.2;letter-spacing:-.025em}
+html[lang="en"] .page-intro>.lead{line-height:1.7;max-width:44em}
+.cn-product-page .page-opening{padding-top:44px;padding-bottom:16px}
+.cn-product-page .page-opening+.section{padding-top:20px}
+.cn-product-page .page-intro{gap:16px}
+.cn-product-page .page-intro h1{font-size:clamp(34px,3.8vw,54px)}
+.cn-product-page .page-intro>.lead{font-size:20px;margin-top:0}
+.cn-product-page .product-detail-layout{gap:40px;align-items:start}
+.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{width:100%;max-height:430px;object-fit:contain;background:#fff}
+.cn-product-page .product-details .section-links{display:flex;flex-wrap:wrap;gap:12px 20px}
+html[lang="en"] .field-stories{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+html[lang="en"] .field-story:last-child{padding-top:0}
+html[lang="en"] .field-stories .media>img{aspect-ratio:4/3}
+html[lang="en"] .field-story-copy{display:block}
+html[lang="en"] .field-story-copy>p{margin-top:16px}
+html[lang="en"] .footer-grid nav{min-width:0}
+.cn-research-entry{margin-top:40px;padding-top:28px;border-top:1px solid var(--line,#d5dfe7)}
+.cn-research-entry h3{font-size:26px}
+.cn-research-entry p{margin:16px 0;color:var(--muted,#58697b)}
+.cn-demo-index{padding-top:20px}
+.cn-demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:32px}
+.cn-demo-grid article{min-width:0;border-top:2px solid var(--line,#d5dfe7);padding-top:24px}
+.cn-demo-grid h3{font-size:25px;line-height:1.4}
+.cn-demo-grid p{margin-bottom:16px;color:var(--muted,#58697b)}
+.cn-demo-grid h3+p{margin-top:16px}
+.cn-demo-grid nav{display:flex;flex-direction:column;align-items:start;gap:14px}
+.cn-demo-grid a{color:var(--blue,var(--blue));text-decoration:underline;text-underline-offset:5px}
+html[lang="en"] .table-scroll:focus-visible{outline:2px solid var(--blue);outline-offset:5px}
+@media(max-width:800px){.cn-demo-grid{grid-template-columns:1fr;gap:32px}.cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:24px}}
+@media(max-width:600px){
+ .cn-product-page .page-opening{padding-top:32px;padding-bottom:8px}
+ .cn-product-page .page-opening+.section{padding-top:16px}
+ .cn-product-page .page-intro>.lead{font-size:18px}
+ .cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{max-height:320px}
+ html[lang="en"] .field-stories{grid-template-columns:1fr}
+ .cn-research-entry{margin-top:28px}
+}
+
+/* Editorial hierarchy: concise openings, readable text and consistent product stages. */
+html[lang="en"] .robot-showcase .product-picture{box-sizing:border-box;aspect-ratio:3/2;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
+html[lang="en"] .robot-showcase .product-picture>img{width:100%;height:100%;object-fit:contain;object-position:center}
+html[lang="en"] .robot-showcase .product-card{display:flex;flex-direction:column;min-width:0}
+html[lang="en"] .robot-showcase .product-card-copy{display:flex;flex-direction:column;flex:1;padding:22px 12px 0}
+html[lang="en"] .robot-showcase .product-links{margin-top:auto;padding-top:16px}
+html[lang="en"]{line-break:strict}
+html[lang="en"] .page-opening{padding-top:52px;padding-bottom:28px}
+html[lang="en"] .page-opening+.section{padding-top:28px}
+html[lang="en"] .page-intro h1{font-size:clamp(34px,4vw,56px);font-weight:600;line-height:1.25;letter-spacing:-.02em;text-wrap:wrap}
+html[lang="en"] .page-intro>.lead{max-width:38em;font-size:20px;line-height:1.75}
+html[lang="en"] main h2{line-height:1.35;letter-spacing:-.015em;text-wrap:wrap}
+html[lang="en"] main h3{line-height:1.45}
+html[lang="en"] .story-split p,html[lang="en"] .statement p{max-width:38em;line-height:1.8}
+html[lang="en"] .product-section-intro{max-width:48em;line-height:1.8}
+html[lang="en"] .note,html[lang="en"] figcaption{line-height:1.7}
+html[lang="en"] .cn-product-page .page-opening{padding-top:40px;padding-bottom:12px}
+html[lang="en"] .cn-product-page .page-opening+.section{padding-top:16px}
+.cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px}
+.cn-product-page .product-detail-image,.cn-product-page .product-detail-layout>.mda-preview-hero{min-width:0;margin:0}
+.cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{box-sizing:border-box;width:100%;height:400px;max-height:none;object-fit:contain;object-position:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+.cn-product-page .product-detail-layout>.mda-preview-hero img{filter:contrast(1.08) saturate(1.04)}
+html[lang="en"] .robot-showcase .sale-image{box-sizing:border-box;aspect-ratio:3/2;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
+html[lang="en"] .robot-showcase .sale-image>img{width:100%;height:100%;object-fit:contain;object-position:center}
+html[lang="en"] .robot-showcase .mda-preview-card>img{filter:contrast(1.08) saturate(1.04)}
+html[lang="en"] .robot-showcase .sale-card .card-body{padding:22px 12px;display:flex;flex-direction:column;flex:1}
+html[lang="en"] .robot-showcase .sale-card{display:flex;flex-direction:column}
+html[lang="en"] .robot-showcase .sale-actions{margin-top:auto;padding-top:16px}
+html[lang="en"] .robot-showcase .card-body>p:not(.sale-badge){line-height:1.75;font-size:16px}
+.cn-development-status{max-width:850px;border-left:3px solid var(--blue);background:#fff;padding:24px 28px;margin-top:24px}
+.cn-development-status p{font-size:18px;line-height:1.8;margin:0 0 14px}
+.cn-development-status p:last-child{margin-bottom:0}
+.cn-development-status .eyebrow{font-size:13px;color:var(--blue);font-weight:600}
+.cn-section-intro{max-width:42em;color:var(--muted);line-height:1.8;margin-top:18px}
+.cn-evidence-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:32px}
+.cn-evidence-cards article{min-width:0;border-top:2px solid #dce5ed;padding-top:24px;display:flex;flex-direction:column}
+.cn-evidence-cards h3{font-size:24px;margin:12px 0}
+.cn-evidence-cards p{line-height:1.8}
+.cn-evidence-cards .text-link{align-self:start;margin-top:auto;padding-top:20px}
+html[lang="en"] #learning-resources .product-feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+html[lang="en"] #learning-resources .note{margin-top:28px;max-width:60em}
+html[lang="en"] #manuals .product-feature-grid{gap:28px}
+@media(max-width:900px){
+ .cn-product-page .product-detail-layout{grid-template-columns:minmax(0,1fr);gap:28px}
+ .cn-evidence-cards,html[lang="en"] #learning-resources .product-feature-grid{grid-template-columns:1fr}
+ html[lang="en"] .story-split{gap:32px}
+}
+@media(max-width:600px){
+ html[lang="en"] .page-opening{padding-top:32px;padding-bottom:20px}
+ html[lang="en"] .page-opening+.section{padding-top:20px}
+ html[lang="en"] .page-intro>.lead{font-size:18px;line-height:1.75}
+ html[lang="en"] .cn-product-page .page-opening{padding-top:30px}
+ .cn-product-page .product-detail-image>img,.cn-product-page .product-detail-layout>.mda-preview-hero img{height:300px;padding:8px}
+ .cn-development-status{padding:20px}
+ .cn-development-status p{font-size:16px}
+ .cn-evidence-cards{gap:24px}
+}
+
+/* Keep titles and model names in a single natural text flow. */
+html[lang="en"] body main :is(h1,h2,h3){max-width:none;white-space:normal;text-wrap:wrap;word-break:normal;overflow-wrap:normal}
+html[lang="en"] .page-intro h1{font-size:clamp(30px,3.5vw,48px);line-height:1.35}
+html[lang="en"] .cn-product-page .page-intro h1{font-size:clamp(28px,3.3vw,46px)}
+html[lang="en"] .robot-model,html[lang="en"] .robot-name{display:inline;font-size:inherit;font-weight:inherit;line-height:inherit;letter-spacing:inherit;margin:0}
+html[lang="en"] .robot-model{white-space:nowrap}
+html[lang="en"] .robot-showcase :is(.sale-card,.product-card) h3{font-size:clamp(20px,1.6vw,23px);font-weight:600;line-height:1.5}
+html[lang="en"] main h2{font-size:clamp(26px,2.6vw,36px)}
+html[lang="en"] .robot-group-heading h2{font-size:26px}
+html[lang="en"] .articulated-page h1{font-size:clamp(28px,2.6vw,38px);line-height:1.35}
+html[lang="en"] .footer-grid>div:first-child>p{font-size:14px;line-height:1.8}
+html[lang="en"] .footer-invitation h2{font-size:clamp(26px,2.6vw,36px)}
+html[lang="en"] .origin-theme .intro{max-width:none}
+html[lang="en"] .origin-theme .intro p{max-width:58em;margin-inline:auto;line-height:1.8}
+html[lang="en"] .origin-theme .hardware-overview p{line-height:1.8}
+@media(max-width:600px){html[lang="en"] .robot-group-heading h2{font-size:24px}html[lang="en"] .page-intro>.lead{font-size:17px}}

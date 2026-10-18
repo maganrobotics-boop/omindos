@@ -1,0 +1,124 @@
+/* Load after page styles: shared Chinese typography without changing application UI. */
+html[lang="zh-CN"] body {
+  font-family: Arial, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+
+/* Keep one flexible gap before desktop navigation on both the homepage and inner pages. */
+@media (min-width: 1100px) {
+  html[lang="zh-CN"] .cn-header .header-row {
+    width: 92%;
+    max-width: none;
+  }
+  html[lang="zh-CN"] .cn-header .header-row .locale-switch {
+    margin-left: 0;
+  }
+}
+
+/* Company inner pages share the homepage's content edges; ARTS keeps its own grid. */
+html[lang="zh-CN"]:not(.home-chapters) body:not(.lab-family):not(.lab-page) #main-content .wrap {
+  width: min(1380px, 88%);
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 0;
+}
+
+html[lang="zh-CN"]:not(.home-chapters) body:not(.lab-family):not(.lab-page) #main-content > :is(.page-opening, .join-intro, .os-hero, .api-hero, .ar-hero) {
+  padding-top: 52px;
+  padding-bottom: 32px;
+}
+
+/* Only page-opening titles: dialog titles, footer text and the ARTS hierarchy are untouched. */
+html[lang="zh-CN"]:not(.home-chapters) body:not(.lab-family):not(.lab-page) #main-content :is(.page-intro, .join-intro, .os-hero, .api-hero, .ar-hero) h1 {
+  max-width: none;
+  margin: 0;
+  font-size: clamp(30px, 3.5vw, 48px);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.02em;
+  text-wrap: wrap;
+}
+
+/* Reset the two-column specification-table default before sizing this five-column comparison. */
+html[lang="zh-CN"] #main-content .industrial-comparison {
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+}
+html[lang="zh-CN"] #main-content .industrial-comparison :is(th, td) {
+  width: 21%;
+  padding: 16px;
+  line-height: 1.8;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+html[lang="zh-CN"] #main-content .industrial-comparison tr > :first-child {
+  width: 16%;
+}
+html[lang="zh-CN"] #main-content .industrial-comparison thead th {
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  html[lang="zh-CN"] #main-content {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  html[lang="zh-CN"]:not(.home-chapters) body:not(.lab-family):not(.lab-page) #main-content > :is(.page-opening, .join-intro, .os-hero, .api-hero, .ar-hero) {
+    padding-top: 32px;
+    padding-bottom: 28px;
+  }
+
+  html[lang="zh-CN"] #main-content :is(.story-split, .statement, .cn-technical-grid, .cn-condition-grid, .cn-validation-grid, .cn-evidence-cards, .product-feature-grid, .product-research-note, .join-card, .join-section, .recruitment-content, .os-capabilities, .os-connect-card, .os-resource-card, .os-cloud-copy) :is(p, li, dd) {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  html[lang="zh-CN"] #main-content :is(.os-task-flow p, .api-section p) {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  html[lang="zh-CN"] body #main-content :is(figcaption, .note, .media-note, .os-entry-note, .os-version-note, .os-console-label, .os-card-kicker, .api-start-links small) {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  html[lang="zh-CN"] #main-content :is(.os-resource-number, .os-section .eyebrow, .os-hero .eyebrow) {
+    font-size: 12px;
+  }
+
+  /* Let the sentence wrap naturally instead of shrinking the main message to fit one line. */
+  html[lang="zh-CN"].home-chapters #main-content .hero .hero-sub {
+    max-width: min(34em, 100%);
+    font-size: 16px;
+    line-height: 1.8;
+    white-space: normal;
+    text-wrap: wrap;
+  }
+  html[lang="zh-CN"].home-chapters #main-content :is(.home-section-intro, .about-proof > p:not(.about-proof-label), .home-product-panel .slide-description) {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  html[lang="zh-CN"].home-chapters #main-content #omindos :is(.function small, .exchange, .robot-label strong) {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  html[lang="zh-CN"].home-chapters #main-content #omindos :is(.system-kicker, .exchange small, .robot-label small) {
+    font-size: 12px;
+  }
+
+  /* Preserve ARTS's lighter headings while making research copy and metadata readable. */
+  html[lang="zh-CN"] :is(.lab-page, .lab-family) #main-content :is(.lab-hero-intro, .lab-about p, .lab-direction > p:not(.lab-direction-en), .lab-section-heading > p:not(.lab-section-index), .lab-paper-title, .lab-paper > p:not([class]), .lab-project-copy > p:not([class]), .lab-result-feature > p:not([class]), .lab-practice-grid p, .lab-exchange-grid article > p:not([class]), .lab-updates p, .lab-join p:not(.lab-section-index), .alumni-bio, .alumni-entry-description) {
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  html[lang="zh-CN"] :is(.lab-page, .lab-family) #main-content :is(figcaption, .lab-paper-author, .lab-paper-note, .lab-paper-venue, .lab-alumni-summary, .lab-institution, .lab-result-subtitle, .lab-subsection-heading p, .lab-awards p, .alumni-entry-meta) {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  html[lang="zh-CN"] :is(.lab-page, .lab-family) #main-content :is(.lab-eyebrow, .lab-section-index, .lab-event-date, .lab-award-year, .lab-result-kind, .lab-year-heading span, .lab-updates time, .lab-direction-meta > span, .lab-direction-en, .lab-chapters small, .lab-direction ul) {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+}

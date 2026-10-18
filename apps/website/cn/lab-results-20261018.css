@@ -1,0 +1,248 @@
+/* Three chronological lists share the existing dark results chapter. */
+.lab-page #results .lab-results-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 0 0 32px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--lab-line);
+}
+.lab-page #results .lab-results-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 2px;
+  color: var(--lab-ink);
+  font-size: 15px;
+  line-height: 1.6;
+  text-decoration-line: underline;
+  text-decoration-color: var(--lab-line);
+  text-underline-offset: 7px;
+}
+.lab-page #results .lab-results-nav a:hover {
+  text-decoration-color: currentColor;
+}
+.lab-page #results .lab-result-group {
+  min-width: 0;
+  margin: 0;
+  padding-block: 32px;
+  border-bottom: 1px solid var(--lab-line);
+  scroll-margin-top: 120px;
+}
+.lab-page #results .lab-results-nav + .lab-result-group {
+  padding-top: 8px;
+}
+.lab-page #results .lab-result-group-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-bottom: 24px;
+}
+.lab-page #results .lab-result-group-heading h3 {
+  color: var(--lab-ink);
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 400;
+  line-height: 1.6;
+}
+.lab-page #results .lab-result-group-heading p {
+  margin: 0;
+  color: var(--lab-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.lab-page #results .lab-chronology {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lab-page #results .lab-chronology-entry {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+  min-width: 0;
+  padding-block: 24px;
+  border-top: 1px solid var(--lab-line);
+}
+.lab-page #results .lab-record-date {
+  display: block;
+  padding-top: 3px;
+  color: var(--lab-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.lab-page #results .lab-record-body {
+  min-width: 0;
+}
+.lab-page #results .lab-record-body h4 {
+  margin: 0;
+  color: var(--lab-ink);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.lab-page #results .lab-record-body h4[lang="en"] {
+  line-height: 1.55;
+  hyphens: auto;
+}
+.lab-page #results .lab-record-body :is(.lab-record-meta, .lab-record-authors, .lab-record-description) {
+  margin: 8px 0 0;
+  color: var(--lab-muted);
+  font-size: 14px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.lab-page #results .lab-record-meta {
+  font-variant-numeric: tabular-nums;
+}
+.lab-page #results .lab-record-description {
+  max-width: 64em;
+}
+.lab-page #results .lab-record-body .lab-paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 24px;
+  margin-top: 8px;
+}
+.lab-page #results .lab-record-body .lab-paper-links a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  max-width: 100%;
+  padding-block: 8px;
+  color: var(--lab-ink);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.lab-page #results .lab-chronology .lab-certificate-disclosure {
+  max-width: 760px;
+  margin-top: 12px;
+}
+.lab-page #results .lab-chronology .lab-certificate-disclosure summary {
+  min-height: 44px;
+  padding-block: 8px;
+  border-top: 0;
+  color: var(--lab-ink);
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.lab-page #results .lab-chronology .lab-certificate-disclosure summary::after {
+  flex: 0 0 auto;
+}
+.lab-page #results .lab-chronology .lab-certificate-image {
+  min-width: 0;
+  margin-top: 16px;
+}
+.lab-page #results .lab-chronology .lab-certificate-image img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 560px;
+  object-fit: contain;
+}
+/* This supplied scan is stored sideways; preserve the original file. */
+.lab-page #results .lab-chronology .lab-certificate-image.lab-certificate-image--rotated {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  max-height: none;
+  aspect-ratio: 1066 / 749;
+  padding: 0;
+}
+.lab-page #results .lab-chronology .lab-certificate-image.lab-certificate-image--rotated img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 70.2627%;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+.lab-page #results .lab-result-group .lab-patent-stats {
+  gap: 20px 32px;
+  margin-bottom: 20px;
+}
+.lab-page #results .lab-result-group .lab-patent-stats strong {
+  font-size: clamp(36px, 4vw, 48px);
+}
+.lab-page #results .lab-result-group .lab-patent-authorization {
+  margin-block: 20px;
+  color: var(--lab-ink);
+  font-size: 15px;
+  line-height: 1.9;
+}
+.lab-page #results .lab-result-group .lab-patent-note {
+  margin-block: 16px 24px;
+}
+.lab-page #results .lab-results-demos {
+  min-width: 0;
+  margin-top: 36px;
+}
+.lab-page #results .lab-results-demos > .lab-subsection-heading {
+  margin-bottom: 24px;
+}
+.lab-page #results :is(.lab-results-nav, .lab-chronology) :is(a, summary):focus-visible {
+  outline: 3px solid var(--lab-focus);
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  .lab-page #results .lab-results-nav {
+    gap: 8px 24px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+  }
+  .lab-page #results .lab-result-group {
+    padding-block: 28px;
+    scroll-margin-top: 104px;
+  }
+  .lab-page #results .lab-result-group-heading {
+    display: block;
+    margin-bottom: 20px;
+  }
+  .lab-page #results .lab-result-group-heading p {
+    margin-top: 8px;
+  }
+  .lab-page #results .lab-chronology-entry {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding-block: 20px;
+  }
+  .lab-page #results .lab-record-date {
+    padding-top: 0;
+    font-size: 13px;
+  }
+  .lab-page #results .lab-record-body h4 {
+    font-size: 17px;
+  }
+  .lab-page #results .lab-record-body .lab-paper-links {
+    gap: 4px 20px;
+  }
+  .lab-page #results .lab-chronology .lab-certificate-image img {
+    max-height: 480px;
+  }
+  .lab-page #results .lab-result-group .lab-patent-stats {
+    gap: 20px;
+  }
+  .lab-page #results .lab-result-group .lab-patent-stats dd {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+  .lab-page #results .lab-results-demos {
+    margin-top: 28px;
+  }
+}

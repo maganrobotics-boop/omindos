@@ -366,9 +366,10 @@ async function serveRobotBrochure(request, env, url) {
 // retain the existing language cookie and API bindings.
 const PORTAL_ROUTES = new Set([
   "/", "/robots", "/robots/wheel-legged", "/robots/quadruped",
-  "/robots/articulated", "/robots/open-frame", "/robots/wheeled", "/robots/dual-arm", "/robots/mobile-dual-arm",
+  "/robots/articulated", "/robots/open-frame", "/robots/wheeled", "/robots/tracked", "/robots/dual-arm", "/robots/mobile-dual-arm",
   "/omindos", "/developers", "/integration", "/field-work", "/field-work/mining",
   "/field-work/warehouse", "/mobility", "/about", "/contact", "/privacy",
+  "/lab", "/lab/join", "/careers", "/join",
 ]);
 
 function browserPortalLocale(request) {
@@ -563,8 +564,8 @@ function chinesePortalRedirect(request, url, pathname) {
   });
 }
 
-// Chinese entry points go directly to the domestic production site.
-// The overseas English site remains available at explicit /en/ URLs.
+// The international homepage opens in English. Explicit Chinese aliases and
+// established unprefixed deep links continue to the domestic production site.
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -582,6 +583,14 @@ export default {
     if (chinese) {
       const route = (chinese[1] || '/').replace(/\/index\.html$/, '/');
       return chinesePortalRedirect(request, url, route);
+    }
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
+      const selected = (url.searchParams.get('lang') || '').toLowerCase();
+      if (['zh', 'cn'].includes(selected)) return chinesePortalRedirect(request, url, '/');
+      const destination = new URL(url);
+      if (host === 'www.omindos.ai') destination.hostname = 'omindos.ai';
+      return portalRedirect(destination, '/en/', true);
     }
     if (/^\/index(?:\.zh)?(?:\.html)?\/?$/.test(url.pathname)) return chinesePortalRedirect(request, url, '/');
     if (/^\/(?:oem\/zh(?:\/index(?:\.html)?)?\/?|founding-oem\.zh(?:\.html)?\/?|why\/zh(?:\/index(?:\.html)?)?\/?|robots\/zh(?:\/index(?:\.html)?)?\/?)$/.test(url.pathname)) {

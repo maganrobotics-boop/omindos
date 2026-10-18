@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {setTimeout as delay} from 'node:timers/promises';
 const base='https://omindos.ai';
-const routes=['','about','contact','developers','field-work','field-work/mining','field-work/warehouse','integration','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/wheel-legged','robots/wheeled'];
+const routes=['','about','careers','contact','developers','field-work','field-work/mining','field-work/warehouse','integration','join','lab','lab/join','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/tracked','robots/wheel-legged','robots/wheeled'];
 async function request(url,headers={}){
  return fetch(url,{headers:{'User-Agent':'Mozilla/5.0 (compatible; OMINDOS-Deployment-Check/1.0)',...headers},redirect:'manual',signal:AbortSignal.timeout(15000)});
 }
@@ -23,13 +23,23 @@ for(const route of routes){
   // /cn/assets/ is a shared media namespace, not a Chinese page route.
   assert.doesNotMatch(html,/href="(?:https:\/\/omindos\.ai)?\/cn\/(?!assets\/)/);
  });
- await check('Chinese root redirects to domestic /'+suffix,async()=>{
+ if(route)await check('Established deep link redirects to domestic /'+suffix,async()=>{
   const r=await request(base+'/'+suffix,{'Accept-Language':'en-US',Cookie:'originmind_language=en'});
   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/'+suffix);await r.body?.cancel();
  });
  await check('Chinese alias /cn/'+suffix,async()=>{
   const r=await request(base+'/cn/'+suffix+'?source=deployment&lang=zh');
   assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/'+suffix+'?source=deployment');await r.body?.cancel();
+ });
+}
+for(const host of ['omindos.ai','www.omindos.ai'])for(const path of ['/','/index.html']){
+ await check('English homepage entry '+host+path,async()=>{
+  const r=await request('https://'+host+path+'?source=deployment',{'Accept-Language':'zh-CN',Cookie:'originmind_language=zh'});
+  assert.equal(r.status,302);assert.equal(r.headers.get('Location'),base+'/en/?source=deployment');await r.body?.cancel();
+ });
+ for(const language of ['zh','cn'])await check('Explicit Chinese homepage '+host+path+' '+language,async()=>{
+  const r=await request('https://'+host+path+'?lang='+language+'&source=deployment');
+  assert.equal(r.status,308);assert.equal(r.headers.get('Location'),'https://omindos.cn/?source=deployment');await r.body?.cancel();
  });
 }
 for(const path of ['/founding-oem','/why-originmind','/robot-products'])await check('English legacy '+path,async()=>{
@@ -62,8 +72,8 @@ for(const path of ['/meeting','/api/meeting/login','/founding-oem.js'])await che
 await check('API remains inaccessible to public reads',async()=>{
  const r=await request(base+'/api/visits');assert.equal(r.status,405);assert.doesNotMatch(await r.text(),/visits|countries|last24Hours/);
 });
-for(const host of ['www.omindos.ai','originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
- const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,host==='www.omindos.ai'?'omindos.cn':'omindos.ai');await r.body?.cancel();
+for(const host of ['originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
+ const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();
 });
 
 

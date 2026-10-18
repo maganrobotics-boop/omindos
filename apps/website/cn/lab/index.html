@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ARTS Robotics · 深圳技术大学机器人自主移动与操作实验室</title>
-  <meta name="description" content="深圳技术大学中德智能制造学院 ARTS Robotics 机器人自主移动与操作实验室。了解自主感知、移动与操作研究，ICRA 代表论文、矿海明眸项目、人才培养与国际交流。">
+  <meta name="description" content="深圳技术大学中德智能制造学院 ARTS Robotics 机器人自主移动与操作实验室。了解自主感知、移动与操作研究，代表论文、专利、获奖、人才培养与国际交流。">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#f5f3ef">
   <link rel="canonical" href="https://omindos.cn/lab/">
@@ -27,7 +27,14 @@
 <link rel="stylesheet" href="/cn/home-chat-20261017.css?v=2-swipe-hide">
 <link rel="stylesheet" href="/cn/page-unified-20261017.css?v=1">
 <link rel="stylesheet" href="/cn/lab-family-20261017.css?v=1">
-</head>
+<link rel="stylesheet" href="/cn/typography-20261017.css?v=1">
+<link rel="stylesheet" href="/cn/lab-hero-20261017.css?v=1">
+<script src="/cn/lab-hero-20261017.js?v=1" defer></script>
+<link rel="stylesheet" href="/cn/lab-muji-20261017.css?v=1">
+<link rel="stylesheet" href="/cn/lab-gallery-20261017.css?v=1">
+<link rel="stylesheet" href="/cn/lab-results-20261018.css?v=1">
+<link rel="stylesheet" href="/cn/lab-bands-20261018.css?v=1">
+<link rel="alternate" hreflang="en" href="https://omindos.ai/en/lab/"></head>
 <body class="lab-page lab-family">
 <a class="skip-link" href="#main-content">跳转到正文</a>
 <header class="site-header cn-header">
@@ -35,36 +42,19 @@
     <a class="wordmark brand" href="/lab/" aria-label="ARTS Robotics 实验室首页"><span>ARTS Robotics</span></a>
     <nav class="desktop-nav main-nav" aria-label="主导航"><a href="/">首页</a><a href="/robots/">机器人</a><a href="/omindos/">OmindOS</a><a href="/integration/">系统集成</a><a href="/lab/" aria-current="page">实验室</a><a href="/about/">关于我们</a><a href="/join/">加入我们</a></nav>
     <a class="header-contact" href="/contact/">联系我们</a>
-    <nav class="locale-switch" aria-label="切换语言"><a href="/lab/" lang="zh-CN" hreflang="zh-CN" aria-current="page">中文</a><span class="slash" aria-hidden="true">/</span><a href="https://omindos.ai/en/" lang="en" hreflang="en" aria-label="English website">EN</a></nav>
+    <nav class="locale-switch" aria-label="切换语言"><a href="/lab/" lang="zh-CN" hreflang="zh-CN" aria-current="page">中文</a><span class="slash" aria-hidden="true">/</span><a href="https://omindos.ai/en/lab/" lang="en" hreflang="en" aria-label="English website">EN</a></nav>
     <button class="menu-button menu-toggle" type="button" aria-controls="mobile-menu" aria-expanded="false" aria-label="打开菜单"><span></span><span></span></button>
   </div>
   <nav class="mobile-menu mobile-nav" id="mobile-menu" aria-label="移动端导航" hidden><a href="/">首页</a><a href="/robots/">机器人</a><a href="/omindos/">OmindOS</a><a href="/integration/">系统集成</a><a href="/lab/" aria-current="page">实验室</a><a href="/about/">关于我们</a><a href="/join/">加入我们</a><a href="/contact/">联系我们</a></nav>
 </header>
 <main id="main-content">
-  <section class="lab-hero" aria-labelledby="lab-title">
-    <div class="lab-wrap lab-hero-heading">
-      <div class="lab-hero-copy">
-        <div class="lab-hero-identity"><p class="lab-eyebrow">ARTS ROBOTICS</p><p class="lab-institution">深圳技术大学机器人自主移动与操作实验室</p></div>
-        <h1 id="lab-title">在真实世界中，让机器人自主行动。</h1>
-        <div class="lab-hero-summary"><p class="lab-hero-intro">连接感知、决策、移动与操作，研究能在真实机器人上验证的自主系统。</p><div class="lab-hero-links"><a href="/lab/join/">招生与培养</a><a href="/learning">机器人课程</a></div></div>
-      </div>
+  <section class="lab-hero lab-hero-screen" aria-labelledby="lab-title">
+    <div class="lab-hero-media" aria-hidden="true">
+      <video class="lab-hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/open-frame-field-demo-poster.jpg" tabindex="-1" disablepictureinpicture><source src="/assets/videos/open-frame-field-demo.mp4" type="video/mp4"></video>
+      <img class="lab-hero-poster" src="/assets/open-frame-field-demo-poster.jpg" width="960" height="540" alt="" fetchpriority="high">
     </div>
-    <div class="lab-wrap lab-hero-stage">
-      <div class="lab-about" aria-labelledby="lab-about-title">
-        <h2 id="lab-about-title">关于实验室</h2>
-        <div><p>机器人自主移动与操作实验室（ARTS Robotics）隶属深圳技术大学中德智能制造学院，围绕机器人在未知、非结构化环境中的感知、行走与操作开展研究。</p><p>从多传感器融合与自主导航，到复杂地形运动、视觉抓取与双臂协作，我们连接算法研究、本体设计和系统实验，在具体任务中培养学生发现问题、构建方法与验证系统的能力。</p></div>
-      </div>
-      <figure class="lab-hero-figure">
-        <div class="lab-hero-image"><img src="/assets/lab-wheel-legged-open-render.webp" width="1536" height="1024" alt="轮足机器人研究平台的三维模型示意" fetchpriority="high"></div>
-        <figcaption><span>移动与操作，面向真实世界</span><span>研究平台 · 模型示意</span></figcaption>
-      </figure>
-    </div>
-    <nav class="lab-wrap lab-chapters" aria-label="实验室页面内容">
-      <a href="#research"><span>01</span><strong>研究方向</strong><small>我们探索的问题</small></a>
-      <a href="#results"><span>02</span><strong>研究成果</strong><small>从方法到系统验证</small></a>
-      <a href="#exchange"><span>03</span><strong>培养与交流</strong><small>开放学习，共同探索</small></a>
-      <a href="#alumni"><span>04</span><strong>毕业生</strong><small>研究与成长的延续</small></a>
-    </nav>
+    <div class="lab-wrap lab-hero-heading"><div class="lab-hero-copy"><h1 id="lab-title">在真实世界中，让机器人自主行动。</h1></div></div>
+    <button class="lab-hero-motion-toggle" type="button" aria-label="暂停背景视频" aria-pressed="false" data-paused="false"><svg data-pause viewBox="0 0 18 18" aria-hidden="true"><path d="M4 3h3v12H4zm7 0h3v12h-3z"/></svg><svg data-play viewBox="0 0 18 18" aria-hidden="true"><path d="M5 2.5 15 9 5 15.5z"/></svg></button>
   </section>
 
   <section class="lab-section lab-research" id="research" aria-labelledby="research-title">
@@ -83,35 +73,100 @@
     </div>
   </section>
 
-  <section class="lab-section lab-results" id="results" aria-labelledby="results-title">
+  <section class="lab-platforms lab-band lab-band-dark" id="research-platforms" aria-labelledby="research-platforms-title">
     <div class="lab-wrap">
-      <div class="lab-section-heading">
-        <div><p class="lab-section-index">02 / 研究成果</p><h2 id="results-title">从研究方法到系统实践。</h2></div>
-        <p>以代表论文呈现方法探索，以机器人任务检验系统能力，从灵巧操作走向矿业巡检。</p>
-      </div>
-      <div class="lab-publications" aria-labelledby="lab-publications-title">
-        <h3 id="lab-publications-title">代表论文</h3>
-        <div class="lab-paper-grid">
-          <article class="lab-paper">
-            <p class="lab-paper-venue">ICRA 2025</p>
-            <h4>透明物体三维表征与抓取</h4>
-            <p class="lab-paper-title" lang="en">NeRF-Based Transparent Object Grasping Enhanced by Shape Priors</p>
-            <p>结合神经辐射场与形状先验，研究透明物体的三维表征和抓取规划。</p>
-            <p class="lab-paper-author">Yi Han*, Zixin Lin*, Dongjie Li, Lvping Chen, Yongliang Shi, Gan Ma</p>
-            <p class="lab-paper-note">*共同贡献 · 第一单位：深圳技术大学</p>
-            <div class="lab-paper-links"><a class="lab-result-link" href="https://arxiv.org/abs/2504.09868" target="_blank" rel="noopener noreferrer">阅读论文</a><a class="lab-result-link" href="https://mp.weixin.qq.com/s/l32RVAob1TZDTOechUsgvw" target="_blank" rel="noopener noreferrer">研究报道</a></div>
+        <div class="lab-platforms-heading"><h2 id="research-platforms-title">实验平台</h2><p>面向机器人教学、课题研究与系统验证，连接轮腿运动、设备集成与双臂操作实验。</p></div>
+        <div class="lab-platform-grid">
+          <article class="lab-platform-card">
+            <figure><img src="/assets/covers/wheel-legged-cover-20260910.webp" width="1536" height="1024" alt="WL1-EDU 轮足机器人效果图" loading="lazy" decoding="async"><figcaption>产品样机 · 效果图</figcaption></figure>
+            <div class="lab-platform-copy"><p class="lab-platform-model">WL1-EDU</p><h3>轮足机器人</h3><p>采用封闭式机身，用于轮腿协同控制与设备集成实验。</p><a class="lab-result-link" href="/robots/wheel-legged/" aria-label="了解 WL1-EDU 轮足机器人">了解平台</a></div>
           </article>
-          <article class="lab-paper">
-            <p class="lab-paper-venue">ICRA 2024</p>
-            <h4>面向楼梯环境的点云建模</h4>
-            <p class="lab-paper-title" lang="en">An Onboard Framework for Staircases Modeling Based on Point Clouds</p>
-            <p>面向机器人机载感知，研究从点云中检测楼梯并构建几何模型，为复杂地形感知提供环境信息。</p>
-            <p class="lab-paper-author">Chun Qing*, Rongxiang Zeng*, Xuan Wu, Yongliang Shi, Gan Ma</p>
-            <p class="lab-paper-note">*共同贡献 · 第一单位：深圳技术大学</p>
-            <div class="lab-paper-links"><a class="lab-result-link" href="https://arxiv.org/abs/2405.01918" target="_blank" rel="noopener noreferrer">阅读论文</a><a class="lab-result-link" href="https://mp.weixin.qq.com/s/GOm9l6rRtsHS1f6SEzG72A" target="_blank" rel="noopener noreferrer">研究报道</a></div>
+          <article class="lab-platform-card">
+            <figure><img src="/assets/covers/open-frame-cover-20260910.webp" width="1536" height="1024" alt="PW1-EDU 并联轮足机器人效果图" loading="lazy" decoding="async"><figcaption>产品样机 · 效果图</figcaption></figure>
+            <div class="lab-platform-copy"><p class="lab-platform-model">PW1-EDU</p><h3>并联轮足机器人</h3><p>采用并联轮腿机构与开放式机身，便于设备接线、安装与运动控制实验。</p><a class="lab-result-link" href="/robots/open-frame/" aria-label="了解 PW1-EDU 并联轮足机器人">了解平台</a></div>
+          </article>
+          <article class="lab-platform-card">
+            <figure><img src="/assets/covers/dual-arm-cover-20260909.webp" width="1536" height="1024" alt="DA1-EDU 双臂协同操作平台参考样机" loading="lazy" decoding="async"><figcaption>产品样机 · 参考样机</figcaption></figure>
+            <div class="lab-platform-copy"><p class="lab-platform-model">DA1-EDU</p><h3>双臂协同操作平台</h3><p>用于视觉抓取、双臂协同、运动规划与数字孪生实验。</p><a class="lab-result-link" href="/robots/dual-arm/" aria-label="了解 DA1-EDU 双臂协同操作平台">了解平台</a></div>
           </article>
         </div>
+        <p class="lab-platform-note">以上平台当前为产品样机，接口说明与示例程序仍在整理，具体配置与验证范围请查看各平台详情。</p>
+    </div>
+  </section>
+
+  <section class="lab-section lab-results" id="results" aria-labelledby="results-title">
+    <div class="lab-wrap lab-results-intro">
+      <div class="lab-section-heading">
+        <div><p class="lab-section-index">02 / 研究成果</p><h2 id="results-title">从研究方法到系统实践。</h2></div>
+        <p>汇集代表论文、专利与获奖记录，按时间倒序呈现实验室的研究积累。</p>
       </div>
+      <nav class="lab-results-nav" aria-label="研究成果分类"><a href="#lab-publications">论文</a><a href="#lab-patents">专利</a><a href="#lab-awards">获奖</a></nav>
+    </div>
+      <div class="lab-result-group lab-band lab-band-light" id="lab-publications" aria-labelledby="lab-publications-title">
+        <div class="lab-wrap">
+        <div class="lab-result-group-heading"><h3 id="lab-publications-title">代表论文</h3><p>会议论文按会议年月、期刊论文按发表时间倒序。</p></div>
+        <ol class="lab-chronology">
+          <li class="lab-chronology-entry" data-date="2025-10"><time class="lab-record-date" datetime="2025-10">2025.10</time><div class="lab-record-body"><h4 lang="en">L-SNI: A Language-Driven Semantic Navigation System for Inspection Tasks</h4><p class="lab-record-meta">IROS 2025</p><p class="lab-record-authors" lang="en">Jiawang Ma, Weichen Guo, Xuan Wu, Zinan Zhuang, Rongxiang Zeng, Yongliang Shi, Gan Ma</p><p class="lab-record-description">面向巡检任务的语言驱动语义导航。</p><div class="lab-paper-links"><a class="lab-result-link" href="https://doi.org/10.1109/iros60139.2025.11247032" target="_blank" rel="noopener noreferrer">论文详情</a></div></div></li>
+          <li class="lab-chronology-entry" data-date="2025-05"><time class="lab-record-date" datetime="2025-05">2025.05</time><div class="lab-record-body"><h4 lang="en">NeRF-Based Transparent Object Grasping Enhanced by Shape Priors</h4><p class="lab-record-meta">ICRA 2025</p><p class="lab-record-authors" lang="en">Yi Han*, Zixin Lin*, Dongjie Li, Lvping Chen, Yongliang Shi, Gan Ma</p><p class="lab-record-description">结合神经辐射场与形状先验，研究透明物体的三维表征和抓取规划。</p><p class="lab-record-meta">*共同贡献</p><div class="lab-paper-links"><a class="lab-result-link" href="https://doi.org/10.1109/icra55743.2025.11127580" target="_blank" rel="noopener noreferrer">论文详情</a><a class="lab-result-link" href="https://arxiv.org/abs/2504.09868" target="_blank" rel="noopener noreferrer">论文预印本</a><a class="lab-result-link" href="https://mp.weixin.qq.com/s/l32RVAob1TZDTOechUsgvw" target="_blank" rel="noopener noreferrer">研究报道</a></div></div></li>
+          <li class="lab-chronology-entry" data-date="2024-05"><time class="lab-record-date" datetime="2024-05">2024.05</time><div class="lab-record-body"><h4 lang="en">An Onboard Framework for Staircases Modeling Based on Point Clouds</h4><p class="lab-record-meta">ICRA 2024</p><p class="lab-record-authors" lang="en">Chun Qing*, Rongxiang Zeng*, Xuan Wu, Yongliang Shi, Gan Ma</p><p class="lab-record-description">面向机器人机载感知，研究从点云中检测楼梯并构建几何模型。</p><p class="lab-record-meta">*共同贡献</p><div class="lab-paper-links"><a class="lab-result-link" href="https://doi.org/10.1109/icra57147.2024.10610407" target="_blank" rel="noopener noreferrer">论文详情</a><a class="lab-result-link" href="https://arxiv.org/abs/2405.01918" target="_blank" rel="noopener noreferrer">论文预印本</a><a class="lab-result-link" href="https://mp.weixin.qq.com/s/GOm9l6rRtsHS1f6SEzG72A" target="_blank" rel="noopener noreferrer">研究报道</a></div></div></li>
+          <li class="lab-chronology-entry" data-date="2023-12"><time class="lab-record-date" datetime="2023-12">2023.12</time><div class="lab-record-body"><h4 lang="en">A Tube Arranging System With a Generic And Efficient Grasp Reasoning Method</h4><p class="lab-record-meta">ROBIO 2023</p><p class="lab-record-authors" lang="en">Ziqi Xu*, Zixin Lin*, Yi Han, Yongliang Shi, Gan Ma</p><p class="lab-record-description">面向试管整理任务的通用、高效抓取推理方法。</p><p class="lab-record-meta">*共同贡献</p><div class="lab-paper-links"><a class="lab-result-link" href="https://doi.org/10.1109/robio58561.2023.10354814" target="_blank" rel="noopener noreferrer">论文详情</a></div></div></li>
+          <li class="lab-chronology-entry" data-date="2023-12"><time class="lab-record-date" datetime="2023-12">2023.12</time><div class="lab-record-body"><h4 lang="en">Regressor-Based Model Adaptation for Shaping Deformable Linear Objects with Force Control</h4><p class="lab-record-meta">ROBIO 2023</p><p class="lab-record-authors" lang="en">Hanzhong Zhong, Ziqi Xu, Gan Ma, Mingrui Yu, Xiang Li</p><p class="lab-record-description">基于回归模型适应与力控制的线性柔性体形态调节。</p><p class="lab-record-meta">IEEE ROBIO 2023 · T. J. Tarn Best Paper Award in Robotics 入围</p><div class="lab-paper-links"><a class="lab-result-link" href="https://doi.org/10.1109/ROBIO58561.2023.10354796" target="_blank" rel="noopener noreferrer">论文详情</a></div></div></li>
+          <li class="lab-chronology-entry" data-date="2022-08"><time class="lab-record-date" datetime="2022-08">2022.08</time><div class="lab-record-body"><h4 lang="en">Design, Analysis and Experiments of Hexapod Robot with Six-Link Legs for High Dynamic Locomotion</h4><p class="lab-record-meta">Micromachines · 2022 · 13(9), 1404</p><p class="lab-record-authors" lang="en">Jiawang Ma, Guanlin Qiu, Weichen Guo, Peitong Li, Gan Ma</p><p class="lab-record-description">六连杆腿六足仿生机器人（仿生蜘蛛）的设计、分析与高动态运动实验。</p><div class="lab-paper-links"><a class="lab-result-link" href="https://doi.org/10.3390/mi13091404" target="_blank" rel="noopener noreferrer">论文详情</a></div></div></li>
+        </ol>
+        </div>
+      </div>
+      <div class="lab-result-group lab-band lab-band-dark" id="lab-patents" aria-labelledby="lab-patents-title">
+        <div class="lab-wrap">
+        <div class="lab-result-group-heading"><h3 id="lab-patents-title">专利</h3><p>按授权、注册或资料日期倒序，各项注明记录类型。</p></div>
+        <dl class="lab-patent-stats"><div><dt>已展示授权／注册专利</dt><dd><strong>12</strong><span>项</span></dd></div><div><dt>其中美国发明专利</dt><dd><strong>1</strong><span>项</span></dd></div></dl>
+        <p class="lab-patent-note">中国发明8项、美国发明1项、中国实用新型2项、德国实用新型1项；另列2项申请及通知记录。</p>
+        <p class="lab-patent-authorization">实验室所有专利已赋权深圳源灵智能科技有限公司开展产业化。</p>
+        <ol class="lab-chronology">
+          <li class="lab-chronology-entry" data-date="2024-08-30" data-record-type="grant"><time class="lab-record-date" datetime="2024-08-30">2024.08.30</time><div class="lab-record-body"><h4>基于点云数据的楼梯建模方法、装置、腿式机器人及介质</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202311698752.5</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/stair-modeling-patent.jpeg" target="_blank" rel="noopener noreferrer" aria-label="查看基于点云数据的楼梯建模方法、装置、腿式机器人及介质完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/stair-modeling-patent.jpeg" width="831" height="1187" alt="基于点云数据的楼梯建模方法、装置、腿式机器人及介质" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-08-23" data-record-type="grant"><time class="lab-record-date" datetime="2024-08-23">2024.08.23</time><div class="lab-record-body"><h4>一种图像补全方法、计算机以及计算机可读存储介质</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202311579818.9</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-4.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种图像补全方法、计算机以及计算机可读存储介质完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-4.jpg" width="1132" height="1600" alt="一种图像补全方法、计算机以及计算机可读存储介质" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-06-10" data-record-type="application"><time class="lab-record-date" datetime="2024-06-10">2024.06.10</time><div class="lab-record-body"><h4>咖啡机器人</h4><p class="lab-record-meta">中国 · 外观设计申请 · 202330736757.7</p><p class="lab-record-description">收到授予外观设计专利权通知书；此处记录通知时间。</p></div></li>
+          <li class="lab-chronology-entry" data-date="2024-03-26" data-record-type="grant"><time class="lab-record-date" datetime="2024-03-26">2024.03.26</time><div class="lab-record-body"><h4 lang="en">Ground simulation device and method for on-orbit manipulation of space manipulator</h4><p class="lab-record-meta">美国 · 发明专利 · 授权 · US 11,938,623 B2</p><details class="lab-certificate-disclosure"><summary>查看授权专利首页</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/us-patent-11938623-b2.png" target="_blank" rel="noopener noreferrer" aria-label="查看Ground simulation device and method for on-orbit manipulation of space manipulator完整图片（新窗口）"><img src="/assets/lab-results-20261018/us-patent-11938623-b2.png" width="823" height="1071" alt="Ground simulation device and method for on-orbit manipulation of space manipulator" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-02-20" data-record-type="grant"><time class="lab-record-date" datetime="2024-02-20">2024.02.20</time><div class="lab-record-body"><h4>一种试管的抓取控制方法及装置</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202310793442.5</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-9.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种试管的抓取控制方法及装置完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-9.jpg" width="1132" height="1600" alt="一种试管的抓取控制方法及装置" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-02-09" data-record-type="grant"><time class="lab-record-date" datetime="2024-02-09">2024.02.09</time><div class="lab-record-body"><h4>一种线性柔性体形变状态分析方法及相关装置</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202211712189.8</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-5.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种线性柔性体形变状态分析方法及相关装置完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-5.jpg" width="1132" height="1600" alt="一种线性柔性体形变状态分析方法及相关装置" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-11-21" data-record-type="grant"><time class="lab-record-date" datetime="2023-11-21">2023.11.21</time><div class="lab-record-body"><h4>一种陆空多模态四足仿生机器人及控制方法</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202310508909.7</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-10.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种陆空多模态四足仿生机器人及控制方法完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-10.jpg" width="1132" height="1600" alt="一种陆空多模态四足仿生机器人及控制方法" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-10-13" data-record-type="grant"><time class="lab-record-date" datetime="2023-10-13">2023.10.13</time><div class="lab-record-body"><h4>一种便携式外科手术机器人教学设备</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202211308593.9</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-6.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种便携式外科手术机器人教学设备完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-6.jpg" width="1132" height="1600" alt="一种便携式外科手术机器人教学设备" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-08-29" data-record-type="grant"><time class="lab-record-date" datetime="2023-08-29">2023.08.29</time><div class="lab-record-body"><h4>一种绳驱操作手柄</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202211308740.2</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-7.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种绳驱操作手柄完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-7.jpg" width="1132" height="1600" alt="一种绳驱操作手柄" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-01-31" data-record-type="grant"><time class="lab-record-date" datetime="2023-01-31">2023.01.31</time><div class="lab-record-body"><h4>空间机械臂在轨操作的地面模拟装置及模拟方法</h4><p class="lab-record-meta">中国 · 发明专利 · 授权 · ZL202210209874.2</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-8.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看空间机械臂在轨操作的地面模拟装置及模拟方法完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-8.jpg" width="1132" height="1600" alt="空间机械臂在轨操作的地面模拟装置及模拟方法" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023" data-record-type="application"><time class="lab-record-date" datetime="2023">2023</time><div class="lab-record-body"><h4>一种地震救灾机器人及救援装置</h4><p class="lab-record-meta">中国 · 发明申请 · CN202311578742.8</p><p class="lab-record-description">发明专利申请；此处按材料所载申请年份列示。</p></div></li>
+          <li class="lab-chronology-entry" data-date="2022-06-21" data-record-type="grant"><time class="lab-record-date" datetime="2022-06-21">2022.06.21</time><div class="lab-record-body"><h4>一种辅助站立支撑设备</h4><p class="lab-record-meta">中国 · 实用新型专利 · 授权 · ZL202122600733.7</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-12.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种辅助站立支撑设备完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-12.jpg" width="1132" height="1600" alt="一种辅助站立支撑设备" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2022-05-04" data-record-type="grant"><time class="lab-record-date" datetime="2022-05-04">2022.05.04</time><div class="lab-record-body"><h4 lang="de">Beinmechanismus für einen bionischen Roboter</h4><p class="lab-record-meta">德国 · 实用新型专利 · 注册 · 20 2022 101 529</p><details class="lab-certificate-disclosure"><summary>查看注册证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-13.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看Beinmechanismus für einen bionischen Roboter完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-13.jpg" width="1131" height="1600" alt="Beinmechanismus für einen bionischen Roboter" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2022-04-05" data-record-type="grant"><time class="lab-record-date" datetime="2022-04-05">2022.04.05</time><div class="lab-record-body"><h4>一种用于仿生机器人的腿部机构</h4><p class="lab-record-meta">中国 · 实用新型专利 · 授权 · ZL202122604550.2</p><details class="lab-certificate-disclosure"><summary>查看授权证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/patent-11.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看一种用于仿生机器人的腿部机构完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/patent-11.jpg" width="1132" height="1600" alt="一种用于仿生机器人的腿部机构" loading="lazy" decoding="async"></a></details></div></li>
+        </ol>
+        </div>
+      </div>
+      <div class="lab-result-group lab-band lab-band-light" id="lab-awards" aria-labelledby="lab-awards-title">
+        <div class="lab-wrap">
+        <div class="lab-result-group-heading"><h3 id="lab-awards-title">获奖与荣誉</h3><p>按证书记载时间倒序；仅载年份的条目列于该年日期明确的条目之后。</p></div>
+        <ol class="lab-chronology">
+          <li class="lab-chronology-entry" data-date="2026-08"><time class="lab-record-date" datetime="2026-08">2026.08</time><div class="lab-record-body"><h4>第十五届“挑战杯”广东大学生创业计划竞赛 · 银奖</h4><p class="lab-record-meta">广东省</p><p class="lab-record-description">矿安智检——矿业智能语义巡检通用系统领航者</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/challenge-cup-guangdong-silver-2026.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看第十五届“挑战杯”广东大学生创业计划竞赛 · 银奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/challenge-cup-guangdong-silver-2026.jpg" width="1536" height="1090" alt="第十五届“挑战杯”广东大学生创业计划竞赛 · 银奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2026-08"><time class="lab-record-date" datetime="2026-08">2026.08</time><div class="lab-record-body"><h4>中国国际大学生创新大赛（2026）深圳技术大学校内赛 · 铜奖</h4><p class="lab-record-meta">校内赛</p><p class="lab-record-description">“康养灵臂”—多模态感知与柔顺操控康养机器人</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/award-kangyang-campus-2026.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看中国国际大学生创新大赛（2026）深圳技术大学校内赛 · 铜奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/award-kangyang-campus-2026.jpg" width="1600" height="1130" alt="中国国际大学生创新大赛（2026）深圳技术大学校内赛 · 铜奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2026-08"><time class="lab-record-date" datetime="2026-08">2026.08</time><div class="lab-record-body"><h4>中国国际大学生创新大赛（2026）深圳技术大学校内赛 · 优胜奖</h4><p class="lab-record-meta">校内赛</p><p class="lab-record-description">“智巡全景”—全场景智能巡检机器人通用解决方案</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/award-inspection-campus-2026.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看中国国际大学生创新大赛（2026）深圳技术大学校内赛 · 优胜奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/award-inspection-campus-2026.jpg" width="1600" height="1131" alt="中国国际大学生创新大赛（2026）深圳技术大学校内赛 · 优胜奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2025-11"><time class="lab-record-date" datetime="2025-11">2025.11</time><div class="lab-record-body"><h4>第十九届“挑战杯”全国大学生课外学术科技作品竞赛“人工智能+”专项赛应用赛 · 一等奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">“矿海明眸”——矿业巡检机器人通用系统</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/challenge-cup-national-first-2025.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看第十九届“挑战杯”全国大学生课外学术科技作品竞赛“人工智能+”专项赛应用赛 · 一等奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/challenge-cup-national-first-2025.jpg" width="1536" height="1101" alt="第十九届“挑战杯”全国大学生课外学术科技作品竞赛“人工智能+”专项赛应用赛 · 一等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2025-10"><time class="lab-record-date" datetime="2025-10">2025.10</time><div class="lab-record-body"><h4>中国国际大学生创新大赛（2025） · 铜奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">“矿海明眸”——矿业智能化巡检生态领航者</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/innovation-competition-bronze-2025.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看中国国际大学生创新大赛（2025） · 铜奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/innovation-competition-bronze-2025.jpg" width="1081" height="1536" alt="中国国际大学生创新大赛（2025） · 铜奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2025-07"><time class="lab-record-date" datetime="2025-07">2025.07</time><div class="lab-record-body"><h4>第十八届“挑战杯”广东大学生课外学术科技作品竞赛 · 一等奖</h4><p class="lab-record-meta">广东省</p><p class="lab-record-description">“矿海明眸”——矿业巡检机器人通用系统</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/challenge-cup-guangdong-first-2025.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看第十八届“挑战杯”广东大学生课外学术科技作品竞赛 · 一等奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/challenge-cup-guangdong-first-2025.jpg" width="1536" height="1086" alt="第十八届“挑战杯”广东大学生课外学术科技作品竞赛 · 一等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-07-31"><time class="lab-record-date" datetime="2024-07-31">2024.07.31</time><div class="lab-record-body"><h4>第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 二等奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">机械类数字化创新设计赛道</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/gaojiao-digital-second-2024.png" target="_blank" rel="noopener noreferrer" aria-label="查看第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 二等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/gaojiao-digital-second-2024.png" width="752" height="1066" alt="第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 二等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-07-31"><time class="lab-record-date" datetime="2024-07-31">2024.07.31</time><div class="lab-record-body"><h4>第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 一等奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">机械类增材制造赛道</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/gaojiao-additive-first-2024.png" target="_blank" rel="noopener noreferrer" aria-label="查看第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 一等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/gaojiao-additive-first-2024.png" width="757" height="1069" alt="第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 一等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2024-07-31"><time class="lab-record-date" datetime="2024-07-31">2024.07.31</time><div class="lab-record-body"><h4>第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 机械类优秀指导教师二等奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">机械类优秀指导教师</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/gaojiao-instructor-second-2024.png" target="_blank" rel="noopener noreferrer" aria-label="查看第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 机械类优秀指导教师二等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/gaojiao-instructor-second-2024.png" width="1508" height="1066" alt="第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 机械类优秀指导教师二等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-12-07"><time class="lab-record-date" datetime="2023-12-07">2023.12.07</time><div class="lab-record-body"><h4>IEEE ROBIO 2023 · 机器人领域最佳论文奖入围</h4><p class="lab-record-meta">IEEE国际会议</p><p class="lab-record-description">T. J. Tarn Best Paper Award in Robotics Finalist · Regressor-Based Model Adaptation for Shaping Deformable Linear Objects with Force Control</p><details class="lab-certificate-disclosure"><summary>查看入围证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/ieee-robio-2023-finalist.png" target="_blank" rel="noopener noreferrer" aria-label="查看IEEE ROBIO 2023 · 机器人领域最佳论文奖入围完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/ieee-robio-2023-finalist.png" width="1507" height="1063" alt="IEEE ROBIO 2023 · 机器人领域最佳论文奖入围" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-08-01"><time class="lab-record-date" datetime="2023-08-01">2023.08.01</time><div class="lab-record-body"><h4>第十六届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 二等奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">机械类数字化创新设计赛道</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/gaojiao-digital-second-2023.png" target="_blank" rel="noopener noreferrer" aria-label="查看第十六届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 二等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/gaojiao-digital-second-2023.png" width="754" height="1067" alt="第十六届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 二等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-07-31"><time class="lab-record-date" datetime="2023-07-31">2023.07.31</time><div class="lab-record-body"><h4>2023睿抗机器人开发者大赛（RAICOM） · 三等奖</h4><p class="lab-record-meta">广东赛区</p><p class="lab-record-description">物资运送竞赛 · 队伍一</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/raicom-guangdong-third-team1-2023.png" target="_blank" rel="noopener noreferrer" aria-label="查看2023睿抗机器人开发者大赛（RAICOM） · 三等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/raicom-guangdong-third-team1-2023.png" width="1506" height="1063" alt="2023睿抗机器人开发者大赛（RAICOM） · 三等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023-07-31"><time class="lab-record-date" datetime="2023-07-31">2023.07.31</time><div class="lab-record-body"><h4>2023睿抗机器人开发者大赛（RAICOM） · 三等奖</h4><p class="lab-record-meta">广东赛区</p><p class="lab-record-description">物资运送竞赛 · 队伍二</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/raicom-guangdong-third-team2-2023.png" target="_blank" rel="noopener noreferrer" aria-label="查看2023睿抗机器人开发者大赛（RAICOM） · 三等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/raicom-guangdong-third-team2-2023.png" width="1502" height="1064" alt="2023睿抗机器人开发者大赛（RAICOM） · 三等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023"><time class="lab-record-date" datetime="2023">2023</time><div class="lab-record-body"><h4>第十八届全国大学生智能汽车竞赛 · 二等奖</h4><p class="lab-record-meta">南部赛区</p><p class="lab-record-description">室外智能驾驶挑战赛</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/smartcar-south-driving-second-2023.png" target="_blank" rel="noopener noreferrer" aria-label="查看第十八届全国大学生智能汽车竞赛 · 二等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/smartcar-south-driving-second-2023.png" width="753" height="1073" alt="第十八届全国大学生智能汽车竞赛 · 二等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023"><time class="lab-record-date" datetime="2023">2023</time><div class="lab-record-body"><h4>第十八届全国大学生智能汽车竞赛 · 三等奖</h4><p class="lab-record-meta">南部赛区</p><p class="lab-record-description">室外ROS无人车竞速赛</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/smartcar-south-ros-third-2023.png" target="_blank" rel="noopener noreferrer" aria-label="查看第十八届全国大学生智能汽车竞赛 · 三等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/smartcar-south-ros-third-2023.png" width="751" height="1073" alt="第十八届全国大学生智能汽车竞赛 · 三等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023"><time class="lab-record-date" datetime="2023">2023</time><div class="lab-record-body"><h4>第十八届全国大学生智能汽车竞赛 · 二等奖</h4><p class="lab-record-meta">全国总决赛</p><p class="lab-record-description">室外智能驾驶挑战赛</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-results-20261018/smartcar-national-driving-second-2023.jpeg" target="_blank" rel="noopener noreferrer" aria-label="查看第十八届全国大学生智能汽车竞赛 · 二等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/smartcar-national-driving-second-2023.jpeg" width="1280" height="1810" alt="第十八届全国大学生智能汽车竞赛 · 二等奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2023"><time class="lab-record-date" datetime="2023">2023</time><div class="lab-record-body"><h4>亚洲国际创新发明大奖2023 · 银奖</h4><p class="lab-record-meta">亚洲国际</p><p class="lab-record-description">新一代工业机器人自学习控制器</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image" href="/assets/lab-gallery-20261017/award-asian-2023.jpg" target="_blank" rel="noopener noreferrer" aria-label="查看亚洲国际创新发明大奖2023 · 银奖完整图片（新窗口）"><img src="/assets/lab-gallery-20261017/award-asian-2023.jpg" width="1131" height="1600" alt="亚洲国际创新发明大奖2023 · 银奖" loading="lazy" decoding="async"></a></details></div></li>
+          <li class="lab-chronology-entry" data-date="2022-08-23"><time class="lab-record-date" datetime="2022-08-23">2022.08.23</time><div class="lab-record-body"><h4>“唯实杯”第十届全国大学生机械创新设计大赛 · 三等奖</h4><p class="lab-record-meta">全国</p><p class="lab-record-description">具有高动态运动能力的仿生蜘蛛</p><details class="lab-certificate-disclosure"><summary>查看获奖证书</summary><a class="lab-certificate-image lab-certificate-image--rotated" href="/assets/lab-results-20261018/mechanical-spider-third-2022.png" target="_blank" rel="noopener noreferrer" aria-label="查看“唯实杯”第十届全国大学生机械创新设计大赛 · 三等奖完整图片（新窗口）"><img src="/assets/lab-results-20261018/mechanical-spider-third-2022.png" width="749" height="1066" alt="“唯实杯”第十届全国大学生机械创新设计大赛 · 三等奖" loading="lazy" decoding="async"></a></details></div></li>
+        </ol>
+        </div>
+      </div>
+      <div class="lab-results-demos lab-band lab-band-dark" aria-labelledby="lab-demos-title">
+        <div class="lab-wrap">
+        <div class="lab-subsection-heading"><h3 id="lab-demos-title">系统研究演示</h3></div>
       <div class="lab-result-grid">
         <article class="lab-result-spotlight">
           <div class="lab-project-copy">
@@ -140,29 +195,44 @@
           <article><h4>线性柔性体操作</h4><p>围绕电缆、软管等可变形物体，研究建模与操作控制。相关项目与清华大学自动化系李翔教授团队合作完成。</p><a class="lab-result-link" href="https://mp.weixin.qq.com/s/7mVlsapqc9Ft4oY3nQSH_g" target="_blank" rel="noopener noreferrer">查看柔性体研究</a></article>
         </div>
       </div>
-      <div class="lab-milestones">
-        <h3>成果与荣誉</h3>
-        <ol class="lab-awards">
-          <li><span class="lab-award-year">2024</span><div><h4>全国成图大赛 · 一等奖</h4><p>第十七届“高教杯”全国大学生先进成图技术与产品信息建模创新大赛 · 机械类增材制造赛道</p></div></li>
-          <li><span class="lab-award-year">2023</span><div><h4>亚洲国际创新发明大赛 · 银奖</h4><p>新一代工业机器人自学习控制器</p></div></li>
-          <li><span class="lab-award-year">2023</span><div><h4>全国大学生智能汽车竞赛 · 二等奖</h4><p>第十八届全国总决赛 · 室外智能驾驶挑战赛</p></div></li>
-          <li><span class="lab-award-year">2022</span><div><h4>全国大学生机械创新设计大赛 · 三等奖</h4><p>第十届全国大学生机械创新设计大赛 · 具有高动态运动能力的仿生蜘蛛</p></div></li>
-        </ol>
+        </div>
       </div>
-    </div>
   </section>
 
   <section class="lab-section lab-exchange" id="exchange" aria-labelledby="exchange-title">
     <div class="lab-wrap">
       <div class="lab-section-heading">
-        <div><p class="lab-section-index">03 / 培养与交流</p><h2 id="exchange-title">在开放交流中，把想法变成实践。</h2></div>
+        <div><p class="lab-section-index">03 / 交流与合作</p><h2 id="exchange-title">在开放交流中，把想法变成实践。</h2></div>
         <p>以研究项目、课程实践和国际交流连接学习与探索，让学生在真实问题中积累经验。</p>
+      </div>
+      <figure class="lab-team-photo">
+        <img src="/assets/lab-gallery-20261017/lab-team.jpg" width="1536" height="1152" alt="实验室成员与机器人研究平台合影" loading="lazy" decoding="async">
+        <figcaption>实验室合影 · 一起研究，一起实践。</figcaption>
+      </figure>
+      <div class="lab-cooperation" aria-labelledby="lab-cooperation-title">
+        <div class="lab-subsection-heading"><h3 id="lab-cooperation-title">学术交流与科研合作</h3></div>
+        <article class="lab-cooperation-feature">
+          <figure class="lab-cooperation-photo"><img src="/assets/lab-gallery-20261017/liu-yunhui-lab-visit.png" width="1018" height="763" alt="刘云辉教授一行在实验室参观机器人平台" loading="lazy" decoding="async"><figcaption>刘云辉教授一行来访交流</figcaption></figure>
+          <div class="lab-cooperation-copy"><p class="lab-event-date">香港中文大学天石机器人研究所</p><h3>刘云辉教授来访交流</h3><p>刘云辉教授一行参观实验室机器人研究平台，开展学术交流。刘教授还在“未来机器人技术”暑期学校作《视觉驱动机器人技术及产业转化》主题报告。</p><a class="lab-event-link" href="https://mp.weixin.qq.com/s/-LcFb45ohA4nWgC1ipOpDA" target="_blank" rel="noopener noreferrer">阅读暑期学校报告记录</a></div>
+        </article>
+        <div class="lab-exchange-grid lab-cooperation-grid">
+          <article><p class="lab-event-date">清华大学自动化系</p><h3>李翔教授团队合作研究</h3><p>围绕电缆、软管等线性柔性体的建模与操作控制，与李翔教授团队合作开展研究，连接对象形态分析与机器人操作实验。</p><a class="lab-event-link" href="https://mp.weixin.qq.com/s/7mVlsapqc9Ft4oY3nQSH_g" target="_blank" rel="noopener noreferrer">阅读合作研究介绍</a></article>
+          <article><p class="lab-event-date">深圳技术大学—WIK 创新研发中心</p><h3>校企合作项目支持</h3><p>双臂协作咖啡机部件拆解研究获校企合作项目资助，以 PCB 板、水泵等部件的拆解探索回收与维修中的机器人操作。</p><a class="lab-event-link" href="https://mp.weixin.qq.com/s/7mVlsapqc9Ft4oY3nQSH_g" target="_blank" rel="noopener noreferrer">阅读项目研究介绍</a></article>
+        </div>
+      </div>
+      <div class="lab-subsection-heading lab-events-heading"><h3>人才培养与活动记录</h3></div>
+      <div class="lab-activity-gallery" aria-label="实验室实践与交流影像">
+        <figure><img src="/assets/lab-gallery-20261017/wheeled-platform-research.jpg" width="1536" height="1024" alt="实验室成员调试轮式移动机器人" loading="lazy" decoding="async"><figcaption>轮式移动机器人实验与调试</figcaption></figure>
+        <figure><img src="/assets/lab-gallery-20261017/campus-open-day.jpg" width="1536" height="1024" alt="校园开放日展示轮足机器人" loading="lazy" decoding="async"><figcaption>校园开放日轮足机器人展示</figcaption></figure>
+        <figure><img src="/assets/lab-gallery-20261017/platform-exchange.jpg" width="1536" height="1154" alt="来访人员在实验室交流机器人研究平台" loading="lazy" decoding="async"><figcaption>机器人研究平台展示与交流</figcaption></figure>
+        <figure><img src="/assets/lab-gallery-20261017/manipulation-exchange.jpg" width="1536" height="1209" alt="来访人员观看机械臂实验平台演示" loading="lazy" decoding="async"><figcaption>机械臂实验平台演示与交流</figcaption></figure>
       </div>
       <div class="lab-exchange-grid">
         <article><p class="lab-event-date">2024 · 德国 THWS</p><h3>国际机器人活动周</h3><p>马淦带领四名本科生参加 THWS 主办的机器人活动周，在 Gazebo 中搭建小车与环境、完成迷宫挑战，体验跨文化团队协作。</p><a class="lab-event-link" href="https://mp.weixin.qq.com/s/yU81VJMLRKSOTX96bJihoA" target="_blank" rel="noopener noreferrer">阅读活动记录</a></article>
         <article><p class="lab-event-date"><time datetime="2024-07-05">2024.07.05</time>—<time datetime="2024-07-08">07.08</time></p><h3>未来机器人技术暑期学校</h3><p>参与深圳技术大学第三届“未来机器人技术”优秀大学生暑期学校，通过研究报告与实验室参观，分享全景感知、运动规划与任务决策等研究。</p><a class="lab-event-link" href="https://mp.weixin.qq.com/s/-LcFb45ohA4nWgC1ipOpDA" target="_blank" rel="noopener noreferrer">阅读活动记录</a></article>
         <article><p class="lab-event-date"><time datetime="2024-04-29">2024.04.29</time></p><h3>华为实验室来访交流</h3><p>华为诺亚方舟实验室、华为云具身智能创新实验室来访，参观机器人自主移动与操作实验室，交流操作、行走与感知研究。</p><a class="lab-event-link" href="https://mp.weixin.qq.com/s/LpezTR1Yy75wMRyoUrVG3Q" target="_blank" rel="noopener noreferrer">阅读交流记录</a></article>
       </div>
+      <span id="join-lab" aria-hidden="true"></span>
       <div class="lab-updates" aria-labelledby="lab-updates-title">
         <h3 id="lab-updates-title">实验室动态</h3>
         <ul>
@@ -179,6 +249,10 @@
         <div><p class="lab-section-index">04 / 成长与连接</p><h2 id="alumni-title">毕业生</h2></div>
         <p>每一段研究经历，都值得被认真记录。从实验室出发，在更广阔的世界继续探索。</p>
       </div>
+      <figure class="lab-team-photo lab-graduation-photo">
+        <div class="lab-graduation-frame"><img src="/assets/lab-gallery-20261017/lab-graduation-collage.jpg" width="1152" height="1536" alt="实验室师生毕业合影" loading="lazy" decoding="async"></div>
+        <figcaption>毕业合影 · 从这里出发，继续探索。</figcaption>
+      </figure>
       <div id="alumni-directory" data-alumni-directory aria-busy="true" aria-label="毕业生公开档案"><p class="lab-status" role="status">正在加载毕业生目录…</p></div>
       <noscript><p class="lab-alumni-status">请启用 JavaScript 查看已公开的毕业生档案。</p></noscript>
       <div class="lab-alumni-invitation"><div><h3>把你的故事留在这里。</h3><p>毕业生可登录统一账户，在个人主页维护教育经历、当前工作、在读期间获得的奖励与研究成果，并自行选择实名或匿名展示。</p></div><a class="lab-primary-link" href="/learning/alumni">维护我的主页</a></div>
@@ -186,7 +260,6 @@
     </div>
   </section>
 
-  <section class="lab-join" aria-labelledby="lab-join-title"><div class="lab-wrap lab-join-grid"><div><p class="lab-section-index">学习 · 研究 · 实践</p><h2 id="lab-join-title">从一个真实问题开始。</h2><p>在课程中建立基础，在项目中验证方法，和我们一起探索机器人自主系统。</p></div><div class="lab-join-actions"><a class="lab-primary-link" href="/lab/join/">了解招生与培养</a><a class="lab-secondary-link" href="/learning">进入机器人课程</a></div></div></section>
 </main>
 <footer class="site-footer cn-footer"><div class="cn-footer-wrap">
 

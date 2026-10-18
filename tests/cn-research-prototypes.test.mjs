@@ -27,11 +27,18 @@ test('three Chinese prototypes retain their names, visible status, demonstration
   assert.match(pwl, /id="manuals"/);
   assert.match(pwl, /停止行走不等于驱动失能/);
 });
-test('research styling is never loaded by unaffected Chinese or English pages', async () => {
+test('research styling stays scoped to the Chinese and English research prototypes', async () => {
   for (const locale of ['cn','en']) {
-    for (const model of ['quadruped','wheeled','dual-arm', ...(locale==='en'?['articulated','wheel-legged','open-frame']:[])]) {
+    for (const model of ['quadruped','wheeled','dual-arm','tracked','mobile-dual-arm']) {
       const html = await readFile(new URL(`${locale}/robots/${model}/index.html`,root),'utf8');
       assert.doesNotMatch(html,/research-prototypes.css|articulated-product-20261006.css/);
+    }
+    for (const model of ['articulated','wheel-legged','open-frame']) {
+      const html = await readFile(new URL(`${locale}/robots/${model}/index.html`,root),'utf8');
+      const stylesheet = locale === 'cn' ? '/cn/research-prototypes.css?v=20261008' : '/en/assets/layout-20261018/research-prototypes.css?v=20261008';
+      assert.ok(html.includes(`href="${stylesheet}"`));
+      if (model === 'articulated') assert.match(html, /href="\/assets\/articulated-product-20261006\.css"/);
+      else assert.doesNotMatch(html, /articulated-product-20261006\.css/);
     }
   }
 });
