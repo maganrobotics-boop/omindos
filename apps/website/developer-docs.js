@@ -60,7 +60,8 @@
         if (show) count++;
       });
       clear.hidden = terms.length === 0;
-      status.textContent = !terms.length ? status.dataset.all : count ? count + status.dataset.count : status.dataset.empty;
+      const suffix = count === 1 ? (status.dataset.countOne || status.dataset.count) : status.dataset.count;
+      status.textContent = !terms.length ? status.dataset.all : count ? count + suffix : status.dataset.empty;
     }
     search.addEventListener('input', filter);
     search.addEventListener('keydown', event => {
