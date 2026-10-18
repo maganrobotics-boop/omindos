@@ -103,6 +103,7 @@ html[lang="en"] .lab-page {
 .lab-page .lab-updates time { font-size: 14px; }
 .lab-page .lab-updates p { max-width: 65ch; font-size: 15px; }
 .lab-page .lab-alumni-directory-link { margin-top: 24px; }
+.lab-page .lab-alumni-invitation > div { max-width: 100%; }
 .lab-page .lab-alumni-invitation p { max-width: 65ch; font-size: 16px; }
 .lab-page .lab-primary-link { white-space: normal; text-align: center; line-height: 1.5; }
 .lab-page .lab-account-settings { font-size: 14px; }
