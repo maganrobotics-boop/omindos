@@ -2,6 +2,7 @@ import http from 'node:http';
 import {Readable} from 'node:stream';
 import {pipeline} from 'node:stream/promises';
 import {pathToFileURL} from 'node:url';
+import {cleanCourseEntryResources} from './course-entry-resources.mjs';
 
 export const PUBLIC_ORIGIN = 'https://omindos.cn';
 export const UPSTREAM_ORIGIN = 'https://chat.omindos.cn';
@@ -23,6 +24,7 @@ export function publicUrl(value) {
 // Rewrite only application-owned URL tokens in static code, never chat answers,
 // API JSON, uploaded documents or event streams.
 export function rewriteStatic(text, type, pathname) {
+  text = cleanCourseEntryResources(text, type, pathname);
   if (pathname === '/manifest.webmanifest') {
     const manifest = JSON.parse(text);
     manifest.id = PREFIX + '/';
