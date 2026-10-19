@@ -31,6 +31,8 @@
 .en-enquiry-fields textarea { min-height: 170px; resize: vertical; }
 .en-enquiry-fields input, .en-enquiry-fields select { min-height: 50px; }
 .en-enquiry-form button, .en-enquiry-quick-actions button { cursor: pointer; }
+.en-site :is(.en-enquiry-actions,.en-enquiry-quick-actions) .button.secondary { background: transparent; color: #30302d; border-color: #68665f; }
+.en-site :is(.en-enquiry-actions,.en-enquiry-quick-actions) .button.secondary:hover { background: #e8e4dc; color: #30302d; }
 .en-enquiry-preview { margin-top: 32px; }
 .en-enquiry-preview > label { display: block; margin-bottom: 10px; font-weight: 500; }
 .en-enquiry-preview textarea { min-height: 310px; resize: vertical; }
