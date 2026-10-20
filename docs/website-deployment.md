@@ -40,7 +40,7 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 2026-10-18 的两项校赛获奖删除提供固定发布来源 `release_source=awards-only-20261018`，仅在手动生产发布中生效，并且必须选择 `statistics_mode=preserve-current`。来源固定为已审核的 `54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0`；发布前核对其相对现网 `437ca28bdc51333b19d76726e782f35c9ac6a545` 的文件白名单与两项删除的完整差异，再独立运行该来源的检查。部署元数据与上线核验均使用此来源提交，保留现网聊天实现；当前 main 中尚在验收的聊天浮窗继续留在源码中。默认 `release_source=current-main` 的原有发布、预览及验证流程保持不变，不接受任意提交或分支输入。
 
-2026-10-20 的 2023 年晶体奖证书使用固定来源 `release_source=award-2023-20261020`，仅允许 `target=production`、`statistics_mode=preserve-current`、`refs/heads/main` 的手动发布。来源固定为已审核的 `a71f2beeef9c23fde12e3636d72eaf0e24279948`，其唯一父提交为已验收生产 `32e7018f04b3c9c04bb75b4375b41b63e54805bb`。相对该生产提交仅允许英文实验室页新增一条 `sztu-crystal-award-2023` 记录，以及 `assets/lab-awards-20261020/sztu-crystal-award-certificate-2023-12.pdf` 和同名 WebP；工作流校验完整三文件状态清单、证书 SHA256、四位姓名和原页面其余字节不变，并要求来源提交已经合入运行工作流的 main 历史。不能替换任意分支或提交。
+2026-10-20 的 2023 年晶体奖证书使用固定来源 `release_source=award-2023-20261020`，仅允许 `target=production`、`statistics_mode=preserve-current`、`refs/heads/main` 的手动发布。来源固定为已审核的 `1aad7eca6dde941f9e11011dc61efa0b9137ba68`，其唯一父提交为已验收生产 `32e7018f04b3c9c04bb75b4375b41b63e54805bb`。相对该生产提交仅允许英文实验室页新增一条 `sztu-crystal-award-2023` 记录，以及 `assets/lab-awards-20261020/sztu-crystal-award-certificate-2023-12.pdf` 和同名 WebP；工作流校验完整三文件状态清单、证书 SHA256、四位姓名和原页面其余字节不变，并要求来源提交已经合入运行工作流的 main 历史。不能替换任意分支或提交。
 
 该固定来源的 test job 和 deploy job 均检出同一审核提交；完整既有 Node、Python、媒体恢复和产物测试继续执行，deploy 额外核对已测试提交。它不携带 main 中尚未单独验收的 Cloud 链接改动；普通 push、Pull Request 和 `current-main` 的原测试行为不变，既有 main 导航一致性失败不被忽略。旧 `awards-only-20261018` 选择器及其历史基线保持原行为。发布前仍独立确认中文正式站已经验收。
 

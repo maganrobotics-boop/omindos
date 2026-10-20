@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     env:
-      WEBSITE_TEST_COMMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'production' && inputs.release_source == 'award-2023-20261020' && 'a71f2beeef9c23fde12e3636d72eaf0e24279948' || github.sha }}
+      WEBSITE_TEST_COMMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'production' && inputs.release_source == 'award-2023-20261020' && '1aad7eca6dde941f9e11011dc61efa0b9137ba68' || github.sha }}
     outputs:
       deploy_international: ${{ steps.scope.outputs.deploy_international }}
       tested_commit: ${{ steps.tested-source.outputs.commit }}
@@ -117,7 +117,7 @@ jobs:
           import hashlib, os, re, subprocess
           from pathlib import Path
           base = '32e7018f04b3c9c04bb75b4375b41b63e54805bb'
-          release = 'a71f2beeef9c23fde12e3636d72eaf0e24279948'
+          release = '1aad7eca6dde941f9e11011dc61efa0b9137ba68'
           assert os.environ['GITHUB_EVENT_NAME'] == 'workflow_dispatch'
           assert os.environ['GITHUB_REF'] == 'refs/heads/main'
           assert os.environ['RELEASE_TARGET'] == 'production'
@@ -176,7 +176,7 @@ jobs:
     env:
       CLOUDFLARE_ACCOUNT_ID: '41e8b3404be24e1dd288556d77ffc951'
       WRANGLER_SEND_METRICS: 'false'
-      WEBSITE_RELEASE_COMMIT: ${{ inputs.release_source == 'awards-only-20261018' && '54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0' || inputs.release_source == 'award-2023-20261020' && 'a71f2beeef9c23fde12e3636d72eaf0e24279948' || github.sha }}
+      WEBSITE_RELEASE_COMMIT: ${{ inputs.release_source == 'awards-only-20261018' && '54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0' || inputs.release_source == 'award-2023-20261020' && '1aad7eca6dde941f9e11011dc61efa0b9137ba68' || github.sha }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -194,7 +194,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import os, subprocess
-          expected = 'a71f2beeef9c23fde12e3636d72eaf0e24279948'
+          expected = '1aad7eca6dde941f9e11011dc61efa0b9137ba68'
           assert os.environ['STATISTICS_MODE'] == 'preserve-current'
           assert os.environ['TESTED_COMMIT'] == expected
           assert os.environ['WEBSITE_RELEASE_COMMIT'] == expected
