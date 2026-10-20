@@ -40,6 +40,10 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 2026-10-18 的两项校赛获奖删除提供固定发布来源 `release_source=awards-only-20261018`，仅在手动生产发布中生效，并且必须选择 `statistics_mode=preserve-current`。来源固定为已审核的 `54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0`；发布前核对其相对现网 `437ca28bdc51333b19d76726e782f35c9ac6a545` 的文件白名单与两项删除的完整差异，再独立运行该来源的检查。部署元数据与上线核验均使用此来源提交，保留现网聊天实现；当前 main 中尚在验收的聊天浮窗继续留在源码中。默认 `release_source=current-main` 的原有发布、预览及验证流程保持不变，不接受任意提交或分支输入。
 
+2026-10-20 的 2023 年晶体奖证书使用固定来源 `release_source=award-2023-20261020`，仅允许 `target=production`、`statistics_mode=preserve-current`、`refs/heads/main` 的手动发布。来源固定为已审核的 `1aad7eca6dde941f9e11011dc61efa0b9137ba68`，其唯一父提交为已验收生产 `32e7018f04b3c9c04bb75b4375b41b63e54805bb`。相对该生产提交仅允许英文实验室页新增一条 `sztu-crystal-award-2023` 记录，以及 `assets/lab-awards-20261020/sztu-crystal-award-certificate-2023-12.pdf` 和同名 WebP；工作流校验完整三文件状态清单、证书 SHA256、四位姓名和原页面其余字节不变，并要求来源提交已经合入运行工作流的 main 历史。不能替换任意分支或提交。
+
+该固定来源的 test job 和 deploy job 均检出同一审核提交；完整既有 Node、Python、媒体恢复和产物测试继续执行，deploy 额外核对已测试提交。它不携带 main 中尚未单独验收的 Cloud 链接改动；普通 push、Pull Request 和 `current-main` 的原测试行为不变，既有 main 导航一致性失败不被忽略。旧 `awards-only-20261018` 选择器及其历史基线保持原行为。发布前仍独立确认中文正式站已经验收。
+
 国际发布包保留已有样式、媒体和 API，便于英文页面及缓存客户端继续使用。默认首页由 Worker 跳转到 `/en/`；明确中文入口及既有无前缀深层路径跳转到 .cn，不在 .ai 展示中文页面。语言链接与 hreflang 保持源码中的跨域关系，.ai sitemap 只列英文正式页面，包括新增的 `/en/robots/tracked/`、`/en/lab/`、`/en/lab/join/`、`/en/careers/` 和 `/en/join/`；根地址为跳转入口，不列为 canonical。Cloud、OA 保持原址；课程链接使用国内 /learning 入口。页面 POST 不跨域重定向。
 
 此方案只修改官网应用路由，不修改 DNS、邮件或服务子域名。默认英文访问留在 .ai；选择中文后转到 .cn，并使用国内页面及资源。
@@ -48,7 +52,7 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 ### 英文页面独立发布（2026-10-18）
 
-当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：`release_source=current-main` 的本轮预检核对线上为已验证的 `1dc44a76d7040cb2cc20e80c2c5f22dd17e85a73`，production deployment 为 `40217d14-91a0-41d2-a36c-fb9ab694c9eb`，依据已成功的英文省级创新训练项目同步发布（[工作流 #412](https://github.com/maganrobotics-boop/omindos/actions/runs/39122467633)）。该发布日志确认沿用 `9a76b841d330f43fab07566875949714afee3995` 的统计函数和客户端，通过旧表写入与公开读取限制检查，并跳过 v2 迁移及报告；相对上一生产版本的源码差异仅为中英文实验室项目、工作流前置提交和部署文档，统计源码未变。`awards-only-20261018` 保留原 `437ca28bdc51333b19d76726e782f35c9ac6a545` 前置条件，因此不会在该快照已上线后再次发布。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
+当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：`release_source=current-main` 与 `award-2023-20261020` 的本轮预检均核对线上为已验证的 `32e7018f04b3c9c04bb75b4375b41b63e54805bb`，production deployment 为 `ac4d6f64-3b0f-4e34-9bbd-57b825d223c8`，依据已成功的英文官网发布（[工作流 39201572362](https://github.com/maganrobotics-boop/omindos/actions/runs/39201572362)）。提交与 deployment ID 必须同时匹配；任何一项改变均先停止并复核，不跳过现有项目、域名或数据库绑定检查。该发布日志确认沿用 `9a76b841d330f43fab07566875949714afee3995` 的统计函数和客户端，通过旧表写入与公开读取限制检查，并跳过 v2 迁移及报告；该生产版本已完成中英文官网与实验室页面优化及询盘隐私信息校验，统计源码未变；本次固定来源仅增加上述英文奖项和两份证书资源。`awards-only-20261018` 保留原 `437ca28bdc51333b19d76726e782f35c9ac6a545` 前置条件，因此不会在该快照已上线后再次发布。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
 
 保留模式使用独立的 portal-client 缓存版本参数，避免以后启用 v2 时复用旧采集脚本。除该资源版本外，英文页面保持源码内容。适配器及最终产物测试核验旧表写入、公开读取限制、英文与中文跳转和资源一致性；项目/域名/数据库绑定、部署 ID、提交和线上检查继续执行。若线上提交改变，发布前失败，必须先核对新生产版本。默认 `filtered-v2` 模式继续保留原有 D1 基线、迁移与报告检查；不得仅跳过迁移并发布依赖 v2 表的 Worker。回滚仍为发布前记录的生产 deployment。
 
