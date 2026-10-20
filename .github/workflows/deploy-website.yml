@@ -75,13 +75,14 @@ on:
           - filtered-v2
           - preserve-current
       release_source:
-        description: 'Production source: current main, or the approved awards-only snapshot without the pending chat panel'
+        description: 'Production source: current main or a pinned, reviewed award-only snapshot'
         type: choice
         required: true
         default: current-main
         options:
           - current-main
           - awards-only-20261018
+          - award-2023-20261020
 
 permissions:
   contents: read
@@ -95,13 +96,62 @@ jobs:
   test:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    env:
+      WEBSITE_TEST_COMMIT: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'production' && inputs.release_source == 'award-2023-20261020' && 'a71f2beeef9c23fde12e3636d72eaf0e24279948' || github.sha }}
     outputs:
       deploy_international: ${{ steps.scope.outputs.deploy_international }}
+      tested_commit: ${{ steps.tested-source.outputs.commit }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
           fetch-depth: 0
+          ref: ${{ env.WEBSITE_TEST_COMMIT }}
+      - name: Validate the fixed 2023 Crystal Award source
+        if: github.event_name == 'workflow_dispatch' && inputs.release_source == 'award-2023-20261020'
+        env:
+          STATISTICS_MODE: ${{ inputs.statistics_mode }}
+          RELEASE_TARGET: ${{ inputs.target }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, os, re, subprocess
+          from pathlib import Path
+          base = '32e7018f04b3c9c04bb75b4375b41b63e54805bb'
+          release = 'a71f2beeef9c23fde12e3636d72eaf0e24279948'
+          assert os.environ['GITHUB_EVENT_NAME'] == 'workflow_dispatch'
+          assert os.environ['GITHUB_REF'] == 'refs/heads/main'
+          assert os.environ['RELEASE_TARGET'] == 'production'
+          assert os.environ['STATISTICS_MODE'] == 'preserve-current'
+          assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == release
+          parents = subprocess.check_output(['git', 'rev-list', '--parents', '-n', '1', release], text=True).split()
+          assert parents == [release, base], parents
+          subprocess.run(['git', 'merge-base', '--is-ancestor', release, os.environ['GITHUB_SHA']], check=True)
+          page = 'apps/website/en/lab/index.html'
+          assets = {
+              'apps/website/assets/lab-awards-20261020/sztu-crystal-award-certificate-2023-12.pdf':
+                  '6e57e4aec66e37b9acc6a32f801a6e3eaffeaa8acb03c1bb53a2dbb0f4afd621',
+              'apps/website/assets/lab-awards-20261020/sztu-crystal-award-certificate-2023-12.webp':
+                  '98748ba8da9c8deb18528d205b96b1c3261a4b9a76c23d438ec4aa8e528f852a',
+          }
+          changed = subprocess.check_output(['git', 'diff', '--name-status', base, release], text=True).splitlines()
+          assert set(changed) == {f'M\t{page}', *(f'A\t{path}' for path in assets)}, changed
+          old = subprocess.check_output(['git', 'show', f'{base}:{page}'])
+          current = Path(page).read_bytes()
+          rows = list(re.finditer(rb'(?m)^[ \t]*<li\b(?=[^>]*\bid="sztu-crystal-award-2023")[\s\S]*?</li>[ \t]*\r?\n', current))
+          assert len(rows) == 1
+          row = rows[0]
+          assert current[:row.start()] + current[row.end():] == old, 'Unrelated English lab content changed'
+          record = row.group().decode('utf-8')
+          assert 'data-date="2023-12"' in record and 'datetime="2023-12"' in record
+          assert all(name in record for name in ('Lin Zixin', 'Huang Xinqi', 'Jiao Zihao', 'Zhu Zhikun'))
+          assert 'Kuanghai Mingmou' not in record
+          for path, expected in assets.items():
+              assert hashlib.sha256(Path(path).read_bytes()).hexdigest() == expected, path
+          print('Validated the reviewed award row and two certificate assets; all other source bytes stay at accepted production')
+          PY
+      - name: Record the source tested by this job
+        id: tested-source
+        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
@@ -126,7 +176,7 @@ jobs:
     env:
       CLOUDFLARE_ACCOUNT_ID: '41e8b3404be24e1dd288556d77ffc951'
       WRANGLER_SEND_METRICS: 'false'
-      WEBSITE_RELEASE_COMMIT: ${{ inputs.release_source == 'awards-only-20261018' && '54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0' || github.sha }}
+      WEBSITE_RELEASE_COMMIT: ${{ inputs.release_source == 'awards-only-20261018' && '54a8a7f2a9d82a2b5747a5674177d8a7b5a8aba0' || inputs.release_source == 'award-2023-20261020' && 'a71f2beeef9c23fde12e3636d72eaf0e24279948' || github.sha }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -136,6 +186,20 @@ jobs:
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '24'
+      - name: Require the complete test job to cover the selected award source
+        if: inputs.release_source == 'award-2023-20261020'
+        env:
+          TESTED_COMMIT: ${{ needs.test.outputs.tested_commit }}
+          STATISTICS_MODE: ${{ inputs.statistics_mode }}
+        run: |
+          python3 - <<'PY'
+          import os, subprocess
+          expected = 'a71f2beeef9c23fde12e3636d72eaf0e24279948'
+          assert os.environ['STATISTICS_MODE'] == 'preserve-current'
+          assert os.environ['TESTED_COMMIT'] == expected
+          assert os.environ['WEBSITE_RELEASE_COMMIT'] == expected
+          assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == expected
+          PY
       - name: Validate the approved awards-only source
         if: inputs.release_source == 'awards-only-20261018'
         env:
@@ -170,8 +234,27 @@ jobs:
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && (inputs.release_source == 'awards-only-20261018' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || '1dc44a76d7040cb2cc20e80c2c5f22dd17e85a73') || '' }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && (inputs.release_source == 'awards-only-20261018' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb') || '' }}
         run: node scripts/check-website-project.mjs
+      - name: Verify the accepted page-only rollback deployment
+        if: inputs.statistics_mode == 'preserve-current' && inputs.release_source != 'awards-only-20261018'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const response = await fetch('https://api.cloudflare.com/client/v4/accounts/41e8b3404be24e1dd288556d77ffc951/pages/projects/omindos-website', {
+            headers: { Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}` },
+            signal: AbortSignal.timeout(20_000),
+          });
+          assert.equal(response.status, 200, 'Cloudflare accepted-baseline lookup failed');
+          const payload = await response.json();
+          assert.equal(payload.success, true, 'Cloudflare accepted-baseline lookup failed');
+          const live = payload.result?.canonical_deployment;
+          assert.equal(live?.id, 'ac4d6f64-3b0f-4e34-9bbd-57b825d223c8', 'Production deployment changed; review its collector and rollback point');
+          assert.equal(live?.deployment_trigger?.metadata?.commit_hash, '32e7018f04b3c9c04bb75b4375b41b63e54805bb', 'Production commit changed; review its collector');
+          console.log('Verified the accepted page-only rollback deployment and commit');
+          JS
       - name: Preserve legacy baseline and prepare isolated filtered statistics
         if: inputs.statistics_mode != 'preserve-current'
         env:
@@ -180,7 +263,7 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Test the selected awards-only production source
-        if: inputs.release_source == 'awards-only-20261018'
+        if: inputs.release_source == 'awards-only-20261018' || inputs.release_source == 'award-2023-20261020'
         run: |
           node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
           python3 -m unittest discover -s tests -p test_cn_seo.py
