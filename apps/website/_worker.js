@@ -758,6 +758,22 @@ export default {
       return legacyWorker.fetch(request, env);
     }
     if (url.pathname.startsWith('/api/')) return legacyWorker.fetch(request, env);
+    // PWA resources must bypass locale/page redirects and revalidate on update.
+    // The worker lives in /pwa/ but only handles a fixed public-page allowlist.
+    if (url.pathname.startsWith('/pwa/')) {
+      if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
+      const response = await env.ASSETS.fetch(request);
+      const headers = new Headers(response.headers);
+      headers.set('Cache-Control', 'no-cache, must-revalidate');
+      headers.set('X-Content-Type-Options', 'nosniff');
+      if (url.pathname === '/pwa/sw.js') {
+        headers.set('Service-Worker-Allowed', '/');
+        headers.set('Content-Type', 'application/javascript; charset=utf-8');
+      } else if (url.pathname.endsWith('.webmanifest')) {
+        headers.set('Content-Type', 'application/manifest+json; charset=utf-8');
+      }
+      return new Response(request.method === 'HEAD' ? null : response.body, { status: response.status, headers });
+    }
     // Locale media must bypass page routing, including same-origin English captions.
     if (/^\/(?:cn|en)\/(?:assets\/|[^/]+\.(?:css|js)$)/.test(url.pathname)) {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);

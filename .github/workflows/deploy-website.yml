@@ -9,6 +9,8 @@ on:
       - 'media/product-demos/**'
       - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
+      - 'tests/website-pwa.test.mjs'
+      - 'scripts/prepare-website-pwa.py'
       - 'tests/website-visits.test.mjs'
       - 'migrations/website/0003_filtered_visit_stats.sql'
       - 'scripts/website-visit-stats.mjs'
@@ -36,6 +38,8 @@ on:
       - 'media/product-demos/**'
       - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
+      - 'tests/website-pwa.test.mjs'
+      - 'scripts/prepare-website-pwa.py'
       - 'tests/website-visits.test.mjs'
       - 'migrations/website/0003_filtered_visit_stats.sql'
       - 'scripts/website-visit-stats.mjs'
@@ -158,7 +162,7 @@ jobs:
       - name: Restore approved product demo media
         run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
-        run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/english-chat-proxy.test.mjs tests/english-chat-widget.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs ops/chat-entry/course-entry-resources.test.mjs
+        run: node --test tests/website.test.mjs tests/website-pwa.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/english-chat-proxy.test.mjs tests/english-chat-widget.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs ops/chat-entry/course-entry-resources.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
@@ -265,7 +269,7 @@ jobs:
       - name: Test the selected awards-only production source
         if: inputs.release_source == 'awards-only-20261018' || inputs.release_source == 'award-2023-20261020'
         run: |
-          node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
+          node --test tests/website.test.mjs tests/website-pwa.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs
           python3 -m unittest discover -s tests -p test_cn_seo.py
           python3 -m unittest discover -s tests -p test_international_artifact.py
       - name: Prepare English site and domestic redirects
