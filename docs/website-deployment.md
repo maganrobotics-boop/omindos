@@ -112,3 +112,25 @@ v2 将 `accepted_unknown`、`accepted_scored` 页面事件与四类排除事件�
 旧 `visit_totals`、`visit_country` 和 `visit_recent` 留作“历史未过滤页面加载次数”，不得与 v2 相加展示为同一口径，也不能将 Cloudflare 全站自动化请求百分比乘入旧计数来修正。旧数据只有汇总，没有足够信息回算真人数。v2 的 `visit_collection_v2.first_event_at` 是该版本首条事件时间，迁移执行时间不等于新口径采集开始时间。分钟聚合保留约两天，累计分类及国家汇总长期保留。回滚只恢复旧部署，不删除 v2 表；旧版本恢复期间的数据仍属于旧口径。
 
 
+
+## Three publication PDFs (2026-10-21)
+
+The owner requested publication of three supplied papers. The Chinese site serves
+the exact PDFs under `https://omindos.cn/assets/papers-20261021/`; the three existing
+English publication records add `Read PDF` links to those canonical files. Existing
+publisher, preprint, and research links remain available.
+
+The accepted international rollback baseline is deployment
+`65e3b980-4be4-45d8-89af-0af970e5c866` at commit
+`f14bc0719e3f567c8a870aab9e5b1974f8a07bec`, verified by the successful
+[production workflow 39558264767](https://github.com/maganrobotics-boop/omindos/actions/runs/39558264767).
+It passed the public website, language routing, PWA, project, and preserved-statistics
+checks. This page-only release uses `statistics_mode=preserve-current`, retaining
+the collector from `9a76b841d330f43fab07566875949714afee3995` and the existing database
+binding. No migration, permission change, DNS change, or Tencent deployment is
+performed by the international workflow.
+
+The one-time publication request verifies the exact base, a four-file change list,
+and the three public PDF hashes before dispatching the existing guarded production
+workflow. It cannot accept arbitrary source branches or commits, and duplicate
+dispatches for the same main commit are rejected.
