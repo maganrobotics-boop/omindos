@@ -363,7 +363,7 @@ test('Chinese Q1 and MDA1 videos state simulation at the player and retain acces
 test('Chinese site navigation remains consistent across desktop and mobile pages', async () => {
   const desktop = ['/', '/robots/', '/robots/quadruped/', '/robots/tracked/', '/robots/wheeled/',
     '/robots/mobile-dual-arm/', '/robots/wheel-legged/', '/robots/open-frame/', '/robots/dual-arm/',
-    '/omindos/', 'https://cloud.omindos.cn/?entry=website', '/integration/', '/developers/',
+    '/omindos/', 'https://cloud.omindos.cn', '/integration/', '/developers/',
     '/field-work/', '/mobility/', 'https://omindos.cn/learning', '/about/', '/join/'];
   const extras = ['robots/mobile-dual-arm', 'robots/tracked', 'developers', 'join', 'careers', 'lab', 'lab/join', 'lab/alumni'];
   for (const route of [...portalRoutes, ...extras]) {

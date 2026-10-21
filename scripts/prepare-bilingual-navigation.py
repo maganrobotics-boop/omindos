@@ -36,7 +36,7 @@ def navigation(language, route, mobile=False):
         robots += link(url('robots/' + slug + '/'), english if en else zh)
     systems = ''.join([
         link(url('omindos/'), 'System overview' if en else '系统概览'),
-        link('https://cloud.omindos.cn/?entry=website', 'OmindOS Cloud' if en else '云机器人 Cloud'),
+        link('https://cloud.omindos.cn', 'OmindOS Cloud' if en else '云机器人 Cloud'),
         link(url('integration/'), 'System integration' if en else '系统集成'),
         link(url('developers/'), 'Developer resources' if en else '开发者资源与 API'),
         link(url('field-work/'), 'Applications' if en else '应用场景'),

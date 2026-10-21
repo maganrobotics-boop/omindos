@@ -20,6 +20,8 @@ for(const route of routes){
   assert.ok(html.includes('property="og:url" content="'+base+'/en/'+suffix+'"'));
   assert.ok(html.includes('hreflang="zh-CN" href="https://omindos.cn/'+suffix+'"'));
   assert.match(html,/<html lang="en"/);assert.match(html,/<main\b/);
+  assert.ok(html.includes('rel="manifest" href="/pwa/manifest-en.webmanifest"'),'English PWA manifest hook is missing');
+  assert.ok(html.includes('src="/pwa/install.js?v=20261021-1"'),'English PWA installation entry is missing');
   // Check navigable page links, not shared icons/styles declared with <link>.
   assert.doesNotMatch(html,/<a\b[^>]*\bhref="(?:https:\/\/omindos\.ai)?\/cn\/(?!assets\/)/i);
  });
@@ -71,6 +73,23 @@ for(const path of ['/meeting','/api/meeting/login','/founding-oem.js'])await che
 });
 await check('API remains inaccessible to public reads',async()=>{
  const r=await request(base+'/api/visits');assert.equal(r.status,405);assert.doesNotMatch(await r.text(),/visits|countries|last24Hours/);
+});
+await check('English PWA installation manifest',async()=>{
+ const r=await request(base+'/pwa/manifest-en.webmanifest');assert.equal(r.status,200);
+ assert.match(r.headers.get('Content-Type')||'',/application\/manifest\+json/);
+ const manifest=await r.json();assert.equal(manifest.lang,'en');assert.equal(manifest.id,'/en/');
+ assert.equal(manifest.start_url,'/en/?source=pwa');assert.equal(manifest.scope,'/en/');assert.equal(manifest.display,'standalone');
+ for(const icon of manifest.icons){
+  const image=await request(base+icon.src);assert.equal(image.status,200);assert.match(image.headers.get('Content-Type')||'',/image\/png/);
+  const bytes=new Uint8Array(await image.arrayBuffer());const view=new DataView(bytes.buffer);
+  const [width,height]=icon.sizes.split('x').map(Number);assert.equal(view.getUint32(16),width);assert.equal(view.getUint32(20),height);
+ }
+});
+await check('Website PWA worker scope and revalidation',async()=>{
+ const r=await request(base+'/pwa/sw.js');assert.equal(r.status,200);
+ assert.match(r.headers.get('Content-Type')||'',/javascript/);assert.equal(r.headers.get('Service-Worker-Allowed'),'/');
+ assert.match(r.headers.get('Cache-Control')||'',/no-cache/);
+ const source=await r.text();assert.ok(source.includes('originmind-website-pwa-'));
 });
 for(const host of ['originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
  const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();

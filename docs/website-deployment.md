@@ -50,6 +50,28 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 ## 凭据与回滚
 
+### PWA 发布（2026-10-21）
+
+中文 PWA 已在腾讯正式站验收。英文 PWA 使用 `current-main` 与
+`statistics_mode=preserve-current`，完整测试通过后手动发布；不执行 D1
+迁移，不调整数据库绑定或权限。导航生成脚本和测试与用户已确认的 Cloud
+根入口 `https://cloud.omindos.cn` 保持一致。
+
+本次 `current-main` 的精确发布前置基线为已成功验收的奖项版本
+`1aad7eca6dde941f9e11011dc61efa0b9137ba68`，deployment
+`7fc4f910-7e22-4121-b751-8e37a487c78f`（工作流
+https://github.com/maganrobotics-boop/omindos/actions/runs/39357163109）。该日志
+确认统计仍沿用 `9a76b841d330f43fab07566875949714afee3995`，已完成项目、
+域名、数据库绑定、产物和线上检查。发布前仍须由 Cloudflare API 同时核对
+这两个精确值；任何一项变化都停止发布。旧 `award-2023-20261020` 和
+`awards-only-20261018` 继续保留各自历史基线。
+
+PWA 行为测试单独执行，仅在测试来源包含该功能时要求存在，避免旧奖项
+固定快照缺少新测试文件。所有原有通用测试保留；当前主分支发布必须通过
+PWA 测试。发布后核验英文 manifest、图标、worker 根作用域响应头、安装入口
+及原有语言路由。回滚点使用上述精确 deployment，客户端 worker 退役要求见
+`ops/pwa/README.md`。
+
 ### 英文页面独立发布（2026-10-18）
 
 当前 GitHub 发布令牌查询 D1 返回 403，v2 统计升级尚未发布。英文页面可在手动生产发布中明确选择 `statistics_mode=preserve-current`：`release_source=current-main` 与 `award-2023-20261020` 的本轮预检均核对线上为已验证的 `32e7018f04b3c9c04bb75b4375b41b63e54805bb`，production deployment 为 `ac4d6f64-3b0f-4e34-9bbd-57b825d223c8`，依据已成功的英文官网发布（[工作流 39201572362](https://github.com/maganrobotics-boop/omindos/actions/runs/39201572362)）。提交与 deployment ID 必须同时匹配；任何一项改变均先停止并复核，不跳过现有项目、域名或数据库绑定检查。该发布日志确认沿用 `9a76b841d330f43fab07566875949714afee3995` 的统计函数和客户端，通过旧表写入与公开读取限制检查，并跳过 v2 迁移及报告；该生产版本已完成中英文官网与实验室页面优化及询盘隐私信息校验，统计源码未变；本次固定来源仅增加上述英文奖项和两份证书资源。`awards-only-20261018` 保留原 `437ca28bdc51333b19d76726e782f35c9ac6a545` 前置条件，因此不会在该快照已上线后再次发布。旧统计函数的提取来源仍固定为 `9a76b841d330f43fab07566875949714afee3995`，不随页面发布提交改变。两段统计函数外的 Worker、英文页面、语言路由及聊天资源保持当前源码；沿用现有 VISITS_DB 和旧表，不执行 v2 迁移及报告，不删除数据。此模式不会更改令牌权限。
