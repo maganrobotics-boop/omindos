@@ -1,0 +1,17 @@
+{
+  "id": "/",
+  "name": "OriginMind 源灵智能",
+  "short_name": "OriginMind",
+  "description": "源灵智能官网：矿山机器人、OmindOS 与团队动态。",
+  "lang": "zh-CN",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#f5f3ee",
+  "background_color": "#f5f3ee",
+  "icons": [
+    { "src": "/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

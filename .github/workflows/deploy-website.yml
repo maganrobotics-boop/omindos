@@ -9,6 +9,8 @@ on:
       - 'media/product-demos/**'
       - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
+      - 'tests/website-pwa.test.mjs'
+      - 'scripts/prepare-website-pwa.py'
       - 'tests/website-visits.test.mjs'
       - 'migrations/website/0003_filtered_visit_stats.sql'
       - 'scripts/website-visit-stats.mjs'
@@ -36,6 +38,8 @@ on:
       - 'media/product-demos/**'
       - 'scripts/prepare-product-demo-media.py'
       - 'tests/website.test.mjs'
+      - 'tests/website-pwa.test.mjs'
+      - 'scripts/prepare-website-pwa.py'
       - 'tests/website-visits.test.mjs'
       - 'migrations/website/0003_filtered_visit_stats.sql'
       - 'scripts/website-visit-stats.mjs'
@@ -159,6 +163,9 @@ jobs:
         run: python3 scripts/prepare-product-demo-media.py
       - name: Check website behavior
         run: node --test tests/website.test.mjs tests/website-visits.test.mjs tests/website-release-scope.test.mjs tests/cn-research-prototypes.test.mjs tests/international-english-only.test.mjs tests/english-chat-ui.test.mjs tests/english-chat-proxy.test.mjs tests/english-chat-widget.test.mjs tests/preserve-website-statistics.test.mjs ops/chat-entry/gateway.test.mjs ops/chat-entry/course-entry-resources.test.mjs
+      - name: Check website PWA behavior for sources containing the feature
+        if: github.event_name != 'workflow_dispatch' || inputs.release_source != 'award-2023-20261020'
+        run: node --test tests/website-pwa.test.mjs
       - name: Check Chinese search addresses
         run: |
           python3 -m unittest discover -s tests -p test_cn_seo.py
@@ -234,12 +241,14 @@ jobs:
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && (inputs.release_source == 'awards-only-20261018' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb') || '' }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && (inputs.release_source == 'awards-only-20261018' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || inputs.release_source == 'current-main' && '1aad7eca6dde941f9e11011dc61efa0b9137ba68' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb') || '' }}
         run: node scripts/check-website-project.mjs
       - name: Verify the accepted page-only rollback deployment
         if: inputs.statistics_mode == 'preserve-current' && inputs.release_source != 'awards-only-20261018'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          EXPECTED_ROLLBACK_DEPLOYMENT: ${{ inputs.release_source == 'current-main' && '7fc4f910-7e22-4121-b751-8e37a487c78f' || 'ac4d6f64-3b0f-4e34-9bbd-57b825d223c8' }}
+          EXPECTED_ROLLBACK_COMMIT: ${{ inputs.release_source == 'current-main' && '1aad7eca6dde941f9e11011dc61efa0b9137ba68' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb' }}
         run: |
           node --input-type=module <<'JS'
           import assert from 'node:assert/strict';
@@ -251,8 +260,8 @@ jobs:
           const payload = await response.json();
           assert.equal(payload.success, true, 'Cloudflare accepted-baseline lookup failed');
           const live = payload.result?.canonical_deployment;
-          assert.equal(live?.id, 'ac4d6f64-3b0f-4e34-9bbd-57b825d223c8', 'Production deployment changed; review its collector and rollback point');
-          assert.equal(live?.deployment_trigger?.metadata?.commit_hash, '32e7018f04b3c9c04bb75b4375b41b63e54805bb', 'Production commit changed; review its collector');
+          assert.equal(live?.id, process.env.EXPECTED_ROLLBACK_DEPLOYMENT, 'Production deployment changed; review its collector and rollback point');
+          assert.equal(live?.deployment_trigger?.metadata?.commit_hash, process.env.EXPECTED_ROLLBACK_COMMIT, 'Production commit changed; review its collector');
           console.log('Verified the accepted page-only rollback deployment and commit');
           JS
       - name: Preserve legacy baseline and prepare isolated filtered statistics
