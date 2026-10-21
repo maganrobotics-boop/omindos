@@ -1,0 +1,121 @@
+name: Publish the authorized paper links once
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/papers-release-once-20261021.yml']
+  pull_request:
+    paths: ['.github/workflows/papers-release-once-20261021.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: papers-release-once-20261021
+  cancel-in-progress: false
+
+jobs:
+  verify-request:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Require the exact accepted source and three paper links
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          base = 'f14bc0719e3f567c8a870aab9e5b1974f8a07bec'
+          subprocess.run(['git', 'merge-base', '--is-ancestor', base, 'HEAD'], check=True)
+          count = subprocess.check_output(['git', 'rev-list', '--count', base + '..HEAD'], text=True).strip()
+          assert count == '1', 'This request is valid only on its first reviewed commit'
+          changed = subprocess.check_output(['git', 'diff', '--name-status', base, 'HEAD'], text=True).splitlines()
+          assert changed == [
+              'M\t.github/workflows/deploy-website.yml',
+              'A\t.github/workflows/papers-release-once-20261021.yml',
+              'M\tapps/website/en/lab/index.html',
+              'M\tdocs/website-deployment.md',
+          ], changed
+          read_base = lambda path: subprocess.check_output(['git', 'show', base + ':' + path], text=True)
+          lab_path = 'apps/website/en/lab/index.html'
+          expected = read_base(lab_path)
+          for doi, filename in [
+              ('iros60139.2025.11247032', 'l-sni-iros2025.pdf'),
+              ('icra55743.2025.11127580', 'nerf-transparent-grasping-icra2025.pdf'),
+              ('icra57147.2024.10610407', 'staircases-point-clouds-icra2024.pdf'),
+          ]:
+              anchor = '<a class="lab-result-link" href="https://doi.org/10.1109/' + doi + '" target="_blank" rel="noopener noreferrer">View publication</a>'
+              assert expected.count(anchor) == 1
+              expected = expected.replace(anchor, anchor + '<a class="lab-result-link" href="https://omindos.cn/assets/papers-20261021/' + filename + '" target="_blank" rel="noopener noreferrer">Read PDF</a>')
+          assert Path(lab_path).read_text() == expected, 'Unexpected English page changes'
+          workflow_path = '.github/workflows/deploy-website.yml'
+          expected_workflow = read_base(workflow_path).replace('5c4844d38351d4099e7eb1c1e7ee0937c0020950', base).replace('21f8b82c-b451-4fe7-85a0-5127ebcda0e0', '65e3b980-4be4-45d8-89af-0af970e5c866')
+          assert Path(workflow_path).read_text() == expected_workflow, 'Production checks must remain intact'
+          docs_path = 'docs/website-deployment.md'
+          assert Path(docs_path).read_text().startswith(read_base(docs_path)), 'Existing release records changed'
+          print('Only the three English paper links, verified rollback baseline, release record and this request changed')
+          PY
+
+  dispatch:
+    needs: verify-request
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Verify the exact three PDFs are already public
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { createHash } from 'node:crypto';
+          const papers = [
+            ['l-sni-iros2025.pdf', '55d986ea9add35a31befcaa893cfdb4bd27377296ea2b5dfe8707a95898e5006'],
+            ['nerf-transparent-grasping-icra2025.pdf', '97c1a93c36955ca3e1a83b766d8b29164637f01b88d93627bed0599f1aeb5fd1'],
+            ['staircases-point-clouds-icra2024.pdf', '4b3bee67db2230b298f72a55a18a7385cac7582b83b76af64bf65486f4df015b'],
+          ];
+          for (const [filename, hash] of papers) {
+            const response = await fetch('https://omindos.cn/assets/papers-20261021/' + filename, { signal: AbortSignal.timeout(45000) });
+            assert.equal(response.status, 200, filename + ' must be public before English publication');
+            assert.match(response.headers.get('content-type') ?? '', /application\/pdf/i);
+            const bytes = Buffer.from(await response.arrayBuffer());
+            assert.equal(bytes.subarray(0, 5).toString(), '%PDF-');
+            assert.equal(createHash('sha256').update(bytes).digest('hex'), hash, filename + ' changed');
+          }
+          console.log('All three exact PDFs are public and verified');
+          JS
+      - name: Dispatch the existing guarded production workflow exactly once
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const repo = process.env.GITHUB_REPOSITORY;
+          const head = process.env.GITHUB_SHA;
+          assert.equal(repo, 'maganrobotics-boop/omindos');
+          assert.equal(process.env.GITHUB_REF, 'refs/heads/main');
+          const headers = { Authorization: 'Bearer ' + process.env.GH_TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+          const root = 'https://api.github.com/repos/' + repo;
+          const ref = await fetch(root + '/git/ref/heads/main', { headers });
+          assert.equal(ref.status, 200);
+          assert.equal((await ref.json()).object.sha, head, 'Main moved; do not dispatch another source');
+          const listed = await fetch(root + '/actions/runs?event=workflow_dispatch&per_page=50', { headers });
+          assert.equal(listed.status, 200);
+          const runs = (await listed.json()).workflow_runs.filter(run => run.path === '.github/workflows/deploy-website.yml');
+          if (runs.some(run => run.head_sha === head)) {
+            console.log('This exact source already has a production request; no duplicate dispatch');
+          } else {
+            assert.ok(!runs.some(run => run.status !== 'completed'), 'Another manual release is active');
+            const response = await fetch(root + '/actions/workflows/deploy-website.yml/dispatches', {
+              method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ref: 'main', inputs: { target: 'production', statistics_mode: 'preserve-current', release_source: 'current-main' } }),
+            });
+            assert.equal(response.status, 204, 'Guarded production dispatch failed');
+            console.log('Requested the authorized paper-link production release at ' + head);
+          }
+          JS
