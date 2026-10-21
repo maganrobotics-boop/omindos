@@ -273,6 +273,9 @@ test('international hosting serves PWA resources without locale redirects and al
       assert.equal(response.headers.get('Location'), null);
       assert.ok(response.headers.get('Content-Type').startsWith(type));
       assert.match(response.headers.get('Cache-Control'), /no-cache|must-revalidate/);
+      assert.match(response.headers.get('Cache-Control'), /private/);
+      assert.match(response.headers.get('Cache-Control'), /no-store/);
+      assert.equal(response.headers.get('Cloudflare-CDN-Cache-Control'), 'no-store');
       assert.equal(await response.text(), method === 'HEAD' ? '' : 'asset');
       if (path.endsWith('sw.js')) assert.equal(response.headers.get('Service-Worker-Allowed'), '/');
     }

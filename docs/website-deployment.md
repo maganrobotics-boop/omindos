@@ -52,6 +52,16 @@ script 与 workflow 双重限制：仅 workflow_dispatch + refs/heads/main 可�
 
 ### PWA 发布（2026-10-21）
 
+首次 PWA 发布 `5c4844d38351d4099e7eb1c1e7ee0937c0020950` 已上传为
+`21f8b82c-b451-4fe7-85a0-5127ebcda0e0`（工作流 39556109411），项目、部署
+提交、全部英文页面、媒体、语言路由、API 隐私及 manifest/图标检查通过；
+最后的 worker 更新缓存检查发现域名的 Browser Cache TTL 将源 `no-cache`
+改为四小时。修复仅加强 `/pwa/` 响应为 `private, no-store, no-cache,
+max-age=0, must-revalidate`，并加 `Cloudflare-CDN-Cache-Control: no-store`；
+不更改全站缓存设置。保留严格线上检查，不以放宽断言解决问题。
+修复发布前须精确匹配上述当前 deployment 和 commit，沿用已核实的旧统计
+采集器；原奖项版本仍保留为此前回滚点。下面记录为首次 PWA 发布时的基线。
+
 中文 PWA 已在腾讯正式站验收。英文 PWA 使用 `current-main` 与
 `statistics_mode=preserve-current`，完整测试通过后手动发布；不执行 D1
 迁移，不调整数据库绑定或权限。导航生成脚本和测试与用户已确认的 Cloud

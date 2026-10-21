@@ -89,6 +89,7 @@ await check('Website PWA worker scope and revalidation',async()=>{
  const r=await request(base+'/pwa/sw.js');assert.equal(r.status,200);
  assert.match(r.headers.get('Content-Type')||'',/javascript/);assert.equal(r.headers.get('Service-Worker-Allowed'),'/');
  assert.match(r.headers.get('Cache-Control')||'',/no-cache/);
+ assert.match(r.headers.get('Cache-Control')||'',/no-store/);
  const source=await r.text();assert.ok(source.includes('originmind-website-pwa-'));
 });
 for(const host of ['originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
