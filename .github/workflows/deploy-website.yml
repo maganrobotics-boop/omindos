@@ -241,14 +241,14 @@ jobs:
       - name: Check production project and existing statistics binding
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && (inputs.release_source == 'awards-only-20261018' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || inputs.release_source == 'current-main' && '1aad7eca6dde941f9e11011dc61efa0b9137ba68' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb') || '' }}
+          EXPECTED_STATISTICS_BASELINE_COMMIT: ${{ inputs.statistics_mode == 'preserve-current' && (inputs.release_source == 'awards-only-20261018' && '437ca28bdc51333b19d76726e782f35c9ac6a545' || inputs.release_source == 'current-main' && '5c4844d38351d4099e7eb1c1e7ee0937c0020950' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb') || '' }}
         run: node scripts/check-website-project.mjs
       - name: Verify the accepted page-only rollback deployment
         if: inputs.statistics_mode == 'preserve-current' && inputs.release_source != 'awards-only-20261018'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          EXPECTED_ROLLBACK_DEPLOYMENT: ${{ inputs.release_source == 'current-main' && '7fc4f910-7e22-4121-b751-8e37a487c78f' || 'ac4d6f64-3b0f-4e34-9bbd-57b825d223c8' }}
-          EXPECTED_ROLLBACK_COMMIT: ${{ inputs.release_source == 'current-main' && '1aad7eca6dde941f9e11011dc61efa0b9137ba68' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb' }}
+          EXPECTED_ROLLBACK_DEPLOYMENT: ${{ inputs.release_source == 'current-main' && '21f8b82c-b451-4fe7-85a0-5127ebcda0e0' || 'ac4d6f64-3b0f-4e34-9bbd-57b825d223c8' }}
+          EXPECTED_ROLLBACK_COMMIT: ${{ inputs.release_source == 'current-main' && '5c4844d38351d4099e7eb1c1e7ee0937c0020950' || '32e7018f04b3c9c04bb75b4375b41b63e54805bb' }}
         run: |
           node --input-type=module <<'JS'
           import assert from 'node:assert/strict';

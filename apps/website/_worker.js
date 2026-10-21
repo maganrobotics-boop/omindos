@@ -764,7 +764,10 @@ export default {
       if (!['GET', 'HEAD'].includes(request.method)) return methodNotAllowed(['GET', 'HEAD']);
       const response = await env.ASSETS.fetch(request);
       const headers = new Headers(response.headers);
-      headers.set('Cache-Control', 'no-cache, must-revalidate');
+      // Explicit no-store keeps the zone's minimum browser TTL from turning
+      // service-worker and manifest updates into four-hour cached responses.
+      headers.set('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
+      headers.set('Cloudflare-CDN-Cache-Control', 'no-store');
       headers.set('X-Content-Type-Options', 'nosniff');
       if (url.pathname === '/pwa/sw.js') {
         headers.set('Service-Worker-Allowed', '/');

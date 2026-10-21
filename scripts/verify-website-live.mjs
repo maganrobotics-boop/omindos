@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
 import {setTimeout as delay} from 'node:timers/promises';
 const base='https://omindos.ai';
 const routes=['','about','careers','contact','developers','field-work','field-work/mining','field-work/warehouse','integration','join','lab','lab/join','mobility','omindos','privacy','robots','robots/articulated','robots/dual-arm','robots/mobile-dual-arm','robots/open-frame','robots/quadruped','robots/tracked','robots/wheel-legged','robots/wheeled'];
-async function request(url,headers={}){
- return fetch(url,{headers:{'User-Agent':'Mozilla/5.0 (compatible; OMINDOS-Deployment-Check/1.0)',...headers},redirect:'manual',signal:AbortSignal.timeout(15000)});
+async function request(url,headers={},method='GET'){
+ return fetch(url,{method,headers:{'User-Agent':'Mozilla/5.0 (compatible; OMINDOS-Deployment-Check/1.0)',...headers},redirect:'manual',signal:AbortSignal.timeout(15000)});
 }
 async function check(name,callback){
  for(let attempt=1;;attempt++){
@@ -89,7 +91,18 @@ await check('Website PWA worker scope and revalidation',async()=>{
  const r=await request(base+'/pwa/sw.js');assert.equal(r.status,200);
  assert.match(r.headers.get('Content-Type')||'',/javascript/);assert.equal(r.headers.get('Service-Worker-Allowed'),'/');
  assert.match(r.headers.get('Cache-Control')||'',/no-cache/);
+ assert.match(r.headers.get('Cache-Control')||'',/no-store/);
  const source=await r.text();assert.ok(source.includes('originmind-website-pwa-'));
+});
+for(const path of ['/pwa/sw.js','/pwa/install.js','/pwa/install.css','/pwa/manifest-en.webmanifest'])await check('PWA canonical update resource '+path,async()=>{
+ const expected=await readFile(new URL('../apps/website'+path,import.meta.url));
+ for(const method of ['GET','GET','HEAD']){
+  const r=await request(base+path,{},method);assert.equal(r.status,200);
+  const policy=r.headers.get('Cache-Control')||'';
+  for(const directive of [/\bprivate\b/,/\bno-store\b/,/\bno-cache\b/,/\bmax-age=0\b/])assert.match(policy,directive);
+  assert.doesNotMatch(policy,/\bmax-age=[1-9]\d*|\bimmutable\b/);
+  if(method==='GET')assert.equal(createHash('sha256').update(new Uint8Array(await r.arrayBuffer())).digest('hex'),createHash('sha256').update(expected).digest('hex'));
+ }
 });
 for(const host of ['originmindos.com','www.originmindos.com'])await check('Host '+host,async()=>{
  const r=await request('https://'+host+'/');assert.equal(r.status,308);assert.equal(new URL(r.headers.get('Location')).hostname,'omindos.ai');await r.body?.cancel();
